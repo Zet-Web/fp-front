@@ -136,7 +136,7 @@
 
 ---
 
-## Profile Functions
+## Profile
 
 ### 5. fetch-auth-profile
 **Location:** `supabase/functions/fetch-auth-profile/index.ts`
