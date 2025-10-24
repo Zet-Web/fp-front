@@ -339,7 +339,7 @@
 
 ---
 
-## Reference Data Functions
+## Data
 
 ### 10. fetch-reference-lists
 **Location:** `supabase/functions/fetch-reference-lists/index.ts`
