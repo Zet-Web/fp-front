@@ -1,6 +1,4 @@
-# Server Functions Documentation
-
-This document provides a comprehensive overview of all Supabase Edge Functions used in the project.
+# Server Functions List
 
 ## Authentication Functions
 
