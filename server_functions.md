@@ -426,26 +426,6 @@
 
 ---
 
-## Function Categories Summary
-
-### Authentication (4 functions)
-- State generation and management
-- Platform authentication processing
-- Session validation and magic link generation
-- Cleanup operations
-
-### Profile Management (5 functions)
-- Profile data fetching (own and public)
-- Profile updates with validation
-- Location data management
-- Additional profile data retrieval
-
-### Reference Data (1 function)
-- City and country search functionality
-
-### Settings (1 function)
-- User preferences management
-
 ## Security Features
 
 - **JWT Token Validation**: All authenticated endpoints validate Bearer tokens
