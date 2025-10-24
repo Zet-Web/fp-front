@@ -384,7 +384,7 @@
 
 ---
 
-## Settings Functions
+## Settings
 
 ### 11. settings
 **Location:** `apps/settings/supabase/functions/settings/index.ts`
