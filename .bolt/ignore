@@ -1,13 +1,13 @@
-# /apps/404
+/apps/404
 # /apps/auth
-# /apps/chats
-# /apps/header
-# /apps/home
-# /apps/mobileNav
-# /apps/navigation
+/apps/chats
+/apps/header
+/apps/home
+/apps/mobileNav
+/apps/navigation
 # /apps/profile
 # /apps/settings
 
 # /supabase/
 
-# src/components/ui
+src/components/ui
