@@ -1,6 +1,6 @@
 # Server Functions List
 
-## Authentication Functions
+## Auth
 
 ### 1. generate-auth-state
 **Location:** `apps/auth/supabase/functions/generate-auth-state/index.ts`
