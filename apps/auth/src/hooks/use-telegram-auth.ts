@@ -1,7 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/lib/supabase';
-import { AuthState, AuthStatusResponse } from '../types/auth';
+import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { AuthState, AuthStatusResponse } from "../types/auth";
 
 interface UseTelegramAuthReturn {
   isLoading: boolean;
@@ -10,12 +9,14 @@ interface UseTelegramAuthReturn {
   handleTelegramAuth: () => void;
 }
 
+const initiatingHostOrigin = "http://localhost:5173";
+
 export function useTelegramAuth(): UseTelegramAuthReturn {
   const [isLoading, setIsLoading] = useState(true);
   const [telegramUrl, setTelegramUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  
+
   const stateRef = useRef<string | null>(null);
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -29,7 +30,7 @@ export function useTelegramAuth(): UseTelegramAuthReturn {
       initializedRef.current = true;
       initializeAuth();
     }
-    
+
     return cleanup;
   }, []);
 
@@ -45,26 +46,26 @@ export function useTelegramAuth(): UseTelegramAuthReturn {
   };
 
   const redirectToHome = () => {
-    navigate('/');
+    navigate("/");
   };
 
   const deleteAuthState = async () => {
     if (!stateRef.current) return;
-    
+
     try {
       await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/delete-auth-state`,
+        `${import.meta.env.VITE_BACKEND_URL}/auth/delete-auth-state`,
         {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-            'Content-Type': 'application/json',
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify({ state: stateRef.current })
+          body: JSON.stringify({ state: stateRef.current }),
         }
       );
     } catch (error) {
-      console.error('Failed to delete auth state:', error);
+      console.error("Failed to delete auth state:", error);
       // Don't throw error as this is cleanup operation
     }
   };
@@ -72,7 +73,7 @@ export function useTelegramAuth(): UseTelegramAuthReturn {
   const handleTelegramAuth = () => {
     if (telegramUrl) {
       // Always open Telegram URL in new tab
-      window.open(telegramUrl, '_blank');
+      window.open(telegramUrl, "_blank");
     }
   };
 
@@ -82,37 +83,37 @@ export function useTelegramAuth(): UseTelegramAuthReturn {
       setError(null);
 
       // Use localhost for development - this should be configurable in production
-      const initiatingHostOrigin = 'http://localhost:5173';
+      
 
       // Generate auth state
       const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-auth-state`,
+        `${import.meta.env.VITE_BACKEND_URL}/auth/generate-auth-state`,
         {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-            'Content-Type': 'application/json',
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify({ initiatingHostOrigin })
+          body: JSON.stringify({ initiatingHostOrigin }),
         }
       );
 
       if (!response.ok) {
-        throw new Error('Failed to generate auth state');
+        throw new Error("Failed to generate auth state");
       }
 
       const data: AuthState = await response.json();
-      
+
       if (!data.success) {
-        throw new Error(data.error || 'Failed to generate auth state');
+        throw new Error(data.error || "Failed to generate auth state");
       }
 
       stateRef.current = data.state;
       setTelegramUrl(data.redirect_url);
-      
+
       // Start polling for auth completion
       startPolling();
-      
+
       // Set timeout for auto-redirect
       timeoutRef.current = setTimeout(() => {
         // Clean up auth state if authentication was not completed
@@ -122,9 +123,8 @@ export function useTelegramAuth(): UseTelegramAuthReturn {
         cleanup();
         redirectToHome();
       }, 3 * 60 * 1000); // 3 minutes
-
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setIsLoading(false);
     }
@@ -142,10 +142,12 @@ export function useTelegramAuth(): UseTelegramAuthReturn {
 
       try {
         const response = await fetch(
-          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-auth-session?state=${stateRef.current}`,
+          `${import.meta.env.VITE_BACKEND_URL}/auth/get-auth-session/${
+            stateRef.current
+          }`,
           {
             headers: {
-              'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
             },
           }
         );
@@ -156,24 +158,26 @@ export function useTelegramAuth(): UseTelegramAuthReturn {
             cleanup();
             return;
           }
-          throw new Error('Failed to check auth status');
+          throw new Error("Failed to check auth status");
         }
 
         const data: AuthStatusResponse = await response.json();
-        
+
         if (data.success && data.completed && data.magic_link) {
           // Authentication completed successfully
           hasAuthCompletedRef.current = true;
           cleanup();
-          
+
           // Redirect to magic link for automatic authentication
           window.location.href = data.magic_link;
         }
       } catch (err) {
         // Only show error if authentication hasn't completed successfully
         if (!hasAuthCompletedRef.current) {
-          console.error('Polling error:', err);
-          setError(err instanceof Error ? err.message : 'Authentication failed');
+          console.error("Polling error:", err);
+          setError(
+            err instanceof Error ? err.message : "Authentication failed"
+          );
           cleanup();
         } else {
           // Auth completed, just cleanup without error
@@ -187,6 +191,6 @@ export function useTelegramAuth(): UseTelegramAuthReturn {
     isLoading,
     telegramUrl,
     error,
-    handleTelegramAuth
+    handleTelegramAuth,
   };
 }
