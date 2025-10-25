@@ -22,4 +22,6 @@ export interface Profile {
   profile_type: string | null;
   badge: string[] | null;
   contact_info: ContactInfoEntry[] | null;
+  birthday: string | null;
+  birthday_visibility: 'full' | 'month_day' | 'year' | null;
 }

@@ -1,4 +1,5 @@
 import { ContactsSection } from "./contacts-section"
+import { BirthdaySection } from "./birthday-section"
 import { ExperienceSection } from "./experience-section"
 import { AwardsSection } from "./awards-section"
 import { AdditionalInfoSection } from "./additional-info-section"
@@ -13,6 +14,8 @@ interface UserProfile {
   profile_type: string | null
   badge: string[] | null
   contact_info: any[] | null
+  birthday: string | null
+  birthday_visibility: 'full' | 'month_day' | 'year' | null
 }
 
 interface InformationSectionProps {
@@ -26,6 +29,7 @@ export function InformationSection({ user, isOwnProfile, isEditing, onUpdateProf
   return (
     <div className="space-y-6">
       <ContactsSection user={user} isOwnProfile={isOwnProfile} isEditing={isEditing} onUpdateProfile={onUpdateProfile} />
+      <BirthdaySection user={user} isOwnProfile={isOwnProfile} isEditing={isEditing} onUpdateProfile={onUpdateProfile} />
       <ExperienceSection isEditing={isEditing} />
       <AwardsSection isEditing={isEditing} />
       <AdditionalInfoSection user={user} isOwnProfile={isOwnProfile} isEditing={isEditing} onUpdateProfile={onUpdateProfile} />

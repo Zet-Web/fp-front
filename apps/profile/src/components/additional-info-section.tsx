@@ -12,6 +12,8 @@ interface UserProfile {
   telegram_username: string | null
   profile_type: string | null
   badge: string[] | null
+  birthday: string | null
+  birthday_visibility: 'full' | 'month_day' | 'year' | null
 }
 
 interface AdditionalInfoSectionProps {

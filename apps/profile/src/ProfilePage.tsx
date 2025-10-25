@@ -150,6 +150,8 @@ export function ProfilePage({ username }: ProfilePageProps) {
         name: profileData?.name,
         avatar_url: profileData?.avatar_url,
         profile_type: profileData?.profile_type,
+        birthday: profileData?.birthday,
+        birthday_visibility: profileData?.birthday_visibility,
         //badge: profileData?.badge,
       }
 
