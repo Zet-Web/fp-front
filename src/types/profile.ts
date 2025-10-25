@@ -22,4 +22,12 @@ export interface Profile {
   profile_type: string | null;
   badge: string[] | null;
   contact_info: ContactInfoEntry[] | null;
+  birthday: BirthdayInfo | null;
+}
+
+export interface BirthdayInfo {
+  day?: number; // 1-31
+  month?: number; // 1-12
+  year?: number; // e.g., 1990
+  visibility: 'public' | 'friends' | 'private';
 }
