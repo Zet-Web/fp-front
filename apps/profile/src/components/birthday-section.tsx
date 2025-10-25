@@ -213,9 +213,9 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
       )
     }
 
-    return (
+    return ( 
       <div className="flex items-center gap-2 border rounded-lg p-3 hover:bg-muted/50 transition-colors">
-        <className="w-4 h-4 text-primary flex-shrink-0" />
+        <Cake className="w-4 h-4 text-primary flex-shrink-0" />
         <span className="text-foreground">{displayValue}</span>
       </div>
     )
