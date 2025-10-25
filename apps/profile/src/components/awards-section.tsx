@@ -161,7 +161,7 @@ export function AwardsSection({ isEditing }: AwardsSectionProps) {
                 />
               </div>
               <div className="flex gap-2">
-                <Button onClick={addAward}>Add Award</Button>
+                <Button onClick={addAward}>Add</Button>
                 <Button variant="outline" onClick={() => setShowAddAwardForm(false)}>
                   Cancel
                 </Button>
