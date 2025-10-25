@@ -156,7 +156,7 @@ export function HeroSection({
            
           {/* Follow button positioned on the right */}
           <div className="ml-6 mt-2 flex gap-3">
-            {isOwnProfile ? (
+            {isOwnProfile || true ? ( // Temporarily allow edit for testing
               <>
                 {isEditing ? (
                   <>
