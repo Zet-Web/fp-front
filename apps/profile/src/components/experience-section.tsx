@@ -232,7 +232,7 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
                   />
                 </div>
                 <div className="flex gap-2">
-                  <Button onClick={addExperience}>Add Experience</Button>
+                  <Button onClick={addExperience}>Add</Button>
                   <Button variant="outline" onClick={() => setShowAddExperienceForm(false)}>
                     Cancel
                   </Button>
