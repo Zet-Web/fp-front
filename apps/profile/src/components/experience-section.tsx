@@ -136,7 +136,7 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
                 onClick={() => setShowAddExperienceForm(true)}
               >
                 <Plus className="w-4 h-4 mr-1" />
-                Add
+                Add Experience
               </Button>
             )}
           </CardTitle>
@@ -232,7 +232,7 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
                   />
                 </div>
                 <div className="flex gap-2">
-                  <Button onClick={addExperience}>Add</Button>
+                  <Button onClick={addExperience}>Add Experience</Button>
                   <Button variant="outline" onClick={() => setShowAddExperienceForm(false)}>
                     Cancel
                   </Button>
@@ -258,7 +258,7 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
                 onClick={() => setShowAddEducationForm(true)}
               >
                 <Plus className="w-4 h-4 mr-1" />
-                Add
+                Add Education
               </Button>
             )}
           </CardTitle>
@@ -349,7 +349,7 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
                   />
                 </div>
                 <div className="flex gap-2">
-                  <Button onClick={addEducation}>Add</Button>
+                  <Button onClick={addEducation}>Add Education</Button>
                   <Button variant="outline" onClick={() => setShowAddEducationForm(false)}>
                     Cancel
                   </Button>

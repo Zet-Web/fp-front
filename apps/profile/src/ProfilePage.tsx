@@ -10,7 +10,6 @@ import { useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { useToast } from "@/hooks/use-toast"
 import { useAuthContext } from "@/components/auth-provider"
-import { BirthdayInfo, AdditionalInfoEntry } from "@/types/profile"
 
 interface ProfilePageProps {
   username?: string // Optional prop to override URL-based username detection
@@ -24,17 +23,6 @@ export function ProfilePage({ username }: ProfilePageProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [profileData, setProfileData] = useState(user)
-  
-  // Initialize birthday and additional_info if they don't exist
-  useEffect(() => {
-    if (user && !user.birthday) {
-      setProfileData(prev => prev ? { 
-        ...prev, 
-        birthday: { visibility: 'public' },
-        additional_info: prev.additional_info || []
-      } : null)
-    }
-  }, [user])
 
   const {
     cities,

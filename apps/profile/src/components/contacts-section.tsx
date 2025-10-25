@@ -425,7 +425,7 @@ export function ContactsSection({ user, isOwnProfile, isEditing, onUpdateProfile
 
             <div className="flex gap-2">
               <Button onClick={addEntry} disabled={!newEntry.value?.trim()}>
-                Add
+                Add Contact
               </Button>
               <Button variant="outline" onClick={() => setShowAddForm(false)}>
                 Cancel
@@ -451,7 +451,7 @@ export function ContactsSection({ user, isOwnProfile, isEditing, onUpdateProfile
               onClick={() => setShowAddForm(true)}
             >
               <Plus className="w-4 h-4 mr-1" />
-              Add
+              Add Contact
             </Button>
           )}
         </CardTitle>
