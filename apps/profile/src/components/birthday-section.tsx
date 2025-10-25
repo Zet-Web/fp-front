@@ -33,9 +33,9 @@ interface BirthdaySectionProps {
 
 export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile }: BirthdaySectionProps) {
   const [showAddForm, setShowAddForm] = useState(false)
-  const [selectedDay, setSelectedDay] = useState<string>('')
-  const [selectedMonth, setSelectedMonth] = useState<string>('')
-  const [selectedYear, setSelectedYear] = useState<string>('')
+  const [selectedDay, setSelectedDay] = useState<string>('not-set')
+  const [selectedMonth, setSelectedMonth] = useState<string>('not-set')
+  const [selectedYear, setSelectedYear] = useState<string>('not-set')
   const [visibility, setVisibility] = useState<'full' | 'month_day' | 'year' | 'day_month' | 'day' | 'month'>('full')
   const [showAge, setShowAge] = useState<boolean>(true)
 
@@ -88,10 +88,14 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
     if (user.birthday) {
       const parts = user.birthday.split('-')
       if (parts.length === 3) {
-        if (parts[0] && parts[0] !== '0000') setSelectedYear(parts[0])
-        if (parts[1] && parts[1] !== '00') setSelectedMonth(parts[1])
-        if (parts[2] && parts[2] !== '00') setSelectedDay(parts[2])
+        setSelectedYear(parts[0] && parts[0] !== '0000' ? parts[0] : 'not-set')
+        setSelectedMonth(parts[1] && parts[1] !== '00' ? parts[1] : 'not-set')
+        setSelectedDay(parts[2] && parts[2] !== '00' ? parts[2] : 'not-set')
       }
+    } else {
+      setSelectedYear('not-set')
+      setSelectedMonth('not-set')
+      setSelectedDay('not-set')
     }
     if (user.birthday_visibility) {
       setVisibility(user.birthday_visibility)
@@ -155,11 +159,11 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
   }
 
   const handleAddBirthday = () => {
-    if (!selectedDay && !selectedMonth && !selectedYear) return
+    if (selectedDay === 'not-set' && selectedMonth === 'not-set' && selectedYear === 'not-set') return
 
-    const year = selectedYear || '0000'
-    const month = selectedMonth || '00'
-    const day = selectedDay || '00'
+    const year = selectedYear !== 'not-set' ? selectedYear : '0000'
+    const month = selectedMonth !== 'not-set' ? selectedMonth : '00'
+    const day = selectedDay !== 'not-set' ? selectedDay : '00'
     const formattedDate = `${year}-${month}-${day}`
 
     onUpdateProfile({
@@ -176,9 +180,9 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
       birthday_visibility: null,
       birthday_show_age: null
     })
-    setSelectedDay('')
-    setSelectedMonth('')
-    setSelectedYear('')
+    setSelectedDay('not-set')
+    setSelectedMonth('not-set')
+    setSelectedYear('not-set')
     setVisibility('full')
     setShowAge(true)
   }
@@ -203,9 +207,10 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
 
   const handleDayChange = (day: string) => {
     setSelectedDay(day)
-    const year = selectedYear || '0000'
-    const month = selectedMonth || '00'
-    const formattedDate = `${year}-${month}-${day}`
+    const year = selectedYear !== 'not-set' ? selectedYear : '0000'
+    const month = selectedMonth !== 'not-set' ? selectedMonth : '00'
+    const dayValue = day !== 'not-set' ? day : '00'
+    const formattedDate = `${year}-${month}-${dayValue}`
     onUpdateProfile({
       birthday: formattedDate
     })
@@ -214,7 +219,7 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
   const handleMonthChange = (month: string) => {
     setSelectedMonth(month)
 
-    if (selectedDay && selectedYear) {
+    if (selectedDay !== 'not-set' && selectedYear !== 'not-set' && month !== 'not-set') {
       const maxDays = getDaysInMonth(month, selectedYear)
       const currentDay = parseInt(selectedDay)
       if (currentDay > maxDays) {
@@ -222,12 +227,13 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
       }
     }
 
-    const year = selectedYear || '0000'
-    const day = selectedDay || '00'
-    const adjustedDay = selectedDay && selectedYear && parseInt(selectedDay) > getDaysInMonth(month, selectedYear)
+    const year = selectedYear !== 'not-set' ? selectedYear : '0000'
+    const day = selectedDay !== 'not-set' ? selectedDay : '00'
+    const monthValue = month !== 'not-set' ? month : '00'
+    const adjustedDay = selectedDay !== 'not-set' && selectedYear !== 'not-set' && month !== 'not-set' && parseInt(selectedDay) > getDaysInMonth(month, selectedYear)
       ? getDaysInMonth(month, selectedYear).toString().padStart(2, '0')
       : day
-    const formattedDate = `${year}-${month}-${adjustedDay}`
+    const formattedDate = `${year}-${monthValue}-${adjustedDay}`
     onUpdateProfile({
       birthday: formattedDate
     })
@@ -236,7 +242,7 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
   const handleYearChange = (year: string) => {
     setSelectedYear(year)
 
-    if (selectedDay && selectedMonth) {
+    if (selectedDay !== 'not-set' && selectedMonth !== 'not-set' && year !== 'not-set') {
       const maxDays = getDaysInMonth(selectedMonth, year)
       const currentDay = parseInt(selectedDay)
       if (currentDay > maxDays) {
@@ -244,12 +250,13 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
       }
     }
 
-    const month = selectedMonth || '00'
-    const day = selectedDay || '00'
-    const adjustedDay = selectedDay && selectedMonth && parseInt(selectedDay) > getDaysInMonth(selectedMonth, year)
+    const month = selectedMonth !== 'not-set' ? selectedMonth : '00'
+    const day = selectedDay !== 'not-set' ? selectedDay : '00'
+    const yearValue = year !== 'not-set' ? year : '0000'
+    const adjustedDay = selectedDay !== 'not-set' && selectedMonth !== 'not-set' && year !== 'not-set' && parseInt(selectedDay) > getDaysInMonth(selectedMonth, year)
       ? getDaysInMonth(selectedMonth, year).toString().padStart(2, '0')
       : day
-    const formattedDate = `${year}-${month}-${adjustedDay}`
+    const formattedDate = `${yearValue}-${month}-${adjustedDay}`
     onUpdateProfile({
       birthday: formattedDate
     })
@@ -299,8 +306,8 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
                         <SelectValue placeholder="Day" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">Not set</SelectItem>
-                        {Array.from({ length: getDaysInMonth(selectedMonth || '01', selectedYear || '2000') }, (_, i) => {
+                        <SelectItem value="not-set">Not set</SelectItem>
+                        {Array.from({ length: getDaysInMonth(selectedMonth !== 'not-set' ? selectedMonth : '01', selectedYear !== 'not-set' ? selectedYear : '2000') }, (_, i) => {
                           const day = (i + 1).toString().padStart(2, '0')
                           return (
                             <SelectItem key={day} value={day}>
@@ -319,7 +326,7 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
                         <SelectValue placeholder="Month" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">Not set</SelectItem>
+                        <SelectItem value="not-set">Not set</SelectItem>
                         {months.map((month) => (
                           <SelectItem key={month.value} value={month.value}>
                             {month.label}
@@ -336,7 +343,7 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
                         <SelectValue placeholder="Year" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">Not set</SelectItem>
+                        <SelectItem value="not-set">Not set</SelectItem>
                         {generateYears().map((year) => (
                           <SelectItem key={year} value={year}>
                             {year}
@@ -406,7 +413,7 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
               </Label>
             </div>
 
-            {(selectedDay || selectedMonth || selectedYear) && (
+            {(selectedDay !== 'not-set' || selectedMonth !== 'not-set' || selectedYear !== 'not-set') && (
               <p className="text-sm text-muted-foreground mt-2">
                 Preview: {formatBirthdayDisplay(previewDate, visibility, showAge) || 'Select at least one field'}
               </p>
@@ -430,8 +437,8 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
                   <SelectValue placeholder="Day" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Not set</SelectItem>
-                  {Array.from({ length: getDaysInMonth(selectedMonth || '01', selectedYear || '2000') }, (_, i) => {
+                  <SelectItem value="not-set">Not set</SelectItem>
+                  {Array.from({ length: getDaysInMonth(selectedMonth !== 'not-set' ? selectedMonth : '01', selectedYear !== 'not-set' ? selectedYear : '2000') }, (_, i) => {
                     const day = (i + 1).toString().padStart(2, '0')
                     return (
                       <SelectItem key={day} value={day}>
@@ -447,7 +454,7 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
               <Label htmlFor="new-month" className="text-xs text-muted-foreground">Month (Optional)</Label>
               <Select value={selectedMonth} onValueChange={(month) => {
                 setSelectedMonth(month)
-                if (selectedDay && selectedYear && month) {
+                if (selectedDay !== 'not-set' && selectedYear !== 'not-set' && month !== 'not-set') {
                   const maxDays = getDaysInMonth(month, selectedYear)
                   const currentDay = parseInt(selectedDay)
                   if (currentDay > maxDays) {
@@ -459,7 +466,7 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
                   <SelectValue placeholder="Month" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Not set</SelectItem>
+                  <SelectItem value="not-set">Not set</SelectItem>
                   {months.map((month) => (
                     <SelectItem key={month.value} value={month.value}>
                       {month.label}
@@ -473,7 +480,7 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
               <Label htmlFor="new-year" className="text-xs text-muted-foreground">Year (Optional)</Label>
               <Select value={selectedYear} onValueChange={(year) => {
                 setSelectedYear(year)
-                if (selectedDay && selectedMonth && year) {
+                if (selectedDay !== 'not-set' && selectedMonth !== 'not-set' && year !== 'not-set') {
                   const maxDays = getDaysInMonth(selectedMonth, year)
                   const currentDay = parseInt(selectedDay)
                   if (currentDay > maxDays) {
@@ -485,7 +492,7 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
                   <SelectValue placeholder="Year" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Not set</SelectItem>
+                  <SelectItem value="not-set">Not set</SelectItem>
                   {generateYears().map((year) => (
                     <SelectItem key={year} value={year}>
                       {year}
@@ -525,14 +532,14 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
           </Label>
         </div>
 
-        {(selectedDay || selectedMonth || selectedYear) && (
+        {(selectedDay !== 'not-set' || selectedMonth !== 'not-set' || selectedYear !== 'not-set') && (
           <p className="text-sm text-muted-foreground mt-2">
-            Preview: {formatBirthdayDisplay(`${selectedYear || '0000'}-${selectedMonth || '00'}-${selectedDay || '00'}`, visibility, showAge) || 'Select at least one field'}
+            Preview: {formatBirthdayDisplay(`${selectedYear !== 'not-set' ? selectedYear : '0000'}-${selectedMonth !== 'not-set' ? selectedMonth : '00'}-${selectedDay !== 'not-set' ? selectedDay : '00'}`, visibility, showAge) || 'Select at least one field'}
           </p>
         )}
 
         <div className="flex gap-2">
-          <Button onClick={handleAddBirthday} disabled={!selectedDay && !selectedMonth && !selectedYear}>
+          <Button onClick={handleAddBirthday} disabled={selectedDay === 'not-set' && selectedMonth === 'not-set' && selectedYear === 'not-set'}>
             Add Birthday
           </Button>
           <Button variant="outline" onClick={() => setShowAddForm(false)}>
