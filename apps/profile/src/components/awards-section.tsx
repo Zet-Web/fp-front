@@ -64,7 +64,7 @@ export function AwardsSection({ isEditing }: AwardsSectionProps) {
               onClick={() => setShowAddAwardForm(true)}
             >
               <Plus className="w-4 h-4 mr-1" />
-              Add Award
+              Add
             </Button>
           )}
         </CardTitle>
