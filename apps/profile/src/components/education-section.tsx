@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { GraduationCap, Plus, Edit, Trash2, ChevronUp, ChevronDown } from "lucide-react"
+import { GraduationCap, Plus, CreditCard as Edit, Trash2, ChevronUp, ChevronDown } from "lucide-react"
 import { useState } from "react"
 
 const initialEducation = [
