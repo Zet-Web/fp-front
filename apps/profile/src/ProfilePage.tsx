@@ -68,6 +68,47 @@ export function ProfilePage({ username }: ProfilePageProps) {
     console.log('🚀 [Profile Save] Starting profile save operation at:', new Date().toISOString())
     console.log('=========================================')
 
+    // TEMPORARY: Save locally without database for testing
+    console.log('🧪 [Profile Save] TEMPORARY MODE: Saving locally without database')
+    setIsSaving(true)
+    
+    try {
+      // Simulate API delay for realistic testing
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      console.log('✅ [Profile Save] Local save completed successfully')
+      console.log('📋 [Profile Save] Updated profile data:', {
+        name: profileData?.name,
+        about: profileData?.about,
+        hasContactInfo: !!profileData?.contact_info,
+        contactInfoCount: profileData?.contact_info?.length || 0,
+      })
+      
+      // Exit edit mode
+      setIsEditing(false)
+      
+      toast({
+        title: "Profile updated (locally)",
+        description: "Your changes have been saved locally for testing.",
+      })
+      
+      console.log('=========================================')
+      console.log('✅ [Profile Save] Temporary local save completed')
+      console.log('=========================================')
+      
+    } catch (error) {
+      console.error('❌ [Profile Save] Temporary save failed:', error)
+      toast({
+        title: "Error",
+        description: "Failed to save changes locally.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsSaving(false)
+    }
+    
+    return // Exit early to skip database operations
+
     setIsSaving(true)
 
     try {
