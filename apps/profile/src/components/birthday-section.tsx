@@ -200,13 +200,13 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
           <Label htmlFor="birthday-visibility">Visibility</Label>
           <Select
             value={birthday.visibility}
-            onValueChange={(value) => handleBirthdayChange('visibility', value)}
+            onValueChange={(value) => handleBirthdayChange('month', value === 'none' ? undefined : parseInt(value))}
           >
             <SelectTrigger id="birthday-visibility">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="public">Public</SelectItem>
+              <SelectItem value="none">No month</SelectItem>
               <SelectItem value="friends">Friends only</SelectItem>
               <SelectItem value="private">Private</SelectItem>
             </SelectContent>
