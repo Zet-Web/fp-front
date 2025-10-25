@@ -19,8 +19,8 @@ export const CONTACT_TYPES: ContactTypeConfig[] = [
     icon: Phone,
     placeholder: '+1234567890',
     validateValue: (value: string) => {
-      const cleaned = value.replace(/[\s\-\(\)\+]/g, '')
-      return /^[0-9\s\-\(\)]{7,}$/.test(value)
+      const cleaned = value.replace(/[\s\-\(\)]/g, '')
+      return /^[\+]?[0-9]{10,15}$/.test(cleaned)
     },
     formatValue: (value: string) => value.trim()
   },
@@ -53,7 +53,7 @@ export const CONTACT_TYPES: ContactTypeConfig[] = [
     placeholder: '1234567890',
     validateValue: (value: string) => {
       const cleaned = value.replace(/[\s\-\(\)\+]/g, '')
-      return /^[0-9]{7,}$/.test(cleaned)
+      return /^[0-9]{10,15}$/.test(cleaned)
     },
     formatValue: (value: string) => value.replace(/[\s\-\(\)\+]/g, '').trim()
   },
@@ -129,6 +129,10 @@ export function getContactIcon(type: ContactInfoEntry['type']): any /* : LucideI
 
 export function generateContactLink(entry: ContactInfoEntry): string {
   if (entry.type === 'phone') {
+    if (entry.is_whatsapp) {
+      const cleanNumber = entry.value.replace(/[\s\-\(\)\+]/g, '')
+      return `wa.me/${cleanNumber}`
+    }
     return `tel:${entry.value}`
   }
 

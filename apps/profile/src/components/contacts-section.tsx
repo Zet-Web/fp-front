@@ -37,9 +37,10 @@ export function ContactsSection({ user, isOwnProfile, isEditing, onUpdateProfile
   const [contactEntries, setContactEntries] = useState<ContactInfoEntry[]>([])
   const [showAddForm, setShowAddForm] = useState(false)
   const [newEntry, setNewEntry] = useState<Partial<ContactInfoEntry>>({
-    type: 'phone',
+    type: 'email',
     value: '',
     label: '',
+    is_whatsapp: false
   })
   const { toast } = useToast()
 
@@ -146,9 +147,10 @@ export function ContactsSection({ user, isOwnProfile, isEditing, onUpdateProfile
     updateContactEntries(updatedEntries)
 
     setNewEntry({
-      type: 'phone',
+      type: 'email',
       value: '',
       label: '',
+      is_whatsapp: false
     })
     setShowAddForm(false)
   }
@@ -190,7 +192,7 @@ export function ContactsSection({ user, isOwnProfile, isEditing, onUpdateProfile
           const labelText = entry.label || config?.label || entry.type
 
           return (
-            <div key={entry.id} className="flex items-center gap-2 border rounded-lg p-3">
+            <div key={entry.id} className="flex items-center gap-2 border rounded-lg p-3 hover:bg-muted/50 transition-colors">
               <IconComponent className="w-4 h-4 text-primary flex-shrink-0" />
               <a
                 href={link}
@@ -339,6 +341,21 @@ export function ContactsSection({ user, isOwnProfile, isEditing, onUpdateProfile
                 />
               </div>
 
+              {entry.type === 'phone' && (
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`whatsapp-${entry.id}`}
+                    checked={entry.is_whatsapp || false}
+                    onCheckedChange={(checked) => {
+                      handleEntryChange(index, 'is_whatsapp', checked)
+                      setTimeout(() => handleBlurEntry(index), 100)
+                    }}
+                  />
+                  <Label htmlFor={`whatsapp-${entry.id}`} className="text-sm font-normal cursor-pointer">
+                    Open in WhatsApp
+                  </Label>
+                </div>
+              )}
             </div>
           )
         })}
@@ -393,6 +410,28 @@ export function ContactsSection({ user, isOwnProfile, isEditing, onUpdateProfile
                 onChange={(e) => handleNewEntryChange('label', e.target.value)}
                 placeholder="Custom label"
               />
+            </div>
+
+            {newEntry.type === 'phone' && (
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="new-whatsapp"
+                  checked={newEntry.is_whatsapp || false}
+                  onCheckedChange={(checked) => handleNewEntryChange('is_whatsapp', checked)}
+                />
+                <Label htmlFor="new-whatsapp" className="text-sm font-normal cursor-pointer">
+                  Open in WhatsApp
+                </Label>
+              </div>
+            )}
+
+            <div className="flex gap-2">
+              <Button onClick={addEntry} disabled={!newEntry.value?.trim()}>
+                Add Contact
+              </Button>
+              <Button variant="outline" onClick={() => setShowAddForm(false)}>
+                Cancel
+              </Button>
             </div>
           </div>
         )}

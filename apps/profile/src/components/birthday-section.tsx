@@ -2,7 +2,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { Cake, Plus, X } from "lucide-react"
 import { useState, useEffect } from "react"
@@ -36,7 +35,6 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
   const [selectedMonth, setSelectedMonth] = useState<string>('')
   const [selectedYear, setSelectedYear] = useState<string>('')
   const [visibility, setVisibility] = useState<'full' | 'month_day' | 'year'>('full')
-  const [showAge, setShowAge] = useState(true)
 
   const months = [
     { value: '01', label: 'January' },
@@ -62,7 +60,7 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
   const generateYears = () => {
     const currentYear = new Date().getFullYear()
     const years = []
-    for (let year = currentYear; year >= 1900; year--) {
+    for (let year = currentYear; year >= 1930; year--) {
       years.push(year.toString())
     }
     return years
@@ -97,43 +95,34 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
     }
   }, [user.birthday, user.birthday_visibility])
 
-  const formatBirthdayDisplay = (date: string | null, visibility: string | null, includeAge: boolean = true) => {
+  const formatBirthdayDisplay = (date: string | null, visibility: string | null) => {
     if (!date) return null
 
     const parsedDate = parse(date, 'yyyy-MM-dd', new Date())
     if (!isValid(parsedDate)) return null
 
     const age = calculateAge(date)
-    const ageText = includeAge && age !== null ? ` (${age} years old)` : ''
+    const ageText = age !== null ? ` (${age} years old)` : ''
 
     switch (visibility) {
       case 'month_day':
         return format(parsedDate, 'MMMM d') + ageText
       case 'year':
-        return format(parsedDate, 'yyyy') + ageText
+        return format(parsedDate, 'yyyy') + (age !== null ? ` (${age} years old)` : '')
       case 'full':
       default:
         return format(parsedDate, 'MMMM d, yyyy') + ageText
     }
   }
 
-  const updateBirthday = () => {
-    if (selectedDay && selectedMonth && selectedYear) {
-      const formattedDate = `${selectedYear}-${selectedMonth}-${selectedDay}`
-      onUpdateProfile({
-        birthday: formattedDate,
-        birthday_visibility: visibility
-      })
-    } else {
-      onUpdateProfile({
-        birthday: null,
-        birthday_visibility: null
-      })
-    }
-  }
-
   const handleAddBirthday = () => {
-    updateBirthday()
+    if (!selectedDay || !selectedMonth || !selectedYear) return
+
+    const formattedDate = `${selectedYear}-${selectedMonth}-${selectedDay}`
+    onUpdateProfile({
+      birthday: formattedDate,
+      birthday_visibility: visibility
+    })
     setShowAddForm(false)
   }
 
@@ -146,21 +135,25 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
     setSelectedMonth('')
     setSelectedYear('')
     setVisibility('full')
-    setShowAge(true)
   }
 
   const handleVisibilityChange = (newVisibility: 'full' | 'month_day' | 'year') => {
     setVisibility(newVisibility)
-    updateBirthday()
-  }
-
-  const handleShowAgeChange = (checked: boolean) => {
-    setShowAge(checked)
+    if (user.birthday) {
+      onUpdateProfile({
+        birthday_visibility: newVisibility
+      })
+    }
   }
 
   const handleDayChange = (day: string) => {
     setSelectedDay(day)
-    updateBirthday()
+    if (selectedMonth && selectedYear) {
+      const formattedDate = `${selectedYear}-${selectedMonth}-${day}`
+      onUpdateProfile({
+        birthday: formattedDate
+      })
+    }
   }
 
   const handleMonthChange = (month: string) => {
@@ -175,7 +168,15 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
       }
     }
     
-    updateBirthday()
+    if (selectedDay && selectedYear) {
+      const adjustedDay = selectedDay && parseInt(selectedDay) > getDaysInMonth(month, selectedYear) 
+        ? getDaysInMonth(month, selectedYear).toString().padStart(2, '0')
+        : selectedDay
+      const formattedDate = `${selectedYear}-${month}-${adjustedDay}`
+      onUpdateProfile({
+        birthday: formattedDate
+      })
+    }
   }
 
   const handleYearChange = (year: string) => {
@@ -190,11 +191,19 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
       }
     }
     
-    updateBirthday()
+    if (selectedDay && selectedMonth) {
+      const adjustedDay = selectedDay && parseInt(selectedDay) > getDaysInMonth(selectedMonth, year)
+        ? getDaysInMonth(selectedMonth, year).toString().padStart(2, '0')
+        : selectedDay
+      const formattedDate = `${year}-${selectedMonth}-${adjustedDay}`
+      onUpdateProfile({
+        birthday: formattedDate
+      })
+    }
   }
 
   const renderViewMode = () => {
-    const displayValue = formatBirthdayDisplay(user.birthday, user.birthday_visibility, showAge)
+    const displayValue = formatBirthdayDisplay(user.birthday, user.birthday_visibility)
 
     if (!displayValue) {
       return (
@@ -205,7 +214,7 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
     }
 
     return ( 
-      <div className="flex items-center gap-2 border rounded-lg p-3">
+      <div className="flex items-center gap-2 border rounded-lg p-3 hover:bg-muted/50 transition-colors">
         <span className="text-foreground">{displayValue}</span>
       </div>
     )
@@ -216,7 +225,7 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
       return null
     }
 
-    if (user.birthday || showAddForm) {
+    if (user.birthday) {
       const previewDate = selectedDay && selectedMonth && selectedYear 
         ? `${selectedYear}-${selectedMonth}-${selectedDay}`
         : user.birthday
@@ -236,7 +245,6 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
                         <SelectValue placeholder="Day" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">Not specified</SelectItem>
                         {Array.from({ length: getDaysInMonth(selectedMonth, selectedYear) }, (_, i) => {
                           const day = (i + 1).toString().padStart(2, '0')
                           return (
@@ -256,7 +264,6 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
                         <SelectValue placeholder="Month" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">Not specified</SelectItem>
                         {months.map((month) => (
                           <SelectItem key={month.value} value={month.value}>
                             {month.label}
@@ -273,7 +280,6 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
                         <SelectValue placeholder="Year" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">Not specified</SelectItem>
                         {generateYears().map((year) => (
                           <SelectItem key={year} value={year}>
                             {year}
@@ -285,33 +291,31 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
                 </div>
               </div>
 
-              {user.birthday && (
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="text-destructive hover:text-destructive h-7 w-7 p-0 mt-6"
-                    >
-                      <X className="w-4 h-4" />
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Delete Birthday</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Are you sure you want to delete your birthday? This action cannot be undone.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction onClick={handleRemoveBirthday}>
-                        Delete
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              )}
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="text-destructive hover:text-destructive h-7 w-7 p-0 mt-6"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Delete Birthday</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Are you sure you want to delete your birthday? This action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleRemoveBirthday}>
+                      Delete
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
 
             <div>
@@ -324,46 +328,131 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="full">Full Date (Month Day, Year)</SelectItem>
-                  <SelectItem value="month_day">Month and Day</SelectItem>
-                  <SelectItem value="year">Year Only</SelectItem>
+                  <SelectItem value="full">Full Date with Age (Month Day, Year + Age)</SelectItem>
+                  <SelectItem value="month_day">Month and Day with Age</SelectItem>
+                  <SelectItem value="year">Year with Age</SelectItem>
                 </SelectContent>
               </Select>
+              {selectedDay && selectedMonth && selectedYear && (
+                <p className="text-sm text-muted-foreground mt-2">
+                  Preview: {formatBirthdayDisplay(previewDate, visibility)}
+                </p>
+              )}
             </div>
-
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="show-age"
-                checked={showAge}
-                onCheckedChange={handleShowAgeChange}
-              />
-              <Label htmlFor="show-age" className="text-sm font-normal cursor-pointer">
-                Show Age
-              </Label>
-            </div>
-
-            {previewDate && (
-              <p className="text-sm text-muted-foreground">
-                Preview: {formatBirthdayDisplay(previewDate, visibility, showAge)}
-              </p>
-            )}
           </div>
-
-          {showAddForm && (
-            <div className="flex gap-2">
-              <Button onClick={handleAddBirthday}>
-                Add Birthday
-              </Button>
-              <Button variant="outline" onClick={() => setShowAddForm(false)}>
-                Cancel
-              </Button>
-            </div>
-          )}
         </div>
       )
     }
 
-    return null
+    return (
+      <div className="border-2 border-dashed border-primary/20 rounded-lg p-4 space-y-4">
+        <h4 className="font-medium">Add Birthday</h4>
+
+        <div>
+          <Label>Select Date</Label>
+          <div className="grid grid-cols-3 gap-2 mt-2">
+            <div>
+              <Label htmlFor="new-day" className="text-xs text-muted-foreground">Day</Label>
+              <Select value={selectedDay} onValueChange={setSelectedDay}>
+                <SelectTrigger id="new-day">
+                  <SelectValue placeholder="Day" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Array.from({ length: getDaysInMonth(selectedMonth, selectedYear) }, (_, i) => {
+                    const day = (i + 1).toString().padStart(2, '0')
+                    return (
+                      <SelectItem key={day} value={day}>
+                        {day}
+                      </SelectItem>
+                    )
+                  })}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="new-month" className="text-xs text-muted-foreground">Month</Label>
+              <Select value={selectedMonth} onValueChange={(month) => {
+                setSelectedMonth(month)
+                // Reset day if it's invalid for the new month
+                if (selectedDay && selectedYear) {
+                  const maxDays = getDaysInMonth(month, selectedYear)
+                  const currentDay = parseInt(selectedDay)
+                  if (currentDay > maxDays) {
+                    setSelectedDay(maxDays.toString().padStart(2, '0'))
+                  }
+                }
+              }}>
+                <SelectTrigger id="new-month">
+                  <SelectValue placeholder="Month" />
+                </SelectTrigger>
+                <SelectContent>
+                  {months.map((month) => (
+                    <SelectItem key={month.value} value={month.value}>
+                      {month.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="new-year" className="text-xs text-muted-foreground">Year</Label>
+              <Select value={selectedYear} onValueChange={(year) => {
+                setSelectedYear(year)
+                // Reset day if it's invalid for the new year (leap year)
+                if (selectedDay && selectedMonth) {
+                  const maxDays = getDaysInMonth(selectedMonth, year)
+                  const currentDay = parseInt(selectedDay)
+                  if (currentDay > maxDays) {
+                    setSelectedDay(maxDays.toString().padStart(2, '0'))
+                  }
+                }
+              }}>
+                <SelectTrigger id="new-year">
+                  <SelectValue placeholder="Year" />
+                </SelectTrigger>
+                <SelectContent>
+                  {generateYears().map((year) => (
+                    <SelectItem key={year} value={year}>
+                      {year}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <Label htmlFor="new-visibility">Display As</Label>
+          <Select value={visibility} onValueChange={(value: 'full' | 'month_day' | 'year') => setVisibility(value)}>
+            <SelectTrigger id="new-visibility" className="mt-2">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="full">Full Date with Age (Month Day, Year + Age)</SelectItem>
+              <SelectItem value="month_day">Month and Day with Age</SelectItem>
+              <SelectItem value="year">Year with Age</SelectItem>
+            </SelectContent>
+          </Select>
+          {selectedDay && selectedMonth && selectedYear && (
+            <p className="text-sm text-muted-foreground mt-2">
+              Preview: {formatBirthdayDisplay(`${selectedYear}-${selectedMonth}-${selectedDay}`, visibility)}
+            </p>
+          )}
+        </div>
+
+        <div className="flex gap-2">
+          <Button onClick={handleAddBirthday} disabled={!selectedDay || !selectedMonth || !selectedYear}>
+            Add Birthday
+          </Button>
+          <Button variant="outline" onClick={() => setShowAddForm(false)}>
+            Cancel
+          </Button>
+        </div>
+      </div>
+    )
   }
 
   return (

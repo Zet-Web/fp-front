@@ -1,7 +1,6 @@
 import { ContactsSection } from "./contacts-section"
 import { BirthdaySection } from "./birthday-section"
 import { ExperienceSection } from "./experience-section"
-import { EducationSection } from "./education-section"
 import { AwardsSection } from "./awards-section"
 import { AdditionalInfoSection } from "./additional-info-section"
 
@@ -32,7 +31,6 @@ export function InformationSection({ user, isOwnProfile, isEditing, onUpdateProf
       <ContactsSection user={user} isOwnProfile={isOwnProfile} isEditing={isEditing} onUpdateProfile={onUpdateProfile} />
       <BirthdaySection user={user} isOwnProfile={isOwnProfile} isEditing={isEditing} onUpdateProfile={onUpdateProfile} />
       <ExperienceSection isEditing={isEditing} />
-      <EducationSection isEditing={isEditing} />
       <AwardsSection isEditing={isEditing} />
       <AdditionalInfoSection user={user} isOwnProfile={isOwnProfile} isEditing={isEditing} onUpdateProfile={onUpdateProfile} />
     </div>
