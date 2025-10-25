@@ -60,7 +60,7 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
   const generateYears = () => {
     const currentYear = new Date().getFullYear()
     const years = []
-    for (let year = currentYear; year >= 1900; year--) {
+    for (let year = currentYear; year >= 1930; year--) {
       years.push(year.toString())
     }
     return years
