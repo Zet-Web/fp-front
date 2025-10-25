@@ -38,7 +38,7 @@ export const CONTACT_TYPES: ContactTypeConfig[] = [
     value: 'telegram',
     label: 'Telegram',
     icon: MessageCircle,
-    urlPrefix: 'https://t.me/',
+    urlPrefix: 't.me/',
     placeholder: 'username (5-32 characters)',
     validateValue: (value: string) => {
       return /^[a-zA-Z0-9_]{5,32}$/.test(value.replace('@', ''))
@@ -61,7 +61,7 @@ export const CONTACT_TYPES: ContactTypeConfig[] = [
     value: 'github',
     label: 'GitHub',
     icon: Github,
-    urlPrefix: 'https://github.com/',
+    urlPrefix: 'github.com/',
     placeholder: 'username',
     validateValue: (value: string) => {
       return /^[a-zA-Z0-9]([a-zA-Z0-9-]{0,38}[a-zA-Z0-9])?$/.test(value)
@@ -72,7 +72,7 @@ export const CONTACT_TYPES: ContactTypeConfig[] = [
     value: 'linkedin',
     label: 'LinkedIn',
     icon: Linkedin,
-    urlPrefix: 'https://linkedin.com/in/',
+    urlPrefix: 'linkedin.com/in/',
     placeholder: 'username',
     validateValue: (value: string) => {
       return /^[a-zA-Z0-9-]{3,100}$/.test(value)
@@ -83,7 +83,7 @@ export const CONTACT_TYPES: ContactTypeConfig[] = [
     value: 'twitter',
     label: 'Twitter',
     icon: Twitter,
-    urlPrefix: 'https://twitter.com/',
+    urlPrefix: 'twitter.com/',
     placeholder: 'username',
     validateValue: (value: string) => {
       return /^[a-zA-Z0-9_]{1,15}$/.test(value.replace('@', ''))
@@ -131,7 +131,7 @@ export function generateContactLink(entry: ContactInfoEntry): string {
   if (entry.type === 'phone') {
     if (entry.is_whatsapp) {
       const cleanNumber = entry.value.replace(/[\s\-\(\)\+]/g, '')
-      return `https://wa.me/${cleanNumber}`
+      return `wa.me/${cleanNumber}`
     }
     return `tel:${entry.value}`
   }
