@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { Cake, Plus, X } from "lucide-react"
+import { Checkbox } from "@/components/ui/checkbox"
 import { useState, useEffect } from "react"
 import { format, parse, isValid } from "date-fns"
 import { cn } from "@/lib/utils"
@@ -19,7 +20,8 @@ interface UserProfile {
   badge: string[] | null
   contact_info: any[] | null
   birthday: string | null
-  birthday_visibility: 'full' | 'month_day' | 'year' | null
+  birthday_visibility: 'full' | 'month_day' | 'year' | 'day_month' | 'day' | 'month' | null
+  birthday_show_age: boolean | null
 }
 
 interface BirthdaySectionProps {
@@ -34,7 +36,8 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
   const [selectedDay, setSelectedDay] = useState<string>('')
   const [selectedMonth, setSelectedMonth] = useState<string>('')
   const [selectedYear, setSelectedYear] = useState<string>('')
-  const [visibility, setVisibility] = useState<'full' | 'month_day' | 'year'>('full')
+  const [visibility, setVisibility] = useState<'full' | 'month_day' | 'year' | 'day_month' | 'day' | 'month'>('full')
+  const [showAge, setShowAge] = useState<boolean>(true)
 
   const months = [
     { value: '01', label: 'January' },
@@ -83,45 +86,86 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
 
   useEffect(() => {
     if (user.birthday) {
-      const parsedDate = parse(user.birthday, 'yyyy-MM-dd', new Date())
-      if (isValid(parsedDate)) {
-        setSelectedDay(format(parsedDate, 'dd'))
-        setSelectedMonth(format(parsedDate, 'MM'))
-        setSelectedYear(format(parsedDate, 'yyyy'))
+      const parts = user.birthday.split('-')
+      if (parts.length === 3) {
+        if (parts[0] && parts[0] !== '0000') setSelectedYear(parts[0])
+        if (parts[1] && parts[1] !== '00') setSelectedMonth(parts[1])
+        if (parts[2] && parts[2] !== '00') setSelectedDay(parts[2])
       }
     }
     if (user.birthday_visibility) {
       setVisibility(user.birthday_visibility)
     }
-  }, [user.birthday, user.birthday_visibility])
+    if (user.birthday_show_age !== undefined && user.birthday_show_age !== null) {
+      setShowAge(user.birthday_show_age)
+    }
+  }, [user.birthday, user.birthday_visibility, user.birthday_show_age])
 
-  const formatBirthdayDisplay = (date: string | null, visibility: string | null) => {
+  const formatBirthdayDisplay = (date: string | null, visibility: string | null, displayAge: boolean = true) => {
     if (!date) return null
 
-    const parsedDate = parse(date, 'yyyy-MM-dd', new Date())
-    if (!isValid(parsedDate)) return null
+    const parts = date.split('-')
+    const year = parts[0] && parts[0] !== '0000' ? parts[0] : null
+    const month = parts[1] && parts[1] !== '00' ? parts[1] : null
+    const day = parts[2] && parts[2] !== '00' ? parts[2] : null
 
-    const age = calculateAge(date)
-    const ageText = age !== null ? ` (${age} years old)` : ''
+    if (!year && !month && !day) return null
+
+    const age = year && month && day ? calculateAge(date) : null
+    const ageText = displayAge && age !== null ? ` (${age} years old)` : ''
 
     switch (visibility) {
-      case 'month_day':
-        return format(parsedDate, 'MMMM d') + ageText
-      case 'year':
-        return format(parsedDate, 'yyyy') + (age !== null ? ` (${age} years old)` : '')
       case 'full':
-      default:
-        return format(parsedDate, 'MMMM d, yyyy') + ageText
+        if (year && month && day) {
+          const parsedDate = parse(date, 'yyyy-MM-dd', new Date())
+          return isValid(parsedDate) ? format(parsedDate, 'MMMM d, yyyy') + ageText : null
+        }
+        break
+      case 'month_day':
+        if (month && day) {
+          const parsedDate = parse(`2000-${month}-${day}`, 'yyyy-MM-dd', new Date())
+          return isValid(parsedDate) ? format(parsedDate, 'MMMM d') + ageText : null
+        }
+        break
+      case 'year':
+        if (year) {
+          return year + ageText
+        }
+        break
+      case 'day_month':
+        if (month && day) {
+          const parsedDate = parse(`2000-${month}-${day}`, 'yyyy-MM-dd', new Date())
+          return isValid(parsedDate) ? format(parsedDate, 'd MMMM') : null
+        }
+        break
+      case 'day':
+        if (day) {
+          return `Day ${parseInt(day)}`
+        }
+        break
+      case 'month':
+        if (month) {
+          const parsedDate = parse(`2000-${month}-01`, 'yyyy-MM-dd', new Date())
+          return isValid(parsedDate) ? format(parsedDate, 'MMMM') : null
+        }
+        break
     }
+
+    return null
   }
 
   const handleAddBirthday = () => {
-    if (!selectedDay || !selectedMonth || !selectedYear) return
+    if (!selectedDay && !selectedMonth && !selectedYear) return
 
-    const formattedDate = `${selectedYear}-${selectedMonth}-${selectedDay}`
+    const year = selectedYear || '0000'
+    const month = selectedMonth || '00'
+    const day = selectedDay || '00'
+    const formattedDate = `${year}-${month}-${day}`
+
     onUpdateProfile({
       birthday: formattedDate,
-      birthday_visibility: visibility
+      birthday_visibility: visibility,
+      birthday_show_age: showAge
     })
     setShowAddForm(false)
   }
@@ -129,15 +173,17 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
   const handleRemoveBirthday = () => {
     onUpdateProfile({
       birthday: null,
-      birthday_visibility: null
+      birthday_visibility: null,
+      birthday_show_age: null
     })
     setSelectedDay('')
     setSelectedMonth('')
     setSelectedYear('')
     setVisibility('full')
+    setShowAge(true)
   }
 
-  const handleVisibilityChange = (newVisibility: 'full' | 'month_day' | 'year') => {
+  const handleVisibilityChange = (newVisibility: 'full' | 'month_day' | 'year' | 'day_month' | 'day' | 'month') => {
     setVisibility(newVisibility)
     if (user.birthday) {
       onUpdateProfile({
@@ -146,20 +192,28 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
     }
   }
 
-  const handleDayChange = (day: string) => {
-    setSelectedDay(day)
-    if (selectedMonth && selectedYear) {
-      const formattedDate = `${selectedYear}-${selectedMonth}-${day}`
+  const handleShowAgeChange = (checked: boolean) => {
+    setShowAge(checked)
+    if (user.birthday) {
       onUpdateProfile({
-        birthday: formattedDate
+        birthday_show_age: checked
       })
     }
   }
 
+  const handleDayChange = (day: string) => {
+    setSelectedDay(day)
+    const year = selectedYear || '0000'
+    const month = selectedMonth || '00'
+    const formattedDate = `${year}-${month}-${day}`
+    onUpdateProfile({
+      birthday: formattedDate
+    })
+  }
+
   const handleMonthChange = (month: string) => {
     setSelectedMonth(month)
-    
-    // Adjust day if it's invalid for the new month
+
     if (selectedDay && selectedYear) {
       const maxDays = getDaysInMonth(month, selectedYear)
       const currentDay = parseInt(selectedDay)
@@ -167,22 +221,21 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
         setSelectedDay(maxDays.toString().padStart(2, '0'))
       }
     }
-    
-    if (selectedDay && selectedYear) {
-      const adjustedDay = selectedDay && parseInt(selectedDay) > getDaysInMonth(month, selectedYear) 
-        ? getDaysInMonth(month, selectedYear).toString().padStart(2, '0')
-        : selectedDay
-      const formattedDate = `${selectedYear}-${month}-${adjustedDay}`
-      onUpdateProfile({
-        birthday: formattedDate
-      })
-    }
+
+    const year = selectedYear || '0000'
+    const day = selectedDay || '00'
+    const adjustedDay = selectedDay && selectedYear && parseInt(selectedDay) > getDaysInMonth(month, selectedYear)
+      ? getDaysInMonth(month, selectedYear).toString().padStart(2, '0')
+      : day
+    const formattedDate = `${year}-${month}-${adjustedDay}`
+    onUpdateProfile({
+      birthday: formattedDate
+    })
   }
 
   const handleYearChange = (year: string) => {
     setSelectedYear(year)
-    
-    // Adjust day if it's invalid for the new year (leap year consideration)
+
     if (selectedDay && selectedMonth) {
       const maxDays = getDaysInMonth(selectedMonth, year)
       const currentDay = parseInt(selectedDay)
@@ -190,20 +243,20 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
         setSelectedDay(maxDays.toString().padStart(2, '0'))
       }
     }
-    
-    if (selectedDay && selectedMonth) {
-      const adjustedDay = selectedDay && parseInt(selectedDay) > getDaysInMonth(selectedMonth, year)
-        ? getDaysInMonth(selectedMonth, year).toString().padStart(2, '0')
-        : selectedDay
-      const formattedDate = `${year}-${selectedMonth}-${adjustedDay}`
-      onUpdateProfile({
-        birthday: formattedDate
-      })
-    }
+
+    const month = selectedMonth || '00'
+    const day = selectedDay || '00'
+    const adjustedDay = selectedDay && selectedMonth && parseInt(selectedDay) > getDaysInMonth(selectedMonth, year)
+      ? getDaysInMonth(selectedMonth, year).toString().padStart(2, '0')
+      : day
+    const formattedDate = `${year}-${month}-${adjustedDay}`
+    onUpdateProfile({
+      birthday: formattedDate
+    })
   }
 
   const renderViewMode = () => {
-    const displayValue = formatBirthdayDisplay(user.birthday, user.birthday_visibility)
+    const displayValue = formatBirthdayDisplay(user.birthday, user.birthday_visibility, user.birthday_show_age ?? true)
 
     if (!displayValue) {
       return (
@@ -213,7 +266,7 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
       )
     }
 
-    return ( 
+    return (
       <div className="flex items-center gap-2 border rounded-lg p-3 hover:bg-muted/50 transition-colors">
         <span className="text-foreground">{displayValue}</span>
       </div>
@@ -226,9 +279,10 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
     }
 
     if (user.birthday) {
-      const previewDate = selectedDay && selectedMonth && selectedYear 
-        ? `${selectedYear}-${selectedMonth}-${selectedDay}`
-        : user.birthday
+      const year = selectedYear || '0000'
+      const month = selectedMonth || '00'
+      const day = selectedDay || '00'
+      const previewDate = `${year}-${month}-${day}`
 
       return (
         <div className="space-y-4">
@@ -236,16 +290,17 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
             <div className="flex items-start justify-between gap-2">
               <div className="flex-1 space-y-4">
                 <Label>Birthday</Label>
-                
+
                 <div className="grid grid-cols-3 gap-2">
                   <div>
-                    <Label htmlFor="day" className="text-xs text-muted-foreground">Day</Label>
+                    <Label htmlFor="day" className="text-xs text-muted-foreground">Day (Optional)</Label>
                     <Select value={selectedDay} onValueChange={handleDayChange}>
                       <SelectTrigger id="day">
                         <SelectValue placeholder="Day" />
                       </SelectTrigger>
                       <SelectContent>
-                        {Array.from({ length: getDaysInMonth(selectedMonth, selectedYear) }, (_, i) => {
+                        <SelectItem value="">Not set</SelectItem>
+                        {Array.from({ length: getDaysInMonth(selectedMonth || '01', selectedYear || '2000') }, (_, i) => {
                           const day = (i + 1).toString().padStart(2, '0')
                           return (
                             <SelectItem key={day} value={day}>
@@ -258,12 +313,13 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
                   </div>
 
                   <div>
-                    <Label htmlFor="month" className="text-xs text-muted-foreground">Month</Label>
+                    <Label htmlFor="month" className="text-xs text-muted-foreground">Month (Optional)</Label>
                     <Select value={selectedMonth} onValueChange={handleMonthChange}>
                       <SelectTrigger id="month">
                         <SelectValue placeholder="Month" />
                       </SelectTrigger>
                       <SelectContent>
+                        <SelectItem value="">Not set</SelectItem>
                         {months.map((month) => (
                           <SelectItem key={month.value} value={month.value}>
                             {month.label}
@@ -274,12 +330,13 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
                   </div>
 
                   <div>
-                    <Label htmlFor="year" className="text-xs text-muted-foreground">Year</Label>
+                    <Label htmlFor="year" className="text-xs text-muted-foreground">Year (Optional)</Label>
                     <Select value={selectedYear} onValueChange={handleYearChange}>
                       <SelectTrigger id="year">
                         <SelectValue placeholder="Year" />
                       </SelectTrigger>
                       <SelectContent>
+                        <SelectItem value="">Not set</SelectItem>
                         {generateYears().map((year) => (
                           <SelectItem key={year} value={year}>
                             {year}
@@ -328,17 +385,32 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="full">Full Date with Age (Month Day, Year + Age)</SelectItem>
-                  <SelectItem value="month_day">Month and Day with Age</SelectItem>
-                  <SelectItem value="year">Year with Age</SelectItem>
+                  <SelectItem value="full">Full Date (Month Day, Year)</SelectItem>
+                  <SelectItem value="month_day">Month and Day</SelectItem>
+                  <SelectItem value="year">Year Only</SelectItem>
+                  <SelectItem value="day_month">Day and Month</SelectItem>
+                  <SelectItem value="day">Day Only</SelectItem>
+                  <SelectItem value="month">Month Only</SelectItem>
                 </SelectContent>
               </Select>
-              {selectedDay && selectedMonth && selectedYear && (
-                <p className="text-sm text-muted-foreground mt-2">
-                  Preview: {formatBirthdayDisplay(previewDate, visibility)}
-                </p>
-              )}
             </div>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="show-age"
+                checked={showAge}
+                onCheckedChange={handleShowAgeChange}
+              />
+              <Label htmlFor="show-age" className="text-sm font-normal cursor-pointer">
+                Show Age
+              </Label>
+            </div>
+
+            {(selectedDay || selectedMonth || selectedYear) && (
+              <p className="text-sm text-muted-foreground mt-2">
+                Preview: {formatBirthdayDisplay(previewDate, visibility, showAge) || 'Select at least one field'}
+              </p>
+            )}
           </div>
         </div>
       )
@@ -349,16 +421,17 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
         <h4 className="font-medium">Add Birthday</h4>
 
         <div>
-          <Label>Select Date</Label>
+          <Label>Select Date (at least one field)</Label>
           <div className="grid grid-cols-3 gap-2 mt-2">
             <div>
-              <Label htmlFor="new-day" className="text-xs text-muted-foreground">Day</Label>
+              <Label htmlFor="new-day" className="text-xs text-muted-foreground">Day (Optional)</Label>
               <Select value={selectedDay} onValueChange={setSelectedDay}>
                 <SelectTrigger id="new-day">
                   <SelectValue placeholder="Day" />
                 </SelectTrigger>
                 <SelectContent>
-                  {Array.from({ length: getDaysInMonth(selectedMonth, selectedYear) }, (_, i) => {
+                  <SelectItem value="">Not set</SelectItem>
+                  {Array.from({ length: getDaysInMonth(selectedMonth || '01', selectedYear || '2000') }, (_, i) => {
                     const day = (i + 1).toString().padStart(2, '0')
                     return (
                       <SelectItem key={day} value={day}>
@@ -371,11 +444,10 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
             </div>
 
             <div>
-              <Label htmlFor="new-month" className="text-xs text-muted-foreground">Month</Label>
+              <Label htmlFor="new-month" className="text-xs text-muted-foreground">Month (Optional)</Label>
               <Select value={selectedMonth} onValueChange={(month) => {
                 setSelectedMonth(month)
-                // Reset day if it's invalid for the new month
-                if (selectedDay && selectedYear) {
+                if (selectedDay && selectedYear && month) {
                   const maxDays = getDaysInMonth(month, selectedYear)
                   const currentDay = parseInt(selectedDay)
                   if (currentDay > maxDays) {
@@ -387,6 +459,7 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
                   <SelectValue placeholder="Month" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="">Not set</SelectItem>
                   {months.map((month) => (
                     <SelectItem key={month.value} value={month.value}>
                       {month.label}
@@ -397,11 +470,10 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
             </div>
 
             <div>
-              <Label htmlFor="new-year" className="text-xs text-muted-foreground">Year</Label>
+              <Label htmlFor="new-year" className="text-xs text-muted-foreground">Year (Optional)</Label>
               <Select value={selectedYear} onValueChange={(year) => {
                 setSelectedYear(year)
-                // Reset day if it's invalid for the new year (leap year)
-                if (selectedDay && selectedMonth) {
+                if (selectedDay && selectedMonth && year) {
                   const maxDays = getDaysInMonth(selectedMonth, year)
                   const currentDay = parseInt(selectedDay)
                   if (currentDay > maxDays) {
@@ -413,6 +485,7 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
                   <SelectValue placeholder="Year" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="">Not set</SelectItem>
                   {generateYears().map((year) => (
                     <SelectItem key={year} value={year}>
                       {year}
@@ -426,25 +499,40 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
 
         <div>
           <Label htmlFor="new-visibility">Display As</Label>
-          <Select value={visibility} onValueChange={(value: 'full' | 'month_day' | 'year') => setVisibility(value)}>
+          <Select value={visibility} onValueChange={(value: 'full' | 'month_day' | 'year' | 'day_month' | 'day' | 'month') => setVisibility(value)}>
             <SelectTrigger id="new-visibility" className="mt-2">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="full">Full Date with Age (Month Day, Year + Age)</SelectItem>
-              <SelectItem value="month_day">Month and Day with Age</SelectItem>
-              <SelectItem value="year">Year with Age</SelectItem>
+              <SelectItem value="full">Full Date (Month Day, Year)</SelectItem>
+              <SelectItem value="month_day">Month and Day</SelectItem>
+              <SelectItem value="year">Year Only</SelectItem>
+              <SelectItem value="day_month">Day and Month</SelectItem>
+              <SelectItem value="day">Day Only</SelectItem>
+              <SelectItem value="month">Month Only</SelectItem>
             </SelectContent>
           </Select>
-          {selectedDay && selectedMonth && selectedYear && (
-            <p className="text-sm text-muted-foreground mt-2">
-              Preview: {formatBirthdayDisplay(`${selectedYear}-${selectedMonth}-${selectedDay}`, visibility)}
-            </p>
-          )}
         </div>
 
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="new-show-age"
+            checked={showAge}
+            onCheckedChange={setShowAge}
+          />
+          <Label htmlFor="new-show-age" className="text-sm font-normal cursor-pointer">
+            Show Age
+          </Label>
+        </div>
+
+        {(selectedDay || selectedMonth || selectedYear) && (
+          <p className="text-sm text-muted-foreground mt-2">
+            Preview: {formatBirthdayDisplay(`${selectedYear || '0000'}-${selectedMonth || '00'}-${selectedDay || '00'}`, visibility, showAge) || 'Select at least one field'}
+          </p>
+        )}
+
         <div className="flex gap-2">
-          <Button onClick={handleAddBirthday} disabled={!selectedDay || !selectedMonth || !selectedYear}>
+          <Button onClick={handleAddBirthday} disabled={!selectedDay && !selectedMonth && !selectedYear}>
             Add Birthday
           </Button>
           <Button variant="outline" onClick={() => setShowAddForm(false)}>

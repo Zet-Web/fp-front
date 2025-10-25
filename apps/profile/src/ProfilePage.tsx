@@ -106,9 +106,10 @@ export function ProfilePage({ username }: ProfilePageProps) {
     } finally {
       setIsSaving(false)
     }
-    
-    return // Exit early to skip database operations
 
+    return
+
+    /* Exit early to skip database operations
     setIsSaving(true)
 
     try {
@@ -251,6 +252,7 @@ export function ProfilePage({ username }: ProfilePageProps) {
       console.log('🏁 [Profile Save] Cleaning up: Setting isSaving to false')
       setIsSaving(false)
     }
+    */
   }
 
   const updateProfileData = (updates: Partial<typeof profileData>) => {

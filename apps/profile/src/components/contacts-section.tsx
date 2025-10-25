@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { ChevronUp, ChevronDown, ExternalLink, Copy, Plus, X } from "lucide-react"
 import { useState, useEffect } from "react"
@@ -37,10 +36,9 @@ export function ContactsSection({ user, isOwnProfile, isEditing, onUpdateProfile
   const [contactEntries, setContactEntries] = useState<ContactInfoEntry[]>([])
   const [showAddForm, setShowAddForm] = useState(false)
   const [newEntry, setNewEntry] = useState<Partial<ContactInfoEntry>>({
-    type: 'email',
+    type: 'phone',
     value: '',
-    label: '',
-    is_whatsapp: false
+    label: ''
   })
   const { toast } = useToast()
 
@@ -147,10 +145,9 @@ export function ContactsSection({ user, isOwnProfile, isEditing, onUpdateProfile
     updateContactEntries(updatedEntries)
 
     setNewEntry({
-      type: 'email',
+      type: 'phone',
       value: '',
-      label: '',
-      is_whatsapp: false
+      label: ''
     })
     setShowAddForm(false)
   }
@@ -192,17 +189,24 @@ export function ContactsSection({ user, isOwnProfile, isEditing, onUpdateProfile
           const labelText = entry.label || config?.label || entry.type
 
           return (
-            <div key={entry.id} className="flex items-center gap-2 border rounded-lg p-3 hover:bg-muted/50 transition-colors">
-              <IconComponent className="w-4 h-4 text-primary flex-shrink-0" />
+            <div key={entry.id} className="flex items-center gap-2 border rounded-lg p-3">
               <a
                 href={link}
                 target={entry.type !== 'phone' && entry.type !== 'email' ? '_blank' : undefined}
                 rel="noopener noreferrer"
-                className="flex-1 flex items-center gap-2 min-w-0"
+                className="flex-shrink-0"
+              >
+                <IconComponent className="w-4 h-4 text-primary" />
+              </a>
+              <a
+                href={link}
+                target={entry.type !== 'phone' && entry.type !== 'email' ? '_blank' : undefined}
+                rel="noopener noreferrer"
+                className="flex-1 min-w-0"
               >
                 <span className="text-blue-500 hover:underline truncate">{displayValue}</span>
-                <span className="text-muted-foreground text-sm flex-shrink-0">{labelText}</span>
               </a>
+              <span className="text-muted-foreground text-sm flex-shrink-0">{labelText}</span>
               <Button
                 size="sm"
                 variant="ghost"
@@ -340,22 +344,6 @@ export function ContactsSection({ user, isOwnProfile, isEditing, onUpdateProfile
                   placeholder="Custom label"
                 />
               </div>
-
-              {entry.type === 'phone' && (
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`whatsapp-${entry.id}`}
-                    checked={entry.is_whatsapp || false}
-                    onCheckedChange={(checked) => {
-                      handleEntryChange(index, 'is_whatsapp', checked)
-                      setTimeout(() => handleBlurEntry(index), 100)
-                    }}
-                  />
-                  <Label htmlFor={`whatsapp-${entry.id}`} className="text-sm font-normal cursor-pointer">
-                    Open in WhatsApp
-                  </Label>
-                </div>
-              )}
             </div>
           )
         })}
@@ -411,19 +399,6 @@ export function ContactsSection({ user, isOwnProfile, isEditing, onUpdateProfile
                 placeholder="Custom label"
               />
             </div>
-
-            {newEntry.type === 'phone' && (
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="new-whatsapp"
-                  checked={newEntry.is_whatsapp || false}
-                  onCheckedChange={(checked) => handleNewEntryChange('is_whatsapp', checked)}
-                />
-                <Label htmlFor="new-whatsapp" className="text-sm font-normal cursor-pointer">
-                  Open in WhatsApp
-                </Label>
-              </div>
-            )}
 
             <div className="flex gap-2">
               <Button onClick={addEntry} disabled={!newEntry.value?.trim()}>

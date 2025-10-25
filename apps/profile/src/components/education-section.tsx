@@ -4,138 +4,149 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { Award, Plus, Edit, Trash2, ChevronUp, ChevronDown, Check, X } from "lucide-react"
+import { GraduationCap, Plus, Edit, Trash2, ChevronUp, ChevronDown, Check, X } from "lucide-react"
 import { useState } from "react"
 
-interface AwardType {
+interface Education {
   id: number
-  title: string
-  issuer: string
-  date: string
+  degree: string
+  school: string
+  period: string
   description: string
 }
 
-interface AwardsSectionProps {
+const initialEducation = [
+  {
+    id: 1,
+    degree: "Bachelor of Science in Computer Science",
+    school: "Tech University",
+    period: "2016 - 2020",
+    description: "Graduated Magna Cum Laude with focus on Software Engineering and Web Development."
+  },
+  {
+    id: 2,
+    degree: "AWS Certified Solutions Architect",
+    school: "Amazon Web Services",
+    period: "2021",
+    description: "Professional certification in cloud architecture and AWS services."
+  }
+]
+
+interface EducationSectionProps {
   isEditing: boolean
 }
 
-export function AwardsSection({ isEditing }: AwardsSectionProps) {
-  const [awards, setAwards] = useState<AwardType[]>([])
-  const [showAddAwardForm, setShowAddAwardForm] = useState(false)
-  const [editingAward, setEditingAward] = useState<number | null>(null)
-  const [newAward, setNewAward] = useState({
-    title: '',
-    issuer: '',
-    date: '',
+export function EducationSection({ isEditing }: EducationSectionProps) {
+  const [education, setEducation] = useState(initialEducation)
+  const [editingEducation, setEditingEducation] = useState<number | null>(null)
+  const [showAddEducationForm, setShowAddEducationForm] = useState(false)
+  const [newEducation, setNewEducation] = useState({
+    degree: '',
+    school: '',
+    period: '',
     description: ''
   })
   const [editForm, setEditForm] = useState({
-    title: '',
-    issuer: '',
-    date: '',
+    degree: '',
+    school: '',
+    period: '',
     description: ''
   })
 
   const moveUp = (index: number) => {
     if (index === 0) return
 
-    const newAwards = [...awards]
-    const temp = newAwards[index - 1]
-    newAwards[index - 1] = newAwards[index]
-    newAwards[index] = temp
+    const newEducation = [...education]
+    const temp = newEducation[index - 1]
+    newEducation[index - 1] = newEducation[index]
+    newEducation[index] = temp
 
-    setAwards(newAwards)
+    setEducation(newEducation)
   }
 
   const moveDown = (index: number) => {
-    if (index === awards.length - 1) return
+    if (index === education.length - 1) return
 
-    const newAwards = [...awards]
-    const temp = newAwards[index + 1]
-    newAwards[index + 1] = newAwards[index]
-    newAwards[index] = temp
+    const newEducation = [...education]
+    const temp = newEducation[index + 1]
+    newEducation[index + 1] = newEducation[index]
+    newEducation[index] = temp
 
-    setAwards(newAwards)
+    setEducation(newEducation)
   }
 
-  const addAward = () => {
-    if (newAward.title && newAward.issuer) {
-      setAwards(prev => [...prev, {
+  const addEducation = () => {
+    if (newEducation.degree && newEducation.school) {
+      setEducation(prev => [...prev, {
         id: Date.now(),
-        ...newAward
+        ...newEducation
       }])
-      setNewAward({
-        title: '',
-        issuer: '',
-        date: '',
+      setNewEducation({
+        degree: '',
+        school: '',
+        period: '',
         description: ''
       })
-      setShowAddAwardForm(false)
+      setShowAddEducationForm(false)
     }
   }
 
-  const removeAward = (id: number) => {
-    setAwards(prev => prev.filter(award => award.id !== id))
+  const removeEducation = (id: number) => {
+    setEducation(prev => prev.filter(edu => edu.id !== id))
   }
 
-  const startEditing = (award: AwardType) => {
-    setEditingAward(award.id)
+  const startEditing = (edu: Education) => {
+    setEditingEducation(edu.id)
     setEditForm({
-      title: award.title,
-      issuer: award.issuer,
-      date: award.date,
-      description: award.description
+      degree: edu.degree,
+      school: edu.school,
+      period: edu.period,
+      description: edu.description
     })
   }
 
   const saveEdit = (id: number) => {
-    setAwards(prev => prev.map(award =>
-      award.id === id ? { ...award, ...editForm } : award
+    setEducation(prev => prev.map(edu =>
+      edu.id === id ? { ...edu, ...editForm } : edu
     ))
-    setEditingAward(null)
+    setEditingEducation(null)
   }
 
   const cancelEdit = () => {
-    setEditingAward(null)
+    setEditingEducation(null)
     setEditForm({
-      title: '',
-      issuer: '',
-      date: '',
+      degree: '',
+      school: '',
+      period: '',
       description: ''
     })
   }
 
   return (
-    <Card className="mb-8 hover:shadow-lg transition-shadow duration-300">
+    <Card className="hover:shadow-lg transition-shadow duration-300">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Award className="w-5 h-5" />
-            Awards and Achievements
+            <GraduationCap className="w-5 h-5" />
+            Education & Certifications
           </div>
           {isEditing && (
             <Button
               size="sm"
               variant="outline"
-              onClick={() => setShowAddAwardForm(true)}
+              onClick={() => setShowAddEducationForm(true)}
             >
               <Plus className="w-4 h-4 mr-1" />
-              Add Award
+              Add Education
             </Button>
           )}
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-          {awards.length === 0 && !isEditing && (
-            <p className="text-muted-foreground italic">
-              No awards or achievements added yet.
-            </p>
-          )}
-
-          {awards.map((award, index) => (
-            <div key={award.id} className="border-l-2 border-primary/20 pl-4">
-              {editingAward === award.id ? (
+          {education.map((edu, index) => (
+            <div key={edu.id} className="border-l-2 border-primary/20 pl-4">
+              {editingEducation === edu.id ? (
                 <div className="space-y-4 border rounded-lg p-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1">
@@ -152,7 +163,7 @@ export function AwardsSection({ isEditing }: AwardsSectionProps) {
                         size="sm"
                         variant="ghost"
                         onClick={() => moveDown(index)}
-                        disabled={index === awards.length - 1}
+                        disabled={index === education.length - 1}
                         className="h-7 w-7 p-0"
                       >
                         <ChevronDown className="w-4 h-4" />
@@ -162,7 +173,7 @@ export function AwardsSection({ isEditing }: AwardsSectionProps) {
                       <Button
                         size="sm"
                         variant="ghost"
-                        onClick={() => saveEdit(award.id)}
+                        onClick={() => saveEdit(edu.id)}
                         className="h-7 w-7 p-0 text-green-600 hover:text-green-700"
                       >
                         <Check className="w-4 h-4" />
@@ -179,40 +190,40 @@ export function AwardsSection({ isEditing }: AwardsSectionProps) {
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="edit-award-title">Award Title</Label>
+                      <Label htmlFor="edit-edu-degree">Degree</Label>
                       <Input
-                        id="edit-award-title"
-                        value={editForm.title}
-                        onChange={(e) => setEditForm(prev => ({ ...prev, title: e.target.value }))}
-                        placeholder="Best Developer Award"
+                        id="edit-edu-degree"
+                        value={editForm.degree}
+                        onChange={(e) => setEditForm(prev => ({ ...prev, degree: e.target.value }))}
+                        placeholder="Bachelor of Science"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="edit-award-issuer">Issuer/Organization</Label>
+                      <Label htmlFor="edit-edu-school">School/Institution</Label>
                       <Input
-                        id="edit-award-issuer"
-                        value={editForm.issuer}
-                        onChange={(e) => setEditForm(prev => ({ ...prev, issuer: e.target.value }))}
-                        placeholder="Tech Company Inc."
+                        id="edit-edu-school"
+                        value={editForm.school}
+                        onChange={(e) => setEditForm(prev => ({ ...prev, school: e.target.value }))}
+                        placeholder="University Name"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="edit-award-date">Date</Label>
+                      <Label htmlFor="edit-edu-period">Period</Label>
                       <Input
-                        id="edit-award-date"
-                        value={editForm.date}
-                        onChange={(e) => setEditForm(prev => ({ ...prev, date: e.target.value }))}
-                        placeholder="2024"
+                        id="edit-edu-period"
+                        value={editForm.period}
+                        onChange={(e) => setEditForm(prev => ({ ...prev, period: e.target.value }))}
+                        placeholder="2016 - 2020"
                       />
                     </div>
                   </div>
                   <div>
-                    <Label htmlFor="edit-award-description">Description</Label>
+                    <Label htmlFor="edit-edu-description">Description</Label>
                     <Textarea
-                      id="edit-award-description"
+                      id="edit-edu-description"
                       value={editForm.description}
                       onChange={(e) => setEditForm(prev => ({ ...prev, description: e.target.value }))}
-                      placeholder="Describe the achievement..."
+                      placeholder="Additional details about your education..."
                       rows={2}
                     />
                   </div>
@@ -220,9 +231,9 @@ export function AwardsSection({ isEditing }: AwardsSectionProps) {
               ) : (
                 <>
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
-                    <h3 className="font-semibold text-lg">{award.title}</h3>
+                    <h3 className="font-semibold text-lg">{edu.degree}</h3>
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-muted-foreground">{award.date}</span>
+                      <span className="text-sm text-muted-foreground">{edu.period}</span>
                       {isEditing && (
                         <div className="flex gap-1">
                           <Button
@@ -238,12 +249,12 @@ export function AwardsSection({ isEditing }: AwardsSectionProps) {
                             size="sm"
                             variant="ghost"
                             onClick={() => moveDown(index)}
-                            disabled={index === awards.length - 1}
+                            disabled={index === education.length - 1}
                             className="h-7 w-7 p-0"
                           >
                             <ChevronDown className="w-4 h-4" />
                           </Button>
-                          <Button size="sm" variant="ghost" onClick={() => startEditing(award)} className="h-7 w-7 p-0">
+                          <Button size="sm" variant="ghost" onClick={() => startEditing(edu)} className="h-7 w-7 p-0">
                             <Edit className="w-4 h-4" />
                           </Button>
                           <AlertDialog>
@@ -254,14 +265,14 @@ export function AwardsSection({ isEditing }: AwardsSectionProps) {
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>Delete Award</AlertDialogTitle>
+                                <AlertDialogTitle>Delete Education</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  Are you sure you want to delete this award? This action cannot be undone.
+                                  Are you sure you want to delete this education entry? This action cannot be undone.
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => removeAward(award.id)}>
+                                <AlertDialogAction onClick={() => removeEducation(edu.id)}>
                                   Delete
                                 </AlertDialogAction>
                               </AlertDialogFooter>
@@ -271,58 +282,58 @@ export function AwardsSection({ isEditing }: AwardsSectionProps) {
                       )}
                     </div>
                   </div>
-                  <p className="text-primary font-medium mb-2">{award.issuer}</p>
-                  <p className="text-muted-foreground">{award.description}</p>
+                  <p className="text-primary font-medium mb-2">{edu.school}</p>
+                  <p className="text-muted-foreground">{edu.description}</p>
                 </>
               )}
             </div>
           ))}
 
-          {isEditing && showAddAwardForm && (
+          {isEditing && showAddEducationForm && (
             <div className="border-l-2 border-dashed border-primary/20 pl-4 space-y-4">
-              <h3 className="font-semibold text-lg">Add New Award</h3>
+              <h3 className="font-semibold text-lg">Add New Education</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="award-title">Award Title</Label>
+                  <Label htmlFor="edu-degree">Degree</Label>
                   <Input
-                    id="award-title"
-                    value={newAward.title}
-                    onChange={(e) => setNewAward(prev => ({ ...prev, title: e.target.value }))}
-                    placeholder="Best Developer Award"
+                    id="edu-degree"
+                    value={newEducation.degree}
+                    onChange={(e) => setNewEducation(prev => ({ ...prev, degree: e.target.value }))}
+                    placeholder="Bachelor of Science"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="award-issuer">Issuer/Organization</Label>
+                  <Label htmlFor="edu-school">School/Institution</Label>
                   <Input
-                    id="award-issuer"
-                    value={newAward.issuer}
-                    onChange={(e) => setNewAward(prev => ({ ...prev, issuer: e.target.value }))}
-                    placeholder="Tech Company Inc."
+                    id="edu-school"
+                    value={newEducation.school}
+                    onChange={(e) => setNewEducation(prev => ({ ...prev, school: e.target.value }))}
+                    placeholder="University Name"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="award-date">Date</Label>
+                  <Label htmlFor="edu-period">Period</Label>
                   <Input
-                    id="award-date"
-                    value={newAward.date}
-                    onChange={(e) => setNewAward(prev => ({ ...prev, date: e.target.value }))}
-                    placeholder="2024"
+                    id="edu-period"
+                    value={newEducation.period}
+                    onChange={(e) => setNewEducation(prev => ({ ...prev, period: e.target.value }))}
+                    placeholder="2016 - 2020"
                   />
                 </div>
               </div>
               <div>
-                <Label htmlFor="award-description">Description</Label>
+                <Label htmlFor="edu-description">Description</Label>
                 <Textarea
-                  id="award-description"
-                  value={newAward.description}
-                  onChange={(e) => setNewAward(prev => ({ ...prev, description: e.target.value }))}
-                  placeholder="Describe the achievement..."
+                  id="edu-description"
+                  value={newEducation.description}
+                  onChange={(e) => setNewEducation(prev => ({ ...prev, description: e.target.value }))}
+                  placeholder="Additional details about your education..."
                   rows={2}
                 />
               </div>
               <div className="flex gap-2">
-                <Button onClick={addAward}>Add Award</Button>
-                <Button variant="outline" onClick={() => setShowAddAwardForm(false)}>
+                <Button onClick={addEducation}>Add Education</Button>
+                <Button variant="outline" onClick={() => setShowAddEducationForm(false)}>
                   Cancel
                 </Button>
               </div>
