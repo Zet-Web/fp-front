@@ -39,7 +39,7 @@ export const CONTACT_TYPES: ContactTypeConfig[] = [
     label: 'Telegram',
     icon: MessageCircle,
     urlPrefix: 't.me/',
-    placeholder: 'username (5-32 characters)',
+    placeholder: 'username (3-32 characters)',
     validateValue: (value: string) => {
       return /^[a-zA-Z0-9_]{5,32}$/.test(value.replace('@', ''))
     },
