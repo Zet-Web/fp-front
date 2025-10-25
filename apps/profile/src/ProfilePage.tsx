@@ -44,10 +44,7 @@ export function ProfilePage({ username }: ProfilePageProps) {
   // Update local profile data when user data changes
   useEffect(() => {
     if (user) {
-      setProfileData({
-        ...user,
-        birthday: user.birthday || null
-      })
+      setProfileData(user)
     }
   }, [user])
 
