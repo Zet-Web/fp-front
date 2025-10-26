@@ -4,8 +4,11 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { GraduationCap, Plus, Edit, Trash2, ChevronUp, ChevronDown, Check, X } from "lucide-react"
-import { useState } from "react"
+import { GraduationCap, Plus, CreditCard as Edit, Trash2, ChevronUp, ChevronDown, Check, X } from "lucide-react"ponents/ui/command"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { GraduationCap, Plus, Edit, Trash2, ChevronUp, ChevronDown, Check, X, ChevronDownIcon, Loader2 } from "lucide-react"
+import { useState, useEffect, useCallback } from "react"
+import { supabase } from "@/lib/supabase"
 
 interface Education {
   id: number
@@ -52,6 +55,84 @@ export function EducationSection({ isEditing }: EducationSectionProps) {
     period: '',
     description: ''
   })
+
+  // Study fields state
+  const [studyFields, setStudyFields] = useState<{ id: number; name_ru: string }[]>([])
+  const [isFetchingStudyFields, setIsFetchingStudyFields] = useState(false)
+  const [newDegreeSearchInput, setNewDegreeSearchInput] = useState('')
+  const [editDegreeSearchInput, setEditDegreeSearchInput] = useState('')
+  const [openNewDegreeSelect, setOpenNewDegreeSelect] = useState(false)
+  const [openEditDegreeSelect, setOpenEditDegreeSelect] = useState(false)
+
+  // Universities state
+  const [universitySearchQuery, setUniversitySearchQuery] = useState('')
+  const [filteredUniversities, setFilteredUniversities] = useState<{ id: number; name_ru: string }[]>([])
+  const [isFetchingUniversities, setIsFetchingUniversities] = useState(false)
+  const [openNewUniversitySelect, setOpenNewUniversitySelect] = useState(false)
+  const [openEditUniversitySelect, setOpenEditUniversitySelect] = useState(false)
+
+  // Fetch study fields on component mount
+  useEffect(() => {
+    const fetchStudyFields = async () => {
+      setIsFetchingStudyFields(true)
+      try {
+        const { data, error } = await supabase
+          .from('list_study_field')
+          .select('id, name_ru')
+          .order('name_ru', { ascending: true })
+
+        if (error) {
+          console.error('Error fetching study fields:', error)
+        } else {
+          setStudyFields(data || [])
+        }
+      } catch (error) {
+        console.error('Error fetching study fields:', error)
+      } finally {
+        setIsFetchingStudyFields(false)
+      }
+    }
+
+    fetchStudyFields()
+  }, [])
+
+  // Debounced university search
+  useEffect(() => {
+    const timeoutId = setTimeout(async () => {
+      if (universitySearchQuery.length >= 3) {
+        setIsFetchingUniversities(true)
+        try {
+          const { data, error } = await supabase
+            .from('list_university')
+            .select('id, name_ru')
+            .or(`name.ilike.%${universitySearchQuery}%,name_ru.ilike.%${universitySearchQuery}%`)
+            .limit(50)
+
+          if (error) {
+            console.error('Error searching universities:', error)
+          } else {
+            setFilteredUniversities(data || [])
+          }
+        } catch (error) {
+          console.error('Error searching universities:', error)
+        } finally {
+          setIsFetchingUniversities(false)
+        }
+      } else {
+        setFilteredUniversities([])
+      }
+    }, 500)
+
+    return () => clearTimeout(timeoutId)
+  }, [universitySearchQuery])
+
+  // Filter study fields based on search input
+  const getFilteredStudyFields = useCallback((searchInput: string) => {
+    if (!searchInput) return studyFields
+    return studyFields.filter(field => 
+      field.name_ru?.toLowerCase().includes(searchInput.toLowerCase())
+    )
+  }, [studyFields])
 
   const moveUp = (index: number) => {
     if (index === 0) return
@@ -103,6 +184,7 @@ export function EducationSection({ isEditing }: EducationSectionProps) {
       period: edu.period,
       description: edu.description
     })
+    setEditDegreeSearchInput('')
   }
 
   const saveEdit = (id: number) => {
@@ -191,21 +273,110 @@ export function EducationSection({ isEditing }: EducationSectionProps) {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="edit-edu-degree">Degree</Label>
-                      <Input
-                        id="edit-edu-degree"
-                        value={editForm.degree}
-                        onChange={(e) => setEditForm(prev => ({ ...prev, degree: e.target.value }))}
-                        placeholder="Bachelor of Science"
-                      />
+                      <Popover open={openEditDegreeSelect} onOpenChange={setOpenEditDegreeSelect}>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            aria-expanded={openEditDegreeSelect}
+                            className="w-full justify-between"
+                          >
+                            {editForm.degree || "Select degree..."}
+                            <ChevronDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-full p-0">
+                          <Command>
+                            <CommandInput
+                              placeholder="Search degrees..."
+                              value={editDegreeSearchInput}
+                              onValueChange={setEditDegreeSearchInput}
+                            />
+                            <CommandList>
+                              {isFetchingStudyFields && (
+                                <div className="flex items-center justify-center py-6">
+                                  <Loader2 className="w-4 h-4 animate-spin" />
+                                </div>
+                              )}
+                              {!isFetchingStudyFields && getFilteredStudyFields(editDegreeSearchInput).length === 0 && (
+                                <CommandEmpty>No degrees found.</CommandEmpty>
+                              )}
+                              {!isFetchingStudyFields && getFilteredStudyFields(editDegreeSearchInput).length > 0 && (
+                                <CommandGroup>
+                                  {getFilteredStudyFields(editDegreeSearchInput).map((field) => (
+                                    <CommandItem
+                                      key={field.id}
+                                      value={field.name_ru}
+                                      onSelect={() => {
+                                        setEditForm(prev => ({ ...prev, degree: field.name_ru }))
+                                        setEditDegreeSearchInput('')
+                                        setOpenEditDegreeSelect(false)
+                                      }}
+                                    >
+                                      {field.name_ru}
+                                    </CommandItem>
+                                  ))}
+                                </CommandGroup>
+                              )}
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
                     </div>
                     <div>
                       <Label htmlFor="edit-edu-school">School/Institution</Label>
-                      <Input
-                        id="edit-edu-school"
-                        value={editForm.school}
-                        onChange={(e) => setEditForm(prev => ({ ...prev, school: e.target.value }))}
-                        placeholder="University Name"
-                      />
+                      <Popover open={openEditUniversitySelect} onOpenChange={setOpenEditUniversitySelect}>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            aria-expanded={openEditUniversitySelect}
+                            className="w-full justify-between"
+                          >
+                            {editForm.school || "Select university..."}
+                            <ChevronDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-full p-0">
+                          <Command shouldFilter={false}>
+                            <CommandInput
+                              placeholder="Type at least 3 characters..."
+                              value={universitySearchQuery}
+                              onValueChange={setUniversitySearchQuery}
+                            />
+                            <CommandList>
+                              {isFetchingUniversities && (
+                                <div className="flex items-center justify-center py-6">
+                                  <Loader2 className="w-4 h-4 animate-spin" />
+                                </div>
+                              )}
+                              {!isFetchingUniversities && universitySearchQuery.length < 3 && (
+                                <CommandEmpty>Type at least 3 characters to search</CommandEmpty>
+                              )}
+                              {!isFetchingUniversities && universitySearchQuery.length >= 3 && filteredUniversities.length === 0 && (
+                                <CommandEmpty>No universities found</CommandEmpty>
+                              )}
+                              {!isFetchingUniversities && filteredUniversities.length > 0 && (
+                                <CommandGroup>
+                                  {filteredUniversities.map((university) => (
+                                    <CommandItem
+                                      key={university.id}
+                                      value={university.name_ru}
+                                      onSelect={() => {
+                                        setEditForm(prev => ({ ...prev, school: university.name_ru }))
+                                        setUniversitySearchQuery('')
+                                        setOpenEditUniversitySelect(false)
+                                      }}
+                                    >
+                                      {university.name_ru}
+                                    </CommandItem>
+                                  ))}
+                                </CommandGroup>
+                              )}
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
                     </div>
                     <div>
                       <Label htmlFor="edit-edu-period">Period</Label>
@@ -295,21 +466,110 @@ export function EducationSection({ isEditing }: EducationSectionProps) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="edu-degree">Degree</Label>
-                  <Input
-                    id="edu-degree"
-                    value={newEducation.degree}
-                    onChange={(e) => setNewEducation(prev => ({ ...prev, degree: e.target.value }))}
-                    placeholder="Bachelor of Science"
-                  />
+                  <Popover open={openNewDegreeSelect} onOpenChange={setOpenNewDegreeSelect}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={openNewDegreeSelect}
+                        className="w-full justify-between"
+                      >
+                        {newEducation.degree || "Select degree..."}
+                        <ChevronDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-full p-0">
+                      <Command>
+                        <CommandInput
+                          placeholder="Search degrees..."
+                          value={newDegreeSearchInput}
+                          onValueChange={setNewDegreeSearchInput}
+                        />
+                        <CommandList>
+                          {isFetchingStudyFields && (
+                            <div className="flex items-center justify-center py-6">
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            </div>
+                          )}
+                          {!isFetchingStudyFields && getFilteredStudyFields(newDegreeSearchInput).length === 0 && (
+                            <CommandEmpty>No degrees found.</CommandEmpty>
+                          )}
+                          {!isFetchingStudyFields && getFilteredStudyFields(newDegreeSearchInput).length > 0 && (
+                            <CommandGroup>
+                              {getFilteredStudyFields(newDegreeSearchInput).map((field) => (
+                                <CommandItem
+                                  key={field.id}
+                                  value={field.name_ru}
+                                  onSelect={() => {
+                                    setNewEducation(prev => ({ ...prev, degree: field.name_ru }))
+                                    setNewDegreeSearchInput('')
+                                    setOpenNewDegreeSelect(false)
+                                  }}
+                                >
+                                  {field.name_ru}
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          )}
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
                 </div>
                 <div>
                   <Label htmlFor="edu-school">School/Institution</Label>
-                  <Input
-                    id="edu-school"
-                    value={newEducation.school}
-                    onChange={(e) => setNewEducation(prev => ({ ...prev, school: e.target.value }))}
-                    placeholder="University Name"
-                  />
+                  <Popover open={openNewUniversitySelect} onOpenChange={setOpenNewUniversitySelect}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={openNewUniversitySelect}
+                        className="w-full justify-between"
+                      >
+                        {newEducation.school || "Select university..."}
+                        <ChevronDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-full p-0">
+                      <Command shouldFilter={false}>
+                        <CommandInput
+                          placeholder="Type at least 3 characters..."
+                          value={universitySearchQuery}
+                          onValueChange={setUniversitySearchQuery}
+                        />
+                        <CommandList>
+                          {isFetchingUniversities && (
+                            <div className="flex items-center justify-center py-6">
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            </div>
+                          )}
+                          {!isFetchingUniversities && universitySearchQuery.length < 3 && (
+                            <CommandEmpty>Type at least 3 characters to search</CommandEmpty>
+                          )}
+                          {!isFetchingUniversities && universitySearchQuery.length >= 3 && filteredUniversities.length === 0 && (
+                            <CommandEmpty>No universities found</CommandEmpty>
+                          )}
+                          {!isFetchingUniversities && filteredUniversities.length > 0 && (
+                            <CommandGroup>
+                              {filteredUniversities.map((university) => (
+                                <CommandItem
+                                  key={university.id}
+                                  value={university.name_ru}
+                                  onSelect={() => {
+                                    setNewEducation(prev => ({ ...prev, school: university.name_ru }))
+                                    setUniversitySearchQuery('')
+                                    setOpenNewUniversitySelect(false)
+                                  }}
+                                >
+                                  {university.name_ru}
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          )}
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
                 </div>
                 <div>
                   <Label htmlFor="edu-period">Period</Label>
