@@ -191,50 +191,45 @@ export function ContactsSection({ user, isOwnProfile, isEditing, onUpdateProfile
           return (
             <div key={entry.id} className="flex items-center gap-2 border rounded-lg p-3">
               <a
-                href={link}
-                target={entry.type !== 'phone' && entry.type !== 'email' ? '_blank' : undefined}
-                rel="noopener noreferrer"
-                className="flex-shrink-0"
-              >
-                <IconComponent className="w-4 h-4 text-primary" />
-              </a>
-              <a
-                href={link}
-                target={entry.type !== 'phone' && entry.type !== 'email' ? '_blank' : undefined}
-                rel="noopener noreferrer"
-                className="flex-1 min-w-0"
-              >
-                <span className="text-blue-500 hover:underline truncate">{displayValue}</span>
-              </a>
-              <span className="text-muted-foreground text-sm flex-shrink-0">{labelText}</span>
-              <Button
-                size="sm"
-                variant="ghost"
-                className="h-8 w-8 p-0 flex-shrink-0"
-                onClick={(e) => {
-                  e.preventDefault()
-                  handleCopyToClipboard(entry.value, entry)
-                }}
-              >
-                <Copy className="w-4 h-4 text-muted-foreground" />
-              </Button>
-              <a
-                href={link}
-                target={entry.type !== 'phone' && entry.type !== 'email' ? '_blank' : undefined}
-                rel="noopener noreferrer"
-                className="flex-shrink-0"
-              >
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="h-8 w-8 p-0"
-                  asChild
-                >
-                  <span>
-                    <ExternalLink className="w-4 h-4 text-muted-foreground" />
-                  </span>
-                </Button>
-              </a>
+  href={link}
+  target={entry.type !== 'phone' && entry.type !== 'email' ? '_blank' : undefined}
+  rel="noopener noreferrer"
+  className="flex-shrink-0"
+>
+  <IconComponent className="w-4 h-4 text-primary" />
+</a>
+<div className="flex items-center gap-2 flex-1 min-w-0">
+  <span className="text-blue-500 hover:underline truncate">{displayValue}</span>
+  {labelText && <span className="text-muted-foreground text-sm flex-shrink-0">{labelText}</span>}
+</div>
+<Button
+  size="sm"
+  variant="ghost"
+  className="h-8 w-8 p-0 flex-shrink-0"
+  onClick={(e) => {
+    e.preventDefault()
+    handleCopyToClipboard(entry.value, entry)
+  }}
+>
+  <Copy className="w-4 h-4 text-muted-foreground" />
+</Button>
+<a
+  href={link}
+  target={entry.type !== 'phone' && entry.type !== 'email' ? '_blank' : undefined}
+  rel="noopener noreferrer"
+  className="flex-shrink-0"
+>
+  <Button
+    size="sm"
+    variant="ghost"
+    className="h-8 w-8 p-0"
+    asChild
+  >
+    <span>
+      <ExternalLink className="w-4 h-4 text-muted-foreground" />
+    </span>
+  </Button>
+</a>
             </div>
           )
         })}
@@ -350,7 +345,7 @@ export function ContactsSection({ user, isOwnProfile, isEditing, onUpdateProfile
 
         {showAddForm && (
           <div className="border-2 border-dashed border-primary/20 rounded-lg p-4 space-y-4">
-            <h4 className="font-medium">Add New Contact</h4>
+            <h4 className="font-medium">Add</h4>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -402,7 +397,7 @@ export function ContactsSection({ user, isOwnProfile, isEditing, onUpdateProfile
 
             <div className="flex gap-2">
               <Button onClick={addEntry} disabled={!newEntry.value?.trim()}>
-                Add Contact
+                Add
               </Button>
               <Button variant="outline" onClick={() => setShowAddForm(false)}>
                 Cancel
@@ -428,7 +423,7 @@ export function ContactsSection({ user, isOwnProfile, isEditing, onUpdateProfile
               onClick={() => setShowAddForm(true)}
             >
               <Plus className="w-4 h-4 mr-1" />
-              Add Contact
+              Add
             </Button>
           )}
         </CardTitle>

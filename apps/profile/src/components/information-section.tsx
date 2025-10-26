@@ -30,11 +30,11 @@ export function InformationSection({ user, isOwnProfile, isEditing, onUpdateProf
   return (
     <div className="space-y-6">
       <ContactsSection user={user} isOwnProfile={isOwnProfile} isEditing={isEditing} onUpdateProfile={onUpdateProfile} />
-      <BirthdaySection user={user} isOwnProfile={isOwnProfile} isEditing={isEditing} onUpdateProfile={onUpdateProfile} />
       <ExperienceSection isEditing={isEditing} />
       <EducationSection isEditing={isEditing} />
       <AwardsSection isEditing={isEditing} />
       <AdditionalInfoSection user={user} isOwnProfile={isOwnProfile} isEditing={isEditing} onUpdateProfile={onUpdateProfile} />
+      <BirthdaySection user={user} isOwnProfile={isOwnProfile} isEditing={isEditing} onUpdateProfile={onUpdateProfile} />
     </div>
   )
 }

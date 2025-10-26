@@ -257,7 +257,7 @@ export function AdditionalInfoSection({ user, isOwnProfile, isEditing, onUpdateP
 
         {showAddForm && (
           <div className="border-2 border-dashed border-primary/20 rounded-lg p-4 space-y-4">
-            <h4 className="font-medium">Add Information</h4>
+            <h4 className="font-medium">Add</h4>
 
             <div>
               <Label htmlFor="new-info">Information</Label>

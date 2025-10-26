@@ -75,12 +75,91 @@ export function HeroSection({
     onUpdateProfile({ about: value });
   };
 
+  const handleAvatarUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingAvatar(true);
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const tempUrl = URL.createObjectURL(file);
+      onUpdateProfile({ avatar_url: tempUrl });
+      console.log("Avatar uploaded (simulated):", file.name);
+    } catch (error) {
+      console.error("Avatar upload failed:", error);
+    } finally {
+      setIsUploadingAvatar(false);
+      event.target.value = "";
+    }
+  };
+
+  const handleCoverUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingCover(true);
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const tempUrl = URL.createObjectURL(file);
+      onUpdateProfile({ cover_url: tempUrl });
+      console.log("Cover uploaded (simulated):", file.name);
+    } catch (error) {
+      console.error("Cover upload failed:", error);
+    } finally {
+      setIsUploadingCover(false);
+      event.target.value = "";
+    }
+  };
   return (
     <div className="relative w-full mb-8">
-      {/* Background Banner */}
       <div className="relative h-64 w-full overflow-hidden rounded-lg">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 dark:from-blue-800 dark:via-purple-800 dark:to-indigo-800" />
+        {user.cover_url ? (
+          <img
+            src={user.cover_url}
+            alt="Cover"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 dark:from-blue-800 dark:via-purple-800 dark:to-indigo-800" />
+        )}
         <div className="absolute inset-0 bg-black/20" />
+
+        {isEditing && (
+          <div className="absolute top-4 right-4">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleCoverUpload}
+              className="hidden"
+              id="cover-upload"
+              disabled={isUploadingCover}
+            />
+            <label htmlFor="cover-upload">
+              <Button
+                variant="secondary"
+                size="sm"
+                className="gap-2 cursor-pointer"
+                disabled={isUploadingCover}
+                asChild
+              >
+                <span>
+                  {isUploadingCover ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Upload className="w-4 h-4" />
+                  )}
+                  {isUploadingCover ? "Uploading..." : "Change Cover"}
+                </span>
+              </Button>
+            </label>
+          </div>
+        )}
       </div>
 
       {/* Profile section below cover */}
@@ -97,11 +176,11 @@ export function HeroSection({
         <div className="mt-4 flex justify-between items-start">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
-              {isEditing && isOwnProfile ? (
+              {isEditing ? (
                 <Input
                   value={user.name || ""}
                   onChange={(e) => handleNameChange(e.target.value)}
-                  className="text-3xl font-bold border-0 p-0 h-auto bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+                  className="text-3xl font-bold border border-input rounded-md px-3 py-2 h-auto bg-background focus-visible:ring-1 focus-visible:ring-ring"
                   placeholder="Enter your name"
                 />
               ) : (
@@ -140,7 +219,7 @@ export function HeroSection({
               </p>
             )}
 
-            {isEditing && isOwnProfile ? (
+            {isEditing ? (
               <div className="mb-4 max-w-2xl">
                 <LocationSelector
                   cities={cities}

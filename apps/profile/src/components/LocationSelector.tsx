@@ -194,11 +194,11 @@ export function LocationSelector({
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="city" className="text-xs">
                   <Building2 className="w-3 h-3 mr-1" />
-                  Cities
+                  City
                 </TabsTrigger>
                 <TabsTrigger value="country" className="text-xs">
                   <Globe className="w-3 h-3 mr-1" />
-                  Countries
+                  Country
                 </TabsTrigger>
               </TabsList>
 
