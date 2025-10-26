@@ -397,7 +397,7 @@ export function ContactsSection({ user, isOwnProfile, isEditing, onUpdateProfile
 
             <div className="flex gap-2">
               <Button onClick={addEntry} disabled={!newEntry.value?.trim()}>
-                Add Contact
+                Add
               </Button>
               <Button variant="outline" onClick={() => setShowAddForm(false)}>
                 Cancel
