@@ -158,7 +158,7 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
               onClick={() => setShowAddExperienceForm(true)}
             >
               <Plus className="w-4 h-4 mr-1" />
-              Add Experience
+              Add
             </Button>
           )}
         </CardTitle>
