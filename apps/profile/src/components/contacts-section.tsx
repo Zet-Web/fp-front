@@ -345,7 +345,7 @@ export function ContactsSection({ user, isOwnProfile, isEditing, onUpdateProfile
 
         {showAddForm && (
           <div className="border-2 border-dashed border-primary/20 rounded-lg p-4 space-y-4">
-            <h4 className="font-medium">Add New Contact</h4>
+            <h4 className="font-medium">Add</h4>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
