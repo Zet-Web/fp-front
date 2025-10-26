@@ -465,7 +465,7 @@ export function EducationSection({ isEditing }: EducationSectionProps) {
               <h3 className="font-semibold text-lg">Add New Education</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="edu-degree">Degree</Label>
+                  <Label htmlFor="edu-degree">Faculty</Label>
                   <Popover open={openNewDegreeSelect} onOpenChange={setOpenNewDegreeSelect}>
                     <PopoverTrigger asChild>
                       <Button
@@ -517,7 +517,7 @@ export function EducationSection({ isEditing }: EducationSectionProps) {
                   </Popover>
                 </div>
                 <div>
-                  <Label htmlFor="edu-school">School/Institution</Label>
+                  <Label htmlFor="edu-school">University</Label>
                   <Popover open={openNewUniversitySelect} onOpenChange={setOpenNewUniversitySelect}>
                     <PopoverTrigger asChild>
                       <Button
