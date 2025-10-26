@@ -408,7 +408,7 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
 
     return (
       <div className="border-2 border-dashed border-primary/20 rounded-lg p-4 space-y-4">
-        <h4 className="font-medium">Add Birthday</h4>
+        <h4 className="font-medium">Add</h4>
 
         <div>
           <Label>Select Date (at least one field)</Label>
