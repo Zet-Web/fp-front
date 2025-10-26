@@ -20,7 +20,7 @@ interface UserProfile {
   badge: string[] | null
   contact_info: any[] | null
   birthday: string | null
-  birthday_visibility: 'full' | 'month_day' | 'year' | 'day_month' | 'day' | 'month' | null
+  birthday_visibility: 'full' | 'day_month' | 'year' | 'not_show' | null
   birthday_show_age: boolean | null
 }
 
