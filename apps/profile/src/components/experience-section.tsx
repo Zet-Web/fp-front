@@ -319,7 +319,7 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
 
           {isEditing && showAddExperienceForm && (
             <div className="border-l-2 border-dashed border-primary/20 pl-4 space-y-4">
-              <h3 className="font-semibold text-lg">Add New Experience</h3>
+              <h3 className="font-semibold text-lg">Add</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="exp-title">Job Title</Label>
