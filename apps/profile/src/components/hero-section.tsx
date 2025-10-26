@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { MessageCircle, UserPlus, Loader as Loader2, MapPin } from "lucide-react"
+import { MessageCircle, UserPlus, Loader as Loader2, MapPin, Camera, Upload } from "lucide-react"
 import { useState } from "react"
 import { LocationSelector } from "./LocationSelector"
 import { LocationItem } from "../types/location"
@@ -52,6 +52,8 @@ export function HeroSection({
   onClearAllLocations
 }: HeroSectionProps) {
   const [isFollowing, setIsFollowing] = useState(false)
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false)
+  const [isUploadingCover, setIsUploadingCover] = useState(false)
 
   const displayName = user.name || user.username || 'User'
   const displayUsername = user.username || user.telegram_username || 'user'
@@ -65,21 +67,141 @@ export function HeroSection({
     onUpdateProfile({ about: value })
   }
 
+  const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    setIsUploadingAvatar(true)
+    
+    try {
+      // Simulate upload delay for testing
+      await new Promise(resolve => setTimeout(resolve, 1500))
+      
+      // Create a temporary URL for testing
+      const tempUrl = URL.createObjectURL(file)
+      onUpdateProfile({ avatar_url: tempUrl })
+      
+      console.log('Avatar uploaded (simulated):', file.name)
+    } catch (error) {
+      console.error('Avatar upload failed:', error)
+    } finally {
+      setIsUploadingAvatar(false)
+      // Reset the input
+      event.target.value = ''
+    }
+  }
+
+  const handleCoverUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    setIsUploadingCover(true)
+    
+    try {
+      // Simulate upload delay for testing
+      await new Promise(resolve => setTimeout(resolve, 1500))
+      
+      // Create a temporary URL for testing
+      const tempUrl = URL.createObjectURL(file)
+      onUpdateProfile({ cover_url: tempUrl })
+      
+      console.log('Cover uploaded (simulated):', file.name)
+    } catch (error) {
+      console.error('Cover upload failed:', error)
+    } finally {
+      setIsUploadingCover(false)
+      // Reset the input
+      event.target.value = ''
+    }
+  }
   return (
     <div className="relative w-full mb-8">
       {/* Background Banner */}
       <div className="relative h-64 w-full overflow-hidden rounded-lg">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 dark:from-blue-800 dark:via-purple-800 dark:to-indigo-800" />
+        {user.cover_url ? (
+          <img 
+            src={user.cover_url} 
+            alt="Cover" 
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 dark:from-blue-800 dark:via-purple-800 dark:to-indigo-800" />
+        )}
         <div className="absolute inset-0 bg-black/20" />
+        
+        {/* Cover Upload Button - Only in Edit Mode */}
+        {isEditing && isOwnProfile && (
+          <div className="absolute top-4 right-4">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleCoverUpload}
+              className="hidden"
+              id="cover-upload"
+              disabled={isUploadingCover}
+            />
+            <label htmlFor="cover-upload">
+              <Button
+                variant="secondary"
+                size="sm"
+                className="gap-2 cursor-pointer"
+                disabled={isUploadingCover}
+                asChild
+              >
+                <span>
+                  {isUploadingCover ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Upload className="w-4 h-4" />
+                  )}
+                  {isUploadingCover ? 'Uploading...' : 'Change Cover'}
+                </span>
+              </Button>
+            </label>
+          </div>
+        )}
       </div>
       
       {/* Profile section below cover */}
       <div className="relative px-6 pb-4">
         {/* Profile picture positioned at bottom left of cover */}
-        <Avatar className="w-40 h-40 border-4 border-background shadow-xl -mt-20 relative z-10">
-          <AvatarImage src={user.avatar_url || undefined} alt="Profile" />
-          <AvatarFallback className="text-2xl text-gray-700">{avatarFallback}</AvatarFallback>
-        </Avatar>
+        <div className="relative inline-block -mt-20 z-10">
+          <Avatar className="w-40 h-40 border-4 border-background shadow-xl">
+            <AvatarImage src={user.avatar_url || undefined} alt="Profile" />
+            <AvatarFallback className="text-2xl text-gray-700">{avatarFallback}</AvatarFallback>
+          </Avatar>
+          
+          {/* Avatar Upload Button - Only in Edit Mode */}
+          {isEditing && isOwnProfile && (
+            <div className="absolute bottom-2 right-2">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarUpload}
+                className="hidden"
+                id="avatar-upload"
+                disabled={isUploadingAvatar}
+              />
+              <label htmlFor="avatar-upload">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="w-10 h-10 rounded-full p-0 cursor-pointer shadow-lg"
+                  disabled={isUploadingAvatar}
+                  asChild
+                >
+                  <span>
+                    {isUploadingAvatar ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Camera className="w-4 h-4" />
+                    )}
+                  </span>
+                </Button>
+              </label>
+            </div>
+          )}
+        </div>
         
         {/* Profile info with Follow button */}
         <div className="mt-4 flex justify-between items-start">
@@ -89,7 +211,7 @@ export function HeroSection({
                 <Input
                   value={user.name || ''}
                   onChange={(e) => handleNameChange(e.target.value)}
-                  className="text-3xl font-bold border-0 p-0 h-auto bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+                  className="text-3xl font-bold border border-input rounded-md px-3 py-2 h-auto bg-background focus-visible:ring-1 focus-visible:ring-ring"
                   placeholder="Enter your name"
                 />
               ) : (

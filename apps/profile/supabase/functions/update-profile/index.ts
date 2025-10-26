@@ -20,6 +20,7 @@ interface ProfileUpdatePayload {
   about?: string;
   name?: string;
   avatar_url?: string;
+  cover_url?: string;
   profile_type?: string;
   badge?: string[];
 }
@@ -177,6 +178,11 @@ Deno.serve(async (req: Request) => {
     if (payload.avatar_url !== undefined) {
       console.log('🖼️ [Update Profile] Avatar URL updated');
       updateData.avatar_url = payload.avatar_url;
+    }
+
+    if (payload.cover_url !== undefined) {
+      console.log('🖼️ [Update Profile] Cover URL updated');
+      updateData.cover_url = payload.cover_url;
     }
 
     if (payload.profile_type !== undefined) {
