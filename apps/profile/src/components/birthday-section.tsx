@@ -521,7 +521,7 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
 
         <div className="flex gap-2">
           <Button onClick={handleAddBirthday} disabled={selectedDay === 'not-set' && selectedMonth === 'not-set' && selectedYear === 'not-set'}>
-            Add Birthday
+            Add
           </Button>
           <Button variant="outline" onClick={() => setShowAddForm(false)}>
             Cancel
