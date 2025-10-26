@@ -219,7 +219,7 @@ export function EducationSection({ isEditing }: EducationSectionProps) {
               onClick={() => setShowAddEducationForm(true)}
             >
               <Plus className="w-4 h-4 mr-1" />
-              Add Education
+              Add
             </Button>
           )}
         </CardTitle>
