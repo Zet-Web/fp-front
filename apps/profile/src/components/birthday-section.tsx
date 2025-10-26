@@ -119,44 +119,25 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
     const ageText = displayAge && age !== null ? ` (${age} years old)` : ''
 
     switch (visibility) {
-      case 'full':
-        if (year && month && day) {
-          const parsedDate = parse(date, 'yyyy-MM-dd', new Date())
-          return isValid(parsedDate) ? format(parsedDate, 'MMMM d, yyyy') + ageText : null
-        }
-        break
-      case 'month_day':
-        if (month && day) {
-          const parsedDate = parse(`2000-${month}-${day}`, 'yyyy-MM-dd', new Date())
-          return isValid(parsedDate) ? format(parsedDate, 'MMMM d') + ageText : null
-        }
-        break
-      case 'year':
-        if (year) {
-          return year + ageText
-        }
-        break
-      case 'day_month':
-        if (month && day) {
-          const parsedDate = parse(`2000-${month}-${day}`, 'yyyy-MM-dd', new Date())
-          return isValid(parsedDate) ? format(parsedDate, 'd MMMM') : null
-        }
-        break
-      case 'day':
-        if (day) {
-          return `Day ${parseInt(day)}`
-        }
-        break
-      case 'month':
-        if (month) {
-          const parsedDate = parse(`2000-${month}-01`, 'yyyy-MM-dd', new Date())
-          return isValid(parsedDate) ? format(parsedDate, 'MMMM') : null
-        }
-        break
+  case 'full':
+    if (year && month && day) {
+      return `${day}.${month}.${year}${ageText}`
     }
-
+    break
+  case 'day_month':
+    if (month && day) {
+      const parsedDate = parse(`2000-${month}-${day}`, 'yyyy-MM-dd', new Date())
+      return isValid(parsedDate) ? format(parsedDate, 'd MMMM') + ageText : null
+    }
+    break
+  case 'year':
+    if (year) {
+      return year + ageText
+    }
+    break
+  case 'not_show':
     return null
-  }
+}
 
   const handleAddBirthday = () => {
     if (selectedDay === 'not-set' && selectedMonth === 'not-set' && selectedYear === 'not-set') return
