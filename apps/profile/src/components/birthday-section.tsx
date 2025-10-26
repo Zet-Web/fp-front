@@ -7,7 +7,6 @@ import { Cake, Plus, X } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useState, useEffect } from "react"
 import { format, parse, isValid } from "date-fns"
-import { cn } from "@/lib/utils"
 
 interface UserProfile {
   id: string
@@ -36,7 +35,7 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
   const [selectedDay, setSelectedDay] = useState<string>('not-set')
   const [selectedMonth, setSelectedMonth] = useState<string>('not-set')
   const [selectedYear, setSelectedYear] = useState<string>('not-set')
-  const [visibility, setVisibility] = useState<'full' | 'month_day' | 'year' | 'day_month' | 'day' | 'month'>('full')
+  const [visibility, setVisibility] = useState<'full' | 'day_month' | 'year' | 'not_show'>('full')
   const [showAge, setShowAge] = useState<boolean>(true)
 
   const months = [
@@ -119,25 +118,28 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
     const ageText = displayAge && age !== null ? ` (${age} years old)` : ''
 
     switch (visibility) {
-  case 'full':
-    if (year && month && day) {
-      return `${day}.${month}.${year}${ageText}`
+      case 'full':
+        if (year && month && day) {
+          return `${day}.${month}.${year}${ageText}`
+        }
+        break
+      case 'day_month':
+        if (month && day) {
+          const parsedDate = parse(`2000-${month}-${day}`, 'yyyy-MM-dd', new Date())
+          return isValid(parsedDate) ? format(parsedDate, 'd MMMM') + ageText : null
+        }
+        break
+      case 'year':
+        if (year) {
+          return year + ageText
+        }
+        break
+      case 'not_show':
+        return null
     }
-    break
-  case 'day_month':
-    if (month && day) {
-      const parsedDate = parse(`2000-${month}-${day}`, 'yyyy-MM-dd', new Date())
-      return isValid(parsedDate) ? format(parsedDate, 'd MMMM') + ageText : null
-    }
-    break
-  case 'year':
-    if (year) {
-      return year + ageText
-    }
-    break
-  case 'not_show':
+
     return null
-}
+  }
 
   const handleAddBirthday = () => {
     if (selectedDay === 'not-set' && selectedMonth === 'not-set' && selectedYear === 'not-set') return
@@ -168,7 +170,7 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
     setShowAge(true)
   }
 
-  const handleVisibilityChange = (newVisibility: 'full' | 'month_day' | 'year' | 'day_month' | 'day' | 'month') => {
+  const handleVisibilityChange = (newVisibility: 'full' | 'day_month' | 'year' | 'not_show') => {
     setVisibility(newVisibility)
     if (user.birthday) {
       onUpdateProfile({
@@ -373,11 +375,11 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-  <SelectItem value="full">Full</SelectItem>
-  <SelectItem value="day_month">Day and Month</SelectItem>
-  <SelectItem value="year">Year</SelectItem>
-  <SelectItem value="not_show">Not show</SelectItem>
-</SelectContent>
+                  <SelectItem value="full">Full</SelectItem>
+                  <SelectItem value="day_month">Day and Month</SelectItem>
+                  <SelectItem value="year">Year</SelectItem>
+                  <SelectItem value="not_show">Not show</SelectItem>
+                </SelectContent>
               </Select>
             </div>
 
@@ -485,16 +487,16 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
 
         <div>
           <Label htmlFor="new-visibility">Display As</Label>
-          <Select value={visibility} onValueChange={(value: 'full' | 'month_day' | 'year' | 'day_month' | 'day' | 'month') => setVisibility(value)}>
+          <Select value={visibility} onValueChange={setVisibility}>
             <SelectTrigger id="new-visibility" className="mt-2">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-  <SelectItem value="full">Full</SelectItem>
-  <SelectItem value="day_month">Day and Month</SelectItem>
-  <SelectItem value="year">Year</SelectItem>
-  <SelectItem value="not_show">Not show</SelectItem>
-</SelectContent>
+              <SelectItem value="full">Full</SelectItem>
+              <SelectItem value="day_month">Day and Month</SelectItem>
+              <SelectItem value="year">Year</SelectItem>
+              <SelectItem value="not_show">Not show</SelectItem>
+            </SelectContent>
           </Select>
         </div>
 
