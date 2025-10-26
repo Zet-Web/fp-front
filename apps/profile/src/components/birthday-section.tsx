@@ -373,13 +373,11 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="full">Full Date (Month Day, Year)</SelectItem>
-                  <SelectItem value="month_day">Month and Day</SelectItem>
-                  <SelectItem value="year">Year Only</SelectItem>
-                  <SelectItem value="day_month">Day and Month</SelectItem>
-                  <SelectItem value="day">Day Only</SelectItem>
-                  <SelectItem value="month">Month Only</SelectItem>
-                </SelectContent>
+  <SelectItem value="full">Full</SelectItem>
+  <SelectItem value="day_month">Day and Month</SelectItem>
+  <SelectItem value="year">Year</SelectItem>
+  <SelectItem value="not_show">Not show</SelectItem>
+</SelectContent>
               </Select>
             </div>
 
