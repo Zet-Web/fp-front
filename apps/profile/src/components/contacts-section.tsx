@@ -423,7 +423,7 @@ export function ContactsSection({ user, isOwnProfile, isEditing, onUpdateProfile
               onClick={() => setShowAddForm(true)}
             >
               <Plus className="w-4 h-4 mr-1" />
-              Add Contact
+              Add
             </Button>
           )}
         </CardTitle>
