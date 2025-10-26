@@ -105,41 +105,43 @@ export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile
   }, [user.birthday, user.birthday_visibility, user.birthday_show_age])
 
   const formatBirthdayDisplay = (date: string | null, visibility: string | null, displayAge: boolean = true) => {
-    if (!date) return null
+  if (!date) return null
 
-    const parts = date.split('-')
-    const year = parts[0] && parts[0] !== '0000' ? parts[0] : null
-    const month = parts[1] && parts[1] !== '00' ? parts[1] : null
-    const day = parts[2] && parts[2] !== '00' ? parts[2] : null
+  const parts = date.split('-')
+  const year = parts[0] && parts[0] !== '0000' ? parts[0] : null
+  const month = parts[1] && parts[1] !== '00' ? parts[1] : null
+  const day = parts[2] && parts[2] !== '00' ? parts[2] : null
 
-    if (!year && !month && !day) return null
+  if (!year && !month && !day) return null
 
-    const age = year && month && day ? calculateAge(date) : null
-    const ageText = displayAge && age !== null ? ` (${age} years old)` : ''
+  const age = year && month && day ? calculateAge(date) : null
+  const ageText = displayAge && age !== null ? ` (${age} years old)` : ''
 
-    switch (visibility) {
-      case 'full':
-        if (year && month && day) {
-          return `${day}.${month}.${year}${ageText}`
-        }
-        break
-      case 'day_month':
-        if (month && day) {
-          const parsedDate = parse(`2000-${month}-${day}`, 'yyyy-MM-dd', new Date())
-          return isValid(parsedDate) ? format(parsedDate, 'd MMMM') + ageText : null
-        }
-        break
-      case 'year':
-        if (year) {
-          return year + ageText
-        }
-        break
-      case 'not_show':
-        return null
-    }
-
-    return null
+  if (visibility === 'not_show') {
+    return ageText || null
   }
+
+  switch (visibility) {
+    case 'full':
+      if (year && month && day) {
+        return `${day}.${month}.${year}${ageText}`
+      }
+      break
+    case 'day_month':
+      if (month && day) {
+        const parsedDate = parse(`2000-${month}-${day}`, 'yyyy-MM-dd', new Date())
+        return isValid(parsedDate) ? format(parsedDate, 'd MMMM') + ageText : null
+      }
+      break
+    case 'year':
+      if (year) {
+        return year + ageText
+      }
+      break
+  }
+
+  return null
+}
 
   const handleAddBirthday = () => {
     if (selectedDay === 'not-set' && selectedMonth === 'not-set' && selectedYear === 'not-set') return
