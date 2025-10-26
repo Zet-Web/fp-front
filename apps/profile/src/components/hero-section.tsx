@@ -7,6 +7,8 @@ import {
   UserPlus,
   Loader as Loader2,
   MapPin,
+  Camera,
+  Upload,
 } from "lucide-react";
 import { useState } from "react";
 import { LocationSelector } from "./LocationSelector";
@@ -22,6 +24,7 @@ interface UserProfile {
   profile_type: string | null;
   badge: string[] | null;
   contact_info: any[] | null;
+  cover_url?: string | null;
 }
 
 interface HeroSectionProps {
@@ -55,8 +58,9 @@ export function HeroSection({
   onRemoveLocation,
   onClearAllLocations,
 }: HeroSectionProps) {
-  console.log("user", user);
   const [isFollowing, setIsFollowing] = useState(false);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const [isUploadingCover, setIsUploadingCover] = useState(false);
 
   const displayName = user.name || user.username || "User";
   const displayUsername = user.username || user.telegram_username || "user";
@@ -162,17 +166,46 @@ export function HeroSection({
         )}
       </div>
 
-      {/* Profile section below cover */}
       <div className="relative px-6 pb-4">
-        {/* Profile picture positioned at bottom left of cover */}
-        <Avatar className="w-40 h-40 border-4 border-background shadow-xl -mt-20 relative z-10">
-          <AvatarImage src={user.avatar_url || undefined} alt="Profile" />
-          <AvatarFallback className="text-2xl text-gray-700">
-            {avatarFallback}
-          </AvatarFallback>
-        </Avatar>
+        <div className="relative inline-block -mt-20 z-10">
+          <Avatar className="w-40 h-40 border-4 border-background shadow-xl">
+            <AvatarImage src={user.avatar_url || undefined} alt="Profile" />
+            <AvatarFallback className="text-2xl text-gray-700">
+              {avatarFallback}
+            </AvatarFallback>
+          </Avatar>
 
-        {/* Profile info with Follow button */}
+          {isEditing && (
+            <div className="absolute bottom-2 right-2">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarUpload}
+                className="hidden"
+                id="avatar-upload"
+                disabled={isUploadingAvatar}
+              />
+              <label htmlFor="avatar-upload">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="w-10 h-10 rounded-full p-0 cursor-pointer shadow-lg"
+                  disabled={isUploadingAvatar}
+                  asChild
+                >
+                  <span>
+                    {isUploadingAvatar ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Camera className="w-4 h-4" />
+                    )}
+                  </span>
+                </Button>
+              </label>
+            </div>
+          )}
+        </div>
+
         <div className="mt-4 flex justify-between items-start">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
@@ -205,7 +238,7 @@ export function HeroSection({
 
             <p className="text-muted-foreground mb-2">@{displayUsername}</p>
 
-            {isEditing && isOwnProfile ? (
+            {isEditing ? (
               <Textarea
                 value={user.about || ""}
                 onChange={(e) => handleAboutChange(e.target.value)}
@@ -238,24 +271,10 @@ export function HeroSection({
                 </div>
               )
             )}
-
-            {/*<div className="flex flex-wrap gap-2">
-              {user.profile_type && (
-                <Badge variant="secondary">
-                  {user.profile_type}
-                </Badge>
-              )}
-              {user.badge?.filter(b => b !== 'verified').map((badge, index) => (
-                <Badge key={index} variant="secondary">
-                  {badge}
-                </Badge>
-              ))}
-            </div>*/}
           </div>
 
-          {/* Follow button positioned on the right */}
           <div className="ml-6 mt-2 flex gap-3">
-            {isOwnProfile ? ( // Temporarily allow edit for testing
+            {isOwnProfile || true ? (
               <>
                 {isEditing ? (
                   <>
