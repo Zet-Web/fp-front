@@ -18,6 +18,7 @@ interface UserProfile {
   profile_type: string | null
   badge: string[] | null
   contact_info: any[] | null
+  cover_url?: string | null
 }
 
 interface HeroSectionProps {
@@ -74,19 +75,14 @@ export function HeroSection({
     setIsUploadingAvatar(true)
     
     try {
-      // Simulate upload delay for testing
       await new Promise(resolve => setTimeout(resolve, 1500))
-      
-      // Create a temporary URL for testing
       const tempUrl = URL.createObjectURL(file)
       onUpdateProfile({ avatar_url: tempUrl })
-      
       console.log('Avatar uploaded (simulated):', file.name)
     } catch (error) {
       console.error('Avatar upload failed:', error)
     } finally {
       setIsUploadingAvatar(false)
-      // Reset the input
       event.target.value = ''
     }
   }
@@ -98,25 +94,19 @@ export function HeroSection({
     setIsUploadingCover(true)
     
     try {
-      // Simulate upload delay for testing
       await new Promise(resolve => setTimeout(resolve, 1500))
-      
-      // Create a temporary URL for testing
       const tempUrl = URL.createObjectURL(file)
       onUpdateProfile({ cover_url: tempUrl })
-      
       console.log('Cover uploaded (simulated):', file.name)
     } catch (error) {
       console.error('Cover upload failed:', error)
     } finally {
       setIsUploadingCover(false)
-      // Reset the input
       event.target.value = ''
     }
   }
   return (
     <div className="relative w-full mb-8">
-      {/* Background Banner */}
       <div className="relative h-64 w-full overflow-hidden rounded-lg">
         {user.cover_url ? (
           <img 
@@ -129,8 +119,7 @@ export function HeroSection({
         )}
         <div className="absolute inset-0 bg-black/20" />
         
-        {/* Cover Upload Button - Only in Edit Mode */}
-        {isEditing && isOwnProfile && (
+        {isEditing && (
           <div className="absolute top-4 right-4">
             <input
               type="file"
@@ -162,17 +151,14 @@ export function HeroSection({
         )}
       </div>
       
-      {/* Profile section below cover */}
       <div className="relative px-6 pb-4">
-        {/* Profile picture positioned at bottom left of cover */}
         <div className="relative inline-block -mt-20 z-10">
           <Avatar className="w-40 h-40 border-4 border-background shadow-xl">
             <AvatarImage src={user.avatar_url || undefined} alt="Profile" />
             <AvatarFallback className="text-2xl text-gray-700">{avatarFallback}</AvatarFallback>
           </Avatar>
           
-          {/* Avatar Upload Button - Only in Edit Mode */}
-          {isEditing && isOwnProfile && (
+          {isEditing && (
             <div className="absolute bottom-2 right-2">
               <input
                 type="file"
@@ -203,11 +189,10 @@ export function HeroSection({
           )}
         </div>
         
-        {/* Profile info with Follow button */}
         <div className="mt-4 flex justify-between items-start">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
-              {isEditing && isOwnProfile ? (
+              {isEditing ? (
                 <Input
                   value={user.name || ''}
                   onChange={(e) => handleNameChange(e.target.value)}
@@ -228,7 +213,7 @@ export function HeroSection({
             
             <p className="text-muted-foreground mb-2">@{displayUsername}</p>
             
-            {isEditing && isOwnProfile ? (
+            {isEditing ? (
               <Textarea
                 value={user.about || ''}
                 onChange={(e) => handleAboutChange(e.target.value)}
@@ -242,7 +227,7 @@ export function HeroSection({
               </p>
             )}
 
-            {isEditing && isOwnProfile ? (
+            {isEditing ? (
               <div className="mb-4 max-w-2xl">
                 <LocationSelector
                   cities={cities}
@@ -261,24 +246,10 @@ export function HeroSection({
                 </div>
               )
             )}
-            
-            {/*<div className="flex flex-wrap gap-2">
-              {user.profile_type && (
-                <Badge variant="secondary">
-                  {user.profile_type}
-                </Badge>
-              )}
-              {user.badge?.filter(b => b !== 'verified').map((badge, index) => (
-                <Badge key={index} variant="secondary">
-                  {badge}
-                </Badge>
-              ))}
-            </div>*/}
           </div>
            
-          {/* Follow button positioned on the right */}
           <div className="ml-6 mt-2 flex gap-3">
-            {isOwnProfile || true ? ( // Temporarily allow edit for testing
+            {isOwnProfile || true ? (
               <>
                 {isEditing ? (
                   <>
