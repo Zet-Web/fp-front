@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { GraduationCap, Plus, CreditCard as Edit, Trash2, ChevronUp, ChevronDown, Check, X, ChevronDownIcon, Loader2 } from "lucide-react"
+import { GraduationCap, Plus, Edit, Trash2, ChevronUp, ChevronDown, Check, X, ChevronDownIcon, Loader2 } from "lucide-react"
 import { useState, useEffect, useCallback } from "react"
 import { supabase } from "@/lib/supabase"
 
