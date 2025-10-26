@@ -4,11 +4,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandList, CommandItem } from "@/components/ui/command"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { GraduationCap, Plus, CreditCard as Edit, Trash2, ChevronUp, ChevronDown, Check, X, ChevronDown as ChevronDownIcon, Loader as Loader2 } from "lucide-react"
-import { useState, useEffect, useCallback } from "react"
-import { supabase } from "@/lib/supabase"
+import { GraduationCap, Plus, Edit, Trash2, ChevronUp, ChevronDown, Check, X } from "lucide-react"
+import { useState } from "react"
 
 interface Education {
   id: number
@@ -55,84 +52,6 @@ export function EducationSection({ isEditing }: EducationSectionProps) {
     period: '',
     description: ''
   })
-
-  // Study fields state
-  const [studyFields, setStudyFields] = useState<{ id: number; name_ru: string }[]>([])
-  const [isFetchingStudyFields, setIsFetchingStudyFields] = useState(false)
-  const [newDegreeSearchInput, setNewDegreeSearchInput] = useState('')
-  const [editDegreeSearchInput, setEditDegreeSearchInput] = useState('')
-  const [openNewDegreeSelect, setOpenNewDegreeSelect] = useState(false)
-  const [openEditDegreeSelect, setOpenEditDegreeSelect] = useState(false)
-
-  // Universities state
-  const [universitySearchQuery, setUniversitySearchQuery] = useState('')
-  const [filteredUniversities, setFilteredUniversities] = useState<{ id: number; name_ru: string }[]>([])
-  const [isFetchingUniversities, setIsFetchingUniversities] = useState(false)
-  const [openNewUniversitySelect, setOpenNewUniversitySelect] = useState(false)
-  const [openEditUniversitySelect, setOpenEditUniversitySelect] = useState(false)
-
-  // Fetch study fields on component mount
-  useEffect(() => {
-    const fetchStudyFields = async () => {
-      setIsFetchingStudyFields(true)
-      try {
-        const { data, error } = await supabase
-          .from('list_study_field')
-          .select('id, name_ru')
-          .order('name_ru', { ascending: true })
-
-        if (error) {
-          console.error('Error fetching study fields:', error)
-        } else {
-          setStudyFields(data || [])
-        }
-      } catch (error) {
-        console.error('Error fetching study fields:', error)
-      } finally {
-        setIsFetchingStudyFields(false)
-      }
-    }
-
-    fetchStudyFields()
-  }, [])
-
-  // Debounced university search
-  useEffect(() => {
-    const timeoutId = setTimeout(async () => {
-      if (universitySearchQuery.length >= 3) {
-        setIsFetchingUniversities(true)
-        try {
-          const { data, error } = await supabase
-            .from('list_university')
-            .select('id, name_ru')
-            .or(`name.ilike.%${universitySearchQuery}%,name_ru.ilike.%${universitySearchQuery}%`)
-            .limit(50)
-
-          if (error) {
-            console.error('Error searching universities:', error)
-          } else {
-            setFilteredUniversities(data || [])
-          }
-        } catch (error) {
-          console.error('Error searching universities:', error)
-        } finally {
-          setIsFetchingUniversities(false)
-        }
-      } else {
-        setFilteredUniversities([])
-      }
-    }, 500)
-
-    return () => clearTimeout(timeoutId)
-  }, [universitySearchQuery])
-
-  // Filter study fields based on search input
-  const getFilteredStudyFields = useCallback((searchInput: string) => {
-    if (!searchInput) return studyFields
-    return studyFields.filter(field => 
-      field.name_ru?.toLowerCase().includes(searchInput.toLowerCase())
-    )
-  }, [studyFields])
 
   const moveUp = (index: number) => {
     if (index === 0) return
@@ -184,7 +103,6 @@ export function EducationSection({ isEditing }: EducationSectionProps) {
       period: edu.period,
       description: edu.description
     })
-    setEditDegreeSearchInput('')
   }
 
   const saveEdit = (id: number) => {
