@@ -1,20 +1,29 @@
-import { Home, User, Settings, MessageCircle, Bell, Search, Bookmark, Users } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Link, useLocation } from "react-router-dom"
-import { useAuthContext } from "@/components/auth-provider"
+import {
+  Home,
+  User,
+  Settings,
+  MessageCircle,
+  Bell,
+  Search,
+  Bookmark,
+  Users,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Link, useLocation } from "react-router-dom";
+import { useAuthContext } from "@/components/auth-provider";
 
 export function Navigation() {
-  const location = useLocation()
-  const { user, profile, isAuthenticated, loading } = useAuthContext()
+  const location = useLocation();
+  const { user, profile, isAuthenticated, loading } = useAuthContext();
 
   // Determine profile path based on authentication status
   const getProfilePath = () => {
     if (isAuthenticated && profile?.username) {
-      return `/${profile.username}`
+      return `/${profile.username}`;
     }
-    return '/auth'
-  }
+    return "/auth";
+  };
 
   // Generate navigation items dynamically to ensure fresh profile path
   const navigationItems = [
@@ -26,7 +35,7 @@ export function Navigation() {
     { icon: Users, label: "Communities", path: "/communities" },
     { icon: User, label: "Profile", path: getProfilePath() },
     { icon: Settings, label: "Settings", path: "/settings" },
-  ]
+  ];
 
   return (
     <aside className="hidden lg:flex lg:w-64 xl:w-72 flex-col h-full bg-background/30 overflow-hidden">
@@ -38,7 +47,9 @@ export function Navigation() {
               <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center">
                 <div className="h-4 w-4 rounded bg-white"></div>
               </div>
-              <span className="text-xl font-bold text-foreground">SocialNet</span>
+              <span className="text-xl font-bold text-foreground">
+                SocialNet
+              </span>
             </div>
           </CardContent>
         </Card>
@@ -55,7 +66,7 @@ export function Navigation() {
                 variant={location.pathname === item.path ? "default" : "ghost"}
                 className={`w-full justify-start h-12 px-4 ${
                   location.pathname === item.path
-                    ? "bg-blue-500 hover:bg-blue-600 text-white" 
+                    ? "bg-blue-500 hover:bg-blue-600 text-white"
                     : "hover:bg-accent/50 transition-colors"
                 }`}
                 asChild
@@ -89,10 +100,13 @@ export function Navigation() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-foreground truncate">
-                    {profile?.name || user.user_metadata?.name || user.email?.split('@')[0] || 'User'}
+                    {profile?.name ||
+                      user.user_metadata?.name ||
+                      user.email?.split("@")[0] ||
+                      "User"}
                   </p>
                   <p className="text-xs text-muted-foreground truncate">
-                    {profile?.username ? `@${profile.username}` : ''}
+                    {profile?.username ? `@${profile.username}` : ""}
                   </p>
                 </div>
               </div>
@@ -117,10 +131,10 @@ export function Navigation() {
         {/* Version Display */}
         <div className="px-4 pb-4">
           <p className="text-xs text-muted-foreground text-center">
-            v{(window as any).APP_VERSION || '1.0.0'}
+            v{(window as any).APP_VERSION || "1.0.0"}
           </p>
         </div>
       </div>
     </aside>
-  )
+  );
 }

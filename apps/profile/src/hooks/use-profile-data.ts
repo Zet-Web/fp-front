@@ -1,26 +1,27 @@
-import { useState, useEffect, useCallback } from 'react'
-import { useAuthContext } from '@/components/auth-provider'
+import { useState, useEffect, useCallback } from "react";
+import { useAuthContext } from "@/components/auth-provider";
+import { FPApi } from "@/lib/api";
 
 interface UserProfile {
-  id: string
-  name: string | null
-  username: string | null
-  avatar_url: string | null
-  about: string | null
-  telegram_username: string | null
-  profile_type: string | null
-  badge: string[] | null
-  contact_info: any[] | null
-  created_at?: string
+  id: string;
+  name: string | null;
+  username: string | null;
+  avatar_url: string | null;
+  about: string | null;
+  telegram_username: string | null;
+  profile_type: string | null;
+  badge: string[] | null;
+  contact_info: unknown[] | null;
+  created_at?: string;
 }
 
 interface ProfileState {
-  user: UserProfile | null
-  isLoading: boolean
-  error: string | null
-  isOwnProfile: boolean
-  requestedUsername: string | null
-  redirectPath: string | null
+  user: UserProfile | null;
+  isLoading: boolean;
+  error: string | null;
+  isOwnProfile: boolean;
+  requestedUsername: string | null;
+  redirectPath: string | null;
 }
 
 export function useProfileData() {
@@ -30,231 +31,196 @@ export function useProfileData() {
     error: null,
     isOwnProfile: false,
     requestedUsername: null,
-    redirectPath: null
-  })
+    redirectPath: null,
+  });
 
-  // Get authenticated user data
-  const { user: authUser, profile: authProfile, isAuthenticated } = useAuthContext()
+  const { profile: authProfile, isAuthenticated } = useAuthContext();
 
-  // Extract username from URL
   const extractUsernameFromUrl = useCallback((): string | null => {
-    const urlParams = new URLSearchParams(window.location.search)
-    const username = urlParams.get('username')
-    
+    const urlParams = new URLSearchParams(window.location.search);
+    const username = urlParams.get("username");
+
     if (username) {
-      console.log('Extracted username from query params:', username)
-      return username
+      console.log("Extracted username from query params:", username);
+      return username;
     }
 
-    // Fallback: try to extract from path if no query param
-    const pathSegments = window.location.pathname.split('/').filter(Boolean)
+    const pathSegments = window.location.pathname.split("/").filter(Boolean);
     if (pathSegments.length > 0) {
-      const lastSegment = pathSegments[pathSegments.length - 1]
-      // Simple validation for username format
+      const lastSegment = pathSegments[pathSegments.length - 1];
       if (/^[a-zA-Z0-9_-]{3,30}$/.test(lastSegment)) {
-        console.log('Extracted username from path:', lastSegment)
-        return lastSegment
+        return lastSegment;
       }
     }
 
-    console.log('No username found in URL')
-    return null
-  }, [])
+    return null;
+  }, []);
 
-  // Direct fetch from Edge Function
-  const fetchProfileByUsername = async (username: string): Promise<UserProfile | null> => {
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-    const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
-
-    if (!supabaseUrl || !supabaseAnonKey) {
-      throw new Error('Supabase configuration missing. Please check your environment variables.')
-    }
-
-    const edgeFunctionUrl = `${supabaseUrl}/functions/v1/fetch-profile-by-username`
-    
-    console.log('Fetching profile for username:', username)
-    console.log('Edge Function URL:', edgeFunctionUrl)
-
+  const fetchProfileByUsername = async (
+    username: string
+  ): Promise<UserProfile | null> => {
     try {
-      const response = await fetch(edgeFunctionUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${supabaseAnonKey}`,
-        },
-        body: JSON.stringify({ username })
-      })
-
-      console.log('Edge Function response status:', response.status)
-
-      if (!response.ok) {
-        const errorText = await response.text()
-        console.error('Edge Function error response:', errorText)
-        throw new Error(`HTTP ${response.status}: ${errorText}`)
-      }
-
-      const data = await response.json()
-      console.log('Edge Function response data:', data)
-
-      return data.profile || null
+      const response = await FPApi.axios.get(
+        `/profile/by-username/${username}`
+      );
+      const data = await response.data;
+      return data || null;
     } catch (error) {
-      console.error('Error fetching profile:', error)
-      throw error
+      console.error("Error fetching profile:", error);
+      throw error;
     }
-  }
+  };
 
   useEffect(() => {
     const initializeProfileData = async () => {
       try {
-        const requestedUsername = extractUsernameFromUrl()
-        
-        setProfileState(prev => ({
+        const requestedUsername =
+          isAuthenticated && !!authProfile
+            ? authProfile.username
+            : extractUsernameFromUrl();
+
+        setProfileState((prev) => ({
           ...prev,
           requestedUsername,
           isLoading: true,
           error: null,
-          redirectPath: null
-        }))
+          redirectPath: null,
+        }));
 
         if (!requestedUsername) {
           // User navigated to /profile - redirect to their own profile if authenticated
           if (isAuthenticated && authProfile?.username) {
-            setProfileState(prev => ({
+            setProfileState((prev) => ({
               ...prev,
               isLoading: false,
-              redirectPath: `/${authProfile.username}`
-            }))
+              redirectPath: `/${authProfile.username}`,
+            }));
           } else {
-            setProfileState(prev => ({
+            setProfileState((prev) => ({
               ...prev,
               isLoading: false,
-              error: isAuthenticated ? 'Profile username not found' : 'Please sign in to view your profile'
-            }))
+              error: isAuthenticated
+                ? "Profile username not found"
+                : "Please sign in to view your profile",
+            }));
           }
         } else {
-          // User navigated to /:username - fetch that profile
-          console.log('Fetching public profile for username:', requestedUsername)
-          
           try {
-            const profileData = await fetchProfileByUsername(requestedUsername)
-            
+            const profileData = await fetchProfileByUsername(requestedUsername);
+
             if (profileData) {
-              const isOwnProfile = isAuthenticated && authProfile?.username === requestedUsername
-              
-              setProfileState(prev => ({
+              const isOwnProfile =
+                isAuthenticated && authProfile?.username === requestedUsername;
+
+              setProfileState((prev) => ({
                 ...prev,
                 user: profileData,
                 isLoading: false,
                 error: null,
-                isOwnProfile
-              }))
+                isOwnProfile,
+              }));
             } else {
               // Profile not found
-              setProfileState(prev => ({
+              setProfileState((prev) => ({
                 ...prev,
                 isLoading: false,
-                error: 'Profile not found',
-                user: null
-              }))
-
+                error: "Profile not found",
+                user: null,
+              }));
             }
           } catch (error) {
-            console.error('Failed to fetch profile:', error)
-            setProfileState(prev => ({
+            console.error("Failed to fetch profile:", error);
+            setProfileState((prev) => ({
               ...prev,
               isLoading: false,
-              error: error instanceof Error ? error.message : 'Failed to load profile'
-            }))
+              error:
+                error instanceof Error
+                  ? error.message
+                  : "Failed to load profile",
+            }));
           }
         }
       } catch (error) {
-        console.error('Failed to initialize profile data:', error)
-        setProfileState(prev => ({
+        console.error("Failed to initialize profile data:", error);
+        setProfileState((prev) => ({
           ...prev,
           isLoading: false,
-          error: 'Failed to initialize profile system'
-        }))
+          error: "Failed to initialize profile system",
+        }));
       }
-    }
+    };
 
-    initializeProfileData()
-  }, [extractUsernameFromUrl, isAuthenticated, authProfile?.username])
+    initializeProfileData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [extractUsernameFromUrl, isAuthenticated, authProfile?.username]);
 
   const updateProfile = (updatedProfile: Partial<UserProfile>) => {
     if (profileState.user && profileState.isOwnProfile) {
-      const newProfile = { ...profileState.user, ...updatedProfile }
-      
+      const newProfile = { ...profileState.user, ...updatedProfile };
+
       // Update local state
-      setProfileState(prev => ({
+      setProfileState((prev) => ({
         ...prev,
-        user: newProfile
-      }))
+        user: newProfile,
+      }));
     }
-  }
+  };
 
   const refetchProfile = async () => {
-    const currentUsername = profileState.requestedUsername
+    const currentUsername = profileState.requestedUsername;
     if (!currentUsername) {
-      console.warn('[Profile Refetch] No username available to refetch')
-      return
+      return;
     }
 
-    console.log('[Profile Refetch] Starting profile refetch for username:', currentUsername)
-
     try {
-      setProfileState(prev => ({
+      setProfileState((prev) => ({
         ...prev,
         isLoading: true,
-        error: null
-      }))
+        error: null,
+      }));
 
-      const profileData = await fetchProfileByUsername(currentUsername)
+      const profileData = await fetchProfileByUsername(currentUsername);
 
       if (profileData) {
-        const isOwnProfile = isAuthenticated && authProfile?.username === currentUsername
+        const isOwnProfile =
+          isAuthenticated && authProfile?.username === currentUsername;
 
-        console.log('[Profile Refetch] Successfully refetched profile:', {
-          username: profileData.username,
-          isOwnProfile
-        })
-
-        setProfileState(prev => ({
+        setProfileState((prev) => ({
           ...prev,
           user: profileData,
           isLoading: false,
           error: null,
-          isOwnProfile
-        }))
+          isOwnProfile,
+        }));
       } else {
-        console.warn('[Profile Refetch] Profile not found after refetch')
-        setProfileState(prev => ({
+        setProfileState((prev) => ({
           ...prev,
           isLoading: false,
-          error: 'Profile not found'
-        }))
+          error: "Profile not found",
+        }));
       }
     } catch (error) {
-      console.error('[Profile Refetch] Failed to refetch profile:', error)
-      setProfileState(prev => ({
+      setProfileState((prev) => ({
         ...prev,
         isLoading: false,
-        error: error instanceof Error ? error.message : 'Failed to reload profile'
-      }))
+        error:
+          error instanceof Error ? error.message : "Failed to reload profile",
+      }));
     }
-  }
+  };
 
   const logout = () => {
-    setProfileState(prev => ({
+    setProfileState((prev) => ({
       ...prev,
       user: null,
-      isOwnProfile: false
-    }))
-  }
+      isOwnProfile: false,
+    }));
+  };
 
   return {
     ...profileState,
     updateProfile,
     refetchProfile,
     logout,
-  }
+  };
 }
