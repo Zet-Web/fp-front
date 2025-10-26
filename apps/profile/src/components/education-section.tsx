@@ -592,7 +592,7 @@ export function EducationSection({ isEditing }: EducationSectionProps) {
                 />
               </div>
               <div className="flex gap-2">
-                <Button onClick={addEducation}>Add Education</Button>
+                <Button onClick={addEducation}>Add</Button>
                 <Button variant="outline" onClick={() => setShowAddEducationForm(false)}>
                   Cancel
                 </Button>
