@@ -1,0 +1,108 @@
+export const MONTHS = [
+  { value: '01', label: 'January' },
+  { value: '02', label: 'February' },
+  { value: '03', label: 'March' },
+  { value: '04', label: 'April' },
+  { value: '05', label: 'May' },
+  { value: '06', label: 'June' },
+  { value: '07', label: 'July' },
+  { value: '08', label: 'August' },
+  { value: '09', label: 'September' },
+  { value: '10', label: 'October' },
+  { value: '11', label: 'November' },
+  { value: '12', label: 'December' }
+] as const
+
+export function generateYears(startYear: number = 1930): string[] {
+  const currentYear = new Date().getFullYear()
+  const years: string[] = []
+  for (let year = currentYear; year >= startYear; year--) {
+    years.push(year.toString())
+  }
+  return years
+}
+
+export function getDaysInMonth(month: string, year: string): number {
+  if (!month || month === 'not-set' || !year || year === 'not-set') {
+    return 31
+  }
+  return new Date(parseInt(year), parseInt(month), 0).getDate()
+}
+
+interface FormatPeriodOptions {
+  startMonth?: string
+  startYear?: string
+  endMonth?: string
+  endYear?: string
+  isCurrent?: boolean
+}
+
+export function formatPeriod(options: FormatPeriodOptions): string {
+  const { startMonth, startYear, endMonth, endYear, isCurrent } = options
+
+  if (!startYear || startYear === 'not-set') {
+    return ''
+  }
+
+  const startMonthLabel = startMonth && startMonth !== 'not-set'
+    ? MONTHS.find(m => m.value === startMonth)?.label
+    : ''
+  const start = startMonthLabel ? `${startMonthLabel} ${startYear}` : startYear
+
+  if (isCurrent) {
+    return `${start} - Present`
+  }
+
+  if (endYear && endYear !== 'not-set') {
+    const endMonthLabel = endMonth && endMonth !== 'not-set'
+      ? MONTHS.find(m => m.value === endMonth)?.label
+      : ''
+    const end = endMonthLabel ? `${endMonthLabel} ${endYear}` : endYear
+    return `${start} - ${end}`
+  }
+
+  return start
+}
+
+export function calculateAge(birthDate: string): number | null {
+  try {
+    const parts = birthDate.split('-')
+    if (parts.length !== 3) return null
+
+    const year = parseInt(parts[0])
+    const month = parseInt(parts[1]) - 1
+    const day = parseInt(parts[2])
+
+    if (isNaN(year) || isNaN(month) || isNaN(day)) return null
+
+    const birth = new Date(year, month, day)
+    if (isNaN(birth.getTime())) return null
+
+    const today = new Date()
+    let age = today.getFullYear() - birth.getFullYear()
+    const monthDiff = today.getMonth() - birth.getMonth()
+
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+      age--
+    }
+
+    return age
+  } catch {
+    return null
+  }
+}
+
+export function adjustDayForMonth(day: string, month: string, year: string): string {
+  if (day === 'not-set' || month === 'not-set' || year === 'not-set') {
+    return day
+  }
+
+  const maxDays = getDaysInMonth(month, year)
+  const currentDay = parseInt(day)
+
+  if (currentDay > maxDays) {
+    return maxDays.toString().padStart(2, '0')
+  }
+
+  return day
+}
