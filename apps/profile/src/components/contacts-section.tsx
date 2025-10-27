@@ -1,15 +1,16 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
-import { ChevronUp, ChevronDown, ExternalLink, Copy, Plus, X } from "lucide-react"
+import { ExternalLink, Copy, Plus, X, Phone } from "lucide-react"
 import { useState, useEffect } from "react"
 import { ContactInfoEntry } from "@/types/profile"
 import { CONTACT_TYPES, getContactIcon, generateContactLink, getContactDisplayValue, validateContactEntry, getContactTypeConfig } from "@/lib/contact-utils"
 import { useToast } from "@/hooks/use-toast"
-import { supabase } from "@/lib/supabase"
+import { SectionCard } from "@/components/shared/SectionCard"
+import { SortableListControls } from "@/components/shared/SortableListControls"
+import { DeleteConfirmationDialog } from "@/components/shared/DeleteConfirmationDialog"
+import { EmptyState } from "@/components/shared/EmptyState"
 
 interface UserProfile {
   id: string
@@ -173,9 +174,10 @@ export function ContactsSection({ user, isOwnProfile, isEditing, onUpdateProfile
   const renderViewMode = () => {
     if (contactEntries.length === 0) {
       return (
-        <p className="text-muted-foreground italic text-sm">
-          No contact information available
-        </p>
+        <EmptyState
+          message="No contact information available"
+          icon={Phone}
+        />
       )
     }
 
@@ -246,50 +248,23 @@ export function ContactsSection({ user, isOwnProfile, isEditing, onUpdateProfile
           return (
             <div key={entry.id} className="border rounded-lg p-4 space-y-3">
               <div className="flex items-start justify-between gap-2">
-                <div className="flex flex-col gap-1">
-                  <div className="flex items-center gap-1">
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => moveUp(index)}
-                      disabled={index === 0}
-                      className="h-7 w-7 p-0"
-                    >
-                      <ChevronUp className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => moveDown(index)}
-                      disabled={index === contactEntries.length - 1}
-                      className="h-7 w-7 p-0"
-                    >
-                      <ChevronDown className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
+                <SortableListControls
+                  index={index}
+                  totalItems={contactEntries.length}
+                  onMoveUp={() => moveUp(index)}
+                  onMoveDown={() => moveDown(index)}
+                />
 
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
+                <DeleteConfirmationDialog
+                  title="Delete Contact"
+                  description="Are you sure you want to delete this contact entry? This action cannot be undone."
+                  onConfirm={() => removeEntry(index)}
+                  triggerButton={
                     <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive h-7 w-7 p-0">
                       <X className="w-4 h-4" />
                     </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Delete Contact</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Are you sure you want to delete this contact entry? This action cannot be undone.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction onClick={() => removeEntry(index)}>
-                        Delete
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                  }
+                />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -410,27 +385,14 @@ export function ContactsSection({ user, isOwnProfile, isEditing, onUpdateProfile
   }
 
   return (
-    <Card className="hover:shadow-lg transition-shadow duration-300">
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            Contacts
-          </div>
-          {isEditing && !showAddForm && (
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => setShowAddForm(true)}
-            >
-              <Plus className="w-4 h-4 mr-1" />
-              Add
-            </Button>
-          )}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        {isEditing ? renderEditMode() : renderViewMode()}
-      </CardContent>
-    </Card>
+    <SectionCard
+      title="Contacts"
+      icon={Phone}
+      isEditing={isEditing}
+      onAddClick={() => setShowAddForm(true)}
+      showAddButton={!showAddForm}
+    >
+      {isEditing ? renderEditMode() : renderViewMode()}
+    </SectionCard>
   )
 }

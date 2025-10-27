@@ -1,8 +1,9 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Share, MoreHorizontal, Bookmark } from "lucide-react"
+import { Share, MoreHorizontal, Bookmark, FileText } from "lucide-react"
+import { UserAvatar } from "@/components/shared/UserAvatar"
+import { VerifiedBadge } from "@/components/shared/VerifiedBadge"
+import { EmptyState } from "@/components/shared/EmptyState"
 
 interface UserProfile {
   id: string
@@ -56,28 +57,31 @@ export function PostsSection({ user, isOwnProfile }: PostsSectionProps) {
   return (
     <div className="space-y-6">
       {isOwnProfile && posts.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground mb-4">You haven't posted anything yet.</p>
-          <Button variant="outline">Create your first post</Button>
-        </div>
+        <EmptyState
+          message="You haven't posted anything yet."
+          icon={FileText}
+          actionButton={<Button variant="outline">Create your first post</Button>}
+        />
       )}
-      
+
       {!isOwnProfile && posts.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">No posts to show.</p>
-        </div>
+        <EmptyState
+          message="No posts to show."
+          icon={FileText}
+        />
       )}
       
       {posts.map((post) => (
         <Card key={post.id} className="hover:shadow-md transition-shadow duration-300">
           <CardContent className="p-4">
             <div className="flex gap-3">
-              {/* Avatar on the left */}
               <div className="flex-shrink-0">
-                <Avatar className="w-12 h-12">
-                  <AvatarImage src={user.avatar_url || undefined} alt={displayName} />
-                  <AvatarFallback>{avatarFallback}</AvatarFallback>
-                </Avatar>
+                <UserAvatar
+                  src={user.avatar_url}
+                  alt={displayName}
+                  fallback={avatarFallback}
+                  size="md"
+                />
               </div>
               
               {/* Content on the right */}
@@ -86,13 +90,7 @@ export function PostsSection({ user, isOwnProfile }: PostsSectionProps) {
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center gap-1">
                     <h3 className="font-semibold text-sm">{displayName}</h3>
-                    {user.badge?.includes('verified') && (
-                      <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
-                      <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    )}
+                    <VerifiedBadge isVerified={user.badge?.includes('verified')} size="sm" />
                     <span className="text-sm text-muted-foreground">@{displayUsername}</span>
                   </div>
                   <div className="flex items-center gap-1 flex-shrink-0">
