@@ -24,4 +24,5 @@ export interface Profile {
   contact_info: ContactInfoEntry[] | null;
   birthday: string | null;
   birthday_visibility: 'full' | 'month_day' | 'year' | null;
+  additional_info: string | null;
 }
