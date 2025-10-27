@@ -1,8 +1,8 @@
 /apps/404
 /apps/auth
 # /apps/chats
-# /apps/header
-# /apps/home
+/apps/header
+/apps/home
 # /apps/mobileNav
 # /apps/navigation
 # /apps/profile
