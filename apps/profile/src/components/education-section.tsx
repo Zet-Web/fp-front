@@ -6,6 +6,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Checkbox } from "@/components/ui/checkbox"
 import { GraduationCap, Plus, Edit, Trash2, ChevronUp, ChevronDown, Check, X, ChevronDownIcon, Loader2 } from "lucide-react"
 import { useState, useEffect, useCallback } from "react"
 import { supabase } from "@/lib/supabase"
@@ -15,6 +17,11 @@ interface Education {
   degree: string
   school: string
   period: string
+  start_month?: string
+  start_year?: string
+  end_month?: string
+  end_year?: string
+  is_current?: boolean
   description: string
 }
 
@@ -47,12 +54,22 @@ export function EducationSection({ isEditing }: EducationSectionProps) {
     degree: '',
     school: '',
     period: '',
+    start_month: 'not-set',
+    start_year: 'not-set',
+    end_month: 'not-set',
+    end_year: 'not-set',
+    is_current: false,
     description: ''
   })
   const [editForm, setEditForm] = useState({
     degree: '',
     school: '',
     period: '',
+    start_month: 'not-set',
+    start_year: 'not-set',
+    end_month: 'not-set',
+    end_year: 'not-set',
+    is_current: false,
     description: ''
   })
 
@@ -129,10 +146,57 @@ export function EducationSection({ isEditing }: EducationSectionProps) {
   // Filter study fields based on search input
   const getFilteredStudyFields = useCallback((searchInput: string) => {
     if (!searchInput) return studyFields
-    return studyFields.filter(field => 
+    return studyFields.filter(field =>
       field.name_ru?.toLowerCase().includes(searchInput.toLowerCase())
     )
   }, [studyFields])
+
+  const months = [
+    { value: '01', label: 'January' },
+    { value: '02', label: 'February' },
+    { value: '03', label: 'March' },
+    { value: '04', label: 'April' },
+    { value: '05', label: 'May' },
+    { value: '06', label: 'June' },
+    { value: '07', label: 'July' },
+    { value: '08', label: 'August' },
+    { value: '09', label: 'September' },
+    { value: '10', label: 'October' },
+    { value: '11', label: 'November' },
+    { value: '12', label: 'December' }
+  ]
+
+  const generateYears = () => {
+    const currentYear = new Date().getFullYear()
+    const years = []
+    for (let year = currentYear; year >= 1930; year--) {
+      years.push(year.toString())
+    }
+    return years
+  }
+
+  const formatPeriod = (edu: Education) => {
+    if (edu.start_year && edu.start_year !== 'not-set') {
+      const startMonth = edu.start_month !== 'not-set' && edu.start_month ? months.find(m => m.value === edu.start_month)?.label : ''
+      const startYear = edu.start_year
+      const start = startMonth ? `${startMonth} ${startYear}` : startYear
+
+      if (edu.is_current) {
+        return `${start} - Present`
+      }
+
+      if (edu.end_year && edu.end_year !== 'not-set') {
+        const endMonth = edu.end_month !== 'not-set' && edu.end_month ? months.find(m => m.value === edu.end_month)?.label : ''
+        const endYear = edu.end_year
+        const end = endMonth ? `${endMonth} ${endYear}` : endYear
+        return `${start} - ${end}`
+      }
+
+      return start
+    }
+
+    return edu.period || ''
+  }
 
   const moveUp = (index: number) => {
     if (index === 0) return
@@ -166,6 +230,11 @@ export function EducationSection({ isEditing }: EducationSectionProps) {
         degree: '',
         school: '',
         period: '',
+        start_month: 'not-set',
+        start_year: 'not-set',
+        end_month: 'not-set',
+        end_year: 'not-set',
+        is_current: false,
         description: ''
       })
       setShowAddEducationForm(false)
@@ -182,6 +251,11 @@ export function EducationSection({ isEditing }: EducationSectionProps) {
       degree: edu.degree,
       school: edu.school,
       period: edu.period,
+      start_month: edu.start_month || 'not-set',
+      start_year: edu.start_year || 'not-set',
+      end_month: edu.end_month || 'not-set',
+      end_year: edu.end_year || 'not-set',
+      is_current: edu.is_current || false,
       description: edu.description
     })
     setEditDegreeSearchInput('')
@@ -200,6 +274,11 @@ export function EducationSection({ isEditing }: EducationSectionProps) {
       degree: '',
       school: '',
       period: '',
+      start_month: 'not-set',
+      start_year: 'not-set',
+      end_month: 'not-set',
+      end_year: 'not-set',
+      is_current: false,
       description: ''
     })
   }
@@ -378,14 +457,92 @@ export function EducationSection({ isEditing }: EducationSectionProps) {
                         </PopoverContent>
                       </Popover>
                     </div>
-                    <div>
-                      <Label htmlFor="edit-edu-period">Period</Label>
-                      <Input
-                        id="edit-edu-period"
-                        value={editForm.period}
-                        onChange={(e) => setEditForm(prev => ({ ...prev, period: e.target.value }))}
-                        placeholder="2016 - 2020"
+                  </div>
+                  <div className="space-y-3">
+                    <Label>Period (Optional)</Label>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                      <div>
+                        <Label htmlFor="edit-edu-start-month" className="text-xs text-muted-foreground">Start Month</Label>
+                        <Select value={editForm.start_month} onValueChange={(value) => setEditForm(prev => ({ ...prev, start_month: value }))}>
+                          <SelectTrigger id="edit-edu-start-month">
+                            <SelectValue placeholder="Month" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="not-set">Not set</SelectItem>
+                            {months.map((month) => (
+                              <SelectItem key={month.value} value={month.value}>
+                                {month.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label htmlFor="edit-edu-start-year" className="text-xs text-muted-foreground">Start Year</Label>
+                        <Select value={editForm.start_year} onValueChange={(value) => setEditForm(prev => ({ ...prev, start_year: value }))}>
+                          <SelectTrigger id="edit-edu-start-year">
+                            <SelectValue placeholder="Year" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="not-set">Not set</SelectItem>
+                            {generateYears().map((year) => (
+                              <SelectItem key={year} value={year}>
+                                {year}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label htmlFor="edit-edu-end-month" className="text-xs text-muted-foreground">End Month</Label>
+                        <Select
+                          value={editForm.end_month}
+                          onValueChange={(value) => setEditForm(prev => ({ ...prev, end_month: value }))}
+                          disabled={editForm.is_current}
+                        >
+                          <SelectTrigger id="edit-edu-end-month">
+                            <SelectValue placeholder="Month" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="not-set">Not set</SelectItem>
+                            {months.map((month) => (
+                              <SelectItem key={month.value} value={month.value}>
+                                {month.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label htmlFor="edit-edu-end-year" className="text-xs text-muted-foreground">End Year</Label>
+                        <Select
+                          value={editForm.end_year}
+                          onValueChange={(value) => setEditForm(prev => ({ ...prev, end_year: value }))}
+                          disabled={editForm.is_current}
+                        >
+                          <SelectTrigger id="edit-edu-end-year">
+                            <SelectValue placeholder="Year" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="not-set">Not set</SelectItem>
+                            {generateYears().map((year) => (
+                              <SelectItem key={year} value={year}>
+                                {year}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="edit-edu-is-current"
+                        checked={editForm.is_current}
+                        onCheckedChange={(checked) => setEditForm(prev => ({ ...prev, is_current: checked as boolean }))}
                       />
+                      <Label htmlFor="edit-edu-is-current" className="text-sm font-normal cursor-pointer">
+                        I currently study here
+                      </Label>
                     </div>
                   </div>
                   <div>
@@ -404,7 +561,7 @@ export function EducationSection({ isEditing }: EducationSectionProps) {
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
                     <h3 className="font-semibold text-lg">{edu.degree}</h3>
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-muted-foreground">{edu.period}</span>
+                      <span className="text-sm text-muted-foreground">{formatPeriod(edu)}</span>
                       {isEditing && (
                         <div className="flex gap-1">
                           <Button
@@ -571,14 +728,92 @@ export function EducationSection({ isEditing }: EducationSectionProps) {
                     </PopoverContent>
                   </Popover>
                 </div>
-                <div>
-                  <Label htmlFor="edu-period">Period</Label>
-                  <Input
-                    id="edu-period"
-                    value={newEducation.period}
-                    onChange={(e) => setNewEducation(prev => ({ ...prev, period: e.target.value }))}
-                    placeholder="2016 - 2020"
+              </div>
+              <div className="space-y-3">
+                <Label>Period (Optional)</Label>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                  <div>
+                    <Label htmlFor="new-edu-start-month" className="text-xs text-muted-foreground">Start Month</Label>
+                    <Select value={newEducation.start_month} onValueChange={(value) => setNewEducation(prev => ({ ...prev, start_month: value }))}>
+                      <SelectTrigger id="new-edu-start-month">
+                        <SelectValue placeholder="Month" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="not-set">Not set</SelectItem>
+                        {months.map((month) => (
+                          <SelectItem key={month.value} value={month.value}>
+                            {month.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="new-edu-start-year" className="text-xs text-muted-foreground">Start Year</Label>
+                    <Select value={newEducation.start_year} onValueChange={(value) => setNewEducation(prev => ({ ...prev, start_year: value }))}>
+                      <SelectTrigger id="new-edu-start-year">
+                        <SelectValue placeholder="Year" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="not-set">Not set</SelectItem>
+                        {generateYears().map((year) => (
+                          <SelectItem key={year} value={year}>
+                            {year}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="new-edu-end-month" className="text-xs text-muted-foreground">End Month</Label>
+                    <Select
+                      value={newEducation.end_month}
+                      onValueChange={(value) => setNewEducation(prev => ({ ...prev, end_month: value }))}
+                      disabled={newEducation.is_current}
+                    >
+                      <SelectTrigger id="new-edu-end-month">
+                        <SelectValue placeholder="Month" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="not-set">Not set</SelectItem>
+                        {months.map((month) => (
+                          <SelectItem key={month.value} value={month.value}>
+                            {month.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="new-edu-end-year" className="text-xs text-muted-foreground">End Year</Label>
+                    <Select
+                      value={newEducation.end_year}
+                      onValueChange={(value) => setNewEducation(prev => ({ ...prev, end_year: value }))}
+                      disabled={newEducation.is_current}
+                    >
+                      <SelectTrigger id="new-edu-end-year">
+                        <SelectValue placeholder="Year" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="not-set">Not set</SelectItem>
+                        {generateYears().map((year) => (
+                          <SelectItem key={year} value={year}>
+                            {year}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="new-edu-is-current"
+                    checked={newEducation.is_current}
+                    onCheckedChange={(checked) => setNewEducation(prev => ({ ...prev, is_current: checked as boolean }))}
                   />
+                  <Label htmlFor="new-edu-is-current" className="text-sm font-normal cursor-pointer">
+                    I currently study here
+                  </Label>
                 </div>
               </div>
               <div>
