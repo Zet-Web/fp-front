@@ -1,3 +1,5 @@
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -5,8 +7,6 @@ import { MessageCircle, UserPlus, Loader as Loader2, MapPin, Camera, Upload } fr
 import { useState } from "react"
 import { LocationSelector } from "./LocationSelector"
 import { LocationItem } from "../types/location"
-import { UserAvatar } from "@/components/shared/UserAvatar"
-import { VerifiedBadge } from "@/components/shared/VerifiedBadge"
 
 interface UserProfile {
   id: string
@@ -153,13 +153,10 @@ export function HeroSection({
       
       <div className="relative px-6 pb-4">
         <div className="relative inline-block -mt-20 z-10">
-          <UserAvatar
-            src={user.avatar_url}
-            alt={displayName}
-            fallback={avatarFallback}
-            size="2xl"
-            className="border-4 border-background shadow-xl"
-          />
+          <Avatar className="w-40 h-40 border-4 border-background shadow-xl">
+            <AvatarImage src={user.avatar_url || undefined} alt="Profile" />
+            <AvatarFallback className="text-2xl text-gray-700">{avatarFallback}</AvatarFallback>
+          </Avatar>
           
           {isEditing && (
             <div className="absolute bottom-2 right-2">
@@ -205,7 +202,13 @@ export function HeroSection({
               ) : (
                 <h1 className="text-3xl font-bold">{displayName}</h1>
               )}
-              <VerifiedBadge isVerified={user.badge?.includes('verified')} size="md" />
+              {user.badge?.includes('verified') && (
+                <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
+                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+              </div>
+              )}
             </div>
             
             <p className="text-muted-foreground mb-2">@{displayUsername}</p>

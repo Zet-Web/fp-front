@@ -1,15 +1,13 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Briefcase, Plus, Edit, Trash2 } from "lucide-react"
+import { Briefcase, Plus, Edit, Trash2, ChevronUp, ChevronDown, Check, X } from "lucide-react"
 import { useState } from "react"
-import { SectionCard } from "@/components/shared/SectionCard"
-import { SortableListControls } from "@/components/shared/SortableListControls"
-import { InlineEditActions } from "@/components/shared/InlineEditActions"
-import { DeleteConfirmationDialog } from "@/components/shared/DeleteConfirmationDialog"
 
 interface Experience {
   id: number
@@ -225,29 +223,70 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
   }
 
   return (
-    <SectionCard
-      title="Professional Experience"
-      icon={Briefcase}
-      isEditing={isEditing}
-      onAddClick={() => setShowAddExperienceForm(true)}
-      showAddButton={!showAddExperienceForm}
-    >
+    <Card className="hover:shadow-lg transition-shadow duration-300">
+      <CardHeader>
+        <CardTitle className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Briefcase className="w-5 h-5" />
+            Professional Experience
+          </div>
+          {isEditing && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setShowAddExperienceForm(true)}
+            >
+              <Plus className="w-4 h-4 mr-1" />
+              Add
+            </Button>
+          )}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
         <div className="space-y-6">
           {experiences.map((exp, index) => (
             <div key={exp.id} className="border-l-2 border-primary/20 pl-4">
               {editingExperience === exp.id ? (
                 <div className="space-y-4 border rounded-lg p-4">
                   <div className="flex items-center justify-between">
-                    <SortableListControls
-                      index={index}
-                      totalItems={experiences.length}
-                      onMoveUp={() => moveUp(index)}
-                      onMoveDown={() => moveDown(index)}
-                    />
-                    <InlineEditActions
-                      onSave={() => saveEdit(exp.id)}
-                      onCancel={cancelEdit}
-                    />
+                    <div className="flex items-center gap-1">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => moveUp(index)}
+                        disabled={index === 0}
+                        className="h-7 w-7 p-0"
+                      >
+                        <ChevronUp className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => moveDown(index)}
+                        disabled={index === experiences.length - 1}
+                        className="h-7 w-7 p-0"
+                      >
+                        <ChevronDown className="w-4 h-4" />
+                      </Button>
+                    </div>
+                    <div className="flex gap-1">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => saveEdit(exp.id)}
+                        className="h-7 w-7 p-0 text-green-600 hover:text-green-700"
+                      >
+                        <Check className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={cancelEdit}
+                        className="h-7 w-7 p-0"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -375,25 +414,48 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
                       <span className="text-sm text-muted-foreground">{formatPeriod(exp)}</span>
                       {isEditing && (
                         <div className="flex gap-1">
-                          <SortableListControls
-                            index={index}
-                            totalItems={experiences.length}
-                            onMoveUp={() => moveUp(index)}
-                            onMoveDown={() => moveDown(index)}
-                          />
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => moveUp(index)}
+                            disabled={index === 0}
+                            className="h-7 w-7 p-0"
+                          >
+                            <ChevronUp className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => moveDown(index)}
+                            disabled={index === experiences.length - 1}
+                            className="h-7 w-7 p-0"
+                          >
+                            <ChevronDown className="w-4 h-4" />
+                          </Button>
                           <Button size="sm" variant="ghost" onClick={() => startEditing(exp)} className="h-7 w-7 p-0">
                             <Edit className="w-4 h-4" />
                           </Button>
-                          <DeleteConfirmationDialog
-                            title="Delete Experience"
-                            description="Are you sure you want to delete this work experience? This action cannot be undone."
-                            onConfirm={() => removeExperience(exp.id)}
-                            triggerButton={
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
                               <Button size="sm" variant="ghost" className="h-7 w-7 p-0">
                                 <Trash2 className="w-4 h-4" />
                               </Button>
-                            }
-                          />
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Delete Experience</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Are you sure you want to delete this work experience? This action cannot be undone.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => removeExperience(exp.id)}>
+                                  Delete
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
                         </div>
                       )}
                     </div>
@@ -541,6 +603,7 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
             </div>
           )}
         </div>
-    </SectionCard>
+      </CardContent>
+    </Card>
   )
 }

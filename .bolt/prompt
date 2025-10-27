@@ -30,4 +30,3 @@ Rules:
 4. File Change Log: When providing a plan or after updated code, write list of files to be created, edited, or removed, including their full paths.
 5. Minor Edits: If a change is very small (one or two lines of code in one or two files), provide the exact, ready-to-use code lines for me to copy and paste.
 6. Don't change /ignore file. You can onle recommend me what add or how update it.
-7. Ensure first rows of files descibe this code file (in 1 sentence).

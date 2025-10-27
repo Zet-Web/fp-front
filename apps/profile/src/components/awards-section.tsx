@@ -1,14 +1,11 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { Award, Plus, Edit, Trash2 } from "lucide-react"
+import { Award, Plus, Edit, Trash2, ChevronUp, ChevronDown, Check, X } from "lucide-react"
 import { useState } from "react"
-import { SectionCard } from "@/components/shared/SectionCard"
-import { SortableListControls } from "@/components/shared/SortableListControls"
-import { InlineEditActions } from "@/components/shared/InlineEditActions"
-import { DeleteConfirmationDialog } from "@/components/shared/DeleteConfirmationDialog"
-import { EmptyState } from "@/components/shared/EmptyState"
 
 interface AwardType {
   id: number
@@ -109,20 +106,31 @@ export function AwardsSection({ isEditing }: AwardsSectionProps) {
   }
 
   return (
-    <SectionCard
-      title="Awards and Achievements"
-      icon={Award}
-      isEditing={isEditing}
-      onAddClick={() => setShowAddAwardForm(true)}
-      showAddButton={!showAddAwardForm}
-      className="mb-8"
-    >
+    <Card className="mb-8 hover:shadow-lg transition-shadow duration-300">
+      <CardHeader>
+        <CardTitle className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Award className="w-5 h-5" />
+            Awards and Achievements
+          </div>
+          {isEditing && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setShowAddAwardForm(true)}
+            >
+              <Plus className="w-4 h-4 mr-1" />
+              Add
+            </Button>
+          )}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
         <div className="space-y-6">
           {awards.length === 0 && !isEditing && (
-            <EmptyState
-              message="No awards or achievements added yet."
-              icon={Award}
-            />
+            <p className="text-muted-foreground italic">
+              No awards or achievements added yet.
+            </p>
           )}
 
           {awards.map((award, index) => (
@@ -130,16 +138,44 @@ export function AwardsSection({ isEditing }: AwardsSectionProps) {
               {editingAward === award.id ? (
                 <div className="space-y-4 border rounded-lg p-4">
                   <div className="flex items-center justify-between">
-                    <SortableListControls
-                      index={index}
-                      totalItems={awards.length}
-                      onMoveUp={() => moveUp(index)}
-                      onMoveDown={() => moveDown(index)}
-                    />
-                    <InlineEditActions
-                      onSave={() => saveEdit(award.id)}
-                      onCancel={cancelEdit}
-                    />
+                    <div className="flex items-center gap-1">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => moveUp(index)}
+                        disabled={index === 0}
+                        className="h-7 w-7 p-0"
+                      >
+                        <ChevronUp className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => moveDown(index)}
+                        disabled={index === awards.length - 1}
+                        className="h-7 w-7 p-0"
+                      >
+                        <ChevronDown className="w-4 h-4" />
+                      </Button>
+                    </div>
+                    <div className="flex gap-1">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => saveEdit(award.id)}
+                        className="h-7 w-7 p-0 text-green-600 hover:text-green-700"
+                      >
+                        <Check className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={cancelEdit}
+                        className="h-7 w-7 p-0"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -189,25 +225,48 @@ export function AwardsSection({ isEditing }: AwardsSectionProps) {
                       <span className="text-sm text-muted-foreground">{award.date}</span>
                       {isEditing && (
                         <div className="flex gap-1">
-                          <SortableListControls
-                            index={index}
-                            totalItems={awards.length}
-                            onMoveUp={() => moveUp(index)}
-                            onMoveDown={() => moveDown(index)}
-                          />
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => moveUp(index)}
+                            disabled={index === 0}
+                            className="h-7 w-7 p-0"
+                          >
+                            <ChevronUp className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => moveDown(index)}
+                            disabled={index === awards.length - 1}
+                            className="h-7 w-7 p-0"
+                          >
+                            <ChevronDown className="w-4 h-4" />
+                          </Button>
                           <Button size="sm" variant="ghost" onClick={() => startEditing(award)} className="h-7 w-7 p-0">
                             <Edit className="w-4 h-4" />
                           </Button>
-                          <DeleteConfirmationDialog
-                            title="Delete Award"
-                            description="Are you sure you want to delete this award? This action cannot be undone."
-                            onConfirm={() => removeAward(award.id)}
-                            triggerButton={
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
                               <Button size="sm" variant="ghost" className="h-7 w-7 p-0">
                                 <Trash2 className="w-4 h-4" />
                               </Button>
-                            }
-                          />
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Delete Award</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Are you sure you want to delete this award? This action cannot be undone.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => removeAward(award.id)}>
+                                  Delete
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
                         </div>
                       )}
                     </div>
@@ -270,6 +329,7 @@ export function AwardsSection({ isEditing }: AwardsSectionProps) {
             </div>
           )}
         </div>
-    </SectionCard>
+      </CardContent>
+    </Card>
   )
 }
