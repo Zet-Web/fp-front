@@ -1,12 +1,12 @@
 /apps/404
 /apps/auth
-# /apps/chats
+/apps/chats
 /apps/header
 /apps/home
-# /apps/mobileNav
-# /apps/navigation
+/apps/mobileNav
+/apps/navigation
 # /apps/profile
-# /apps/settings
+/apps/settings
 
 # /supabase/
 
