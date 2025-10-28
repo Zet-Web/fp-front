@@ -27,16 +27,12 @@ export function Navigation() {
     <aside className="hidden lg:flex lg:w-64 xl:w-72 flex-col h-full bg-background/30 overflow-hidden">
       <div className="flex-1 p-4 space-y-4 overflow-y-auto">
         <Card className="shadow-sm">
-          <CardHeader className="pb-0">
-  <Button variant="ghost" className="w-full justify-start h-12 px-4 hover:bg-transparent">
-    <Link to="/" className="flex items-center space-x-3">
-      <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center">
-        <div className="h-4 w-4 rounded bg-white"></div>
-      </div>
-      <span className="text-xl font-bold text-foreground">SocialNet</span>
-    </Link>
-  </Button>
-</CardHeader>
+          <div className="px-4 pt-4 pb-2 flex items-center space-x-3">
+  <div className="h-9 w-9 rounded-full bg-blue-500 flex items-center justify-center">
+    <div className="h-4.5 w-4.5 rounded bg-white"></div>
+  </div>
+  <h1 className="text-xl font-extrabold tracking-tight text-foreground">SocialNet</h1>
+</div>
           <CardContent className="space-y-2">
             {/* Brand as first nav item */}
             {/*<div className="flex items-center space-x-3 px-4 py-2">
