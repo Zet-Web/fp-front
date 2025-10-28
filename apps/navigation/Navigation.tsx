@@ -10,7 +10,7 @@ import {
 import { Link, useLocation } from "react-router-dom"
 import { useAuthContext } from "@/components/auth-provider"
 import { useTheme } from "next-themes"
-import { desktopNavigationItems, createButtonConfig } from "@/shared-src/lib/navigation-config"
+import { desktopNavigationItems, createButtonConfig } from "@shared/lib/navigation-config"
 
 export function Navigation() {
   const location = useLocation()

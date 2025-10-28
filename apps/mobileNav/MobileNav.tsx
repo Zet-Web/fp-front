@@ -10,7 +10,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import { desktopNavigationItems, mobileBottomNavigationItems } from "@/shared-src/lib/navigation-config"
+import { desktopNavigationItems, mobileBottomNavigationItems } from "@shared/lib/navigation-config"
 
 export function MobileNav() {
   const location = useLocation()
