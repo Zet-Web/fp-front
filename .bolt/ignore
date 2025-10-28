@@ -12,3 +12,4 @@ apps/settings
 supabase/
 
 # src/components
+# shared-src
