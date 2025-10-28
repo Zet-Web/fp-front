@@ -36,7 +36,7 @@ export function Navigation() {
     </Link>
     
     {/* Separator after brand */}
-    <div className="h-px bg-border/50 mx-2"></div>
+    <div className="h-px bg-border mx-2"></div>
 </CardHeader>
           <CardContent className="space-y-2">
             {/* Navigation items */}
