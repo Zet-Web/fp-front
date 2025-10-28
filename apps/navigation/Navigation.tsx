@@ -16,7 +16,6 @@ export function Navigation() {
   const { user, profile, isAuthenticated, loading } = useAuthContext()
   const { setTheme } = useTheme()
 
-  // Determine profile path based on authentication status
   const getProfilePath = () => {
     if (isAuthenticated && profile?.username) {
       return `/${profile.username}`
@@ -24,7 +23,6 @@ export function Navigation() {
     return '/auth'
   }
 
-  // Generate navigation items dynamically to ensure fresh profile path
   const navigationItems = [
     { icon: Home, label: "Home", path: "/" },
     { icon: Search, label: "Explore", path: "/explore" },
@@ -37,26 +35,17 @@ export function Navigation() {
   ]
 
   return (
-    <aside className="hidden lg:flex lg:w-64 xl:w-72 flex-col h-full bg-background/30 overflow-hidden">
-      <div className="flex-1 p-4 space-y-4 overflow-y-auto">
-        {/* Brand Card */}
-        <Card className="shadow-sm">
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-3">
-              <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center">
-                <div className="h-4 w-4 rounded bg-white"></div>
-              </div>
-              <span className="text-xl font-bold text-foreground">SocialNet</span>
+    <aside className="hidden lg:flex lg:w-64 xl:w-72 flex-col h-screen sticky top-0 bg-background/30">
+      <Card className="h-full shadow-sm flex flex-col overflow-hidden">
+        <CardContent className="p-4 flex-1 flex flex-col overflow-hidden">
+          <div className="flex items-center space-x-3 mb-4">
+            <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center">
+              <div className="h-4 w-4 rounded bg-white"></div>
             </div>
-          </CardContent>
-        </Card>
+            <span className="text-xl font-bold text-foreground">SocialNet</span>
+          </div>
 
-        {/* Navigation Card */}
-        <Card className="shadow-sm">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg">Navigation</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
+          <div className="flex-1 overflow-y-auto space-y-1">
             {navigationItems.map((item) => (
               <Button
                 key={item.label}
@@ -74,29 +63,25 @@ export function Navigation() {
                 </Link>
               </Button>
             ))}
-          </CardContent>
-        </Card>
+          </div>
 
-        {/* Create Button */}
-        <Button
-          className="w-full h-12 bg-blue-500 hover:bg-blue-600 text-white font-medium"
-          onClick={() => {
-            console.log('Create button clicked')
-          }}
-        >
-          <Plus className="h-5 w-5 mr-2" />
-          Create
-        </Button>
+          <div className="space-y-1 mt-4">
+            <Button
+              className="w-full h-12 bg-blue-500 hover:bg-blue-600 text-white font-medium justify-start px-4"
+              onClick={() => {
+                console.log('Create button clicked')
+              }}
+            >
+              <Plus className="h-5 w-5 mr-3" />
+              <span className="text-base">Create</span>
+            </Button>
 
-        {/* Theme Toggle */}
-        <Card className="shadow-sm">
-          <CardContent className="p-3">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="w-full justify-start h-10 px-3">
-                  <Sun className="h-4 w-4 mr-3 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                  <Moon className="absolute left-6 h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                  <span className="ml-3 dark:ml-0">Theme</span>
+                <Button variant="ghost" className="w-full justify-start h-12 px-4">
+                  <Sun className="h-5 w-5 mr-3 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                  <Moon className="absolute left-7 h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                  <span className="text-base">Theme</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-48">
@@ -114,12 +99,9 @@ export function Navigation() {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          </CardContent>
-        </Card>
+          </div>
 
-        {/* User Profile Card */}
-        <Card className="shadow-sm hover:shadow-md transition-shadow">
-          <CardContent className="p-4">
+          <div className="border-t border-border/40 pt-4 mt-4">
             {loading ? (
               <div className="flex items-center space-x-3">
                 <div className="h-10 w-10 rounded-full bg-muted animate-pulse"></div>
@@ -130,7 +112,7 @@ export function Navigation() {
               </div>
             ) : isAuthenticated && user ? (
               <div className="flex items-center space-x-3">
-                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
                   <span className="text-white font-semibold text-sm">
                     {user.email?.charAt(0).toUpperCase()}
                   </span>
@@ -159,16 +141,15 @@ export function Navigation() {
                 </div>
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
 
-        {/* Version Display */}
-        <div className="px-4 pb-4">
-          <p className="text-xs text-muted-foreground text-center">
-            v{(window as any).APP_VERSION || '1.0.0'}
-          </p>
-        </div>
-      </div>
+          <div className="text-center pt-3 border-t border-border/40 mt-3">
+            <p className="text-xs text-muted-foreground">
+              v{(window as any).APP_VERSION || '1.0.0'}
+            </p>
+          </div>
+        </CardContent>
+      </Card>
     </aside>
   )
 }
