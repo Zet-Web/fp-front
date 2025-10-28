@@ -52,7 +52,5 @@ export const mobileBottomNavigationItems: NavItem[] = [
 export const createButtonConfig = {
   icon: Plus,
   label: "Create",
-  onClick: () => {
-    console.log('Create button clicked')
-  }
+  path: "/post"
 }

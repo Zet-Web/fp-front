@@ -92,10 +92,12 @@ export function Navigation() {
 <Button
   variant="ghost"
   className="w-full justify-start h-12 px-4 text-base"
-  onClick={createButtonConfig.onClick}
+  asChild
 >
-  <createButtonConfig.icon className="h-5 w-5 mr-3" />
-  <span>{createButtonConfig.label}</span>
+  <Link to={createButtonConfig.path}>
+    <createButtonConfig.icon className="h-5 w-5 mr-3" />
+    <span>{createButtonConfig.label}</span>
+  </Link>
 </Button>
 
             {/* Separator before user profile */}

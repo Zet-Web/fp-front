@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
-import { X } from "lucide-react"
+import { X, Upload, Loader2 } from "lucide-react"
 import { useState } from "react"
 import type { PostAuthor } from "../types/post"
 import { PostType, PostStatus } from "../types/post"
@@ -62,6 +62,8 @@ export function EditablePostCard({
   const [editedIsPinned, setEditedIsPinned] = useState(isPinned)
   const [editedSlug, setEditedSlug] = useState(slug)
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [isUploadingCover, setIsUploadingCover] = useState(false)
+  const [showUrlInput, setShowUrlInput] = useState(false)
 
   const displayName = author.name || author.username || 'User'
   const displayUsername = author.username || author.telegram_username || 'user'
@@ -111,6 +113,25 @@ export function EditablePostCard({
 
   const removeCoverImage = () => {
     setEditedCoverImage('')
+  }
+
+  const handleCoverUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    setIsUploadingCover(true)
+
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1500))
+      const tempUrl = URL.createObjectURL(file)
+      setEditedCoverImage(tempUrl)
+      console.log('Cover uploaded (simulated):', file.name)
+    } catch (error) {
+      console.error('Cover upload failed:', error)
+    } finally {
+      setIsUploadingCover(false)
+      event.target.value = ''
+    }
   }
 
   return (
@@ -185,30 +206,83 @@ export function EditablePostCard({
               </div>
 
               <div>
-                <Label htmlFor="edit-cover" className="text-sm font-medium mb-2 block">
-                  Cover Image URL
-                </Label>
+                <div className="flex justify-between items-center mb-2">
+                  <Label className="text-sm font-medium">
+                    Cover Image
+                  </Label>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowUrlInput(!showUrlInput)}
+                    className="text-xs h-auto py-1 px-2"
+                  >
+                    {showUrlInput ? 'Upload File' : 'Use URL'}
+                  </Button>
+                </div>
                 <div className="space-y-2">
-                  <div className="flex gap-2">
-                    <Input
-                      id="edit-cover"
-                      value={editedCoverImage}
-                      onChange={handleCoverImageChange}
-                      placeholder="https://example.com/image.jpg"
-                      className="flex-1"
-                    />
-                    {editedCoverImage && (
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="ghost"
-                        onClick={removeCoverImage}
-                        className="px-3"
-                      >
-                        <X className="w-4 h-4" />
-                      </Button>
-                    )}
-                  </div>
+                  {showUrlInput ? (
+                    <div className="flex gap-2">
+                      <Input
+                        id="edit-cover"
+                        value={editedCoverImage}
+                        onChange={handleCoverImageChange}
+                        placeholder="https://example.com/image.jpg"
+                        className="flex-1"
+                      />
+                      {editedCoverImage && (
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="ghost"
+                          onClick={removeCoverImage}
+                          className="px-3"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="flex gap-2">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleCoverUpload}
+                        className="hidden"
+                        id="cover-upload"
+                        disabled={isUploadingCover}
+                      />
+                      <label htmlFor="cover-upload" className="flex-1">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="w-full gap-2 cursor-pointer"
+                          disabled={isUploadingCover}
+                          asChild
+                        >
+                          <span>
+                            {isUploadingCover ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <Upload className="w-4 h-4" />
+                            )}
+                            {isUploadingCover ? 'Uploading...' : 'Upload Cover Image'}
+                          </span>
+                        </Button>
+                      </label>
+                      {editedCoverImage && (
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="ghost"
+                          onClick={removeCoverImage}
+                          className="px-3"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      )}
+                    </div>
+                  )}
                   {editedCoverImage && (
                     <img
                       src={editedCoverImage}
