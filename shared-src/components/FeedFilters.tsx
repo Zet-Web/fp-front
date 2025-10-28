@@ -66,7 +66,7 @@ export function FeedFilters({
           </TabsList>
         </Tabs>
 
-        <div className="flex flex-col md:flex-row gap-2 md:gap-3">
+        <div className="flex gap-2 md:gap-3">
           <div className="w-full md:w-auto">
             <Select
               value={postType || 'all'}
