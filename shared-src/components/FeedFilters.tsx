@@ -86,7 +86,7 @@ export function FeedFilters({
             </Select>
           </div>
 
-          <div className="flex-1">
+          <div className="w-full md:flex-1">
             <FeedLocationDropdown
               country={location.country}
               city={location.city}
