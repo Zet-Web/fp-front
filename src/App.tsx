@@ -6,6 +6,7 @@ import { ProfilePage } from "/apps/profile/src/ProfilePage"
 import { AuthPage } from "/apps/auth/src/AuthPage"
 import { SettingsPage } from "/apps/settings/src/SettingsPage"
 import { HomePage } from "/apps/home/HomePage"
+import { PostPage } from "/apps/post/src/PostPage"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/toaster"
 import { Routes, Route } from "react-router-dom"
@@ -31,6 +32,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/post/:urlCode" element={<PostPage />} />
                 <Route path="/:username" element={<ProfilePage />} />
                 <Route path="/auth" element={<AuthPage />} />
                 <Route path="/settings" element={<SettingsPage />} />

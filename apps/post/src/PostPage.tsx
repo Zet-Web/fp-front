@@ -1,29 +1,14 @@
-// Posts section component displaying user posts with links to individual post pages
+// Individual post page component displaying a single post by URL code
 
+import { useParams, useNavigate } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { PostCard } from "@/components/shared/PostCard"
-import { constructPostUrl } from "@/lib/post-utils"
-import { Link } from "react-router-dom"
+import { extractUrlCodeFromParam, isValidUrlCode } from "@/lib/post-utils"
 import type { PostWithAuthor } from "@/types/post"
 
-interface UserProfile {
-  id: string
-  name: string | null
-  username: string | null
-  avatar_url: string | null
-  about: string | null
-  telegram_username: string | null
-  profile_type: string | null
-  badge: string[] | null
-  contact_info: any[] | null
-}
-
-interface PostsSectionProps {
-  user: UserProfile
-  isOwnProfile: boolean
-}
-
-const posts: PostWithAuthor[] = [
+const TEST_POSTS: PostWithAuthor[] = [
   {
     id: "1",
     url: "Ab3X",
@@ -102,37 +87,84 @@ const posts: PostWithAuthor[] = [
   }
 ]
 
-export function PostsSection({ user, isOwnProfile }: PostsSectionProps) {
+export function PostPage() {
+  const { urlCode } = useParams<{ urlCode: string }>()
+  const navigate = useNavigate()
+  const [post, setPost] = useState<PostWithAuthor | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const loadPost = () => {
+      setIsLoading(true)
+      setError(null)
+
+      if (!urlCode) {
+        setError("Invalid post URL")
+        setIsLoading(false)
+        return
+      }
+
+      const extractedCode = extractUrlCodeFromParam(urlCode)
+
+      if (!isValidUrlCode(extractedCode)) {
+        setError("Invalid post URL format")
+        setIsLoading(false)
+        return
+      }
+
+      const foundPost = TEST_POSTS.find(p => p.url === extractedCode)
+
+      if (!foundPost) {
+        setError("Post not found")
+        setIsLoading(false)
+        return
+      }
+
+      setPost(foundPost)
+      setIsLoading(false)
+    }
+
+    loadPost()
+  }, [urlCode])
+
+  if (isLoading) {
+    return (
+      <div className="bg-background flex items-center justify-center min-h-[400px]">
+        <Card className="w-96">
+          <CardContent className="p-6 text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading post...</p>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  if (error || !post) {
+    return (
+      <div className="bg-background flex items-center justify-center min-h-[400px]">
+        <Card className="w-96">
+          <CardContent className="p-6 text-center">
+            <p className="text-destructive mb-4">{error || "Post not found"}</p>
+            <Button onClick={() => navigate("/")}>Go to Home</Button>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
   return (
-    <div className="space-y-6">
-      {isOwnProfile && posts.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground mb-4">You haven't posted anything yet.</p>
-          <Button variant="outline">Create your first post</Button>
-        </div>
-      )}
-
-      {!isOwnProfile && posts.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">No posts to show.</p>
-        </div>
-      )}
-
-      {posts.map((post) => (
-        <Link
-          key={post.id}
-          to={constructPostUrl(post.url, post.slug)}
-          className="block"
-        >
-          <PostCard
-            title={post.title}
-            content={post.content}
-            images={post.images}
-            author={post.author}
-            showActions={true}
-          />
-        </Link>
-      ))}
+    <div className="bg-background">
+      <div className="container mx-auto px-6 py-6 max-w-4xl">
+        <PostCard
+          title={post.title}
+          content={post.content}
+          images={post.images}
+          author={post.author}
+          showActions={true}
+        />
+      </div>
     </div>
   )
 }
