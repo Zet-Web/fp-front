@@ -26,16 +26,14 @@ export function Navigation() {
   return (
     <aside className="hidden lg:flex lg:w-64 xl:w-72 flex-col h-full bg-background/30 overflow-hidden">
       <div className="flex-1 p-4 space-y-4 overflow-y-auto"> 
-        <Card className="shadow-sm">
+        <Card className="shadow-sm hover:shadow-md transition-shadow duration-300">
           <CardHeader className="pb-3">
-  <Button variant="ghost" className="w-full justify-start h-auto p-0 hover:bg-transparent">
-    <Link to="/" className="flex flex-row items-center space-x-3">
+    <Link to="/" className="flex flex-row items-center space-x-3 w-full justify-start h-auto px-4 py-2 hover:bg-accent/50 transition-colors rounded-md">
       <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center">
         <div className="h-4 w-4 rounded bg-white"></div>
       </div>
       <CardTitle className="text-xl font-bold text-foreground">Social Network</CardTitle>
     </Link>
-  </Button>
 </CardHeader>
           <CardContent className="space-y-2">
             {/* Brand as first nav item */}
@@ -106,8 +104,8 @@ export function Navigation() {
 
 {/* Create item */}
 <Button
-  variant="ghost"
-  className="w-full justify-start h-12 px-4 hover:bg-accent/50 transition-colors text-base"
+  variant="default"
+  className="w-full justify-start h-12 px-4 text-base"
   onClick={() => {
     console.log('Create button clicked')
   }}
@@ -126,7 +124,7 @@ export function Navigation() {
                 </div>
               </div>
             ) : isAuthenticated && user ? (
-              <div className="flex items-center space-x-3 px-4 py-2">
+              <Link to={getProfilePath()} className="flex items-center space-x-3 px-4 py-2 hover:bg-accent/50 transition-colors rounded-md">
                 <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
                   <span className="text-white font-semibold text-sm">
                     {user.email?.charAt(0).toUpperCase()}
@@ -140,7 +138,7 @@ export function Navigation() {
                     {profile?.username ? `@${profile.username}` : ''}
                   </p>
                 </div>
-              </div>
+              </Link>
             ) : (
               <div className="flex items-center space-x-3 px-4 py-2">
                 <div className="h-10 w-10 rounded-full bg-muted"></div>
