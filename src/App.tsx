@@ -32,7 +32,6 @@ function App() {
                 <Routes>
                   <Route path="/" element={<HomePage />} />
                   <Route path="/profile" element={<ProfilePage />} />
-                  <Route path="/post" element={<PostPage />} />
                   <Route path="/post/:urlCode" element={<PostPage />} />
                   <Route path="/:username" element={<ProfilePage />} />
                   <Route path="/auth" element={<AuthPage />} />

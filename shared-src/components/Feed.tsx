@@ -1,7 +1,7 @@
 // Feed component with filtering, sorting, lazy loading and skeleton states
 
 import { useState, useEffect, useRef, useCallback } from "react"
-import { useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { PostCard } from "./PostCard"
@@ -9,16 +9,6 @@ import { constructPostUrl } from "../lib/post-utils"
 import type { PostWithAuthor } from "../types/post"
 import { Skeleton } from "@/components/ui/skeleton"
 import { toast } from "sonner"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
 
 interface FeedProps {
   posts: PostWithAuthor[]
@@ -29,9 +19,6 @@ interface FeedProps {
     onClick: () => void
   }
   itemsPerPage?: number
-  onPostUpdate?: (postId: string, post: PostWithAuthor) => void
-  onPostDelete?: (postId: string) => void
-  showEditDelete?: boolean
 }
 
 function PostSkeleton() {
@@ -59,18 +46,13 @@ export function Feed({
   filterByUserId,
   emptyMessage = "No posts to display",
   emptyAction,
-  itemsPerPage = 10,
-  onPostUpdate,
-  onPostDelete,
-  showEditDelete = false
+  itemsPerPage = 10
 }: FeedProps) {
-  const navigate = useNavigate()
   const [displayedPosts, setDisplayedPosts] = useState<PostWithAuthor[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [hasMore, setHasMore] = useState(true)
   const [page, setPage] = useState(1)
   const [savedPostIds, setSavedPostIds] = useState<Set<string>>(new Set())
-  const [deletePostId, setDeletePostId] = useState<string | null>(null)
   const observerRef = useRef<HTMLDivElement>(null)
 
   const filteredPosts = filterByUserId
@@ -160,22 +142,6 @@ export function Feed({
     }
   }
 
-  const handleEditClick = (post: PostWithAuthor) => {
-    navigate(`/post/${post.url}?mode=edit`)
-  }
-
-  const handleDeleteClick = (postId: string) => {
-    setDeletePostId(postId)
-  }
-
-  const confirmDelete = () => {
-    if (deletePostId) {
-      onPostDelete?.(deletePostId)
-      toast.success('Post deleted successfully')
-      setDeletePostId(null)
-    }
-  }
-
   if (isLoading && displayedPosts.length === 0) {
     return (
       <div className="space-y-6">
@@ -203,29 +169,24 @@ export function Feed({
 
   return (
     <div className="space-y-6">
-      {displayedPosts.map((post) => {
-        const postUrl = constructPostUrl(post.url, post.slug)
-        return (
-          <div key={post.id}>
-            <PostCard
-              postId={post.id}
-              postUrl={postUrl}
-              title={post.title}
-              content={post.content}
-              images={post.images}
-              author={post.author}
-              showActions={true}
-              showEditDelete={showEditDelete}
-              isSaved={savedPostIds.has(post.id)}
-              onEditClick={() => handleEditClick(post)}
-              onDeleteClick={() => handleDeleteClick(post.id)}
-              onBookmarkClick={() => handleBookmarkClick(post.id)}
-              onShareClick={() => handleShareClick(post)}
-              onContentClick={() => window.location.href = postUrl}
-            />
-          </div>
-        )
-      })}
+      {displayedPosts.map((post) => (
+        <Link
+          key={post.id}
+          to={constructPostUrl(post.url, post.slug)}
+          className="block"
+        >
+          <PostCard
+            title={post.title}
+            content={post.content}
+            images={post.images}
+            author={post.author}
+            showActions={true}
+            isSaved={savedPostIds.has(post.id)}
+            onBookmarkClick={() => handleBookmarkClick(post.id)}
+            onShareClick={() => handleShareClick(post)}
+          />
+        </Link>
+      ))}
 
       {hasMore && (
         <div ref={observerRef} className="py-4">
@@ -238,23 +199,6 @@ export function Feed({
           <p className="text-sm text-muted-foreground">You've reached the end</p>
         </div>
       )}
-
-      <AlertDialog open={!!deletePostId} onOpenChange={() => setDeletePostId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Post</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete this post? This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   )
 }
