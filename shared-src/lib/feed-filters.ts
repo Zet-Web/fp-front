@@ -75,8 +75,7 @@ export const POST_TYPE_LABELS: Record<PostType, string> = {
   [PostType.ARTICLE]: 'Articles',
   [PostType.EVENT]: 'Events',
   [PostType.VACANCY]: 'Vacancies',
-  [PostType.POLL]: 'Polls',
-  [PostType.UPDATE]: 'Updates'
+  [PostType.POLL]: 'Polls'
 }
 
 export function getEmptyStateMessage(filters: FeedFilters): string {
