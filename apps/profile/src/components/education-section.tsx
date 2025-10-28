@@ -1,20 +1,28 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { GraduationCap, Plus, Edit, Trash2, ChevronUp, ChevronDown, Check, X, ChevronDownIcon, Loader2 } from "lucide-react"
-import { useState, useEffect, useCallback } from "react"
-import { supabase } from "@/lib/supabase"
+import { GraduationCap, Edit, Trash2 } from "lucide-react"
+import { useState } from "react"
+import { SectionCard } from "@/components/shared/SectionCard"
+import { SortableListControls } from "@/components/shared/SortableListControls"
+import { InlineEditActions } from "@/components/shared/InlineEditActions"
+import { DeleteConfirmationDialog } from "@/components/shared/DeleteConfirmationDialog"
+import { PeriodSelector, PeriodData } from "@/components/shared/PeriodSelector"
+import { DatabaseDropdown } from "@/components/shared/DatabaseDropdown"
+import { SearchableDropdown } from "@/components/shared/SearchableDropdown"
+import { formatPeriod } from "@/lib/date-utils"
 
 interface Education {
   id: number
   degree: string
   school: string
   period: string
+  start_month?: string
+  start_year?: string
+  end_month?: string
+  end_year?: string
+  is_current?: boolean
   description: string
 }
 
@@ -47,112 +55,46 @@ export function EducationSection({ isEditing }: EducationSectionProps) {
     degree: '',
     school: '',
     period: '',
+    start_month: 'not-set',
+    start_year: 'not-set',
+    end_month: 'not-set',
+    end_year: 'not-set',
+    is_current: false,
     description: ''
   })
   const [editForm, setEditForm] = useState({
     degree: '',
     school: '',
     period: '',
+    start_month: 'not-set',
+    start_year: 'not-set',
+    end_month: 'not-set',
+    end_year: 'not-set',
+    is_current: false,
     description: ''
   })
 
-  // Study fields state
-  const [studyFields, setStudyFields] = useState<{ id: number; name_ru: string }[]>([])
-  const [isFetchingStudyFields, setIsFetchingStudyFields] = useState(false)
-  const [newDegreeSearchInput, setNewDegreeSearchInput] = useState('')
-  const [editDegreeSearchInput, setEditDegreeSearchInput] = useState('')
-  const [openNewDegreeSelect, setOpenNewDegreeSelect] = useState(false)
-  const [openEditDegreeSelect, setOpenEditDegreeSelect] = useState(false)
-
-  // Universities state
-  const [universitySearchQuery, setUniversitySearchQuery] = useState('')
-  const [filteredUniversities, setFilteredUniversities] = useState<{ id: number; name_ru: string }[]>([])
-  const [isFetchingUniversities, setIsFetchingUniversities] = useState(false)
-  const [openNewUniversitySelect, setOpenNewUniversitySelect] = useState(false)
-  const [openEditUniversitySelect, setOpenEditUniversitySelect] = useState(false)
-
-  // Fetch study fields on component mount
-  useEffect(() => {
-    const fetchStudyFields = async () => {
-      setIsFetchingStudyFields(true)
-      try {
-        const { data, error } = await supabase
-          .from('list_study_field')
-          .select('id, name_ru')
-          .order('name_ru', { ascending: true })
-
-        if (error) {
-          console.error('Error fetching study fields:', error)
-        } else {
-          setStudyFields(data || [])
-        }
-      } catch (error) {
-        console.error('Error fetching study fields:', error)
-      } finally {
-        setIsFetchingStudyFields(false)
-      }
-    }
-
-    fetchStudyFields()
-  }, [])
-
-  // Debounced university search
-  useEffect(() => {
-    const timeoutId = setTimeout(async () => {
-      if (universitySearchQuery.length >= 3) {
-        setIsFetchingUniversities(true)
-        try {
-          const { data, error } = await supabase
-            .from('list_university')
-            .select('id, name_ru')
-            .or(`name.ilike.%${universitySearchQuery}%,name_ru.ilike.%${universitySearchQuery}%`)
-            .limit(50)
-
-          if (error) {
-            console.error('Error searching universities:', error)
-          } else {
-            setFilteredUniversities(data || [])
-          }
-        } catch (error) {
-          console.error('Error searching universities:', error)
-        } finally {
-          setIsFetchingUniversities(false)
-        }
-      } else {
-        setFilteredUniversities([])
-      }
-    }, 500)
-
-    return () => clearTimeout(timeoutId)
-  }, [universitySearchQuery])
-
-  // Filter study fields based on search input
-  const getFilteredStudyFields = useCallback((searchInput: string) => {
-    if (!searchInput) return studyFields
-    return studyFields.filter(field => 
-      field.name_ru?.toLowerCase().includes(searchInput.toLowerCase())
-    )
-  }, [studyFields])
+  const formatPeriodData = (edu: Education) => {
+    return formatPeriod({
+      startMonth: edu.start_month,
+      startYear: edu.start_year,
+      endMonth: edu.end_month,
+      endYear: edu.end_year,
+      isCurrent: edu.is_current
+    }) || edu.period || ''
+  }
 
   const moveUp = (index: number) => {
     if (index === 0) return
-
     const newEducation = [...education]
-    const temp = newEducation[index - 1]
-    newEducation[index - 1] = newEducation[index]
-    newEducation[index] = temp
-
+    ;[newEducation[index - 1], newEducation[index]] = [newEducation[index], newEducation[index - 1]]
     setEducation(newEducation)
   }
 
   const moveDown = (index: number) => {
     if (index === education.length - 1) return
-
     const newEducation = [...education]
-    const temp = newEducation[index + 1]
-    newEducation[index + 1] = newEducation[index]
-    newEducation[index] = temp
-
+    ;[newEducation[index], newEducation[index + 1]] = [newEducation[index + 1], newEducation[index]]
     setEducation(newEducation)
   }
 
@@ -166,6 +108,11 @@ export function EducationSection({ isEditing }: EducationSectionProps) {
         degree: '',
         school: '',
         period: '',
+        start_month: 'not-set',
+        start_year: 'not-set',
+        end_month: 'not-set',
+        end_year: 'not-set',
+        is_current: false,
         description: ''
       })
       setShowAddEducationForm(false)
@@ -182,9 +129,13 @@ export function EducationSection({ isEditing }: EducationSectionProps) {
       degree: edu.degree,
       school: edu.school,
       period: edu.period,
+      start_month: edu.start_month || 'not-set',
+      start_year: edu.start_year || 'not-set',
+      end_month: edu.end_month || 'not-set',
+      end_year: edu.end_year || 'not-set',
+      is_current: edu.is_current || false,
       description: edu.description
     })
-    setEditDegreeSearchInput('')
   }
 
   const saveEdit = (id: number) => {
@@ -196,411 +147,189 @@ export function EducationSection({ isEditing }: EducationSectionProps) {
 
   const cancelEdit = () => {
     setEditingEducation(null)
-    setEditForm({
-      degree: '',
-      school: '',
-      period: '',
-      description: ''
-    })
+  }
+
+  const handlePeriodChange = (period: PeriodData, isNew: boolean) => {
+    if (isNew) {
+      setNewEducation(prev => ({ ...prev, ...period }))
+    } else {
+      setEditForm(prev => ({ ...prev, ...period }))
+    }
   }
 
   return (
-    <Card className="hover:shadow-lg transition-shadow duration-300">
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <GraduationCap className="w-5 h-5" />
-            Education & Certifications
-          </div>
-          {isEditing && (
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => setShowAddEducationForm(true)}
-            >
-              <Plus className="w-4 h-4 mr-1" />
-              Add
-            </Button>
-          )}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-6">
-          {education.map((edu, index) => (
-            <div key={edu.id} className="border-l-2 border-primary/20 pl-4">
-              {editingEducation === edu.id ? (
-                <div className="space-y-4 border rounded-lg p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => moveUp(index)}
-                        disabled={index === 0}
-                        className="h-7 w-7 p-0"
-                      >
-                        <ChevronUp className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => moveDown(index)}
-                        disabled={index === education.length - 1}
-                        className="h-7 w-7 p-0"
-                      >
-                        <ChevronDown className="w-4 h-4" />
-                      </Button>
-                    </div>
-                    <div className="flex gap-1">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => saveEdit(edu.id)}
-                        className="h-7 w-7 p-0 text-green-600 hover:text-green-700"
-                      >
-                        <Check className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={cancelEdit}
-                        className="h-7 w-7 p-0"
-                      >
-                        <X className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="edit-edu-degree">Degree</Label>
-                      <Popover open={openEditDegreeSelect} onOpenChange={setOpenEditDegreeSelect}>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            role="combobox"
-                            aria-expanded={openEditDegreeSelect}
-                            className="w-full justify-between"
-                          >
-                            {editForm.degree || "Select degree..."}
-                            <ChevronDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-full p-0">
-                          <Command>
-                            <CommandInput
-                              placeholder="Search degrees..."
-                              value={editDegreeSearchInput}
-                              onValueChange={setEditDegreeSearchInput}
-                            />
-                            <CommandList>
-                              {isFetchingStudyFields && (
-                                <div className="flex items-center justify-center py-6">
-                                  <Loader2 className="w-4 h-4 animate-spin" />
-                                </div>
-                              )}
-                              {!isFetchingStudyFields && getFilteredStudyFields(editDegreeSearchInput).length === 0 && (
-                                <CommandEmpty>No degrees found.</CommandEmpty>
-                              )}
-                              {!isFetchingStudyFields && getFilteredStudyFields(editDegreeSearchInput).length > 0 && (
-                                <CommandGroup>
-                                  {getFilteredStudyFields(editDegreeSearchInput).map((field) => (
-                                    <CommandItem
-                                      key={field.id}
-                                      value={field.name_ru}
-                                      onSelect={() => {
-                                        setEditForm(prev => ({ ...prev, degree: field.name_ru }))
-                                        setEditDegreeSearchInput('')
-                                        setOpenEditDegreeSelect(false)
-                                      }}
-                                    >
-                                      {field.name_ru}
-                                    </CommandItem>
-                                  ))}
-                                </CommandGroup>
-                              )}
-                            </CommandList>
-                          </Command>
-                        </PopoverContent>
-                      </Popover>
-                    </div>
-                    <div>
-                      <Label htmlFor="edit-edu-school">School/Institution</Label>
-                      <Popover open={openEditUniversitySelect} onOpenChange={setOpenEditUniversitySelect}>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            role="combobox"
-                            aria-expanded={openEditUniversitySelect}
-                            className="w-full justify-between"
-                          >
-                            {editForm.school || "Select university..."}
-                            <ChevronDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-full p-0">
-                          <Command shouldFilter={false}>
-                            <CommandInput
-                              placeholder="Type at least 3 characters..."
-                              value={universitySearchQuery}
-                              onValueChange={setUniversitySearchQuery}
-                            />
-                            <CommandList>
-                              {isFetchingUniversities && (
-                                <div className="flex items-center justify-center py-6">
-                                  <Loader2 className="w-4 h-4 animate-spin" />
-                                </div>
-                              )}
-                              {!isFetchingUniversities && universitySearchQuery.length < 3 && (
-                                <CommandEmpty>Type at least 3 characters to search</CommandEmpty>
-                              )}
-                              {!isFetchingUniversities && universitySearchQuery.length >= 3 && filteredUniversities.length === 0 && (
-                                <CommandEmpty>No universities found</CommandEmpty>
-                              )}
-                              {!isFetchingUniversities && filteredUniversities.length > 0 && (
-                                <CommandGroup>
-                                  {filteredUniversities.map((university) => (
-                                    <CommandItem
-                                      key={university.id}
-                                      value={university.name_ru}
-                                      onSelect={() => {
-                                        setEditForm(prev => ({ ...prev, school: university.name_ru }))
-                                        setUniversitySearchQuery('')
-                                        setOpenEditUniversitySelect(false)
-                                      }}
-                                    >
-                                      {university.name_ru}
-                                    </CommandItem>
-                                  ))}
-                                </CommandGroup>
-                              )}
-                            </CommandList>
-                          </Command>
-                        </PopoverContent>
-                      </Popover>
-                    </div>
-                    <div>
-                      <Label htmlFor="edit-edu-period">Period</Label>
-                      <Input
-                        id="edit-edu-period"
-                        value={editForm.period}
-                        onChange={(e) => setEditForm(prev => ({ ...prev, period: e.target.value }))}
-                        placeholder="2016 - 2020"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <Label htmlFor="edit-edu-description">Description</Label>
-                    <Textarea
-                      id="edit-edu-description"
-                      value={editForm.description}
-                      onChange={(e) => setEditForm(prev => ({ ...prev, description: e.target.value }))}
-                      placeholder="Additional details about your education..."
-                      rows={2}
-                    />
-                  </div>
+    <SectionCard
+      title="Education & Certifications"
+      icon={GraduationCap}
+      isEditing={isEditing}
+      onAddClick={() => setShowAddEducationForm(true)}
+      showAddButton={!showAddEducationForm}
+    >
+      <div className="space-y-6">
+        {education.map((edu, index) => (
+          <div key={edu.id} className="border-l-2 border-primary/20 pl-4">
+            {editingEducation === edu.id ? (
+              <div className="space-y-4 border rounded-lg p-4">
+                <div className="flex items-center justify-between">
+                  <SortableListControls
+                    index={index}
+                    totalItems={education.length}
+                    onMoveUp={() => moveUp(index)}
+                    onMoveDown={() => moveDown(index)}
+                  />
+                  <InlineEditActions
+                    onSave={() => saveEdit(edu.id)}
+                    onCancel={cancelEdit}
+                  />
                 </div>
-              ) : (
-                <>
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
-                    <h3 className="font-semibold text-lg">{edu.degree}</h3>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-muted-foreground">{edu.period}</span>
-                      {isEditing && (
-                        <div className="flex gap-1">
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => moveUp(index)}
-                            disabled={index === 0}
-                            className="h-7 w-7 p-0"
-                          >
-                            <ChevronUp className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => moveDown(index)}
-                            disabled={index === education.length - 1}
-                            className="h-7 w-7 p-0"
-                          >
-                            <ChevronDown className="w-4 h-4" />
-                          </Button>
-                          <Button size="sm" variant="ghost" onClick={() => startEditing(edu)} className="h-7 w-7 p-0">
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button size="sm" variant="ghost" className="h-7 w-7 p-0">
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Delete Education</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Are you sure you want to delete this education entry? This action cannot be undone.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => removeEducation(edu.id)}>
-                                  Delete
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <p className="text-primary font-medium mb-2">{edu.school}</p>
-                  <p className="text-muted-foreground">{edu.description}</p>
-                </>
-              )}
-            </div>
-          ))}
 
-          {isEditing && showAddEducationForm && (
-            <div className="border-l-2 border-dashed border-primary/20 pl-4 space-y-4">
-              <h3 className="font-semibold text-lg">Add</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="edu-degree">Faculty</Label>
-                  <Popover open={openNewDegreeSelect} onOpenChange={setOpenNewDegreeSelect}>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        role="combobox"
-                        aria-expanded={openNewDegreeSelect}
-                        className="w-full justify-between"
-                      >
-                        {newEducation.degree || "Select degree..."}
-                        <ChevronDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-full p-0">
-                      <Command>
-                        <CommandInput
-                          placeholder="Search degrees..."
-                          value={newDegreeSearchInput}
-                          onValueChange={setNewDegreeSearchInput}
-                        />
-                        <CommandList>
-                          {isFetchingStudyFields && (
-                            <div className="flex items-center justify-center py-6">
-                              <Loader2 className="w-4 h-4 animate-spin" />
-                            </div>
-                          )}
-                          {!isFetchingStudyFields && getFilteredStudyFields(newDegreeSearchInput).length === 0 && (
-                            <CommandEmpty>No degrees found.</CommandEmpty>
-                          )}
-                          {!isFetchingStudyFields && getFilteredStudyFields(newDegreeSearchInput).length > 0 && (
-                            <CommandGroup>
-                              {getFilteredStudyFields(newDegreeSearchInput).map((field) => (
-                                <CommandItem
-                                  key={field.id}
-                                  value={field.name_ru}
-                                  onSelect={() => {
-                                    setNewEducation(prev => ({ ...prev, degree: field.name_ru }))
-                                    setNewDegreeSearchInput('')
-                                    setOpenNewDegreeSelect(false)
-                                  }}
-                                >
-                                  {field.name_ru}
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          )}
-                        </CommandList>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <DatabaseDropdown
+                    table="list_study_field"
+                    valueColumn="id"
+                    labelColumn="name_ru"
+                    value={editForm.degree}
+                    onChange={(_, label) => setEditForm(prev => ({ ...prev, degree: label }))}
+                    label="Degree"
+                    placeholder="Select degree..."
+                    searchPlaceholder="Search degrees..."
+                    orderBy="name_ru"
+                  />
+
+                  <SearchableDropdown
+                    table="list_university"
+                    searchColumns={['name', 'name_ru']}
+                    valueColumn="id"
+                    labelColumn="name_ru"
+                    value={editForm.school}
+                    onChange={(_, label) => setEditForm(prev => ({ ...prev, school: label }))}
+                    label="School/Institution"
+                    placeholder="Select university..."
+                    searchPlaceholder="Type at least 3 characters..."
+                  />
                 </div>
+
+                <PeriodSelector
+                  value={{
+                    startMonth: editForm.start_month,
+                    startYear: editForm.start_year,
+                    endMonth: editForm.end_month,
+                    endYear: editForm.end_year,
+                    isCurrent: editForm.is_current
+                  }}
+                  onChange={(period) => handlePeriodChange(period, false)}
+                  currentLabel="I currently study here"
+                />
+
                 <div>
-                  <Label htmlFor="edu-school">University</Label>
-                  <Popover open={openNewUniversitySelect} onOpenChange={setOpenNewUniversitySelect}>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        role="combobox"
-                        aria-expanded={openNewUniversitySelect}
-                        className="w-full justify-between"
-                      >
-                        {newEducation.school || "Select university..."}
-                        <ChevronDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-full p-0">
-                      <Command shouldFilter={false}>
-                        <CommandInput
-                          placeholder="Type at least 3 characters..."
-                          value={universitySearchQuery}
-                          onValueChange={setUniversitySearchQuery}
-                        />
-                        <CommandList>
-                          {isFetchingUniversities && (
-                            <div className="flex items-center justify-center py-6">
-                              <Loader2 className="w-4 h-4 animate-spin" />
-                            </div>
-                          )}
-                          {!isFetchingUniversities && universitySearchQuery.length < 3 && (
-                            <CommandEmpty>Type at least 3 characters to search</CommandEmpty>
-                          )}
-                          {!isFetchingUniversities && universitySearchQuery.length >= 3 && filteredUniversities.length === 0 && (
-                            <CommandEmpty>No universities found</CommandEmpty>
-                          )}
-                          {!isFetchingUniversities && filteredUniversities.length > 0 && (
-                            <CommandGroup>
-                              {filteredUniversities.map((university) => (
-                                <CommandItem
-                                  key={university.id}
-                                  value={university.name_ru}
-                                  onSelect={() => {
-                                    setNewEducation(prev => ({ ...prev, school: university.name_ru }))
-                                    setUniversitySearchQuery('')
-                                    setOpenNewUniversitySelect(false)
-                                  }}
-                                >
-                                  {university.name_ru}
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          )}
-                        </CommandList>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
-                </div>
-                <div>
-                  <Label htmlFor="edu-period">Period</Label>
-                  <Input
-                    id="edu-period"
-                    value={newEducation.period}
-                    onChange={(e) => setNewEducation(prev => ({ ...prev, period: e.target.value }))}
-                    placeholder="2016 - 2020"
+                  <Label htmlFor="edit-edu-description">Description</Label>
+                  <Textarea
+                    id="edit-edu-description"
+                    value={editForm.description}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, description: e.target.value }))}
+                    placeholder="Additional details about your education..."
+                    rows={2}
                   />
                 </div>
               </div>
-              <div>
-                <Label htmlFor="edu-description">Description</Label>
-                <Textarea
-                  id="edu-description"
-                  value={newEducation.description}
-                  onChange={(e) => setNewEducation(prev => ({ ...prev, description: e.target.value }))}
-                  placeholder="Additional details about your education..."
-                  rows={2}
-                />
-              </div>
-              <div className="flex gap-2">
-                <Button onClick={addEducation}>Add</Button>
-                <Button variant="outline" onClick={() => setShowAddEducationForm(false)}>
-                  Cancel
-                </Button>
-              </div>
+            ) : (
+              <>
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
+                  <h3 className="font-semibold text-lg">{edu.degree}</h3>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-muted-foreground">{formatPeriodData(edu)}</span>
+                    {isEditing && (
+                      <div className="flex gap-1">
+                        <SortableListControls
+                          index={index}
+                          totalItems={education.length}
+                          onMoveUp={() => moveUp(index)}
+                          onMoveDown={() => moveDown(index)}
+                        />
+                        <Button size="sm" variant="ghost" onClick={() => startEditing(edu)} className="h-7 w-7 p-0">
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        <DeleteConfirmationDialog
+                          title="Delete Education"
+                          description="Are you sure you want to delete this education entry? This action cannot be undone."
+                          onConfirm={() => removeEducation(edu.id)}
+                          triggerButton={
+                            <Button size="sm" variant="ghost" className="h-7 w-7 p-0">
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          }
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <p className="text-primary font-medium mb-2">{edu.school}</p>
+                <p className="text-muted-foreground">{edu.description}</p>
+              </>
+            )}
+          </div>
+        ))}
+
+        {isEditing && showAddEducationForm && (
+          <div className="border-l-2 border-dashed border-primary/20 pl-4 space-y-4">
+            <h3 className="font-semibold text-lg">Add</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <DatabaseDropdown
+                table="list_study_field"
+                valueColumn="id"
+                labelColumn="name_ru"
+                value={newEducation.degree}
+                onChange={(_, label) => setNewEducation(prev => ({ ...prev, degree: label }))}
+                label="Faculty"
+                placeholder="Select degree..."
+                searchPlaceholder="Search degrees..."
+                orderBy="name_ru"
+              />
+
+              <SearchableDropdown
+                table="list_university"
+                searchColumns={['name', 'name_ru']}
+                valueColumn="id"
+                labelColumn="name_ru"
+                value={newEducation.school}
+                onChange={(_, label) => setNewEducation(prev => ({ ...prev, school: label }))}
+                label="University"
+                placeholder="Select university..."
+                searchPlaceholder="Type at least 3 characters..."
+              />
             </div>
-          )}
-        </div>
-      </CardContent>
-    </Card>
+
+            <PeriodSelector
+              value={{
+                startMonth: newEducation.start_month,
+                startYear: newEducation.start_year,
+                endMonth: newEducation.end_month,
+                endYear: newEducation.end_year,
+                isCurrent: newEducation.is_current
+              }}
+              onChange={(period) => handlePeriodChange(period, true)}
+              currentLabel="I currently study here"
+            />
+
+            <div>
+              <Label htmlFor="edu-description">Description</Label>
+              <Textarea
+                id="edu-description"
+                value={newEducation.description}
+                onChange={(e) => setNewEducation(prev => ({ ...prev, description: e.target.value }))}
+                placeholder="Additional details about your education..."
+                rows={2}
+              />
+            </div>
+            <div className="flex gap-2">
+              <Button onClick={addEducation}>Add</Button>
+              <Button variant="outline" onClick={() => setShowAddEducationForm(false)}>
+                Cancel
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+    </SectionCard>
   )
 }

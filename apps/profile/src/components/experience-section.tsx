@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Briefcase, Plus, Edit, Trash2, ChevronUp, ChevronDown, Check, X } from "lucide-react"
 import { useState } from "react"
 
@@ -12,6 +14,11 @@ interface Experience {
   title: string
   company: string
   period: string
+  start_month?: string
+  start_year?: string
+  end_month?: string
+  end_year?: string
+  is_current?: boolean
   description: string
   achievements: string[]
 }
@@ -55,6 +62,11 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
     title: '',
     company: '',
     period: '',
+    start_month: 'not-set',
+    start_year: 'not-set',
+    end_month: 'not-set',
+    end_year: 'not-set',
+    is_current: false,
     description: '',
     achievements: ['']
   })
@@ -62,9 +74,61 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
     title: '',
     company: '',
     period: '',
+    start_month: 'not-set',
+    start_year: 'not-set',
+    end_month: 'not-set',
+    end_year: 'not-set',
+    is_current: false,
     description: '',
     achievements: ['']
   })
+
+  const months = [
+    { value: '01', label: 'January' },
+    { value: '02', label: 'February' },
+    { value: '03', label: 'March' },
+    { value: '04', label: 'April' },
+    { value: '05', label: 'May' },
+    { value: '06', label: 'June' },
+    { value: '07', label: 'July' },
+    { value: '08', label: 'August' },
+    { value: '09', label: 'September' },
+    { value: '10', label: 'October' },
+    { value: '11', label: 'November' },
+    { value: '12', label: 'December' }
+  ]
+
+  const generateYears = () => {
+    const currentYear = new Date().getFullYear()
+    const years = []
+    for (let year = currentYear; year >= 1930; year--) {
+      years.push(year.toString())
+    }
+    return years
+  }
+
+  const formatPeriod = (exp: Experience) => {
+    if (exp.start_year && exp.start_year !== 'not-set') {
+      const startMonth = exp.start_month !== 'not-set' && exp.start_month ? months.find(m => m.value === exp.start_month)?.label : ''
+      const startYear = exp.start_year
+      const start = startMonth ? `${startMonth} ${startYear}` : startYear
+
+      if (exp.is_current) {
+        return `${start} - Present`
+      }
+
+      if (exp.end_year && exp.end_year !== 'not-set') {
+        const endMonth = exp.end_month !== 'not-set' && exp.end_month ? months.find(m => m.value === exp.end_month)?.label : ''
+        const endYear = exp.end_year
+        const end = endMonth ? `${endMonth} ${endYear}` : endYear
+        return `${start} - ${end}`
+      }
+
+      return start
+    }
+
+    return exp.period || ''
+  }
 
   const moveUp = (index: number) => {
     if (index === 0) return
@@ -99,6 +163,11 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
         title: '',
         company: '',
         period: '',
+        start_month: 'not-set',
+        start_year: 'not-set',
+        end_month: 'not-set',
+        end_year: 'not-set',
+        is_current: false,
         description: '',
         achievements: ['']
       })
@@ -116,6 +185,11 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
       title: exp.title,
       company: exp.company,
       period: exp.period,
+      start_month: exp.start_month || 'not-set',
+      start_year: exp.start_year || 'not-set',
+      end_month: exp.end_month || 'not-set',
+      end_year: exp.end_year || 'not-set',
+      is_current: exp.is_current || false,
       description: exp.description,
       achievements: exp.achievements.length > 0 ? exp.achievements : ['']
     })
@@ -138,6 +212,11 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
       title: '',
       company: '',
       period: '',
+      start_month: 'not-set',
+      start_year: 'not-set',
+      end_month: 'not-set',
+      end_year: 'not-set',
+      is_current: false,
       description: '',
       achievements: ['']
     })
@@ -228,14 +307,92 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
                         placeholder="Company Name"
                       />
                     </div>
-                    <div>
-                      <Label htmlFor="edit-exp-period">Period</Label>
-                      <Input
-                        id="edit-exp-period"
-                        value={editForm.period}
-                        onChange={(e) => setEditForm(prev => ({ ...prev, period: e.target.value }))}
-                        placeholder="2022 - Present"
+                  </div>
+                  <div className="space-y-3">
+                    <Label>Period (Optional)</Label>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                      <div>
+                        <Label htmlFor="edit-start-month" className="text-xs text-muted-foreground">Start Month</Label>
+                        <Select value={editForm.start_month} onValueChange={(value) => setEditForm(prev => ({ ...prev, start_month: value }))}>
+                          <SelectTrigger id="edit-start-month">
+                            <SelectValue placeholder="Month" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="not-set">Not set</SelectItem>
+                            {months.map((month) => (
+                              <SelectItem key={month.value} value={month.value}>
+                                {month.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label htmlFor="edit-start-year" className="text-xs text-muted-foreground">Start Year</Label>
+                        <Select value={editForm.start_year} onValueChange={(value) => setEditForm(prev => ({ ...prev, start_year: value }))}>
+                          <SelectTrigger id="edit-start-year">
+                            <SelectValue placeholder="Year" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="not-set">Not set</SelectItem>
+                            {generateYears().map((year) => (
+                              <SelectItem key={year} value={year}>
+                                {year}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label htmlFor="edit-end-month" className="text-xs text-muted-foreground">End Month</Label>
+                        <Select
+                          value={editForm.end_month}
+                          onValueChange={(value) => setEditForm(prev => ({ ...prev, end_month: value }))}
+                          disabled={editForm.is_current}
+                        >
+                          <SelectTrigger id="edit-end-month">
+                            <SelectValue placeholder="Month" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="not-set">Not set</SelectItem>
+                            {months.map((month) => (
+                              <SelectItem key={month.value} value={month.value}>
+                                {month.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label htmlFor="edit-end-year" className="text-xs text-muted-foreground">End Year</Label>
+                        <Select
+                          value={editForm.end_year}
+                          onValueChange={(value) => setEditForm(prev => ({ ...prev, end_year: value }))}
+                          disabled={editForm.is_current}
+                        >
+                          <SelectTrigger id="edit-end-year">
+                            <SelectValue placeholder="Year" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="not-set">Not set</SelectItem>
+                            {generateYears().map((year) => (
+                              <SelectItem key={year} value={year}>
+                                {year}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="edit-is-current"
+                        checked={editForm.is_current}
+                        onCheckedChange={(checked) => setEditForm(prev => ({ ...prev, is_current: checked as boolean }))}
                       />
+                      <Label htmlFor="edit-is-current" className="text-sm font-normal cursor-pointer">
+                        I currently work here
+                      </Label>
                     </div>
                   </div>
                   <div>
@@ -254,7 +411,7 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
                     <h3 className="font-semibold text-lg">{exp.title}</h3>
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-muted-foreground">{exp.period}</span>
+                      <span className="text-sm text-muted-foreground">{formatPeriod(exp)}</span>
                       {isEditing && (
                         <div className="flex gap-1">
                           <Button
@@ -339,14 +496,92 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
                     placeholder="Company Name"
                   />
                 </div>
-                <div>
-                  <Label htmlFor="exp-period">Period</Label>
-                  <Input
-                    id="exp-period"
-                    value={newExperience.period}
-                    onChange={(e) => setNewExperience(prev => ({ ...prev, period: e.target.value }))}
-                    placeholder="2022 - Present"
+              </div>
+              <div className="space-y-3">
+                <Label>Period (Optional)</Label>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                  <div>
+                    <Label htmlFor="new-start-month" className="text-xs text-muted-foreground">Start Month</Label>
+                    <Select value={newExperience.start_month} onValueChange={(value) => setNewExperience(prev => ({ ...prev, start_month: value }))}>
+                      <SelectTrigger id="new-start-month">
+                        <SelectValue placeholder="Month" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="not-set">Not set</SelectItem>
+                        {months.map((month) => (
+                          <SelectItem key={month.value} value={month.value}>
+                            {month.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="new-start-year" className="text-xs text-muted-foreground">Start Year</Label>
+                    <Select value={newExperience.start_year} onValueChange={(value) => setNewExperience(prev => ({ ...prev, start_year: value }))}>
+                      <SelectTrigger id="new-start-year">
+                        <SelectValue placeholder="Year" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="not-set">Not set</SelectItem>
+                        {generateYears().map((year) => (
+                          <SelectItem key={year} value={year}>
+                            {year}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="new-end-month" className="text-xs text-muted-foreground">End Month</Label>
+                    <Select
+                      value={newExperience.end_month}
+                      onValueChange={(value) => setNewExperience(prev => ({ ...prev, end_month: value }))}
+                      disabled={newExperience.is_current}
+                    >
+                      <SelectTrigger id="new-end-month">
+                        <SelectValue placeholder="Month" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="not-set">Not set</SelectItem>
+                        {months.map((month) => (
+                          <SelectItem key={month.value} value={month.value}>
+                            {month.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="new-end-year" className="text-xs text-muted-foreground">End Year</Label>
+                    <Select
+                      value={newExperience.end_year}
+                      onValueChange={(value) => setNewExperience(prev => ({ ...prev, end_year: value }))}
+                      disabled={newExperience.is_current}
+                    >
+                      <SelectTrigger id="new-end-year">
+                        <SelectValue placeholder="Year" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="not-set">Not set</SelectItem>
+                        {generateYears().map((year) => (
+                          <SelectItem key={year} value={year}>
+                            {year}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="new-is-current"
+                    checked={newExperience.is_current}
+                    onCheckedChange={(checked) => setNewExperience(prev => ({ ...prev, is_current: checked as boolean }))}
                   />
+                  <Label htmlFor="new-is-current" className="text-sm font-normal cursor-pointer">
+                    I currently work here
+                  </Label>
                 </div>
               </div>
               <div>
