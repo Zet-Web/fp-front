@@ -4,8 +4,7 @@ export enum PostType {
   ARTICLE = 'article',
   EVENT = 'event',
   VACANCY = 'vacancy',
-  POLL = 'poll',
-  UPDATE = 'update'
+  POLL = 'poll'
 }
 
 export interface Post {
