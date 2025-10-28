@@ -1,13 +1,13 @@
 apps/404
-# apps/auth
+apps/auth
 apps/chats
-# apps/header
-# apps/home
+apps/header
+apps/home
 # apps/mobileNav
 # apps/navigation
-# apps/profile
-# apps/post
-# apps/settings
+apps/profile
+apps/post
+apps/settings
 
 supabase/
 
