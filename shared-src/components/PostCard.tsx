@@ -93,7 +93,6 @@ export function PostCard({
                   className="text-muted-foreground hover:text-foreground p-1 bg-transparent hover:bg-transparent"
                   onClick={(e) => {
                     e.preventDefault()
-                    e.stopPropagation()
                     onBookmarkClick?.()
                   }}
                 >
@@ -105,7 +104,6 @@ export function PostCard({
                   className="text-muted-foreground hover:text-foreground p-1 bg-transparent hover:bg-transparent"
                   onClick={(e) => {
                     e.preventDefault()
-                    e.stopPropagation()
                     onShareClick?.()
                   }}
                 >
