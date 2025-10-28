@@ -5,7 +5,7 @@ apps/header
 apps/home
 apps/mobileNav
 apps/navigation
-apps/profile
+# apps/profile
 # apps/post
 apps/settings
 
