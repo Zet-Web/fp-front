@@ -6,6 +6,7 @@
 /apps/mobileNav
 /apps/navigation
 # /apps/profile
+# /apps/post
 /apps/settings
 
 /supabase/
