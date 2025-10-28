@@ -74,7 +74,7 @@ export function Navigation() {
               </Button>
             ))}
 
-            {/* Theme Toggle как навигационный пункт */}
+            {/* Theme Toggle item */}
 <DropdownMenu>
   <DropdownMenuTrigger asChild>
     <Button
@@ -102,7 +102,7 @@ export function Navigation() {
   </DropdownMenuContent>
 </DropdownMenu>
 
-{/* Create как навигационный пункт */}
+{/* Create item */}
 <Button
   variant="ghost"
   className="w-full justify-start h-12 px-4 hover:bg-accent/50 transition-colors text-base"
