@@ -155,7 +155,17 @@ export function Feed({
     setEditingPostId(postId)
   }
 
-  const handleSavePost = (postId: string, updates: { title: string; content: string; images: string[] }) => {
+  const handleSavePost = (postId: string, updates: {
+    title?: string
+    excerpt: string
+    content?: string
+    cover_image?: string
+    images: string[]
+    type: any
+    status: any
+    is_pinned: boolean
+    slug?: string
+  }) => {
     setLocalPosts(prev => prev.map(post =>
       post.id === postId
         ? { ...post, ...updates, updated_at: new Date().toISOString() }
@@ -210,8 +220,14 @@ export function Feed({
             <div key={post.id}>
               <EditablePostCard
                 title={post.title}
+                excerpt={post.excerpt}
                 content={post.content}
+                coverImage={post.cover_image}
                 images={post.images}
+                type={post.type}
+                status={post.status}
+                isPinned={post.is_pinned}
+                slug={post.slug}
                 author={post.author}
                 onSave={(updates) => handleSavePost(post.id, updates)}
                 onCancel={handleCancelEdit}

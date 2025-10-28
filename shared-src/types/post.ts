@@ -7,17 +7,27 @@ export enum PostType {
   POLL = 'poll'
 }
 
+export enum PostStatus {
+  DRAFT = 'draft',
+  PUBLISHED = 'published',
+  ARCHIVED = 'archived'
+}
+
 export interface Post {
   id: string
   url: string
   slug?: string
-  title: string
-  content: string
+  title?: string
+  excerpt: string
+  content?: string
+  cover_image?: string
   images: string[]
   author_id: string
   created_at: string
   updated_at: string
   type: PostType
+  status: PostStatus
+  is_pinned: boolean
   is_featured: boolean
   is_saved?: boolean
 }
