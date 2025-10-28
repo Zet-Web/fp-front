@@ -1,6 +1,7 @@
-// Home page with feed of posts from the network
-
 import { useState, useMemo } from "react"
+import { useNavigate } from "react-router-dom"
+import { Button } from "@/components/ui/button"
+import { Plus } from "lucide-react"
 import { Feed } from "../../shared-src/components/Feed"
 import { FeedFilters } from "../../shared-src/components/FeedFilters"
 import { MOCK_POSTS, FOLLOWED_USER_IDS } from "../../shared-src/lib/mock-posts"
@@ -13,8 +14,11 @@ import {
   getEmptyStateMessage,
   type FeedFilters as FeedFiltersType
 } from "../../shared-src/lib/feed-filters"
+import { useAuth } from "@/hooks/use-auth"
 
 export function HomePage() {
+  const navigate = useNavigate()
+  const { session } = useAuth()
   const [filters, setFilters] = useState<FeedFiltersType>(DEFAULT_FILTERS)
 
   const filteredPosts = useMemo(() => {
@@ -29,6 +33,14 @@ export function HomePage() {
   }, [filters.location.country])
 
   const emptyMessage = getEmptyStateMessage(filters)
+
+  const handleCreatePost = () => {
+    if (session) {
+      navigate('/post')
+    } else {
+      navigate('/auth')
+    }
+  }
 
   return (
     <div className="h-full w-full flex flex-col">
@@ -53,9 +65,18 @@ export function HomePage() {
             posts={filteredPosts}
             emptyMessage={emptyMessage}
             itemsPerPage={5}
+            currentUserId={session?.user?.id}
           />
         </div>
       </div>
+
+      <Button
+        onClick={handleCreatePost}
+        className="fixed bottom-20 md:bottom-6 right-6 rounded-full w-14 h-14 shadow-lg hover:shadow-xl transition-shadow"
+        size="icon"
+      >
+        <Plus className="w-6 h-6" />
+      </Button>
     </div>
   )
 }
