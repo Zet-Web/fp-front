@@ -15,6 +15,7 @@ interface PostCardProps {
   onMoreClick?: () => void
   onBookmarkClick?: () => void
   onShareClick?: () => void
+  isSaved?: boolean
 }
 
 export function PostCard({
@@ -25,7 +26,8 @@ export function PostCard({
   showActions = true,
   onMoreClick,
   onBookmarkClick,
-  onShareClick
+  onShareClick,
+  isSaved = false
 }: PostCardProps) {
   const displayName = author.name || author.username || 'User'
   const displayUsername = author.username || author.telegram_username || 'user'
@@ -89,15 +91,21 @@ export function PostCard({
                   variant="ghost"
                   size="sm"
                   className="text-muted-foreground hover:text-foreground p-1 bg-transparent hover:bg-transparent"
-                  onClick={onBookmarkClick}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    onBookmarkClick?.()
+                  }}
                 >
-                  <Bookmark className="w-4 h-4" />
+                  <Bookmark className={`w-4 h-4 transition-colors ${isSaved ? 'fill-blue-500 text-blue-500' : ''}`} />
                 </Button>
                 <Button
                   variant="ghost"
                   size="sm"
                   className="text-muted-foreground hover:text-foreground p-1 bg-transparent hover:bg-transparent"
-                  onClick={onShareClick}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    onShareClick?.()
+                  }}
                 >
                   <Share className="w-4 h-4" />
                 </Button>

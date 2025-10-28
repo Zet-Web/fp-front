@@ -8,6 +8,7 @@ import { PostCard } from "./PostCard"
 import { constructPostUrl } from "../lib/post-utils"
 import type { PostWithAuthor } from "../types/post"
 import { Skeleton } from "@/components/ui/skeleton"
+import { toast } from "sonner"
 
 interface FeedProps {
   posts: PostWithAuthor[]
@@ -51,6 +52,7 @@ export function Feed({
   const [isLoading, setIsLoading] = useState(true)
   const [hasMore, setHasMore] = useState(true)
   const [page, setPage] = useState(1)
+  const [savedPostIds, setSavedPostIds] = useState<Set<string>>(new Set())
   const observerRef = useRef<HTMLDivElement>(null)
 
   const filteredPosts = filterByUserId
@@ -86,6 +88,9 @@ export function Feed({
       setDisplayedPosts(initialPosts)
       setHasMore(sortedPosts.length > itemsPerPage)
       setIsLoading(false)
+
+      const initialSavedIds = new Set(sortedPosts.filter(p => p.is_saved).map(p => p.id))
+      setSavedPostIds(initialSavedIds)
     }, 500)
 
     return () => clearTimeout(timer)
@@ -111,6 +116,31 @@ export function Feed({
       }
     }
   }, [hasMore, isLoading, loadMorePosts])
+
+  const handleBookmarkClick = (postId: string) => {
+    setSavedPostIds(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(postId)) {
+        newSet.delete(postId)
+        toast.success('Post removed from saved')
+      } else {
+        newSet.add(postId)
+        toast.success('Post saved')
+      }
+      return newSet
+    })
+  }
+
+  const handleShareClick = async (post: PostWithAuthor) => {
+    const postUrl = `${window.location.origin}${constructPostUrl(post.url, post.slug)}`
+
+    try {
+      await navigator.clipboard.writeText(postUrl)
+      toast.success('Link copied to clipboard')
+    } catch (error) {
+      toast.error('Failed to copy link')
+    }
+  }
 
   if (isLoading && displayedPosts.length === 0) {
     return (
@@ -151,6 +181,9 @@ export function Feed({
             images={post.images}
             author={post.author}
             showActions={true}
+            isSaved={savedPostIds.has(post.id)}
+            onBookmarkClick={() => handleBookmarkClick(post.id)}
+            onShareClick={() => handleShareClick(post)}
           />
         </Link>
       ))}
