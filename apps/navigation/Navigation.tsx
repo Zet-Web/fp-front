@@ -32,7 +32,7 @@ export function Navigation() {
       <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center">
         <div className="h-4 w-4 rounded bg-white"></div>
       </div>
-      <CardTitle className="text-xl font-bold text-foreground">Фонд Права</CardTitle>
+      <CardTitle className="text-xl font-bold text-foreground">Social Network</CardTitle>
     </Link>
 </CardHeader>
           <CardContent className="space-y-2">
