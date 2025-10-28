@@ -26,3 +26,14 @@ Clear visual hierarchy is established through typography scale, spacing, and col
 
 ## Animation & Motion
 Subtle animations enhance user experience without distraction. Transitions apply to background-color, border-color, and color properties (0.2s ease-in-out). Hover effects use scale transforms (hover:scale-105) and shadow transitions for depth perception.
+
+## Standardized Component Patterns
+Action Buttons: Edit actions always use Pencil icon (w-4 h-4) with ghost variant buttons, delete actions use Trash2 icon (w-4 h-4) with text-destructive color class. All action buttons in dropdown menus include icon on left (mr-2 spacing) followed by text label. Primary save buttons use default variant with optional Loader2 icon (w-4 h-4 mr-2 animate-spin) during loading states, while cancel buttons use outline variant.
+
+Confirmation Dialogs: Destructive actions require AlertDialog with consistent structure including AlertDialogTitle describing action, AlertDialogDescription explaining consequences, AlertDialogCancel button labeled "Cancel" with default styling, and AlertDialogAction button for confirmation. Delete confirmations use red destructive styling (bg-destructive text-destructive-foreground hover:bg-destructive/90) while exit/discard dialogs maintain default action button styling.
+
+Icon Sizing Standards: Action icons in buttons and menus use w-4 h-4, section headers and primary features use w-5 h-5, prominent hero elements use w-6 h-6. Close/remove icons (X) consistently use w-4 h-4 in buttons and w-3 h-3 in badge-style removals. All Lucide icons maintain consistent stroke width and never mix icon libraries.
+
+Button Hierarchy: Primary actions use default blue variant, secondary actions use outline variant, tertiary actions use ghost variant with transparent backgrounds (bg-transparent hover:bg-transparent), destructive actions use destructive variant. Loading states disable buttons and show spinner icon, all buttons provide hover state feedback through color or shadow changes.
+
+Form Validation: Required fields marked with red asterisk (text-destructive), error states show red border (border-destructive) with error message below in small red text (text-sm text-destructive), character counters display remaining count with color change at 20 characters remaining (text-destructive when low, text-muted-foreground normally). All inputs provide clear visual feedback for focus, error, and disabled states using consistent border and shadow transitions.
