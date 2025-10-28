@@ -1,18 +1,11 @@
+// Feed component with filtering, sorting, lazy loading and skeleton states
+
 import { useState, useEffect, useRef, useCallback } from "react"
-import { useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
 import { PostCard } from "./PostCard"
+import { constructPostUrl } from "../lib/post-utils"
 import type { PostWithAuthor } from "../types/post"
 import { Skeleton } from "@/components/ui/skeleton"
 import { toast } from "sonner"
@@ -26,8 +19,6 @@ interface FeedProps {
     onClick: () => void
   }
   itemsPerPage?: number
-  currentUserId?: string
-  onPostDeleted?: (postId: string) => void
 }
 
 function PostSkeleton() {
@@ -55,19 +46,13 @@ export function Feed({
   filterByUserId,
   emptyMessage = "No posts to display",
   emptyAction,
-  itemsPerPage = 10,
-  currentUserId,
-  onPostDeleted
+  itemsPerPage = 10
 }: FeedProps) {
-  const navigate = useNavigate()
   const [displayedPosts, setDisplayedPosts] = useState<PostWithAuthor[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [hasMore, setHasMore] = useState(true)
   const [page, setPage] = useState(1)
   const [savedPostIds, setSavedPostIds] = useState<Set<string>>(new Set())
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [postToDelete, setPostToDelete] = useState<PostWithAuthor | null>(null)
-  const [isDeleting, setIsDeleting] = useState(false)
   const observerRef = useRef<HTMLDivElement>(null)
 
   const filteredPosts = filterByUserId
@@ -147,56 +132,13 @@ export function Feed({
   }
 
   const handleShareClick = async (post: PostWithAuthor) => {
-    const postUrl = `${window.location.origin}/post/${post.id}`
+    const postUrl = `${window.location.origin}${constructPostUrl(post.url, post.slug)}`
 
     try {
       await navigator.clipboard.writeText(postUrl)
       toast.success('Link copied to clipboard')
     } catch (error) {
       toast.error('Failed to copy link')
-    }
-  }
-
-  const handleEditClick = (postId: string) => {
-    navigate(`/post/${postId}`)
-  }
-
-  const handleDeleteClick = (post: PostWithAuthor) => {
-    setPostToDelete(post)
-    setDeleteDialogOpen(true)
-  }
-
-  const confirmDelete = async () => {
-    if (!postToDelete) return
-
-    setIsDeleting(true)
-    try {
-      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/delete-post?id=${postToDelete.id}`
-      const response = await fetch(apiUrl, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('supabase.auth.token')}`,
-        },
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to delete post')
-      }
-
-      toast.success('Post deleted successfully')
-      setDeleteDialogOpen(false)
-      setPostToDelete(null)
-
-      setDisplayedPosts(prev => prev.filter(p => p.id !== postToDelete.id))
-
-      if (onPostDeleted) {
-        onPostDeleted(postToDelete.id)
-      }
-    } catch (error) {
-      console.error('Error deleting post:', error)
-      toast.error('Failed to delete post')
-    } finally {
-      setIsDeleting(false)
     }
   }
 
@@ -226,62 +168,37 @@ export function Feed({
   }
 
   return (
-    <>
-      <div className="space-y-6">
-        {displayedPosts.map((post) => {
-          const isOwner = currentUserId && post.author_id === currentUserId
-          return (
-            <PostCard
-              key={post.id}
-              id={post.id}
-              title={post.title}
-              content={post.content}
-              images={post.images}
-              author={post.author}
-              showActions={true}
-              isSaved={savedPostIds.has(post.id)}
-              isOwner={isOwner}
-              onEditClick={() => handleEditClick(post.id)}
-              onDeleteClick={() => handleDeleteClick(post)}
-              onBookmarkClick={() => handleBookmarkClick(post.id)}
-              onShareClick={() => handleShareClick(post)}
-            />
-          )
-        })}
+    <div className="space-y-6">
+      {displayedPosts.map((post) => (
+        <Link
+          key={post.id}
+          to={constructPostUrl(post.url, post.slug)}
+          className="block"
+        >
+          <PostCard
+            title={post.title}
+            content={post.content}
+            images={post.images}
+            author={post.author}
+            showActions={true}
+            isSaved={savedPostIds.has(post.id)}
+            onBookmarkClick={() => handleBookmarkClick(post.id)}
+            onShareClick={() => handleShareClick(post)}
+          />
+        </Link>
+      ))}
 
-        {hasMore && (
-          <div ref={observerRef} className="py-4">
-            <PostSkeleton />
-          </div>
-        )}
+      {hasMore && (
+        <div ref={observerRef} className="py-4">
+          <PostSkeleton />
+        </div>
+      )}
 
-        {!hasMore && displayedPosts.length > 0 && (
-          <div className="text-center py-8">
-            <p className="text-sm text-muted-foreground">You've reached the end</p>
-          </div>
-        )}
-      </div>
-
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Post</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete "{postToDelete?.title}"? This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={confirmDelete}
-              disabled={isDeleting}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {isDeleting ? 'Deleting...' : 'Delete'}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </>
+      {!hasMore && displayedPosts.length > 0 && (
+        <div className="text-center py-8">
+          <p className="text-sm text-muted-foreground">You've reached the end</p>
+        </div>
+      )}
+    </div>
   )
 }
