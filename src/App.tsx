@@ -24,24 +24,24 @@ function App() {
     >
       <AuthProvider>
         <div className="h-full w-full flex flex-col bg-background text-foreground overflow-hidden">
-          <Header />
           <div className="flex flex-1 min-h-0">
             <Navigation />
-            <main className="flex-1 p-4 overflow-y-auto lg:flex-1">
-              {/* <div className="max-w-4xl mx-auto flex flex-col items-center justify-center min-h-full">*/}
-              <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/profile" element={<ProfilePage />} />
-                <Route path="/post/:urlCode" element={<PostPage />} />
-                <Route path="/:username" element={<ProfilePage />} />
-                <Route path="/auth" element={<AuthPage />} />
-                <Route path="/settings" element={<SettingsPage />} />
-                <Route path="/chats" element={<div className="lg:hidden h-full"><Chats /></div>} />
-                <Route path="/404" element={<NotFoundPage />} />
-                <Route path="*" element={<NotFoundPage />} />
-              </Routes>
-              {/*</div>*/}
-            </main>
+            <div className="flex flex-col flex-1 min-w-0">
+              <Header />
+              <main className="flex-1 p-4 overflow-y-auto">
+                <Routes>
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/profile" element={<ProfilePage />} />
+                  <Route path="/post/:urlCode" element={<PostPage />} />
+                  <Route path="/:username" element={<ProfilePage />} />
+                  <Route path="/auth" element={<AuthPage />} />
+                  <Route path="/settings" element={<SettingsPage />} />
+                  <Route path="/chats" element={<div className="lg:hidden h-full"><Chats /></div>} />
+                  <Route path="/404" element={<NotFoundPage />} />
+                  <Route path="*" element={<NotFoundPage />} />
+                </Routes>
+              </main>
+            </div>
             <div className="hidden lg:block p-4">
               <Chats />
             </div>

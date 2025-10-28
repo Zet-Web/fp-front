@@ -1,52 +1,71 @@
-import { Moon, Sun, Monitor } from "lucide-react"
+import { ChevronLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { useTheme } from "next-themes"
+import { useNavigate, useLocation } from "react-router-dom"
 import { useAuthContext } from "@/components/auth-provider"
 
 export function Header() {
-  const { setTheme, theme } = useTheme()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { profile } = useAuthContext()
+
+  const getPageTitle = () => {
+    const path = location.pathname
+
+    if (path === '/' || path === '/home') return null
+    if (path === '/settings') return 'Settings'
+    if (path === '/auth') return 'Authentication'
+    if (path === '/chats' || path === '/messages') return 'Messages'
+    if (path === '/notifications') return 'Notifications'
+    if (path === '/bookmarks') return 'Bookmarks'
+    if (path === '/explore') return 'Explore'
+    if (path === '/communities') return 'Communities'
+    if (path.startsWith('/post/')) return 'Post'
+    if (path === '/profile' || (profile?.username && path === `/${profile.username}`)) {
+      return profile?.name || profile?.username || 'Profile'
+    }
+    if (path.startsWith('/')) {
+      const username = path.substring(1)
+      if (username && !username.includes('/')) {
+        return `@${username}`
+      }
+    }
+
+    return null
+  }
+
+  const canGoBack = () => {
+    return window.history.length > 1
+  }
+
+  const handleBack = () => {
+    if (canGoBack()) {
+      navigate(-1)
+    }
+  }
+
+  const pageTitle = getPageTitle()
+
+  if (!pageTitle) {
+    return null
+  }
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto flex h-14 items-center justify-between px-4">
-        <div className="flex items-center space-x-2">
-          <div className="h-6 w-6 rounded bg-blue-500"></div>
-          <h1 className="text-xl font-semibold text-foreground">
-            Business network
-          </h1>
-        </div>
-
-        <nav className="flex items-center space-x-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-9 w-9">
-                <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                <span className="sr-only">Toggle theme</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setTheme("light")}>
-                <Sun className="mr-2 h-4 w-4" />
-                Light
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme("dark")}>
-                <Moon className="mr-2 h-4 w-4" />
-                Dark
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme("system")}>
-                <Monitor className="mr-2 h-4 w-4" />
-                System
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </nav>
+    <header className="sticky top-0 z-40 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="flex h-14 items-center px-4">
+        {canGoBack() && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9 mr-2"
+            onClick={handleBack}
+          >
+            <ChevronLeft className="h-5 w-5" />
+            <span className="sr-only">Go back</span>
+          </Button>
+        )}
+        <h1 className="text-lg font-semibold text-foreground truncate">
+          {pageTitle}
+        </h1>
       </div>
     </header>
   )

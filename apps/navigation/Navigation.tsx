@@ -1,12 +1,20 @@
-import { Home, User, Settings, MessageCircle, Bell, Search, Bookmark, Users } from "lucide-react"
+import { Home, User, Settings, MessageCircle, Bell, Search, Bookmark, Users, Plus, Moon, Sun, Monitor } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { Link, useLocation } from "react-router-dom"
 import { useAuthContext } from "@/components/auth-provider"
+import { useTheme } from "next-themes"
 
 export function Navigation() {
   const location = useLocation()
   const { user, profile, isAuthenticated, loading } = useAuthContext()
+  const { setTheme } = useTheme()
 
   // Determine profile path based on authentication status
   const getProfilePath = () => {
@@ -55,7 +63,7 @@ export function Navigation() {
                 variant={location.pathname === item.path ? "default" : "ghost"}
                 className={`w-full justify-start h-12 px-4 ${
                   location.pathname === item.path
-                    ? "bg-blue-500 hover:bg-blue-600 text-white" 
+                    ? "bg-blue-500 hover:bg-blue-600 text-white"
                     : "hover:bg-accent/50 transition-colors"
                 }`}
                 asChild
@@ -66,6 +74,46 @@ export function Navigation() {
                 </Link>
               </Button>
             ))}
+          </CardContent>
+        </Card>
+
+        {/* Create Button */}
+        <Button
+          className="w-full h-12 bg-blue-500 hover:bg-blue-600 text-white font-medium"
+          onClick={() => {
+            console.log('Create button clicked')
+          }}
+        >
+          <Plus className="h-5 w-5 mr-2" />
+          Create
+        </Button>
+
+        {/* Theme Toggle */}
+        <Card className="shadow-sm">
+          <CardContent className="p-3">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="w-full justify-start h-10 px-3">
+                  <Sun className="h-4 w-4 mr-3 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                  <Moon className="absolute left-6 h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                  <span className="ml-3 dark:ml-0">Theme</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-48">
+                <DropdownMenuItem onClick={() => setTheme("light")}>
+                  <Sun className="mr-2 h-4 w-4" />
+                  Light
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme("dark")}>
+                  <Moon className="mr-2 h-4 w-4" />
+                  Dark
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme("system")}>
+                  <Monitor className="mr-2 h-4 w-4" />
+                  System
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </CardContent>
         </Card>
 
