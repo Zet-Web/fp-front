@@ -27,17 +27,12 @@ export function Navigation() {
     <aside className="hidden lg:flex lg:w-64 xl:w-72 flex-col h-full bg-background/30 overflow-hidden">
       <div className="flex-1 p-4 space-y-4 overflow-y-auto">
         <Card className="shadow-sm">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg">Fond Network</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            {/* Brand as first nav item */}
-            <div className="flex items-center space-x-3 px-4 py-2">
-              <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center">
-                <div className="h-4 w-4 rounded bg-white"></div>
-              </div>
-              <span className="text-xl font-bold text-foreground">FP Network</span>
-            </div>
+          <CardHeader className="pb-3 flex flex-row items-center space-x-3">
+  <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center">
+    <div className="h-4 w-4 rounded bg-white"></div>
+  </div>
+  <CardTitle className="text-xl font-bold text-foreground">SocialNet</CardTitle>
+</CardHeader>
 
             {/* Navigation items */}
             {[
