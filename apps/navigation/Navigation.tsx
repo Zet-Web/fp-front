@@ -110,7 +110,7 @@ export function Navigation() {
 </Button>
 
             {/* Separator before user profile */}
-            <div className="h-px bg-border/50 mx-2 mt-4"></div>
+            <div className="h-px bg-border mx-2 mt-4"></div>
 
             {/* User Profile */}
             {loading ? (
