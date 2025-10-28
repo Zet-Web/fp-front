@@ -1,6 +1,6 @@
 // Centralized navigation configuration for consistent navigation across desktop and mobile
 
-import { Chrome as Home, User, Settings, MessageCircle, Bell, Search, Bookmark, Users, Plus } from "lucide-react"
+import { Home, User, Settings, MessageCircle, Bell, Search, Bookmark, Users, Plus } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 import type { Profile } from "@/types/profile"
 
