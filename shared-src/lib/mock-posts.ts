@@ -434,7 +434,7 @@ export const MOCK_POSTS: PostWithAuthor[] = [
     content: "Hosting a free workshop on Python for Data Science next Saturday! We'll cover pandas, numpy, matplotlib, and scikit-learn basics. Perfect for beginners. Limited spots available - register now!",
     cover_image: "https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg?auto=compress&cs=tinysrgb&w=600&h=300&fit=crop",
     images: [],
-    author_id: "test-user-7",
+    author_id: "test-user-1",
     created_at: "2024-10-28T14:50:00Z",
     updated_at: "2024-10-28T14:50:00Z",
     type: PostType.EVENT,
