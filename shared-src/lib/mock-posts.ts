@@ -443,7 +443,7 @@ export const MOCK_POSTS: PostWithAuthor[] = [
     is_featured: false,
     is_saved: false,
     author: {
-      id: "test-user-7",
+      id: "test-user-1",
       name: "Yuki Tanaka",
       username: "ytanaka",
       avatar_url: null,
