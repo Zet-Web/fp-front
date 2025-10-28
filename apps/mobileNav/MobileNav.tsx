@@ -1,4 +1,4 @@
-import { Home, User, MessageSquare, Menu } from "lucide-react"
+import { Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Link, useLocation } from "react-router-dom"
 import { useState } from "react"
@@ -10,32 +10,12 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
+import { desktopNavigationItems, mobileBottomNavigationItems } from "@/shared-src/lib/navigation-config"
 
 export function MobileNav() {
   const location = useLocation()
   const [isOpen, setIsOpen] = useState(false)
   const { isAuthenticated, profile } = useAuthContext()
-
-  // Determine profile path based on authentication status
-  const getProfilePath = () => {
-    if (isAuthenticated && profile?.username) {
-      return `/${profile.username}`
-    }
-    return '/auth'
-  }
-
-  // Generate navigation items dynamically to ensure fresh profile path
-  const navigationItems = [
-    { icon: Home, label: "Home", path: "/" },
-    { icon: User, label: "Profile", path: getProfilePath() },
-    { icon: MessageSquare, label: "Messages", path: "/chats" },
-  ]
-
-  const allNavigationItems = [
-    { icon: Home, label: "Home", path: "/" },
-    { icon: User, label: "Profile", path: getProfilePath() },
-    { icon: MessageSquare, label: "Messages", path: "/chats" },
-  ]
 
   const handleChatsToggle = () => {
     // This will be handled by the parent component
@@ -65,73 +45,58 @@ export function MobileNav() {
                 <SheetTitle>Navigation</SheetTitle>
               </SheetHeader>
               <div className="mt-6 space-y-2">
-                {allNavigationItems.map((item) => (
+                {desktopNavigationItems.map((item) => {
+                  const itemPath = typeof item.path === 'function' 
+                    ? item.path(profile, isAuthenticated) 
+                    : item.path
+                  
+                  return (
                   <Button
                     key={item.label}
-                    variant={location.pathname === item.path ? "default" : "ghost"}
+                    variant={location.pathname === itemPath ? "default" : "ghost"}
                     className={`w-full justify-start h-12 px-4 ${
-                      location.pathname === item.path
+                      location.pathname === itemPath
                         ? "bg-blue-500 hover:bg-blue-600 text-white" 
                         : "hover:bg-accent/50 transition-colors"
                     }`}
                     asChild
                     onClick={() => setIsOpen(false)}
                   >
-                    <Link to={item.path}>
+                    <Link to={itemPath}>
                       <item.icon className="h-5 w-5 mr-3" />
                       <span className="text-base">{item.label}</span>
                     </Link>
                   </Button>
-                ))}
+                  )
+                })}
               </div>
             </SheetContent>
           </Sheet>
 
-          {/* Home Button */}
-          <Button
-            variant="ghost"
-            size="sm"
-            className={`flex flex-col items-center justify-center h-12 w-12 p-1 ${
-              location.pathname === "/" ? "text-blue-500" : ""
-            }`}
-            asChild
-          >
-            <Link to="/">
-              <Home className="h-5 w-5" />
-              <span className="text-xs mt-1">Home</span>
-            </Link>
-          </Button>
-
-          {/* Profile Button */}
-          <Button
-            variant="ghost"
-            size="sm"
-            className={`flex flex-col items-center justify-center h-12 w-12 p-1 ${
-              location.pathname === getProfilePath() ? "text-blue-500" : ""
-            }`}
-            asChild
-          >
-            <Link to={getProfilePath()}>
-              <User className="h-5 w-5" />
-              <span className="text-xs mt-1">Profile</span>
-            </Link>
-          </Button>
-
-          {/* Chats Toggle Button */}
-          <Button
-  variant="ghost"
-  size="sm"
-  className={`flex flex-col items-center justify-center h-12 w-12 p-1 ${
-    location.pathname === "/chats" ? "text-blue-500" : ""
-  }`}
-  asChild
-  onClick={() => setIsOpen(false)}
->
-  <Link to="/chats">
-    <MessageSquare className="h-5 w-5" />
-    <span className="text-xs mt-1">Messages</span>
-  </Link>
-</Button>
+          {/* Bottom Navigation Items */}
+          {mobileBottomNavigationItems.map((item) => {
+            const itemPath = typeof item.path === 'function' 
+              ? item.path(profile, isAuthenticated) 
+              : item.path
+            
+            return (
+              <Button
+                key={item.label}
+                variant="ghost"
+                size="sm"
+                className={`flex flex-col items-center justify-center h-12 w-12 p-1 ${
+                  location.pathname === itemPath ? "text-blue-500" : ""
+                }`}
+                asChild
+                onClick={() => setIsOpen(false)}
+              >
+                <Link to={itemPath}>
+                  <item.icon className="h-5 w-5" />
+                  <span className="text-xs mt-1">{item.label}</span>
+                </Link>
+              </Button>
+            )
+          })}
         </div>
       </div>
 

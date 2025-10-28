@@ -10,18 +10,12 @@ import {
 import { Link, useLocation } from "react-router-dom"
 import { useAuthContext } from "@/components/auth-provider"
 import { useTheme } from "next-themes"
+import { desktopNavigationItems, createButtonConfig } from "@/shared-src/lib/navigation-config"
 
 export function Navigation() {
   const location = useLocation()
   const { user, profile, isAuthenticated, loading } = useAuthContext()
   const { setTheme } = useTheme()
-
-  const getProfilePath = () => {
-    if (isAuthenticated && profile?.username) {
-      return `/${profile.username}`
-    }
-    return '/auth'
-  }
 
   return (
     <aside className="hidden lg:flex lg:w-64 xl:w-72 flex-col h-full bg-background/30 overflow-hidden">
@@ -40,32 +34,29 @@ export function Navigation() {
 </CardHeader>
           <CardContent className="space-y-2">
             {/* Navigation items */}
-            {[
-              { icon: Home, label: "Home", path: "/" },
-              { icon: Search, label: "Explore", path: "/explore" },
-              { icon: Bell, label: "Notifications", path: "/notifications" },
-              { icon: MessageCircle, label: "Messages", path: "/messages" },
-              { icon: Bookmark, label: "Bookmarks", path: "/bookmarks" },
-              { icon: Users, label: "Communities", path: "/communities" },
-              { icon: User, label: "Profile", path: getProfilePath() },
-              { icon: Settings, label: "Settings", path: "/settings" },
-            ].map((item) => (
+            {desktopNavigationItems.map((item) => {
+              const itemPath = typeof item.path === 'function' 
+                ? item.path(profile, isAuthenticated) 
+                : item.path
+              
+              return (
               <Button
                 key={item.label}
-                variant={location.pathname === item.path ? "default" : "ghost"}
+                variant={location.pathname === itemPath ? "default" : "ghost"}
                 className={`w-full justify-start h-12 px-4 ${
-                  location.pathname === item.path
+                  location.pathname === itemPath
                     ? "bg-blue-500 hover:bg-blue-600 text-white"
                     : "hover:bg-accent/50 transition-colors"
                 }`}
                 asChild
               >
-                <Link to={item.path}>
+                <Link to={itemPath}>
                   <item.icon className="h-5 w-5 mr-3" />
                   <span className="text-base">{item.label}</span>
                 </Link>
               </Button>
-            ))}
+              )
+            })}
 
             {/* Theme Toggle item */}
 <DropdownMenu>
@@ -101,12 +92,10 @@ export function Navigation() {
 <Button
   variant="ghost"
   className="w-full justify-start h-12 px-4 text-base"
-  onClick={() => {
-    console.log('Create button clicked')
-  }}
+  onClick={createButtonConfig.onClick}
 >
-  <Plus className="h-5 w-5 mr-3" />
-  <span>Create</span>
+  <createButtonConfig.icon className="h-5 w-5 mr-3" />
+  <span>{createButtonConfig.label}</span>
 </Button>
 
             {/* Separator before user profile */}
@@ -122,7 +111,7 @@ export function Navigation() {
                 </div>
               </div>
             ) : isAuthenticated && user ? (
-              <Link to={getProfilePath()} className="flex items-center space-x-3 px-4 py-2 hover:bg-accent/50 transition-colors rounded-md mt-2">
+              <Link to={typeof desktopNavigationItems[6].path === 'function' ? desktopNavigationItems[6].path(profile, isAuthenticated) : desktopNavigationItems[6].path} className="flex items-center space-x-3 px-4 py-2 hover:bg-accent/50 transition-colors rounded-md mt-2">
                 <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
                   <span className="text-white font-semibold text-sm">
                     {user.email?.charAt(0).toUpperCase()}
