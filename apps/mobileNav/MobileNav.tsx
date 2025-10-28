@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Link, useLocation } from "react-router-dom"
 import { useState } from "react"
 import { useAuthContext } from "@/components/auth-provider"
+import { NavigationHeaderContent } from "@shared/components/NavigationHeaderContent"
 import {
   Sheet,
   SheetContent,
@@ -43,6 +44,7 @@ export function MobileNav() {
             <SheetContent side="left" className="w-80">
               <SheetHeader>
                 <SheetTitle>Navigation</SheetTitle>
+                <NavigationHeaderContent />
               </SheetHeader>
               <div className="mt-6 space-y-2">
                 {desktopNavigationItems.map((item) => {
