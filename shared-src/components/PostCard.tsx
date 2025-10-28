@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Share, MoreHorizontal, Bookmark } from "lucide-react"
-import type { PostAuthor } from "@/types/post"
+import type { PostAuthor } from "../types/post"
 
 interface PostCardProps {
   title: string
