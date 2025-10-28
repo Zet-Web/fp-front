@@ -53,6 +53,7 @@ export function HomePage() {
             posts={filteredPosts}
             emptyMessage={emptyMessage}
             itemsPerPage={5}
+            currentUserId="test-user-1"
           />
         </div>
       </div>

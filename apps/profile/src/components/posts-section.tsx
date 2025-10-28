@@ -39,6 +39,7 @@ export function PostsSection({ user, isOwnProfile }: PostsSectionProps) {
           : undefined
       }
       itemsPerPage={10}
+      currentUserId={user.id}
     />
   )
 }

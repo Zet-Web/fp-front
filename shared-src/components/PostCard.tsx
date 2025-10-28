@@ -3,7 +3,24 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Share, MoreHorizontal, Bookmark } from "lucide-react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { Share, MoreHorizontal, Bookmark, Pencil, Trash2 } from "lucide-react"
+import { useState } from "react"
 import type { PostAuthor } from "../types/post"
 
 interface PostCardProps {
@@ -15,7 +32,10 @@ interface PostCardProps {
   onMoreClick?: () => void
   onBookmarkClick?: () => void
   onShareClick?: () => void
+  onEditClick?: () => void
+  onDeleteClick?: () => void
   isSaved?: boolean
+  isOwner?: boolean
 }
 
 export function PostCard({
@@ -27,8 +47,12 @@ export function PostCard({
   onMoreClick,
   onBookmarkClick,
   onShareClick,
-  isSaved = false
+  onEditClick,
+  onDeleteClick,
+  isSaved = false,
+  isOwner = false
 }: PostCardProps) {
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const displayName = author.name || author.username || 'User'
   const displayUsername = author.username || author.telegram_username || 'user'
   const avatarFallback = displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
@@ -57,16 +81,44 @@ export function PostCard({
                 )}
                 <span className="text-sm text-muted-foreground">@{displayUsername}</span>
               </div>
-              {showActions && (
+              {showActions && isOwner && (
                 <div className="flex items-center gap-1 flex-shrink-0">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-muted-foreground hover:text-foreground p-1 bg-transparent hover:bg-transparent"
-                    onClick={onMoreClick}
-                  >
-                    <MoreHorizontal className="w-4 h-4" />
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-muted-foreground hover:text-foreground p-1 bg-transparent hover:bg-transparent"
+                        onClick={(e) => {
+                          e.preventDefault()
+                          onMoreClick?.()
+                        }}
+                      >
+                        <MoreHorizontal className="w-4 h-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        onClick={(e) => {
+                          e.preventDefault()
+                          onEditClick?.()
+                        }}
+                      >
+                        <Pencil className="w-4 h-4 mr-2" />
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={(e) => {
+                          e.preventDefault()
+                          setShowDeleteDialog(true)
+                        }}
+                        className="text-destructive focus:text-destructive"
+                      >
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               )}
             </div>
@@ -114,6 +166,30 @@ export function PostCard({
           </div>
         </div>
       </CardContent>
+
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Post</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this post? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault()
+                onDeleteClick?.()
+                setShowDeleteDialog(false)
+              }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   )
 }

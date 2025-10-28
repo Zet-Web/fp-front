@@ -5,6 +5,7 @@ import { Link } from "react-router-dom"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { PostCard } from "./PostCard"
+import { EditablePostCard } from "./EditablePostCard"
 import { constructPostUrl } from "../lib/post-utils"
 import type { PostWithAuthor } from "../types/post"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -19,6 +20,7 @@ interface FeedProps {
     onClick: () => void
   }
   itemsPerPage?: number
+  currentUserId?: string
 }
 
 function PostSkeleton() {
@@ -46,18 +48,25 @@ export function Feed({
   filterByUserId,
   emptyMessage = "No posts to display",
   emptyAction,
-  itemsPerPage = 10
+  itemsPerPage = 10,
+  currentUserId
 }: FeedProps) {
   const [displayedPosts, setDisplayedPosts] = useState<PostWithAuthor[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [hasMore, setHasMore] = useState(true)
   const [page, setPage] = useState(1)
   const [savedPostIds, setSavedPostIds] = useState<Set<string>>(new Set())
+  const [editingPostId, setEditingPostId] = useState<string | null>(null)
+  const [localPosts, setLocalPosts] = useState<PostWithAuthor[]>(posts)
   const observerRef = useRef<HTMLDivElement>(null)
 
+  useEffect(() => {
+    setLocalPosts(posts)
+  }, [posts])
+
   const filteredPosts = filterByUserId
-    ? posts.filter(post => post.author_id === filterByUserId)
-    : posts
+    ? localPosts.filter(post => post.author_id === filterByUserId)
+    : localPosts
 
   const sortedPosts = [...filteredPosts].sort((a, b) => {
     return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
@@ -142,6 +151,29 @@ export function Feed({
     }
   }
 
+  const handleEditClick = (postId: string) => {
+    setEditingPostId(postId)
+  }
+
+  const handleSavePost = (postId: string, updates: { title: string; content: string; images: string[] }) => {
+    setLocalPosts(prev => prev.map(post =>
+      post.id === postId
+        ? { ...post, ...updates, updated_at: new Date().toISOString() }
+        : post
+    ))
+    setEditingPostId(null)
+    toast.success('Post updated successfully')
+  }
+
+  const handleCancelEdit = () => {
+    setEditingPostId(null)
+  }
+
+  const handleDeletePost = (postId: string) => {
+    setLocalPosts(prev => prev.filter(post => post.id !== postId))
+    toast.success('Post deleted successfully')
+  }
+
   if (isLoading && displayedPosts.length === 0) {
     return (
       <div className="space-y-6">
@@ -169,24 +201,47 @@ export function Feed({
 
   return (
     <div className="space-y-6">
-      {displayedPosts.map((post) => (
-        <Link
-          key={post.id}
-          to={constructPostUrl(post.url, post.slug)}
-          className="block"
-        >
-          <PostCard
-            title={post.title}
-            content={post.content}
-            images={post.images}
-            author={post.author}
-            showActions={true}
-            isSaved={savedPostIds.has(post.id)}
-            onBookmarkClick={() => handleBookmarkClick(post.id)}
-            onShareClick={() => handleShareClick(post)}
-          />
-        </Link>
-      ))}
+      {displayedPosts.map((post) => {
+        const isEditing = editingPostId === post.id
+        const isOwner = currentUserId ? post.author_id === currentUserId : true
+
+        if (isEditing) {
+          return (
+            <div key={post.id}>
+              <EditablePostCard
+                title={post.title}
+                content={post.content}
+                images={post.images}
+                author={post.author}
+                onSave={(updates) => handleSavePost(post.id, updates)}
+                onCancel={handleCancelEdit}
+              />
+            </div>
+          )
+        }
+
+        return (
+          <Link
+            key={post.id}
+            to={constructPostUrl(post.url, post.slug)}
+            className="block"
+          >
+            <PostCard
+              title={post.title}
+              content={post.content}
+              images={post.images}
+              author={post.author}
+              showActions={true}
+              isSaved={savedPostIds.has(post.id)}
+              isOwner={isOwner}
+              onBookmarkClick={() => handleBookmarkClick(post.id)}
+              onShareClick={() => handleShareClick(post)}
+              onEditClick={() => handleEditClick(post.id)}
+              onDeleteClick={() => handleDeletePost(post.id)}
+            />
+          </Link>
+        )
+      })}
 
       {hasMore && (
         <div ref={observerRef} className="py-4">
