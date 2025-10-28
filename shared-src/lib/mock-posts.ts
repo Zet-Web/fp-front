@@ -1,6 +1,8 @@
 // Mock post data for testing and development
 
-import type { PostWithAuthor } from "../types/post"
+import { PostType, type PostWithAuthor } from "../types/post"
+
+const FOLLOWED_USER_IDS = ["test-user-1", "test-user-3"]
 
 export const MOCK_POSTS: PostWithAuthor[] = [
   {
@@ -13,32 +15,42 @@ export const MOCK_POSTS: PostWithAuthor[] = [
     author_id: "test-user-1",
     created_at: "2024-10-20T10:00:00Z",
     updated_at: "2024-10-20T10:00:00Z",
+    type: PostType.ARTICLE,
+    is_featured: true,
+    is_saved: true,
     author: {
       id: "test-user-1",
       name: "John Doe",
       username: "johndoe",
       avatar_url: null,
       badge: ["verified"],
-      telegram_username: "johndoe"
+      telegram_username: "johndoe",
+      city: "San Francisco",
+      country: "USA"
     }
   },
   {
     id: "2",
     url: "Cd5Y",
     slug: "react-conference-2024-experience",
-    title: "React Conference 2024 Experience",
-    content: "Attending the React Conference 2024 was an amazing experience! Met so many talented developers and learned about the latest trends in web development. The future of React looks incredibly promising with the new concurrent features.",
+    title: "React Conference 2024 - Join Us!",
+    content: "Attending the React Conference 2024 was an amazing experience! We're hosting a networking event next month. Join us to meet talented developers and learn about the latest trends in web development.",
     images: ["https://images.pexels.com/photos/1181676/pexels-photo-1181676.jpeg?auto=compress&cs=tinysrgb&w=600&h=300&fit=crop"],
     author_id: "test-user-1",
     created_at: "2024-10-21T14:30:00Z",
     updated_at: "2024-10-21T14:30:00Z",
+    type: PostType.EVENT,
+    is_featured: true,
+    is_saved: false,
     author: {
       id: "test-user-1",
       name: "John Doe",
       username: "johndoe",
       avatar_url: null,
       badge: ["verified"],
-      telegram_username: "johndoe"
+      telegram_username: "johndoe",
+      city: "San Francisco",
+      country: "USA"
     }
   },
   {
@@ -51,13 +63,18 @@ export const MOCK_POSTS: PostWithAuthor[] = [
     author_id: "test-user-1",
     created_at: "2024-10-22T09:15:00Z",
     updated_at: "2024-10-22T09:15:00Z",
+    type: PostType.UPDATE,
+    is_featured: false,
+    is_saved: true,
     author: {
       id: "test-user-1",
       name: "John Doe",
       username: "johndoe",
       avatar_url: null,
       badge: ["verified"],
-      telegram_username: "johndoe"
+      telegram_username: "johndoe",
+      city: "San Francisco",
+      country: "USA"
     }
   },
   {
@@ -70,13 +87,18 @@ export const MOCK_POSTS: PostWithAuthor[] = [
     author_id: "test-user-1",
     created_at: "2024-10-23T16:45:00Z",
     updated_at: "2024-10-23T16:45:00Z",
+    type: PostType.ARTICLE,
+    is_featured: false,
+    is_saved: false,
     author: {
       id: "test-user-1",
       name: "John Doe",
       username: "johndoe",
       avatar_url: null,
       badge: ["verified"],
-      telegram_username: "johndoe"
+      telegram_username: "johndoe",
+      city: "San Francisco",
+      country: "USA"
     }
   },
   {
@@ -89,32 +111,42 @@ export const MOCK_POSTS: PostWithAuthor[] = [
     author_id: "test-user-2",
     created_at: "2024-10-24T08:20:00Z",
     updated_at: "2024-10-24T08:20:00Z",
+    type: PostType.ARTICLE,
+    is_featured: true,
+    is_saved: false,
     author: {
       id: "test-user-2",
       name: "Sarah Smith",
       username: "sarahsmith",
       avatar_url: null,
       badge: null,
-      telegram_username: "sarahsmith"
+      telegram_username: "sarahsmith",
+      city: "London",
+      country: "UK"
     }
   },
   {
     id: "6",
     url: "Kl2M",
     slug: "remote-work-productivity-tips",
-    title: "Remote Work Productivity Tips",
-    content: "After 3 years of remote work, I've learned what works and what doesn't. Here are my top 5 tips for staying productive while working from home. Would love to hear your experiences too!",
+    title: "Remote Work Productivity Survey",
+    content: "After 3 years of remote work, I want to understand what works for others. Taking a quick poll: What's your biggest challenge with remote work? A) Communication B) Work-life balance C) Motivation D) Technical issues",
     images: [],
     author_id: "test-user-2",
     created_at: "2024-10-25T11:30:00Z",
     updated_at: "2024-10-25T11:30:00Z",
+    type: PostType.POLL,
+    is_featured: false,
+    is_saved: false,
     author: {
       id: "test-user-2",
       name: "Sarah Smith",
       username: "sarahsmith",
       avatar_url: null,
       badge: null,
-      telegram_username: "sarahsmith"
+      telegram_username: "sarahsmith",
+      city: "London",
+      country: "UK"
     }
   },
   {
@@ -127,13 +159,18 @@ export const MOCK_POSTS: PostWithAuthor[] = [
     author_id: "test-user-3",
     created_at: "2024-10-26T15:45:00Z",
     updated_at: "2024-10-26T15:45:00Z",
+    type: PostType.UPDATE,
+    is_featured: true,
+    is_saved: true,
     author: {
       id: "test-user-3",
       name: "Michael Chen",
       username: "mchen",
       avatar_url: null,
       badge: ["verified"],
-      telegram_username: "michaelchen"
+      telegram_username: "michaelchen",
+      city: "Singapore",
+      country: "Singapore"
     }
   },
   {
@@ -146,13 +183,308 @@ export const MOCK_POSTS: PostWithAuthor[] = [
     author_id: "test-user-3",
     created_at: "2024-10-27T09:10:00Z",
     updated_at: "2024-10-27T09:10:00Z",
+    type: PostType.ARTICLE,
+    is_featured: false,
+    is_saved: false,
     author: {
       id: "test-user-3",
       name: "Michael Chen",
       username: "mchen",
       avatar_url: null,
       badge: ["verified"],
-      telegram_username: "michaelchen"
+      telegram_username: "michaelchen",
+      city: "Singapore",
+      country: "Singapore"
+    }
+  },
+  {
+    id: "9",
+    url: "Qr5S",
+    slug: "senior-frontend-developer-position",
+    title: "Hiring: Senior Frontend Developer",
+    content: "We're looking for a talented Senior Frontend Developer to join our team! Must have 5+ years experience with React, TypeScript, and modern web technologies. Remote-friendly position with competitive salary and benefits.",
+    images: [],
+    author_id: "test-user-3",
+    created_at: "2024-10-27T12:00:00Z",
+    updated_at: "2024-10-27T12:00:00Z",
+    type: PostType.VACANCY,
+    is_featured: true,
+    is_saved: false,
+    author: {
+      id: "test-user-3",
+      name: "Michael Chen",
+      username: "mchen",
+      avatar_url: null,
+      badge: ["verified"],
+      telegram_username: "michaelchen",
+      city: "Singapore",
+      country: "Singapore"
+    }
+  },
+  {
+    id: "10",
+    url: "Tu8V",
+    slug: "web3-blockchain-conference-berlin",
+    title: "Web3 & Blockchain Conference - Berlin",
+    content: "Excited to announce our Web3 conference in Berlin next month! Three days of workshops, keynotes, and networking. Early bird tickets available now. Don't miss this opportunity to connect with industry leaders!",
+    images: ["https://images.pexels.com/photos/2774556/pexels-photo-2774556.jpeg?auto=compress&cs=tinysrgb&w=600&h=300&fit=crop"],
+    author_id: "test-user-4",
+    created_at: "2024-10-27T14:20:00Z",
+    updated_at: "2024-10-27T14:20:00Z",
+    type: PostType.EVENT,
+    is_featured: true,
+    is_saved: true,
+    author: {
+      id: "test-user-4",
+      name: "Anna Mueller",
+      username: "amueller",
+      avatar_url: null,
+      badge: ["verified"],
+      telegram_username: "annamueller",
+      city: "Berlin",
+      country: "Germany"
+    }
+  },
+  {
+    id: "11",
+    url: "Wx1Y",
+    slug: "devops-engineer-opportunity",
+    title: "DevOps Engineer - Remote Position",
+    content: "Join our growing team as a DevOps Engineer! We need someone experienced with Kubernetes, Docker, CI/CD pipelines, and cloud infrastructure. Fully remote with flexible hours and excellent compensation package.",
+    images: [],
+    author_id: "test-user-4",
+    created_at: "2024-10-27T16:30:00Z",
+    updated_at: "2024-10-27T16:30:00Z",
+    type: PostType.VACANCY,
+    is_featured: false,
+    is_saved: false,
+    author: {
+      id: "test-user-4",
+      name: "Anna Mueller",
+      username: "amueller",
+      avatar_url: null,
+      badge: ["verified"],
+      telegram_username: "annamueller",
+      city: "Berlin",
+      country: "Germany"
+    }
+  },
+  {
+    id: "12",
+    url: "Za3B",
+    slug: "product-management-insights",
+    title: "Product Management in 2024",
+    content: "Sharing my thoughts on modern product management. The role has evolved significantly with AI tools and data-driven decision making. Here are 10 lessons I learned this year that transformed how I work.",
+    images: ["https://images.pexels.com/photos/3183197/pexels-photo-3183197.jpeg?auto=compress&cs=tinysrgb&w=600&h=300&fit=crop"],
+    author_id: "test-user-5",
+    created_at: "2024-10-28T08:00:00Z",
+    updated_at: "2024-10-28T08:00:00Z",
+    type: PostType.ARTICLE,
+    is_featured: false,
+    is_saved: false,
+    author: {
+      id: "test-user-5",
+      name: "David Park",
+      username: "dpark",
+      avatar_url: null,
+      badge: null,
+      telegram_username: "davidpark",
+      city: "Toronto",
+      country: "Canada"
+    }
+  },
+  {
+    id: "13",
+    url: "Bc4D",
+    slug: "ai-ethics-discussion",
+    title: "AI Ethics Discussion: Your Opinion?",
+    content: "With rapid AI advancement, what should be our top priority? A) Privacy protection B) Bias elimination C) Transparency & explainability D) Job displacement solutions. Let me know your thoughts!",
+    images: [],
+    author_id: "test-user-5",
+    created_at: "2024-10-28T10:15:00Z",
+    updated_at: "2024-10-28T10:15:00Z",
+    type: PostType.POLL,
+    is_featured: true,
+    is_saved: false,
+    author: {
+      id: "test-user-5",
+      name: "David Park",
+      username: "dpark",
+      avatar_url: null,
+      badge: null,
+      telegram_username: "davidpark",
+      city: "Toronto",
+      country: "Canada"
+    }
+  },
+  {
+    id: "14",
+    url: "Ef6G",
+    slug: "mobile-app-launch-celebration",
+    title: "Our Mobile App Just Hit 100K Downloads!",
+    content: "Incredible milestone reached! Our mobile app crossed 100,000 downloads this week. Thank you to everyone who supported us. Special shoutout to our amazing development team who worked tirelessly to make this happen!",
+    images: ["https://images.pexels.com/photos/607812/pexels-photo-607812.jpeg?auto=compress&cs=tinysrgb&w=600&h=300&fit=crop"],
+    author_id: "test-user-6",
+    created_at: "2024-10-28T11:45:00Z",
+    updated_at: "2024-10-28T11:45:00Z",
+    type: PostType.UPDATE,
+    is_featured: false,
+    is_saved: false,
+    author: {
+      id: "test-user-6",
+      name: "Maria Garcia",
+      username: "mgarcia",
+      avatar_url: null,
+      badge: ["verified"],
+      telegram_username: "mariagarcia",
+      city: "Barcelona",
+      country: "Spain"
+    }
+  },
+  {
+    id: "15",
+    url: "Hi8J",
+    slug: "ux-designer-needed-startup",
+    title: "UX Designer Wanted - Early Stage Startup",
+    content: "Seeking a passionate UX Designer to join our early-stage fintech startup. You'll be the first designer and help shape the product from the ground up. Equity + competitive salary. Based in Sydney or remote.",
+    images: [],
+    author_id: "test-user-6",
+    created_at: "2024-10-28T13:20:00Z",
+    updated_at: "2024-10-28T13:20:00Z",
+    type: PostType.VACANCY,
+    is_featured: false,
+    is_saved: true,
+    author: {
+      id: "test-user-6",
+      name: "Maria Garcia",
+      username: "mgarcia",
+      avatar_url: null,
+      badge: ["verified"],
+      telegram_username: "mariagarcia",
+      city: "Barcelona",
+      country: "Spain"
+    }
+  },
+  {
+    id: "16",
+    url: "Kl9M",
+    slug: "python-data-science-workshop",
+    title: "Free Python Data Science Workshop",
+    content: "Hosting a free workshop on Python for Data Science next Saturday! We'll cover pandas, numpy, matplotlib, and scikit-learn basics. Perfect for beginners. Limited spots available - register now!",
+    images: ["https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg?auto=compress&cs=tinysrgb&w=600&h=300&fit=crop"],
+    author_id: "test-user-7",
+    created_at: "2024-10-28T14:50:00Z",
+    updated_at: "2024-10-28T14:50:00Z",
+    type: PostType.EVENT,
+    is_featured: false,
+    is_saved: false,
+    author: {
+      id: "test-user-7",
+      name: "Yuki Tanaka",
+      username: "ytanaka",
+      avatar_url: null,
+      badge: null,
+      telegram_username: "yukitanaka",
+      city: "Tokyo",
+      country: "Japan"
+    }
+  },
+  {
+    id: "17",
+    url: "No2P",
+    slug: "cybersecurity-best-practices-2024",
+    title: "Cybersecurity Best Practices for 2024",
+    content: "In today's threat landscape, security can't be an afterthought. Here's a comprehensive guide to securing your web applications: from authentication patterns to encryption strategies and common vulnerabilities to avoid.",
+    images: ["https://images.pexels.com/photos/60504/security-protection-anti-virus-software-60504.jpeg?auto=compress&cs=tinysrgb&w=600&h=300&fit=crop"],
+    author_id: "test-user-7",
+    created_at: "2024-10-28T16:10:00Z",
+    updated_at: "2024-10-28T16:10:00Z",
+    type: PostType.ARTICLE,
+    is_featured: true,
+    is_saved: false,
+    author: {
+      id: "test-user-7",
+      name: "Yuki Tanaka",
+      username: "ytanaka",
+      avatar_url: null,
+      badge: null,
+      telegram_username: "yukitanaka",
+      city: "Tokyo",
+      country: "Japan"
+    }
+  },
+  {
+    id: "18",
+    url: "Qr3S",
+    slug: "react-native-vs-flutter-debate",
+    title: "React Native vs Flutter - What's Your Pick?",
+    content: "The eternal debate! I've worked with both frameworks extensively. What's your preference for cross-platform mobile development? A) React Native B) Flutter C) Both equally D) Native only. Share your reasoning!",
+    images: [],
+    author_id: "test-user-8",
+    created_at: "2024-10-28T17:30:00Z",
+    updated_at: "2024-10-28T17:30:00Z",
+    type: PostType.POLL,
+    is_featured: false,
+    is_saved: false,
+    author: {
+      id: "test-user-8",
+      name: "Raj Patel",
+      username: "rpatel",
+      avatar_url: null,
+      badge: ["verified"],
+      telegram_username: "rajpatel",
+      city: "Mumbai",
+      country: "India"
+    }
+  },
+  {
+    id: "19",
+    url: "Tu4V",
+    slug: "backend-engineer-saas-company",
+    title: "Backend Engineer - SaaS Company",
+    content: "We're hiring a Backend Engineer for our B2B SaaS platform! Looking for expertise in Node.js, PostgreSQL, Redis, and microservices architecture. Great team culture, stock options, and work-life balance.",
+    images: [],
+    author_id: "test-user-8",
+    created_at: "2024-10-28T18:45:00Z",
+    updated_at: "2024-10-28T18:45:00Z",
+    type: PostType.VACANCY,
+    is_featured: false,
+    is_saved: false,
+    author: {
+      id: "test-user-8",
+      name: "Raj Patel",
+      username: "rpatel",
+      avatar_url: null,
+      badge: ["verified"],
+      telegram_username: "rajpatel",
+      city: "Mumbai",
+      country: "India"
+    }
+  },
+  {
+    id: "20",
+    url: "Wx5Y",
+    slug: "successful-app-pivot-story",
+    title: "How We Pivoted Our App and Found Product-Market Fit",
+    content: "After 18 months of struggle, we finally found our product-market fit by pivoting from B2C to B2B. Here's the complete story of our journey, the lessons learned, and advice for other founders facing similar challenges.",
+    images: ["https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=600&h=300&fit=crop"],
+    author_id: "test-user-9",
+    created_at: "2024-10-28T19:20:00Z",
+    updated_at: "2024-10-28T19:20:00Z",
+    type: PostType.ARTICLE,
+    is_featured: false,
+    is_saved: true,
+    author: {
+      id: "test-user-9",
+      name: "Emma Wilson",
+      username: "ewilson",
+      avatar_url: null,
+      badge: null,
+      telegram_username: "emmawilson",
+      city: "Austin",
+      country: "USA"
     }
   }
 ]
+
+export { FOLLOWED_USER_IDS }

@@ -80,6 +80,7 @@ export function Feed({
 
   useEffect(() => {
     setIsLoading(true)
+    setPage(1)
     const timer = setTimeout(() => {
       const initialPosts = sortedPosts.slice(0, itemsPerPage)
       setDisplayedPosts(initialPosts)
