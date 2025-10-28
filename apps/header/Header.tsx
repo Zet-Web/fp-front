@@ -1,4 +1,4 @@
-import { ChevronLeft } from "lucide-react"
+import { ChevronLeft, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useNavigate, useLocation } from "react-router-dom"
 import { useAuthContext } from "@/components/auth-provider"
@@ -7,6 +7,8 @@ export function Header() {
   const navigate = useNavigate()
   const location = useLocation()
   const { profile } = useAuthContext()
+
+  const isHomePage = location.pathname === '/' || location.pathname === '/home'
 
   const getPageTitle = () => {
     const path = location.pathname
@@ -45,27 +47,41 @@ export function Header() {
 
   const pageTitle = getPageTitle()
 
-  if (!pageTitle) {
+  if (!pageTitle && !isHomePage) {
     return null
   }
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="flex h-14 items-center px-4">
-        {canGoBack() && (
+      <div className="flex h-14 items-center px-4 justify-between">
+        <div className="flex items-center">
+          {canGoBack() && !isHomePage && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9 mr-2"
+              onClick={handleBack}
+            >
+              <ChevronLeft className="h-5 w-5" />
+              <span className="sr-only">Go back</span>
+            </Button>
+          )}
+          {pageTitle && (
+            <h1 className="text-lg font-semibold text-foreground truncate">
+              {pageTitle}
+            </h1>
+          )}
+        </div>
+        {isHomePage && (
           <Button
-            variant="ghost"
-            size="icon"
-            className="h-9 w-9 mr-2"
-            onClick={handleBack}
+            size="sm"
+            onClick={() => navigate("/post?mode=create")}
+            className="gap-2"
           >
-            <ChevronLeft className="h-5 w-5" />
-            <span className="sr-only">Go back</span>
+            <Plus className="h-4 w-4" />
+            <span className="hidden md:inline">Create</span>
           </Button>
         )}
-        <h1 className="text-lg font-semibold text-foreground truncate">
-          {pageTitle}
-        </h1>
       </div>
     </header>
   )

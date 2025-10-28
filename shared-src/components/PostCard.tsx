@@ -3,41 +3,77 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Share, MoreHorizontal, Bookmark } from "lucide-react"
+import { Share, MoreHorizontal, Bookmark, Edit, Trash2 } from "lucide-react"
+import { useNavigate } from "react-router-dom"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import type { PostAuthor } from "../types/post"
 
 interface PostCardProps {
+  postId?: string
+  postUrl?: string
   title: string
   content: string
   images: string[]
   author: PostAuthor
   showActions?: boolean
+  showEditDelete?: boolean
   onMoreClick?: () => void
+  onEditClick?: () => void
+  onDeleteClick?: () => void
   onBookmarkClick?: () => void
   onShareClick?: () => void
+  onContentClick?: () => void
   isSaved?: boolean
 }
 
 export function PostCard({
+  postId,
+  postUrl,
   title,
   content,
   images,
   author,
   showActions = true,
+  showEditDelete = false,
   onMoreClick,
+  onEditClick,
+  onDeleteClick,
   onBookmarkClick,
   onShareClick,
+  onContentClick,
   isSaved = false
 }: PostCardProps) {
+  const navigate = useNavigate()
   const displayName = author.name || author.username || 'User'
   const displayUsername = author.username || author.telegram_username || 'user'
   const avatarFallback = displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+
+  const handleAuthorClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (author.username) {
+      navigate(`/${author.username}`)
+    }
+  }
+
+  const handleContentClick = (e: React.MouseEvent) => {
+    if (onContentClick) {
+      e.preventDefault()
+      e.stopPropagation()
+      onContentClick()
+    }
+  }
 
   return (
     <Card className="hover:shadow-md transition-shadow duration-300">
       <CardContent className="p-4">
         <div className="flex gap-3">
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 cursor-pointer" onClick={handleAuthorClick}>
             <Avatar className="w-12 h-12">
               <AvatarImage src={author.avatar_url || undefined} alt={displayName} />
               <AvatarFallback>{avatarFallback}</AvatarFallback>
@@ -46,7 +82,7 @@ export function PostCard({
 
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between mb-2">
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1 cursor-pointer" onClick={handleAuthorClick}>
                 <h3 className="font-semibold text-sm">{displayName}</h3>
                 {author.badge?.includes('verified') && (
                   <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
@@ -57,13 +93,59 @@ export function PostCard({
                 )}
                 <span className="text-sm text-muted-foreground">@{displayUsername}</span>
               </div>
-              {showActions && (
+              {showActions && showEditDelete && (
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-muted-foreground hover:text-foreground p-1 bg-transparent hover:bg-transparent"
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                        }}
+                      >
+                        <MoreHorizontal className="w-4 h-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          onEditClick?.()
+                        }}
+                      >
+                        <Edit className="w-4 h-4 mr-2" />
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          onDeleteClick?.()
+                        }}
+                        className="text-destructive"
+                      >
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              )}
+              {showActions && !showEditDelete && onMoreClick && (
                 <div className="flex items-center gap-1 flex-shrink-0">
                   <Button
                     variant="ghost"
                     size="sm"
                     className="text-muted-foreground hover:text-foreground p-1 bg-transparent hover:bg-transparent"
-                    onClick={onMoreClick}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      onMoreClick()
+                    }}
                   >
                     <MoreHorizontal className="w-4 h-4" />
                   </Button>
@@ -71,19 +153,21 @@ export function PostCard({
               )}
             </div>
 
-            <h4 className="font-semibold text-base mb-3">{title}</h4>
+            <div onClick={handleContentClick} className={onContentClick ? "cursor-pointer" : ""}>
+              <h4 className="font-semibold text-base mb-3">{title}</h4>
 
-            <p className="text-sm leading-relaxed mb-4">{content}</p>
+              <p className="text-sm leading-relaxed mb-4">{content}</p>
 
-            {images.length > 0 && (
-              <div className="mb-4">
-                <img
-                  src={images[0]}
-                  alt="Post content"
-                  className="w-full rounded-lg object-cover max-h-64"
-                />
-              </div>
-            )}
+              {images.length > 0 && (
+                <div className="mb-4">
+                  <img
+                    src={images[0]}
+                    alt="Post content"
+                    className="w-full rounded-lg object-cover max-h-64"
+                  />
+                </div>
+              )}
+            </div>
 
             {showActions && (
               <div className="flex justify-end gap-1 mt-2">
@@ -93,6 +177,7 @@ export function PostCard({
                   className="text-muted-foreground hover:text-foreground p-1 bg-transparent hover:bg-transparent"
                   onClick={(e) => {
                     e.preventDefault()
+                    e.stopPropagation()
                     onBookmarkClick?.()
                   }}
                 >
@@ -104,6 +189,7 @@ export function PostCard({
                   className="text-muted-foreground hover:text-foreground p-1 bg-transparent hover:bg-transparent"
                   onClick={(e) => {
                     e.preventDefault()
+                    e.stopPropagation()
                     onShareClick?.()
                   }}
                 >

@@ -63,3 +63,5 @@ export function isValidUrlCode(urlCode: string): boolean {
   const validChars = /^[A-Za-z0-9]{4}$/
   return validChars.test(urlCode)
 }
+
+export { generatePostUrlCode as generateRandomUrlCode }
