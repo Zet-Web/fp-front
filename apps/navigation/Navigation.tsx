@@ -78,13 +78,15 @@ export function Navigation() {
 <DropdownMenu>
   <DropdownMenuTrigger asChild>
     <Button
-      variant="ghost"
-      className={`w-full justify-start h-12 px-4 hover:bg-accent/50 transition-colors`}
-    >
-      <Sun className="h-5 w-5 mr-3 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-      <Moon className="absolute left-6 h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-      <span className="text-base ml-3 dark:ml-0">Theme</span>
-    </Button>
+  variant="ghost"
+  className="w-full justify-start h-12 px-4 hover:bg-accent/50 transition-colors"
+>
+  <div className="relative h-5 w-5 mr-3">
+    <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+    <Moon className="absolute inset-0 h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+  </div>
+  <span className="text-base">Theme</span>
+</Button>
   </DropdownMenuTrigger>
   <DropdownMenuContent align="start" className="w-48">
     <DropdownMenuItem onClick={() => setTheme("light")}>
