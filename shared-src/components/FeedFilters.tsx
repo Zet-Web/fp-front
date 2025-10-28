@@ -67,7 +67,7 @@ export function FeedFilters({
         </Tabs>
 
         <div className="flex flex-col md:flex-row gap-2 md:gap-3">
-          <div className="w-full md:w-32">
+          <div className="w-full">
             <Select
               value={postType || 'all'}
               onValueChange={(value) => onPostTypeChange(value === 'all' ? null : (value as PostType))}
