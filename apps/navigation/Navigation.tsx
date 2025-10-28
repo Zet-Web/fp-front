@@ -28,7 +28,7 @@ export function Navigation() {
       <div className="flex-1 p-4 space-y-4 overflow-y-auto">
         <Card className="shadow-sm">
           <CardHeader className="pb-3">
-            <CardTitle className="text-lg">Navigation</CardTitle>
+            <CardTitle className="text-lg">Fond Network</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             {/* Brand as first nav item */}
