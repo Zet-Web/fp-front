@@ -9,7 +9,6 @@ import { SearchableDropdown } from '@/components/shared/SearchableDropdown';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
-import { UserAvatar } from '@/components/shared/UserAvatar';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { Search, MapPin, Package, Briefcase, ShoppingBag, Wrench, Users, Sparkles, FileText, CalendarDays, MapPinned, Briefcase as BriefcaseIcon, GraduationCap, Award, Mail, Phone, Link as LinkIcon, Send, Bot } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
@@ -274,11 +273,10 @@ export function TestPage() {
               <CardContent className="pt-6">
                 <div className="flex flex-col md:flex-row gap-6">
                   <div className="flex flex-col items-center md:items-start gap-4">
-                    <UserAvatar
-                      src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=200"
-                      name="John Anderson"
-                      size="xl"
-                    />
+                    <Avatar className="w-24 h-24">
+                      <AvatarImage src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=200" alt="John Anderson" />
+                      <AvatarFallback>JA</AvatarFallback>
+                    </Avatar>
                     <Button className="w-full md:w-auto">Follow</Button>
                   </div>
 
@@ -333,11 +331,10 @@ export function TestPage() {
                   <Card key={i} className="shadow-sm hover:shadow-md transition-shadow">
                     <CardHeader>
                       <div className="flex items-start gap-3">
-                        <UserAvatar
-                          src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100"
-                          name="John Anderson"
-                          size="md"
-                        />
+                        <Avatar className="w-10 h-10">
+                          <AvatarImage src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100" alt="John Anderson" />
+                          <AvatarFallback>JA</AvatarFallback>
+                        </Avatar>
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
                             <span className="font-semibold">John Anderson</span>
@@ -459,11 +456,10 @@ export function TestPage() {
                       ].map((member, i) => (
                         <div key={i} className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
-                            <UserAvatar
-                              src={member.avatar}
-                              name={member.name}
-                              size="md"
-                            />
+                            <Avatar className="w-10 h-10">
+                              <AvatarImage src={member.avatar} alt={member.name} />
+                              <AvatarFallback>{member.name.split(' ').map(n => n[0]).join('').toUpperCase()}</AvatarFallback>
+                            </Avatar>
                             <div>
                               <p className="font-medium">{member.name}</p>
                               <p className="text-sm text-muted-foreground">{member.role}</p>
@@ -507,11 +503,9 @@ export function TestPage() {
                             <p className="text-sm">What are John's main skills?</p>
                           </CardContent>
                         </Card>
-                        <UserAvatar
-                          src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100"
-                          name="You"
-                          size="sm"
-                        />
+                        <Avatar className="w-8 h-8">
+                          <AvatarFallback>U</AvatarFallback>
+                        </Avatar>
                       </div>
 
                       <div className="flex gap-3">
