@@ -1,5 +1,6 @@
 // Testing page for UI components and features, hidden from search engines
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -11,7 +12,7 @@ import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
-import { Search, MapPin, Package, Briefcase, ShoppingBag, Wrench, Users, Sparkles, FileText, CalendarDays, MapPinned, Briefcase as BriefcaseIcon, GraduationCap, Award, Mail, Phone, Link as LinkIcon, Send, Bot, BookOpen, Plus, Edit2, Trash2, ExternalLink, CheckSquare, X } from 'lucide-react';
+import { Search, MapPin, Package, Briefcase, ShoppingBag, Wrench, Users, Sparkles, FileText, CalendarDays, MapPinned, Briefcase as BriefcaseIcon, GraduationCap, Award, Mail, Phone, Link as LinkIcon, Send, Bot, BookOpen, Plus, Edit2, Trash2, ExternalLink, CheckSquare, X, MessageCircle, Clock, UserCheck, UserPlus, UserX } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 
 type CategoryType = 'products' | 'services' | 'goods' | 'tools';
@@ -54,13 +55,14 @@ interface KnowledgeItem {
 }
 
 export function TestPage() {
+  const [searchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCity, setSelectedCity] = useState('All Cities');
   const [selectedCategory, setSelectedCategory] = useState<CategoryType>('products');
   const [knowledgeItems, setKnowledgeItems] = useState<KnowledgeItem[]>([
     { id: '1', title: 'Community Guidelines', content: 'Our community values respect, collaboration, and innovation. All members are expected to treat each other with kindness.', category: 'Guidelines' },
     { id: '2', title: 'Product Features', content: 'Our main product features include real-time collaboration, AI-powered insights, and seamless integration with popular tools.', category: 'Products' },
-    { id: '3', title: 'Company History', content: 'Founded in 2018, Tech Community started as a small group of developers and has grown into a thriving community of 50,000+ members.', category: 'About' },
+    { id: '3', title: 'Company History', content: 'Founded in 2018, TechCommunity started as a small group of developers and has grown into a thriving community of 50,000+ members.', category: 'About' },
   ]);
   const [newKnowledgeTitle, setNewKnowledgeTitle] = useState('');
   const [newKnowledgeContent, setNewKnowledgeContent] = useState('');
@@ -73,6 +75,9 @@ export function TestPage() {
     { id: '3', text: 'Schedule next event', completed: false },
   ]);
   const [newTodo, setNewTodo] = useState('');
+
+  const tab1 = searchParams.get('tab1') || 'catalog';
+  const tab2 = searchParams.get('tab2') || 'posts';
 
   useEffect(() => {
     const metaRobots = document.createElement('meta');
@@ -113,7 +118,7 @@ export function TestPage() {
           </CardHeader>
         </Card>
 
-        <Tabs defaultValue="catalog" className="w-full">
+        <Tabs value={tab1} className="w-full">
           <TabsList className="grid w-full grid-cols-1 md:grid-cols-4 h-auto">
             <TabsTrigger value="catalog">Catalog Directory</TabsTrigger>
             <TabsTrigger value="scrolling">Scrolling Tabs</TabsTrigger>
@@ -298,14 +303,13 @@ export function TestPage() {
                 <div className="flex flex-col md:flex-row gap-6">
                   <div className="flex flex-col items-center md:items-start gap-4">
                     <Avatar className="w-24 h-24">
-                      <AvatarImage src="https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=200" alt="Tech Community" />
+                      <AvatarImage src="https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=200" alt="TechCommunity" />
                       <AvatarFallback>TC</AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col gap-2 w-full md:w-auto">
-                     
                       <Dialog open={showSaaS} onOpenChange={setShowSaaS}>
                         <DialogTrigger asChild>
-                          <Button variant="outline" className="w-full gap-2">
+                          <Button className="w-full gap-2">
                             <ExternalLink className="h-4 w-4" />
                             Open App
                           </Button>
@@ -314,7 +318,7 @@ export function TestPage() {
                           <DialogHeader>
                             <DialogTitle>Community Task Manager</DialogTitle>
                             <DialogDescription>
-                              Manage tasks and activities for Tech Community (Demo)
+                              Manage tasks and activities for TechCommunity (Demo)
                             </DialogDescription>
                           </DialogHeader>
                           <div className="space-y-4">
@@ -381,13 +385,21 @@ export function TestPage() {
                           </div>
                         </DialogContent>
                       </Dialog>
+                      <Button variant="outline" className="w-full gap-2">
+                        <MessageCircle className="h-4 w-4" />
+                        Message
+                      </Button>
+                      <Button variant="outline" className="w-full gap-2">
+                        <Bot className="h-4 w-4" />
+                        AI Message
+                      </Button>
                     </div>
                   </div>
 
                   <div className="flex-1 space-y-4">
                     <div>
                       <div className="flex items-center gap-2">
-                        <h2 className="text-2xl font-bold">Tech Community</h2>
+                        <h2 className="text-2xl font-bold">TechCommunity</h2>
                         <VerifiedBadge size="md" />
                       </div>
                       <p className="text-muted-foreground">@techcommunity</p>
@@ -422,7 +434,7 @@ export function TestPage() {
               </CardContent>
             </Card>
 
-            <Tabs defaultValue="posts" className="w-full">
+            <Tabs value={tab2} className="w-full">
               <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="posts">Posts</TabsTrigger>
                 <TabsTrigger value="information">Information</TabsTrigger>
@@ -436,12 +448,12 @@ export function TestPage() {
                     <CardHeader>
                       <div className="flex items-start gap-3">
                         <Avatar className="w-10 h-10">
-                          <AvatarImage src="https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=100" alt="Tech Community" />
+                          <AvatarImage src="https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=100" alt="TechCommunity" />
                           <AvatarFallback>TC</AvatarFallback>
                         </Avatar>
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
-                            <span className="font-semibold">Tech Community</span>
+                            <span className="font-semibold">TechCommunity</span>
                             <VerifiedBadge size="sm" />
                             <span className="text-sm text-muted-foreground">@techcommunity</span>
                           </div>
@@ -534,16 +546,14 @@ export function TestPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Users className="h-5 w-5 text-blue-500" />
-                      Community Leaders
+                      Admins
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
                       {[
-                        { name: 'Sarah Johnson', role: 'Product Manager', avatar: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=100' },
-                        { name: 'Michael Chen', role: 'Senior Developer', avatar: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=100' },
-                        { name: 'Emily Rodriguez', role: 'UX Researcher', avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=100' },
-                        { name: 'David Kim', role: 'Frontend Developer', avatar: 'https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=100' },
+                        { name: 'Sarah Johnson', role: 'Product Manager', status: 'admin', avatar: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=100' },
+                        { name: 'Michael Chen', role: 'Senior Developer', status: 'admin', avatar: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=100' },
                       ].map((member, i) => (
                         <div key={i} className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
@@ -556,7 +566,118 @@ export function TestPage() {
                               <p className="text-sm text-muted-foreground">{member.role}</p>
                             </div>
                           </div>
-                          <Button variant="outline" size="sm">View</Button>
+                          <Badge variant="default" className="gap-1">
+                            <UserCheck className="h-3 w-3" />
+                            Admin
+                          </Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="shadow-md">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Users className="h-5 w-5 text-blue-500" />
+                      Members
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {[
+                        { name: 'Emily Rodriguez', role: 'UX Researcher', status: 'member', avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=100' },
+                        { name: 'David Kim', role: 'Frontend Developer', status: 'member', avatar: 'https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=100' },
+                        { name: 'Alex Martinez', role: 'Backend Developer', status: 'member', avatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=100' },
+                        { name: 'Jessica Lee', role: 'Data Scientist', status: 'member', avatar: 'https://images.pexels.com/photos/2726111/pexels-photo-2726111.jpeg?auto=compress&cs=tinysrgb&w=100' },
+                        { name: 'Ryan Thompson', role: 'DevOps Engineer', status: 'member', avatar: 'https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=100' },
+                      ].map((member, i) => (
+                        <div key={i} className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <Avatar className="w-10 h-10">
+                              <AvatarImage src={member.avatar} alt={member.name} />
+                              <AvatarFallback>{member.name.split(' ').map(n => n[0]).join('').toUpperCase()}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <p className="font-medium">{member.name}</p>
+                              <p className="text-sm text-muted-foreground">{member.role}</p>
+                            </div>
+                          </div>
+                          <Badge variant="secondary" className="gap-1">
+                            <Users className="h-3 w-3" />
+                            Member
+                          </Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="shadow-md">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Clock className="h-5 w-5 text-blue-500" />
+                      Sent Invites
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {[
+                        { name: 'Chris Anderson', email: 'chris.anderson@email.com', avatar: 'https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg?auto=compress&cs=tinysrgb&w=100' },
+                        { name: 'Nina Patel', email: 'nina.patel@email.com', avatar: 'https://images.pexels.com/photos/1181690/pexels-photo-1181690.jpeg?auto=compress&cs=tinysrgb&w=100' },
+                      ].map((person, i) => (
+                        <div key={i} className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <Avatar className="w-10 h-10">
+                              <AvatarImage src={person.avatar} alt={person.name} />
+                              <AvatarFallback>{person.name.split(' ').map(n => n[0]).join('').toUpperCase()}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <p className="font-medium">{person.name}</p>
+                              <p className="text-sm text-muted-foreground">{person.email}</p>
+                            </div>
+                          </div>
+                          <Badge variant="outline" className="gap-1">
+                            <Clock className="h-3 w-3" />
+                            Pending
+                          </Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="shadow-md">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <UserPlus className="h-5 w-5 text-blue-500" />
+                      Join Requests
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {[
+                        { name: 'Tom Wilson', role: 'Mobile Developer', avatar: 'https://images.pexels.com/photos/1516680/pexels-photo-1516680.jpeg?auto=compress&cs=tinysrgb&w=100' },
+                        { name: 'Lisa Brown', role: 'UI Designer', avatar: 'https://images.pexels.com/photos/1858175/pexels-photo-1858175.jpeg?auto=compress&cs=tinysrgb&w=100' },
+                        { name: 'Mark Davis', role: 'QA Engineer', avatar: 'https://images.pexels.com/photos/2102415/pexels-photo-2102415.jpeg?auto=compress&cs=tinysrgb&w=100' },
+                      ].map((person, i) => (
+                        <div key={i} className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <Avatar className="w-10 h-10">
+                              <AvatarImage src={person.avatar} alt={person.name} />
+                              <AvatarFallback>{person.name.split(' ').map(n => n[0]).join('').toUpperCase()}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <p className="font-medium">{person.name}</p>
+                              <p className="text-sm text-muted-foreground">{person.role}</p>
+                            </div>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button size="sm" variant="default">Accept</Button>
+                            <Button size="sm" variant="outline">
+                              <UserX className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </div>
                       ))}
                     </div>
