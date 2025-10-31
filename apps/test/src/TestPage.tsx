@@ -60,7 +60,7 @@ export function TestPage() {
   const [knowledgeItems, setKnowledgeItems] = useState<KnowledgeItem[]>([
     { id: '1', title: 'Community Guidelines', content: 'Our community values respect, collaboration, and innovation. All members are expected to treat each other with kindness.', category: 'Guidelines' },
     { id: '2', title: 'Product Features', content: 'Our main product features include real-time collaboration, AI-powered insights, and seamless integration with popular tools.', category: 'Products' },
-    { id: '3', title: 'Company History', content: 'Founded in 2018, TechCommunity started as a small group of developers and has grown into a thriving community of 50,000+ members.', category: 'About' },
+    { id: '3', title: 'Company History', content: 'Founded in 2018, Tech Community started as a small group of developers and has grown into a thriving community of 50,000+ members.', category: 'About' },
   ]);
   const [newKnowledgeTitle, setNewKnowledgeTitle] = useState('');
   const [newKnowledgeContent, setNewKnowledgeContent] = useState('');
@@ -298,7 +298,7 @@ export function TestPage() {
                 <div className="flex flex-col md:flex-row gap-6">
                   <div className="flex flex-col items-center md:items-start gap-4">
                     <Avatar className="w-24 h-24">
-                      <AvatarImage src="https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=200" alt="TechCommunity" />
+                      <AvatarImage src="https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=200" alt="Tech Community" />
                       <AvatarFallback>TC</AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col gap-2 w-full md:w-auto">
@@ -307,14 +307,14 @@ export function TestPage() {
                         <DialogTrigger asChild>
                           <Button variant="outline" className="w-full gap-2">
                             <ExternalLink className="h-4 w-4" />
-                            Open
+                            Open App
                           </Button>
                         </DialogTrigger>
                         <DialogContent className="max-w-2xl max-h-[80vh]">
                           <DialogHeader>
                             <DialogTitle>Community Task Manager</DialogTitle>
                             <DialogDescription>
-                              Manage tasks and activities for TechCommunity (Demo)
+                              Manage tasks and activities for Tech Community (Demo)
                             </DialogDescription>
                           </DialogHeader>
                           <div className="space-y-4">
@@ -387,7 +387,7 @@ export function TestPage() {
                   <div className="flex-1 space-y-4">
                     <div>
                       <div className="flex items-center gap-2">
-                        <h2 className="text-2xl font-bold">TechCommunity</h2>
+                        <h2 className="text-2xl font-bold">Tech Community</h2>
                         <VerifiedBadge size="md" />
                       </div>
                       <p className="text-muted-foreground">@techcommunity</p>
@@ -436,12 +436,12 @@ export function TestPage() {
                     <CardHeader>
                       <div className="flex items-start gap-3">
                         <Avatar className="w-10 h-10">
-                          <AvatarImage src="https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=100" alt="TechCommunity" />
+                          <AvatarImage src="https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=100" alt="Tech Community" />
                           <AvatarFallback>TC</AvatarFallback>
                         </Avatar>
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
-                            <span className="font-semibold">TechCommunity</span>
+                            <span className="font-semibold">Tech Community</span>
                             <VerifiedBadge size="sm" />
                             <span className="text-sm text-muted-foreground">@techcommunity</span>
                           </div>
@@ -523,7 +523,7 @@ export function TestPage() {
                     </div>
                     <div className="flex items-center gap-2">
                       <LinkIcon className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm text-blue-500">techcommunity.com</span>
+                      <span className="text-sm text-blue-500">tech community.com</span>
                     </div>
                   </CardContent>
                 </Card>
