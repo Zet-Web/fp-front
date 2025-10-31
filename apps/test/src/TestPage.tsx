@@ -155,7 +155,7 @@ export function TestPage() {
           <TabsList className="grid w-full grid-cols-1 md:grid-cols-4 h-auto">
             <TabsTrigger value="catalog">Catalog Directory</TabsTrigger>
             <TabsTrigger value="scrolling">Scrolling Tabs</TabsTrigger>
-            <TabsTrigger value="profile">Profile 1</TabsTrigger>
+            <TabsTrigger value="profile">Public Profile</TabsTrigger>
             <TabsTrigger value="chat">Profile 2</TabsTrigger>
           </TabsList>
 
@@ -893,7 +893,7 @@ export function TestPage() {
           </TabsContent>
 
           <TabsContent value="chat" className="space-y-6">
-            <div className={`transition-all duration-500 ease-in-out ${isAppOpen ? 'opacity-0 -translate-y-8 h-0 overflow-hidden' : 'opacity-100 translate-y-0'}`}>
+            <div className={`transition-all duration-1000 ease-in-out ${isAppOpen ? 'opacity-0 -translate-y-16 h-0 overflow-hidden' : 'opacity-100 translate-y-0'}`}>
               <Card className="shadow-md">
                 <CardContent className="pt-6">
                   <div className="flex flex-col md:flex-row gap-6">
@@ -953,100 +953,103 @@ export function TestPage() {
               </Card>
             </div>
 
-            <Tabs value={activeProfile2Tab} onValueChange={(value) => {
-              setActiveProfile2Tab(value);
-              if (value === 'app') {
-                setIsAppOpen(true);
-              } else {
-                setIsAppOpen(false);
-              }
-            }} className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="posts">Posts</TabsTrigger>
-                <TabsTrigger value="information">Information</TabsTrigger>
-                <TabsTrigger value="app" className="gap-2">
-                  <Package className="h-4 w-4" />
-                  App
-                </TabsTrigger>
-              </TabsList>
+            <div className={`transition-all duration-1000 ease-in-out ${isAppOpen ? 'opacity-0 -translate-y-16 h-0 overflow-hidden mb-0' : 'opacity-100 translate-y-0 mb-6'}`}>
+              <Tabs value={activeProfile2Tab} onValueChange={(value) => {
+                setActiveProfile2Tab(value);
+                if (value === 'app') {
+                  setIsAppOpen(true);
+                } else {
+                  setIsAppOpen(false);
+                }
+              }} className="w-full">
+                <TabsList className="grid w-full grid-cols-3">
+                  <TabsTrigger value="posts">Posts</TabsTrigger>
+                  <TabsTrigger value="information">Information</TabsTrigger>
+                  <TabsTrigger value="app" className="gap-2">
+                    <Package className="h-4 w-4" />
+                    App
+                  </TabsTrigger>
+                </TabsList>
 
-              <TabsContent value="posts" className="space-y-4">
-                {[1, 2].map((i) => (
-                  <Card key={i} className="shadow-sm hover:shadow-md transition-shadow">
-                    <CardHeader>
-                      <div className="flex items-start gap-3">
-                        <Avatar className="w-10 h-10">
-                          <AvatarImage src="https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=100" alt="TechCommunity" />
-                          <AvatarFallback>TC</AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <span className="font-semibold">TechCommunity</span>
-                            <VerifiedBadge size="sm" />
-                            <span className="text-sm text-muted-foreground">@techcommunity</span>
+                <TabsContent value="posts" className="space-y-4">
+                  {[1, 2].map((i) => (
+                    <Card key={i} className="shadow-sm hover:shadow-md transition-shadow">
+                      <CardHeader>
+                        <div className="flex items-start gap-3">
+                          <Avatar className="w-10 h-10">
+                            <AvatarImage src="https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=100" alt="TechCommunity" />
+                            <AvatarFallback>TC</AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="font-semibold">TechCommunity</span>
+                              <VerifiedBadge size="sm" />
+                              <span className="text-sm text-muted-foreground">@techcommunity</span>
+                            </div>
+                            <p className="text-sm text-muted-foreground">2 hours ago</p>
                           </div>
-                          <p className="text-sm text-muted-foreground">2 hours ago</p>
                         </div>
-                      </div>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="mb-4">Excited to announce our new AI-powered learning platform! Join thousands of developers already using it to level up their skills.</p>
+                        <div className="flex gap-4 text-sm text-muted-foreground">
+                          <span>245 likes</span>
+                          <span>32 comments</span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </TabsContent>
+
+                <TabsContent value="information" className="space-y-4">
+                  <Card className="shadow-md">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <FileText className="h-5 w-5 text-blue-500" />
+                        About
+                      </CardTitle>
                     </CardHeader>
-                    <CardContent>
-                      <p className="mb-4">Excited to announce our new AI-powered learning platform! Join thousands of developers already using it to level up their skills.</p>
-                      <div className="flex gap-4 text-sm text-muted-foreground">
-                        <span>245 likes</span>
-                        <span>32 comments</span>
+                    <CardContent className="space-y-4">
+                      <div>
+                        <h4 className="font-semibold">Mission</h4>
+                        <p className="text-sm text-muted-foreground">Empowering tech professionals through collaboration, education, and innovation.</p>
+                      </div>
+                      <Separator />
+                      <div>
+                        <h4 className="font-semibold">Focus Areas</h4>
+                        <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1 mt-2">
+                          <li>Web Development & Design</li>
+                          <li>Artificial Intelligence & Machine Learning</li>
+                          <li>Cloud Computing & DevOps</li>
+                        </ul>
                       </div>
                     </CardContent>
                   </Card>
-                ))}
-              </TabsContent>
+                </TabsContent>
+              </Tabs>
+            </div>
 
-              <TabsContent value="information" className="space-y-4">
+            <div className={`transition-all duration-1000 ease-in-out ${isAppOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16 h-0 overflow-hidden pointer-events-none'}`}>
+              <div className="space-y-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setIsAppOpen(false);
+                    setActiveProfile2Tab('posts');
+                  }}
+                  className="gap-2"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  Back to Profile
+                </Button>
+
                 <Card className="shadow-md">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <FileText className="h-5 w-5 text-blue-500" />
-                      About
+                      <CheckSquare className="h-5 w-5 text-blue-500" />
+                      Task Manager
                     </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div>
-                      <h4 className="font-semibold">Mission</h4>
-                      <p className="text-sm text-muted-foreground">Empowering tech professionals through collaboration, education, and innovation.</p>
-                    </div>
-                    <Separator />
-                    <div>
-                      <h4 className="font-semibold">Focus Areas</h4>
-                      <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1 mt-2">
-                        <li>Web Development & Design</li>
-                        <li>Artificial Intelligence & Machine Learning</li>
-                        <li>Cloud Computing & DevOps</li>
-                      </ul>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              <TabsContent value="app" className="space-y-4">
-                <Card className="shadow-md">
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="flex items-center gap-2">
-                        <CheckSquare className="h-5 w-5 text-blue-500" />
-                        Task Manager
-                      </CardTitle>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setIsAppOpen(false);
-                          setActiveProfile2Tab('posts');
-                        }}
-                        className="gap-2"
-                      >
-                        <ChevronLeft className="h-4 w-4" />
-                        Back to Profile
-                      </Button>
-                    </div>
                     <p className="text-sm text-muted-foreground">Manage your community tasks and activities</p>
                   </CardHeader>
                   <CardContent className="space-y-4">
@@ -1127,8 +1130,8 @@ export function TestPage() {
                     </Card>
                   </CardContent>
                 </Card>
-              </TabsContent>
-            </Tabs>
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
