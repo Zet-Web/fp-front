@@ -12,7 +12,7 @@ import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
-import { Search, MapPin, Package, Briefcase, ShoppingBag, Wrench, Users, Sparkles, FileText, CalendarDays, MapPinned, Briefcase as BriefcaseIcon, GraduationCap, Award, Mail, Phone, Link as LinkIcon, Send, Bot, BookOpen, Plus, Edit2, Trash2, ExternalLink, CheckSquare, X, MessageCircle, Clock, UserCheck, UserPlus, UserX } from 'lucide-react';
+import { Search, MapPin, Package, Briefcase, ShoppingBag, Wrench, Users, Sparkles, FileText, CalendarDays, MapPinned, Briefcase as BriefcaseIcon, GraduationCap, Award, Mail, Phone, Link as LinkIcon, Send, Bot, BookOpen, Plus, Edit2, Trash2, ExternalLink, CheckSquare, X, MessageCircle, Clock, UserCheck, UserPlus, UserX, ChevronLeft } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 
 type CategoryType = 'products' | 'services' | 'goods' | 'tools';
@@ -68,6 +68,12 @@ const tab2Map: Record<string, string> = {
   '4': 'ai'
 };
 
+const profile2TabMap: Record<string, string> = {
+  '1': 'posts',
+  '2': 'information',
+  '3': 'app'
+};
+
 export function TestPage() {
   const [searchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
@@ -89,6 +95,8 @@ export function TestPage() {
     { id: '3', text: 'Schedule next event', completed: false },
   ]);
   const [newTodo, setNewTodo] = useState('');
+  const [isAppOpen, setIsAppOpen] = useState(false);
+  const [activeProfile2Tab, setActiveProfile2Tab] = useState('posts');
 
   const tabParam = searchParams.get('tab');
   const tab2Param = searchParams.get('tab2');
@@ -148,7 +156,7 @@ export function TestPage() {
             <TabsTrigger value="catalog">Catalog Directory</TabsTrigger>
             <TabsTrigger value="scrolling">Scrolling Tabs</TabsTrigger>
             <TabsTrigger value="profile">Public Profile</TabsTrigger>
-            <TabsTrigger value="chat">AI Chat</TabsTrigger>
+            <TabsTrigger value="chat">Profile 2</TabsTrigger>
           </TabsList>
 
           <TabsContent value="catalog" className="space-y-6">
@@ -885,45 +893,242 @@ export function TestPage() {
           </TabsContent>
 
           <TabsContent value="chat" className="space-y-6">
-            <Card className="shadow-md">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Bot className="h-5 w-5 text-blue-500" />
-                  AI Chat Interface
-                </CardTitle>
-                <p className="text-sm text-muted-foreground">Clean AI chat interface for testing</p>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <ScrollArea className="h-[500px] pr-4">
-                  <div className="space-y-4">
-                    <div className="flex gap-3">
-                      <Avatar className="h-8 w-8 shrink-0">
-                        <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white">
-                          <Bot className="h-4 w-4" />
-                        </AvatarFallback>
+            <div className={`transition-all duration-500 ease-in-out ${isAppOpen ? 'opacity-0 -translate-y-8 h-0 overflow-hidden' : 'opacity-100 translate-y-0'}`}>
+              <Card className="shadow-md">
+                <CardContent className="pt-6">
+                  <div className="flex flex-col md:flex-row gap-6">
+                    <div className="flex flex-col items-center md:items-start gap-4">
+                      <Avatar className="w-24 h-24">
+                        <AvatarImage src="https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=200" alt="TechCommunity" />
+                        <AvatarFallback>TC</AvatarFallback>
                       </Avatar>
-                      <Card className="flex-1 shadow-sm">
-                        <CardContent className="pt-4 pb-4">
-                          <p className="text-sm">Hello! I'm your AI assistant. How can I help you today?</p>
-                        </CardContent>
-                      </Card>
+                      <div className="flex flex-col gap-2 w-full md:w-auto">
+                        <Button variant="outline" className="w-full gap-2">
+                          <MessageCircle className="h-4 w-4" />
+                          Message
+                        </Button>
+                        <Button variant="outline" className="w-full gap-2">
+                          <UserPlus className="h-4 w-4" />
+                          Follow
+                        </Button>
+                      </div>
+                    </div>
+
+                    <div className="flex-1 space-y-4">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h2 className="text-2xl font-bold">TechCommunity</h2>
+                          <VerifiedBadge size="md" />
+                        </div>
+                        <p className="text-muted-foreground">@techcommunity</p>
+                      </div>
+
+                      <p className="text-foreground">
+                        A thriving community of developers, designers, and tech enthusiasts building the future together.
+                        Join us to collaborate, learn, and grow in the world of technology.
+                      </p>
+
+                      <div className="flex flex-wrap gap-4 text-sm">
+                        <div className="flex items-center gap-1">
+                          <MapPinned className="h-4 w-4 text-muted-foreground" />
+                          <span>San Francisco, CA</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Users className="h-4 w-4 text-muted-foreground" />
+                          <span>50,000+ Members</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <CalendarDays className="h-4 w-4 text-muted-foreground" />
+                          <span>Joined March 2020</span>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-4 text-sm">
+                        <div><span className="font-semibold">850</span> <span className="text-muted-foreground">Following</span></div>
+                        <div><span className="font-semibold">50K</span> <span className="text-muted-foreground">Followers</span></div>
+                      </div>
                     </div>
                   </div>
-                </ScrollArea>
+                </CardContent>
+              </Card>
+            </div>
 
-                <Separator />
+            <Tabs value={activeProfile2Tab} onValueChange={(value) => {
+              setActiveProfile2Tab(value);
+              if (value === 'app') {
+                setIsAppOpen(true);
+              } else {
+                setIsAppOpen(false);
+              }
+            }} className="w-full">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="posts">Posts</TabsTrigger>
+                <TabsTrigger value="information">Information</TabsTrigger>
+                <TabsTrigger value="app" className="gap-2">
+                  <Package className="h-4 w-4" />
+                  App
+                </TabsTrigger>
+              </TabsList>
 
-                <div className="flex gap-2">
-                  <Textarea
-                    placeholder="Type your message..."
-                    className="min-h-[80px] resize-none"
-                  />
-                  <Button size="icon" className="shrink-0 h-auto">
-                    <Send className="h-4 w-4" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+              <TabsContent value="posts" className="space-y-4">
+                {[1, 2].map((i) => (
+                  <Card key={i} className="shadow-sm hover:shadow-md transition-shadow">
+                    <CardHeader>
+                      <div className="flex items-start gap-3">
+                        <Avatar className="w-10 h-10">
+                          <AvatarImage src="https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=100" alt="TechCommunity" />
+                          <AvatarFallback>TC</AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold">TechCommunity</span>
+                            <VerifiedBadge size="sm" />
+                            <span className="text-sm text-muted-foreground">@techcommunity</span>
+                          </div>
+                          <p className="text-sm text-muted-foreground">2 hours ago</p>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="mb-4">Excited to announce our new AI-powered learning platform! Join thousands of developers already using it to level up their skills.</p>
+                      <div className="flex gap-4 text-sm text-muted-foreground">
+                        <span>245 likes</span>
+                        <span>32 comments</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </TabsContent>
+
+              <TabsContent value="information" className="space-y-4">
+                <Card className="shadow-md">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <FileText className="h-5 w-5 text-blue-500" />
+                      About
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <h4 className="font-semibold">Mission</h4>
+                      <p className="text-sm text-muted-foreground">Empowering tech professionals through collaboration, education, and innovation.</p>
+                    </div>
+                    <Separator />
+                    <div>
+                      <h4 className="font-semibold">Focus Areas</h4>
+                      <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1 mt-2">
+                        <li>Web Development & Design</li>
+                        <li>Artificial Intelligence & Machine Learning</li>
+                        <li>Cloud Computing & DevOps</li>
+                      </ul>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="app" className="space-y-4">
+                <Card className="shadow-md">
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="flex items-center gap-2">
+                        <CheckSquare className="h-5 w-5 text-blue-500" />
+                        Task Manager
+                      </CardTitle>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setIsAppOpen(false);
+                          setActiveProfile2Tab('posts');
+                        }}
+                        className="gap-2"
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                        Back to Profile
+                      </Button>
+                    </div>
+                    <p className="text-sm text-muted-foreground">Manage your community tasks and activities</p>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-3">
+                      {todos.map((todo) => (
+                        <div key={todo.id} className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent transition-colors">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-6 w-6 p-0"
+                            onClick={() => {
+                              setTodos(todos.map(t =>
+                                t.id === todo.id ? { ...t, completed: !t.completed } : t
+                              ));
+                            }}
+                          >
+                            {todo.completed ? (
+                              <CheckSquare className="h-5 w-5 text-blue-500" />
+                            ) : (
+                              <div className="h-5 w-5 border-2 rounded border-muted-foreground" />
+                            )}
+                          </Button>
+                          <span className={todo.completed ? 'line-through text-muted-foreground flex-1' : 'flex-1'}>
+                            {todo.text}
+                          </span>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setTodos(todos.filter(t => t.id !== todo.id))}
+                          >
+                            <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+
+                    <Separator />
+
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="Add new task..."
+                        value={newTodo}
+                        onChange={(e) => setNewTodo(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && newTodo.trim()) {
+                            setTodos([...todos, { id: Date.now().toString(), text: newTodo, completed: false }]);
+                            setNewTodo('');
+                          }
+                        }}
+                      />
+                      <Button
+                        onClick={() => {
+                          if (newTodo.trim()) {
+                            setTodos([...todos, { id: Date.now().toString(), text: newTodo, completed: false }]);
+                            setNewTodo('');
+                          }
+                        }}
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </div>
+
+                    <Card className="bg-muted/50">
+                      <CardContent className="pt-4">
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-muted-foreground">Total Tasks</span>
+                          <span className="font-semibold">{todos.length}</span>
+                        </div>
+                        <div className="flex items-center justify-between text-sm mt-2">
+                          <span className="text-muted-foreground">Completed</span>
+                          <span className="font-semibold text-blue-500">{todos.filter(t => t.completed).length}</span>
+                        </div>
+                        <div className="flex items-center justify-between text-sm mt-2">
+                          <span className="text-muted-foreground">Remaining</span>
+                          <span className="font-semibold">{todos.filter(t => !t.completed).length}</span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
           </TabsContent>
         </Tabs>
       </div>
