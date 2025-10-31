@@ -141,14 +141,7 @@ export function TestPage() {
     <>
 
       <div className="max-w-7xl mx-auto space-y-6">
-        <Card className="shadow-md">
-          <CardHeader>
-            <CardTitle className="text-2xl">Test Page</CardTitle>
-            <p className="text-sm text-muted-foreground">
-              This page is for testing new UI components and features
-            </p>
-          </CardHeader>
-        </Card>
+
 
         <Tabs value={activeTab1} onValueChange={setActiveTab1} className="w-full">
           <TabsList className="grid w-full grid-cols-1 md:grid-cols-4 h-auto">
