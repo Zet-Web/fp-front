@@ -724,7 +724,7 @@ export function TestPage() {
                       <div>
                         <CardTitle className="flex items-center gap-2">
                           <BookOpen className="h-5 w-5 text-blue-500" />
-                          Knowledge Base
+                          AI
                         </CardTitle>
                         <p className="text-sm text-muted-foreground mt-1">Manage information for AI to learn about the community</p>
                       </div>
