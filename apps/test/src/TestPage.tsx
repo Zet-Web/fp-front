@@ -77,7 +77,7 @@ export function TestPage() {
       <div className="max-w-7xl mx-auto space-y-6">
         <Card className="shadow-md">
           <CardHeader>
-            <CardTitle className="text-2xl">Test Page - UI Components</CardTitle>
+            <CardTitle className="text-2xl">Test Page</CardTitle>
             <p className="text-sm text-muted-foreground">
               This page is for testing new UI components and features
             </p>
