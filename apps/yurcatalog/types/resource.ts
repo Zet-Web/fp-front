@@ -3,6 +3,7 @@
 export interface ResourceLink {
   label: string
   url: string
+  type?: "official" | "service" | "other"
 }
 
 export interface ResourceContact {

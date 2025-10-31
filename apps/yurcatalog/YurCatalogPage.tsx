@@ -18,6 +18,7 @@ export function YurCatalogPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedRegion, setSelectedRegion] = useState("All Regions")
   const [selectedCategory, setSelectedCategory] = useState("all")
+  const [expandedCardId, setExpandedCardId] = useState<string | null>(null)
 
   const filteredResources = useMemo(() => {
     return MOCK_RESOURCES.filter((resource) => {
@@ -102,7 +103,12 @@ export function YurCatalogPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredResources.map((resource) => (
-            <ResourceCard key={resource.id} resource={resource} />
+            <ResourceCard
+              key={resource.id}
+              resource={resource}
+              isExpanded={expandedCardId === resource.id}
+              onToggle={() => setExpandedCardId(expandedCardId === resource.id ? null : resource.id)}
+            />
           ))}
         </div>
       )}

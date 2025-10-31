@@ -11,10 +11,11 @@ export const MOCK_RESOURCES: Resource[] = [
     region: "Federal",
     mainUrl: "https://www.nalog.gov.ru",
     links: [
-      { label: "Personal Account", url: "https://lkfl2.nalog.ru" },
-      { label: "Tax Monitoring", url: "https://service.nalog.ru/bi.do" },
-      { label: "Payment Receipts", url: "https://service.nalog.ru/payment/" },
-      { label: "Tax Calculator", url: "https://www.nalog.gov.ru/rn77/service/calc/" }
+      { label: "Official Website", url: "https://www.nalog.gov.ru", type: "official" },
+      { label: "Personal Account", url: "https://lkfl2.nalog.ru", type: "service" },
+      { label: "Tax Monitoring", url: "https://service.nalog.ru/bi.do", type: "service" },
+      { label: "Payment Receipts", url: "https://service.nalog.ru/payment/", type: "service" },
+      { label: "Tax Calculator", url: "https://www.nalog.gov.ru/rn77/service/calc/", type: "other" }
     ],
     contacts: {
       phone: "8-800-222-22-22 (Hotline)",
@@ -29,11 +30,12 @@ export const MOCK_RESOURCES: Resource[] = [
     region: "Tatarstan",
     mainUrl: "https://tatarstan.arbitr.ru",
     links: [
-      { label: "Case Search", url: "https://tatarstan.arbitr.ru/search" },
-      { label: "Decision Database", url: "https://tatarstan.arbitr.ru/decisions" },
-      { label: "Vacancies", url: "https://tatarstan.arbitr.ru/vacancies" },
-      { label: "Fee Schedule", url: "https://tatarstan.arbitr.ru/fees" },
-      { label: "Hearing Schedule", url: "https://tatarstan.arbitr.ru/schedule" }
+      { label: "Official Website", url: "https://tatarstan.arbitr.ru", type: "official" },
+      { label: "Case Search", url: "https://tatarstan.arbitr.ru/search", type: "service" },
+      { label: "Decision Database", url: "https://tatarstan.arbitr.ru/decisions", type: "service" },
+      { label: "Hearing Schedule", url: "https://tatarstan.arbitr.ru/schedule", type: "service" },
+      { label: "Fee Schedule", url: "https://tatarstan.arbitr.ru/fees", type: "other" },
+      { label: "Vacancies", url: "https://tatarstan.arbitr.ru/vacancies", type: "other" }
     ],
     contacts: {
       phone: "78435335000 (Reception); 78435335050 (Office)",
@@ -49,9 +51,10 @@ export const MOCK_RESOURCES: Resource[] = [
     region: "Tatarstan",
     mainUrl: "https://vs.tat.sudrf.ru",
     links: [
-      { label: "Court Cases", url: "https://vs.tat.sudrf.ru/cases" },
-      { label: "Contacts", url: "https://vs.tat.sudrf.ru/contacts" },
-      { label: "District Court Fees", url: "https://vs.tat.sudrf.ru/requisites" }
+      { label: "Official Website", url: "https://vs.tat.sudrf.ru", type: "official" },
+      { label: "Court Cases", url: "https://vs.tat.sudrf.ru/cases", type: "service" },
+      { label: "District Court Fees", url: "https://vs.tat.sudrf.ru/requisites", type: "other" },
+      { label: "Contacts", url: "https://vs.tat.sudrf.ru/contacts", type: "other" }
     ],
     contacts: {
       phone: "78432887777 (Hotline)",
@@ -67,7 +70,8 @@ export const MOCK_RESOURCES: Resource[] = [
     region: "Federal",
     mainUrl: "https://fssp.gov.ru",
     links: [
-      { label: "Enforcement Proceedings", url: "https://fssp.gov.ru/iss/ip" }
+      { label: "Official Website", url: "https://fssp.gov.ru", type: "official" },
+      { label: "Enforcement Proceedings", url: "https://fssp.gov.ru/iss/ip", type: "service" }
     ]
   },
   {
@@ -78,8 +82,9 @@ export const MOCK_RESOURCES: Resource[] = [
     region: "Federal",
     mainUrl: "https://sudact.ru",
     links: [
-      { label: "Case Search", url: "https://sudact.ru/search" },
-      { label: "Criminal Law Practice", url: "https://sudact.ru/practice/criminal" }
+      { label: "Official Website", url: "https://sudact.ru", type: "official" },
+      { label: "Case Search", url: "https://sudact.ru/search", type: "service" },
+      { label: "Criminal Law Practice", url: "https://sudact.ru/practice/criminal", type: "other" }
     ]
   },
   {
@@ -90,12 +95,13 @@ export const MOCK_RESOURCES: Resource[] = [
     region: "Federal",
     mainUrl: "https://calculator-ipoteki.ru",
     links: [
-      { label: "Arbitration Court Fee (Art.333.21)", url: "https://calculator-ipoteki.ru/gosposhlina-arbitraj" },
-      { label: "District Court Fee (Art.333.19)", url: "https://calculator-ipoteki.ru/gosposhlina-sud" },
-      { label: "Law.ru Calculator", url: "https://pravo.ru/calc/gosshlina" },
-      { label: "Zakonius Calculator", url: "https://zakonius.ru/calculator/gosposhlina" },
-      { label: "Article 395 of Civil Code", url: "https://calculator-ipoteki.ru/395-gk" },
-      { label: "Monetary Obligation Interest (317.1 CC)", url: "https://calculator-ipoteki.ru/317-gk" }
+      { label: "Official Website", url: "https://calculator-ipoteki.ru", type: "official" },
+      { label: "Arbitration Court Fee (Art.333.21)", url: "https://calculator-ipoteki.ru/gosposhlina-arbitraj", type: "service" },
+      { label: "District Court Fee (Art.333.19)", url: "https://calculator-ipoteki.ru/gosposhlina-sud", type: "service" },
+      { label: "Article 395 of Civil Code", url: "https://calculator-ipoteki.ru/395-gk", type: "service" },
+      { label: "Monetary Obligation Interest (317.1 CC)", url: "https://calculator-ipoteki.ru/317-gk", type: "service" },
+      { label: "Law.ru Calculator", url: "https://pravo.ru/calc/gosshlina", type: "other" },
+      { label: "Zakonius Calculator", url: "https://zakonius.ru/calculator/gosposhlina", type: "other" }
     ]
   },
   {
@@ -106,9 +112,10 @@ export const MOCK_RESOURCES: Resource[] = [
     region: "Federal",
     mainUrl: "https://gosuslugi.ru",
     links: [
-      { label: "Personal Account", url: "https://lk.gosuslugi.ru" },
-      { label: "Service Catalog", url: "https://gosuslugi.ru/catalog" },
-      { label: "Documents", url: "https://gosuslugi.ru/documents" }
+      { label: "Official Website", url: "https://gosuslugi.ru", type: "official" },
+      { label: "Personal Account", url: "https://lk.gosuslugi.ru", type: "service" },
+      { label: "Service Catalog", url: "https://gosuslugi.ru/catalog", type: "service" },
+      { label: "Documents", url: "https://gosuslugi.ru/documents", type: "other" }
     ],
     contacts: {
       phone: "8-800-100-70-10 (24/7 Support)",
@@ -123,8 +130,9 @@ export const MOCK_RESOURCES: Resource[] = [
     region: "Federal",
     mainUrl: "https://pfr.gov.ru",
     links: [
-      { label: "Personal Account", url: "https://lk.pfr.gov.ru" },
-      { label: "Pension Calculator", url: "https://pfr.gov.ru/calculator" }
+      { label: "Official Website", url: "https://pfr.gov.ru", type: "official" },
+      { label: "Personal Account", url: "https://lk.pfr.gov.ru", type: "service" },
+      { label: "Pension Calculator", url: "https://pfr.gov.ru/calculator", type: "other" }
     ],
     contacts: {
       phone: "8-800-600-03-89 (Hotline)"

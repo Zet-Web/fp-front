@@ -4,30 +4,51 @@ import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { ChevronDown, ChevronUp, ExternalLink, Globe, Phone, Mail, MapPin, Clock } from "lucide-react"
-import type { Resource } from "../types/resource"
+import type { Resource, ResourceLink } from "../types/resource"
 import { CATEGORY_LABELS } from "../types/resource"
 
 interface ResourceCardProps {
   resource: Resource
+  isExpanded: boolean
+  onToggle: () => void
 }
 
-export function ResourceCard({ resource }: ResourceCardProps) {
-  const [isExpanded, setIsExpanded] = useState(false)
-
+export function ResourceCard({ resource, isExpanded, onToggle }: ResourceCardProps) {
   const handleLinkClick = (url: string) => {
     window.open(url, "_blank", "noopener,noreferrer,nofollow")
   }
 
+  const getInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map(word => word[0])
+      .slice(0, 2)
+      .join("")
+      .toUpperCase()
+  }
+
+  const organizeLinks = (links: ResourceLink[]) => {
+    const official = links.filter(l => l.type === "official")
+    const services = links.filter(l => l.type === "service")
+    const others = links.filter(l => !l.type || l.type === "other")
+    return [...official, ...services, ...others]
+  }
+
+  const sortedLinks = organizeLinks(resource.links)
+
   return (
     <Card className="hover:shadow-md transition-shadow">
       <CardHeader className="pb-3">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex-1">
+        <div className="flex items-start gap-3">
+          <Avatar className="h-10 w-10 shrink-0">
+            <AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold">
+              {getInitials(resource.name)}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex-1 min-w-0">
             <CardTitle className="text-lg mb-2">{resource.name}</CardTitle>
-            <p className="text-sm text-muted-foreground mb-3">
-              {resource.description}
-            </p>
             <div className="flex flex-wrap gap-2">
               <Badge variant="secondary" className="text-xs">
                 {CATEGORY_LABELS[resource.category as keyof typeof CATEGORY_LABELS]}
@@ -40,7 +61,7 @@ export function ResourceCard({ resource }: ResourceCardProps) {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setIsExpanded(!isExpanded)}
+            onClick={onToggle}
             className="shrink-0"
           >
             {isExpanded ? (
@@ -56,7 +77,7 @@ export function ResourceCard({ resource }: ResourceCardProps) {
         <Button
           variant="default"
           size="sm"
-          className="w-full mb-3"
+          className="w-full"
           onClick={() => handleLinkClick(resource.mainUrl)}
         >
           <Globe className="h-4 w-4 mr-2" />
@@ -65,12 +86,18 @@ export function ResourceCard({ resource }: ResourceCardProps) {
         </Button>
 
         {isExpanded && (
-          <div className="space-y-4 pt-3 border-t">
-            {resource.links.length > 0 && (
+          <div className="space-y-4 pt-4 mt-4 border-t">
+            <div>
+              <p className="text-sm text-muted-foreground mb-4">
+                {resource.description}
+              </p>
+            </div>
+
+            {sortedLinks.length > 0 && (
               <div>
                 <h4 className="text-sm font-medium mb-2">Quick Links</h4>
                 <div className="space-y-1">
-                  {resource.links.map((link, index) => (
+                  {sortedLinks.map((link, index) => (
                     <Button
                       key={index}
                       variant="ghost"
