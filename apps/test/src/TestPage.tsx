@@ -471,7 +471,7 @@ export function TestPage() {
                 <TabsTrigger value="posts">Posts</TabsTrigger>
                 <TabsTrigger value="information">Information</TabsTrigger>
                 <TabsTrigger value="members">Members</TabsTrigger>
-                <TabsTrigger value="ai">Knowledge Base</TabsTrigger>
+                <TabsTrigger value="ai">AI</TabsTrigger>
               </TabsList>
 
               <TabsContent value="posts" className="space-y-4">
