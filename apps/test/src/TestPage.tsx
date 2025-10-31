@@ -155,7 +155,7 @@ export function TestPage() {
           <TabsList className="grid w-full grid-cols-1 md:grid-cols-4 h-auto">
             <TabsTrigger value="catalog">Catalog Directory</TabsTrigger>
             <TabsTrigger value="scrolling">Scrolling Tabs</TabsTrigger>
-            <TabsTrigger value="profile">Public Profile</TabsTrigger>
+            <TabsTrigger value="profile">Profile 1</TabsTrigger>
             <TabsTrigger value="chat">Profile 2</TabsTrigger>
           </TabsList>
 
