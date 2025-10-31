@@ -302,7 +302,7 @@ export function TestPage() {
                       <AvatarFallback>TC</AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col gap-2 w-full md:w-auto">
-                      <Button className="w-full">Follow</Button>
+                     
                       <Dialog open={showSaaS} onOpenChange={setShowSaaS}>
                         <DialogTrigger asChild>
                           <Button variant="outline" className="w-full gap-2">
