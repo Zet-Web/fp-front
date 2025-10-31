@@ -1,5 +1,6 @@
 // Testing page for UI components and features, hidden from search engines
 import { useState, useEffect } from 'react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -10,7 +11,7 @@ import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
-import { Search, MapPin, Package, Briefcase, ShoppingBag, Wrench, Users, Sparkles, FileText, CalendarDays, MapPinned, Briefcase as BriefcaseIcon, GraduationCap, Award, Mail, Phone, Link as LinkIcon, Send, Bot } from 'lucide-react';
+import { Search, MapPin, Package, Briefcase, ShoppingBag, Wrench, Users, Sparkles, FileText, CalendarDays, MapPinned, Briefcase as BriefcaseIcon, GraduationCap, Award, Mail, Phone, Link as LinkIcon, Send, Bot, BookOpen, Plus, Edit2, Trash2, ExternalLink, CheckSquare, X } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 
 type CategoryType = 'products' | 'services' | 'goods' | 'tools';
@@ -45,10 +46,33 @@ const categories = [
 
 const cities = ['All Cities', 'New York', 'San Francisco', 'Chicago', 'Los Angeles', 'Boston', 'Seattle', 'Denver'];
 
+interface KnowledgeItem {
+  id: string;
+  title: string;
+  content: string;
+  category: string;
+}
+
 export function TestPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCity, setSelectedCity] = useState('All Cities');
   const [selectedCategory, setSelectedCategory] = useState<CategoryType>('products');
+  const [knowledgeItems, setKnowledgeItems] = useState<KnowledgeItem[]>([
+    { id: '1', title: 'Community Guidelines', content: 'Our community values respect, collaboration, and innovation. All members are expected to treat each other with kindness.', category: 'Guidelines' },
+    { id: '2', title: 'Product Features', content: 'Our main product features include real-time collaboration, AI-powered insights, and seamless integration with popular tools.', category: 'Products' },
+    { id: '3', title: 'Company History', content: 'Founded in 2018, TechCommunity started as a small group of developers and has grown into a thriving community of 50,000+ members.', category: 'About' },
+  ]);
+  const [newKnowledgeTitle, setNewKnowledgeTitle] = useState('');
+  const [newKnowledgeContent, setNewKnowledgeContent] = useState('');
+  const [newKnowledgeCategory, setNewKnowledgeCategory] = useState('');
+  const [editingKnowledge, setEditingKnowledge] = useState<KnowledgeItem | null>(null);
+  const [showSaaS, setShowSaaS] = useState(false);
+  const [todos, setTodos] = useState([
+    { id: '1', text: 'Review community posts', completed: false },
+    { id: '2', text: 'Update member guidelines', completed: true },
+    { id: '3', text: 'Schedule next event', completed: false },
+  ]);
+  const [newTodo, setNewTodo] = useState('');
 
   useEffect(() => {
     const metaRobots = document.createElement('meta');
@@ -274,24 +298,104 @@ export function TestPage() {
                 <div className="flex flex-col md:flex-row gap-6">
                   <div className="flex flex-col items-center md:items-start gap-4">
                     <Avatar className="w-24 h-24">
-                      <AvatarImage src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=200" alt="John Anderson" />
-                      <AvatarFallback>JA</AvatarFallback>
+                      <AvatarImage src="https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=200" alt="TechCommunity" />
+                      <AvatarFallback>TC</AvatarFallback>
                     </Avatar>
-                    <Button className="w-full md:w-auto">Follow</Button>
+                    <div className="flex flex-col gap-2 w-full md:w-auto">
+                      <Button className="w-full">Follow</Button>
+                      <Dialog open={showSaaS} onOpenChange={setShowSaaS}>
+                        <DialogTrigger asChild>
+                          <Button variant="outline" className="w-full gap-2">
+                            <ExternalLink className="h-4 w-4" />
+                            Open
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl max-h-[80vh]">
+                          <DialogHeader>
+                            <DialogTitle>Community Task Manager</DialogTitle>
+                            <DialogDescription>
+                              Manage tasks and activities for TechCommunity (Demo)
+                            </DialogDescription>
+                          </DialogHeader>
+                          <div className="space-y-4">
+                            <Card>
+                              <CardHeader>
+                                <CardTitle className="text-lg">Active Tasks</CardTitle>
+                              </CardHeader>
+                              <CardContent className="space-y-3">
+                                {todos.map((todo) => (
+                                  <div key={todo.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent">
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="h-6 w-6 p-0"
+                                      onClick={() => {
+                                        setTodos(todos.map(t =>
+                                          t.id === todo.id ? { ...t, completed: !t.completed } : t
+                                        ));
+                                      }}
+                                    >
+                                      {todo.completed ? (
+                                        <CheckSquare className="h-4 w-4 text-blue-500" />
+                                      ) : (
+                                        <div className="h-4 w-4 border-2 rounded" />
+                                      )}
+                                    </Button>
+                                    <span className={todo.completed ? 'line-through text-muted-foreground flex-1' : 'flex-1'}>
+                                      {todo.text}
+                                    </span>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => setTodos(todos.filter(t => t.id !== todo.id))}
+                                    >
+                                      <X className="h-4 w-4" />
+                                    </Button>
+                                  </div>
+                                ))}
+                                <div className="flex gap-2 mt-4">
+                                  <Input
+                                    placeholder="Add new task..."
+                                    value={newTodo}
+                                    onChange={(e) => setNewTodo(e.target.value)}
+                                    onKeyDown={(e) => {
+                                      if (e.key === 'Enter' && newTodo.trim()) {
+                                        setTodos([...todos, { id: Date.now().toString(), text: newTodo, completed: false }]);
+                                        setNewTodo('');
+                                      }
+                                    }}
+                                  />
+                                  <Button
+                                    onClick={() => {
+                                      if (newTodo.trim()) {
+                                        setTodos([...todos, { id: Date.now().toString(), text: newTodo, completed: false }]);
+                                        setNewTodo('');
+                                      }
+                                    }}
+                                  >
+                                    <Plus className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
                   </div>
 
                   <div className="flex-1 space-y-4">
                     <div>
                       <div className="flex items-center gap-2">
-                        <h2 className="text-2xl font-bold">John Anderson</h2>
+                        <h2 className="text-2xl font-bold">TechCommunity</h2>
                         <VerifiedBadge size="md" />
                       </div>
-                      <p className="text-muted-foreground">@johnanderson</p>
+                      <p className="text-muted-foreground">@techcommunity</p>
                     </div>
 
                     <p className="text-foreground">
-                      Senior Product Designer | UX Enthusiast | Building digital experiences that matter.
-                      Passionate about creating intuitive and beautiful interfaces.
+                      A thriving community of developers, designers, and tech enthusiasts building the future together.
+                      Join us to collaborate, learn, and grow in the world of technology.
                     </p>
 
                     <div className="flex flex-wrap gap-4 text-sm">
@@ -300,8 +404,8 @@ export function TestPage() {
                         <span>San Francisco, CA</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <BriefcaseIcon className="h-4 w-4 text-muted-foreground" />
-                        <span>Tech Corp Inc.</span>
+                        <Users className="h-4 w-4 text-muted-foreground" />
+                        <span>50,000+ Members</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <CalendarDays className="h-4 w-4 text-muted-foreground" />
@@ -310,8 +414,8 @@ export function TestPage() {
                     </div>
 
                     <div className="flex gap-4 text-sm">
-                      <div><span className="font-semibold">2,458</span> <span className="text-muted-foreground">Following</span></div>
-                      <div><span className="font-semibold">12.5K</span> <span className="text-muted-foreground">Followers</span></div>
+                      <div><span className="font-semibold">850</span> <span className="text-muted-foreground">Following</span></div>
+                      <div><span className="font-semibold">50K</span> <span className="text-muted-foreground">Followers</span></div>
                     </div>
                   </div>
                 </div>
@@ -323,7 +427,7 @@ export function TestPage() {
                 <TabsTrigger value="posts">Posts</TabsTrigger>
                 <TabsTrigger value="information">Information</TabsTrigger>
                 <TabsTrigger value="members">Members</TabsTrigger>
-                <TabsTrigger value="ai">AI</TabsTrigger>
+                <TabsTrigger value="ai">Knowledge Base</TabsTrigger>
               </TabsList>
 
               <TabsContent value="posts" className="space-y-4">
@@ -332,21 +436,21 @@ export function TestPage() {
                     <CardHeader>
                       <div className="flex items-start gap-3">
                         <Avatar className="w-10 h-10">
-                          <AvatarImage src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100" alt="John Anderson" />
-                          <AvatarFallback>JA</AvatarFallback>
+                          <AvatarImage src="https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=100" alt="TechCommunity" />
+                          <AvatarFallback>TC</AvatarFallback>
                         </Avatar>
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
-                            <span className="font-semibold">John Anderson</span>
+                            <span className="font-semibold">TechCommunity</span>
                             <VerifiedBadge size="sm" />
-                            <span className="text-sm text-muted-foreground">@johnanderson</span>
+                            <span className="text-sm text-muted-foreground">@techcommunity</span>
                           </div>
                           <p className="text-sm text-muted-foreground">2 hours ago</p>
                         </div>
                       </div>
                     </CardHeader>
                     <CardContent>
-                      <p className="mb-4">Just shipped a new feature that I'm really excited about! The team worked incredibly hard to make this happen. Check it out and let me know what you think! 🚀</p>
+                      <p className="mb-4">Excited to announce our new AI-powered learning platform! Join thousands of developers already using it to level up their skills. What topics would you like to see covered next?</p>
                       <div className="flex gap-4 text-sm text-muted-foreground">
                         <span>245 likes</span>
                         <span>32 comments</span>
@@ -361,40 +465,24 @@ export function TestPage() {
                 <Card className="shadow-md">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <BriefcaseIcon className="h-5 w-5 text-blue-500" />
-                      Experience
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    {[
-                      { title: 'Senior Product Designer', company: 'Tech Corp Inc.', period: '2021 - Present' },
-                      { title: 'Product Designer', company: 'Design Studio', period: '2019 - 2021' },
-                      { title: 'UX Designer', company: 'StartUp Co.', period: '2017 - 2019' },
-                    ].map((exp, i) => (
-                      <div key={i}>
-                        {i > 0 && <Separator className="my-4" />}
-                        <div>
-                          <h4 className="font-semibold">{exp.title}</h4>
-                          <p className="text-sm text-muted-foreground">{exp.company}</p>
-                          <p className="text-xs text-muted-foreground mt-1">{exp.period}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </CardContent>
-                </Card>
-
-                <Card className="shadow-md">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <GraduationCap className="h-5 w-5 text-blue-500" />
-                      Education
+                      <FileText className="h-5 w-5 text-blue-500" />
+                      About
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div>
-                      <h4 className="font-semibold">Master of Design</h4>
-                      <p className="text-sm text-muted-foreground">Stanford University</p>
-                      <p className="text-xs text-muted-foreground mt-1">2015 - 2017</p>
+                      <h4 className="font-semibold">Mission</h4>
+                      <p className="text-sm text-muted-foreground">Empowering tech professionals through collaboration, education, and innovation.</p>
+                    </div>
+                    <Separator />
+                    <div>
+                      <h4 className="font-semibold">Focus Areas</h4>
+                      <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1 mt-2">
+                        <li>Web Development & Design</li>
+                        <li>Artificial Intelligence & Machine Learning</li>
+                        <li>Cloud Computing & DevOps</li>
+                        <li>Mobile App Development</li>
+                      </ul>
                     </div>
                   </CardContent>
                 </Card>
@@ -403,15 +491,22 @@ export function TestPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Award className="h-5 w-5 text-blue-500" />
-                      Awards
+                      Achievements
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-2">
+                  <CardContent className="space-y-3">
                     <div className="flex items-start gap-2">
                       <Award className="h-4 w-4 text-yellow-500 mt-1" />
                       <div>
-                        <p className="font-medium">Best Design Innovation 2023</p>
-                        <p className="text-sm text-muted-foreground">Design Awards Conference</p>
+                        <p className="font-medium">Best Tech Community 2023</p>
+                        <p className="text-sm text-muted-foreground">Tech Awards</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <Award className="h-4 w-4 text-yellow-500 mt-1" />
+                      <div>
+                        <p className="font-medium">Innovation Award 2022</p>
+                        <p className="text-sm text-muted-foreground">Community Excellence</p>
                       </div>
                     </div>
                   </CardContent>
@@ -424,15 +519,11 @@ export function TestPage() {
                   <CardContent className="space-y-3">
                     <div className="flex items-center gap-2">
                       <Mail className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm">john.anderson@email.com</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Phone className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm">+1 (555) 123-4567</span>
+                      <span className="text-sm">hello@techcommunity.com</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <LinkIcon className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm text-blue-500">johnanderson.com</span>
+                      <span className="text-sm text-blue-500">techcommunity.com</span>
                     </div>
                   </CardContent>
                 </Card>
@@ -443,7 +534,7 @@ export function TestPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Users className="h-5 w-5 text-blue-500" />
-                      Team Members
+                      Community Leaders
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -476,70 +567,170 @@ export function TestPage() {
               <TabsContent value="ai" className="space-y-4">
                 <Card className="shadow-md">
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Sparkles className="h-5 w-5 text-blue-500" />
-                      AI Assistant
-                    </CardTitle>
-                    <p className="text-sm text-muted-foreground">Ask anything about this profile or get recommendations</p>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-4 max-h-96 overflow-y-auto">
-                      <div className="flex gap-3">
-                        <Avatar className="h-8 w-8 shrink-0">
-                          <AvatarFallback className="bg-blue-500 text-white">
-                            <Bot className="h-4 w-4" />
-                          </AvatarFallback>
-                        </Avatar>
-                        <Card className="flex-1 shadow-sm">
-                          <CardContent className="pt-3 pb-3">
-                            <p className="text-sm">Hello! I'm here to help you learn more about John's professional background. What would you like to know?</p>
-                          </CardContent>
-                        </Card>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <CardTitle className="flex items-center gap-2">
+                          <BookOpen className="h-5 w-5 text-blue-500" />
+                          Knowledge Base
+                        </CardTitle>
+                        <p className="text-sm text-muted-foreground mt-1">Manage information for AI to learn about the community</p>
                       </div>
-
-                      <div className="flex gap-3 justify-end">
-                        <Card className="max-w-[80%] shadow-sm bg-blue-500 text-white">
-                          <CardContent className="pt-3 pb-3">
-                            <p className="text-sm">What are John's main skills?</p>
-                          </CardContent>
-                        </Card>
-                        <Avatar className="w-8 h-8">
-                          <AvatarFallback>U</AvatarFallback>
-                        </Avatar>
-                      </div>
-
-                      <div className="flex gap-3">
-                        <Avatar className="h-8 w-8 shrink-0">
-                          <AvatarFallback className="bg-blue-500 text-white">
-                            <Bot className="h-4 w-4" />
-                          </AvatarFallback>
-                        </Avatar>
-                        <Card className="flex-1 shadow-sm">
-                          <CardContent className="pt-3 pb-3">
-                            <p className="text-sm">Based on John's profile, his main skills include:</p>
-                            <ul className="list-disc list-inside mt-2 space-y-1 text-sm">
-                              <li>Product Design & UX/UI</li>
-                              <li>User Research & Testing</li>
-                              <li>Design Systems</li>
-                              <li>Prototyping & Wireframing</li>
-                              <li>Cross-functional Team Leadership</li>
-                            </ul>
-                            <p className="text-sm mt-2">He has over 7 years of experience in the field and has worked with several prominent tech companies.</p>
-                          </CardContent>
-                        </Card>
-                      </div>
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button size="sm" className="gap-2">
+                            <Plus className="h-4 w-4" />
+                            Add Knowledge
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Add Knowledge Item</DialogTitle>
+                            <DialogDescription>
+                              Add new information for the AI to learn
+                            </DialogDescription>
+                          </DialogHeader>
+                          <div className="space-y-4">
+                            <div>
+                              <label className="text-sm font-medium">Title</label>
+                              <Input
+                                placeholder="e.g., Company Values"
+                                value={newKnowledgeTitle}
+                                onChange={(e) => setNewKnowledgeTitle(e.target.value)}
+                              />
+                            </div>
+                            <div>
+                              <label className="text-sm font-medium">Category</label>
+                              <Input
+                                placeholder="e.g., About, Guidelines, Products"
+                                value={newKnowledgeCategory}
+                                onChange={(e) => setNewKnowledgeCategory(e.target.value)}
+                              />
+                            </div>
+                            <div>
+                              <label className="text-sm font-medium">Content</label>
+                              <Textarea
+                                placeholder="Enter detailed information..."
+                                value={newKnowledgeContent}
+                                onChange={(e) => setNewKnowledgeContent(e.target.value)}
+                                className="min-h-[120px]"
+                              />
+                            </div>
+                            <Button
+                              className="w-full"
+                              onClick={() => {
+                                if (newKnowledgeTitle && newKnowledgeContent && newKnowledgeCategory) {
+                                  setKnowledgeItems([...knowledgeItems, {
+                                    id: Date.now().toString(),
+                                    title: newKnowledgeTitle,
+                                    content: newKnowledgeContent,
+                                    category: newKnowledgeCategory
+                                  }]);
+                                  setNewKnowledgeTitle('');
+                                  setNewKnowledgeContent('');
+                                  setNewKnowledgeCategory('');
+                                }
+                              }}
+                            >
+                              Add Item
+                            </Button>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
                     </div>
-
-                    <Separator />
-
-                    <div className="flex gap-2">
-                      <Textarea
-                        placeholder="Ask about experience, skills, or recommendations..."
-                        className="min-h-[60px]"
-                      />
-                      <Button size="icon" className="shrink-0 h-auto">
-                        <Send className="h-4 w-4" />
-                      </Button>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {knowledgeItems.map((item) => (
+                        <Card key={item.id} className="shadow-sm">
+                          <CardHeader className="pb-3">
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2">
+                                  <CardTitle className="text-base">{item.title}</CardTitle>
+                                  <Badge variant="secondary" className="text-xs">{item.category}</Badge>
+                                </div>
+                              </div>
+                              <div className="flex gap-1">
+                                <Dialog>
+                                  <DialogTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => setEditingKnowledge(item)}
+                                    >
+                                      <Edit2 className="h-4 w-4" />
+                                    </Button>
+                                  </DialogTrigger>
+                                  <DialogContent>
+                                    <DialogHeader>
+                                      <DialogTitle>Edit Knowledge Item</DialogTitle>
+                                    </DialogHeader>
+                                    <div className="space-y-4">
+                                      <div>
+                                        <label className="text-sm font-medium">Title</label>
+                                        <Input
+                                          defaultValue={item.title}
+                                          onChange={(e) => {
+                                            if (editingKnowledge) {
+                                              setEditingKnowledge({ ...editingKnowledge, title: e.target.value });
+                                            }
+                                          }}
+                                        />
+                                      </div>
+                                      <div>
+                                        <label className="text-sm font-medium">Category</label>
+                                        <Input
+                                          defaultValue={item.category}
+                                          onChange={(e) => {
+                                            if (editingKnowledge) {
+                                              setEditingKnowledge({ ...editingKnowledge, category: e.target.value });
+                                            }
+                                          }}
+                                        />
+                                      </div>
+                                      <div>
+                                        <label className="text-sm font-medium">Content</label>
+                                        <Textarea
+                                          defaultValue={item.content}
+                                          onChange={(e) => {
+                                            if (editingKnowledge) {
+                                              setEditingKnowledge({ ...editingKnowledge, content: e.target.value });
+                                            }
+                                          }}
+                                          className="min-h-[120px]"
+                                        />
+                                      </div>
+                                      <Button
+                                        className="w-full"
+                                        onClick={() => {
+                                          if (editingKnowledge) {
+                                            setKnowledgeItems(knowledgeItems.map(k =>
+                                              k.id === editingKnowledge.id ? editingKnowledge : k
+                                            ));
+                                            setEditingKnowledge(null);
+                                          }
+                                        }}
+                                      >
+                                        Save Changes
+                                      </Button>
+                                    </div>
+                                  </DialogContent>
+                                </Dialog>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => setKnowledgeItems(knowledgeItems.filter(k => k.id !== item.id))}
+                                >
+                                  <Trash2 className="h-4 w-4 text-destructive" />
+                                </Button>
+                              </div>
+                            </div>
+                          </CardHeader>
+                          <CardContent>
+                            <p className="text-sm text-muted-foreground">{item.content}</p>
+                          </CardContent>
+                        </Card>
+                      ))}
                     </div>
                   </CardContent>
                 </Card>
@@ -552,9 +743,9 @@ export function TestPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Bot className="h-5 w-5 text-blue-500" />
-                  AI Chat Example
+                  AI Chat Interface
                 </CardTitle>
-                <p className="text-sm text-muted-foreground">Interactive AI assistant chat interface</p>
+                <p className="text-sm text-muted-foreground">Clean AI chat interface for testing</p>
               </CardHeader>
               <CardContent className="space-y-4">
                 <ScrollArea className="h-[500px] pr-4">
@@ -570,89 +761,6 @@ export function TestPage() {
                           <p className="text-sm">Hello! I'm your AI assistant. How can I help you today?</p>
                         </CardContent>
                       </Card>
-                    </div>
-
-                    <div className="flex gap-3 justify-end">
-                      <Card className="max-w-[80%] shadow-sm bg-blue-500 text-white">
-                        <CardContent className="pt-4 pb-4">
-                          <p className="text-sm">I need help with my business strategy</p>
-                        </CardContent>
-                      </Card>
-                      <Avatar className="h-8 w-8 shrink-0">
-                        <AvatarFallback>U</AvatarFallback>
-                      </Avatar>
-                    </div>
-
-                    <div className="flex gap-3">
-                      <Avatar className="h-8 w-8 shrink-0">
-                        <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white">
-                          <Bot className="h-4 w-4" />
-                        </AvatarFallback>
-                      </Avatar>
-                      <Card className="flex-1 shadow-sm">
-                        <CardContent className="pt-4 pb-4">
-                          <p className="text-sm mb-3">I'd be happy to help you with your business strategy! Let me ask you a few questions to better understand your needs:</p>
-                          <ol className="list-decimal list-inside space-y-2 text-sm">
-                            <li>What industry is your business in?</li>
-                            <li>What are your main business goals for the next year?</li>
-                            <li>What challenges are you currently facing?</li>
-                          </ol>
-                        </CardContent>
-                      </Card>
-                    </div>
-
-                    <div className="flex gap-3 justify-end">
-                      <Card className="max-w-[80%] shadow-sm bg-blue-500 text-white">
-                        <CardContent className="pt-4 pb-4">
-                          <p className="text-sm">We're in the tech industry, focused on SaaS products. Our main goal is to increase customer retention and expand to new markets.</p>
-                        </CardContent>
-                      </Card>
-                      <Avatar className="h-8 w-8 shrink-0">
-                        <AvatarFallback>U</AvatarFallback>
-                      </Avatar>
-                    </div>
-
-                    <div className="flex gap-3">
-                      <Avatar className="h-8 w-8 shrink-0">
-                        <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white">
-                          <Bot className="h-4 w-4" />
-                        </AvatarFallback>
-                      </Avatar>
-                      <Card className="flex-1 shadow-sm">
-                        <CardContent className="pt-4 pb-4">
-                          <p className="text-sm mb-3">Great! For a SaaS business focused on customer retention and market expansion, here are my recommendations:</p>
-
-                          <div className="space-y-3">
-                            <div>
-                              <h4 className="font-semibold text-sm mb-1">1. Customer Retention Strategy</h4>
-                              <ul className="list-disc list-inside ml-2 space-y-1 text-sm text-muted-foreground">
-                                <li>Implement a robust onboarding process</li>
-                                <li>Create a customer success team</li>
-                                <li>Develop a loyalty program</li>
-                                <li>Regular check-ins and feedback loops</li>
-                              </ul>
-                            </div>
-
-                            <div>
-                              <h4 className="font-semibold text-sm mb-1">2. Market Expansion</h4>
-                              <ul className="list-disc list-inside ml-2 space-y-1 text-sm text-muted-foreground">
-                                <li>Conduct thorough market research</li>
-                                <li>Localize your product for new regions</li>
-                                <li>Partner with local businesses</li>
-                                <li>Adapt pricing for different markets</li>
-                              </ul>
-                            </div>
-                          </div>
-
-                          <p className="text-sm mt-3">Would you like me to elaborate on any of these points?</p>
-                        </CardContent>
-                      </Card>
-                    </div>
-
-                    <div className="flex gap-2 flex-wrap">
-                      <Badge variant="outline" className="cursor-pointer hover:bg-accent">Tell me more about onboarding</Badge>
-                      <Badge variant="outline" className="cursor-pointer hover:bg-accent">Market research tips</Badge>
-                      <Badge variant="outline" className="cursor-pointer hover:bg-accent">Pricing strategies</Badge>
                     </div>
                   </div>
                 </ScrollArea>
