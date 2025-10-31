@@ -54,6 +54,20 @@ interface KnowledgeItem {
   category: string;
 }
 
+const tabMap: Record<string, string> = {
+  '1': 'catalog',
+  '2': 'scrolling',
+  '3': 'profile',
+  '4': 'chat'
+};
+
+const tab2Map: Record<string, string> = {
+  '1': 'posts',
+  '2': 'information',
+  '3': 'members',
+  '4': 'ai'
+};
+
 export function TestPage() {
   const [searchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
@@ -76,8 +90,26 @@ export function TestPage() {
   ]);
   const [newTodo, setNewTodo] = useState('');
 
-  const tab1 = searchParams.get('tab1') || 'catalog';
-  const tab2 = searchParams.get('tab2') || 'posts';
+  const tabParam = searchParams.get('tab');
+  const tab2Param = searchParams.get('tab2');
+
+  const initialTab1 = tabParam ? (tabMap[tabParam] || 'catalog') : 'catalog';
+  const initialTab2 = tab2Param ? (tab2Map[tab2Param] || 'posts') : 'posts';
+
+  const [activeTab1, setActiveTab1] = useState(initialTab1);
+  const [activeTab2, setActiveTab2] = useState(initialTab2);
+
+  useEffect(() => {
+    if (tabParam) {
+      setActiveTab1(tabMap[tabParam] || 'catalog');
+    }
+  }, [tabParam]);
+
+  useEffect(() => {
+    if (tab2Param) {
+      setActiveTab2(tab2Map[tab2Param] || 'posts');
+    }
+  }, [tab2Param]);
 
   useEffect(() => {
     const metaRobots = document.createElement('meta');
@@ -118,7 +150,7 @@ export function TestPage() {
           </CardHeader>
         </Card>
 
-        <Tabs value={tab1} className="w-full">
+        <Tabs value={activeTab1} onValueChange={setActiveTab1} className="w-full">
           <TabsList className="grid w-full grid-cols-1 md:grid-cols-4 h-auto">
             <TabsTrigger value="catalog">Catalog Directory</TabsTrigger>
             <TabsTrigger value="scrolling">Scrolling Tabs</TabsTrigger>
@@ -434,7 +466,7 @@ export function TestPage() {
               </CardContent>
             </Card>
 
-            <Tabs value={tab2} className="w-full">
+            <Tabs value={activeTab2} onValueChange={setActiveTab2} className="w-full">
               <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="posts">Posts</TabsTrigger>
                 <TabsTrigger value="information">Information</TabsTrigger>
