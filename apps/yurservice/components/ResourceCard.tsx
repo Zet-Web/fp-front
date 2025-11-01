@@ -16,9 +16,16 @@ export function ResourceCard({ resource }: ResourceCardProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const { toast } = useToast()
 
+  console.log(`[ResourceCard] Rendering card for: ${resource.name} (ID: ${resource.id}), isExpanded: ${isExpanded}`)
+
   const handleToggle = (e: React.MouseEvent) => {
     e.stopPropagation()
-    setIsExpanded(prev => !prev)
+    console.log(`[handleToggle] Clicked on card: ${resource.name} (ID: ${resource.id}), current state: ${isExpanded}`)
+    setIsExpanded(prev => {
+      const newState = !prev
+      console.log(`[handleToggle] Setting ${resource.name} (ID: ${resource.id}) from ${prev} to ${newState}`)
+      return newState
+    })
   }
 
   const handleLinkClick = (url: string) => {
@@ -68,7 +75,7 @@ export function ResourceCard({ resource }: ResourceCardProps) {
   const sortedLinks = organizeLinks(resource.links)
 
   return (
-    <Card className="hover:shadow-md transition-shadow">
+    <Card className="hover:shadow-md transition-shadow" data-resource-id={resource.id}>
       <CardHeader className="pb-3">
         <div className="flex items-start gap-3">
           <Avatar className="h-10 w-10 shrink-0">

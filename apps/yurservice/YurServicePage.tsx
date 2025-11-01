@@ -135,6 +135,7 @@ export function YurServicePage() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {paginatedCourtResources.map((resource) => {
                   const uiResource = mapDatabaseResourceToUI(resource)
+                  console.log(`[YurServicePage Courts] Rendering card with key: court-${resource.id}, name: ${resource.title}`)
                   return (
                     <ResourceCard
                       key={`court-${resource.id}`}
