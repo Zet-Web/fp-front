@@ -16,7 +16,7 @@ const ITEMS_PER_PAGE = 24
 export function YurServicePage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedRegionId, setSelectedRegionId] = useState<string>("all")
-  const [expandedCardId, setExpandedCardId] = useState<number | null>(null)
+  const [expandedCardId, setExpandedCardId] = useState<string | null>(null)
   const [courtPage, setCourtPage] = useState(1)
   const [govPage, setGovPage] = useState(1)
   const [toolPage, setToolPage] = useState(1)
@@ -132,17 +132,18 @@ export function YurServicePage() {
           {courtResources.length > 0 && (
             <section>
               <h2 className="text-xl font-semibold mb-4">Courts</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {paginatedCourtResources.map((resource) => {
                   const uiResource = mapDatabaseResourceToUI(resource)
+                  const cardId = `court-${resource.id}`
                   return (
                     <ResourceCard
                       key={resource.id}
                       resource={uiResource}
-                      isExpanded={expandedCardId === resource.id}
+                      isExpanded={expandedCardId === cardId}
                       onToggle={() =>
                         setExpandedCardId(
-                          expandedCardId === resource.id ? null : resource.id
+                          expandedCardId === cardId ? null : cardId
                         )
                       }
                     />
@@ -165,17 +166,18 @@ export function YurServicePage() {
           {govResources.length > 0 && (
             <section>
               <h2 className="text-xl font-semibold mb-4">Government</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {paginatedGovResources.map((resource) => {
                   const uiResource = mapDatabaseResourceToUI(resource)
+                  const cardId = `gov-${resource.id}`
                   return (
                     <ResourceCard
                       key={resource.id}
                       resource={uiResource}
-                      isExpanded={expandedCardId === resource.id}
+                      isExpanded={expandedCardId === cardId}
                       onToggle={() =>
                         setExpandedCardId(
-                          expandedCardId === resource.id ? null : resource.id
+                          expandedCardId === cardId ? null : cardId
                         )
                       }
                     />
@@ -198,17 +200,18 @@ export function YurServicePage() {
           {toolResources.length > 0 && (
             <section>
               <h2 className="text-xl font-semibold mb-4">Tools</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {paginatedToolResources.map((resource) => {
                   const uiResource = mapDatabaseResourceToUI(resource)
+                  const cardId = `tool-${resource.id}`
                   return (
                     <ResourceCard
                       key={resource.id}
                       resource={uiResource}
-                      isExpanded={expandedCardId === resource.id}
+                      isExpanded={expandedCardId === cardId}
                       onToggle={() =>
                         setExpandedCardId(
-                          expandedCardId === resource.id ? null : resource.id
+                          expandedCardId === cardId ? null : cardId
                         )
                       }
                     />

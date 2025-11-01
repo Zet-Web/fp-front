@@ -96,12 +96,12 @@ export function ResourceCard({ resource, isExpanded, onToggle }: ResourceCardPro
         <Button
           variant="default"
           size="sm"
-          className="w-full h-auto min-h-[32px] whitespace-normal"
+          className="w-full"
           onClick={() => handleLinkClick(resource.mainUrl)}
         >
-          <Globe className="h-4 w-4 mr-2 shrink-0" />
-          <span className="flex-1 text-center">{resource.mainButtonLabel || 'Visit Website'}</span>
-          <ExternalLink className="h-3 w-3 ml-2 shrink-0" />
+          <Globe className="h-4 w-4 mr-2" />
+          {resource.mainButtonLabel || 'Visit Website'}
+          <ExternalLink className="h-3 w-3 ml-2" />
         </Button>
 
         {isExpanded && (
@@ -123,11 +123,11 @@ export function ResourceCard({ resource, isExpanded, onToggle }: ResourceCardPro
                       key={index}
                       variant="ghost"
                       size="sm"
-                      className="w-full justify-start text-sm h-auto py-2 px-3 whitespace-normal text-left"
+                      className="w-full justify-start text-sm h-auto py-2 px-3"
                       onClick={() => handleLinkClick(link.url)}
                     >
                       <ExternalLink className="h-3 w-3 mr-2 shrink-0" />
-                      <span className="flex-1 break-words">{link.label}</span>
+                      <span className="text-left">{link.label}</span>
                     </Button>
                   ))}
                 </div>
@@ -140,22 +140,22 @@ export function ResourceCard({ resource, isExpanded, onToggle }: ResourceCardPro
                   <Button
                     variant="outline"
                     size="sm"
-                    className="flex-1 h-auto min-h-[32px] whitespace-normal"
+                    className="flex-1"
                     onClick={() => handleLinkClick(resource.websiteUrl!)}
                   >
-                    <Globe className="h-3 w-3 mr-2 shrink-0" />
-                    <span>Website</span>
+                    <Globe className="h-3 w-3 mr-2" />
+                    Website
                   </Button>
                 )}
                 {resource.servicesUrl && (
                   <Button
                     variant="outline"
                     size="sm"
-                    className="flex-1 h-auto min-h-[32px] whitespace-normal"
+                    className="flex-1"
                     onClick={() => handleLinkClick(resource.servicesUrl!)}
                   >
-                    <List className="h-3 w-3 mr-2 shrink-0" />
-                    <span>Services</span>
+                    <List className="h-3 w-3 mr-2" />
+                    Services
                   </Button>
                 )}
               </div>
