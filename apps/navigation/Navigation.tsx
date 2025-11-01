@@ -1,4 +1,4 @@
-import { Chrome as Home, User, Settings, MessageCircle, Bell, Search, Bookmark, Users, Plus, Moon, Sun, Monitor } from "lucide-react"
+import { Chrome as Home, User, Settings, MessageCircle, Bell, Search, Bookmark, Users, Plus, Moon, Sun, Monitor, PanelLeftClose, PanelLeftOpen, Minimize2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
@@ -7,18 +7,202 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { Link, useLocation } from "react-router-dom"
 import { useAuthContext } from "@/components/auth-provider"
 import { useTheme } from "next-themes"
 import { desktopNavigationItems, createButtonConfig } from "@shared/lib/navigation-config"
+import { useSidebar } from "@/contexts/sidebar-context"
 
 export function Navigation() {
   const location = useLocation()
   const { user, profile, isAuthenticated, loading } = useAuthContext()
   const { setTheme } = useTheme()
+  const { leftCollapsed, toggleLeft, collapseAll } = useSidebar()
+
+  if (leftCollapsed) {
+    return (
+      <aside className="hidden lg:flex lg:w-16 xl:w-18 flex-col h-full bg-background/30 overflow-hidden transition-all duration-300">
+        <div className="flex-1 p-2 space-y-2 overflow-y-auto">
+          <TooltipProvider>
+            <div className="flex flex-col items-center space-y-3 py-3">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link to="/" className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center hover:bg-blue-600 transition-colors">
+                    <div className="h-5 w-5 rounded bg-white"></div>
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p>Social Network</p>
+                </TooltipContent>
+              </Tooltip>
+
+              <div className="h-px w-8 bg-border"></div>
+
+              {desktopNavigationItems.map((item) => {
+                const itemPath = typeof item.path === 'function'
+                  ? item.path(profile, isAuthenticated)
+                  : item.path
+
+                return (
+                  <Tooltip key={item.label}>
+                    <TooltipTrigger asChild>
+                      <Link to={itemPath}>
+                        <Button
+                          variant={location.pathname === itemPath ? "default" : "ghost"}
+                          size="icon"
+                          className={`h-10 w-10 ${
+                            location.pathname === itemPath
+                              ? "bg-blue-500 hover:bg-blue-600 text-white"
+                              : "hover:bg-accent/50"
+                          }`}
+                        >
+                          <item.icon className="h-5 w-5" />
+                        </Button>
+                      </Link>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">
+                      <p>{item.label}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                )
+              })}
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-10 w-10 hover:bg-accent/50"
+                      >
+                        <div className="relative h-5 w-5">
+                          <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                          <Moon className="absolute inset-0 h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                        </div>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" side="right" className="w-48">
+                      <DropdownMenuItem onClick={() => setTheme("light")}>
+                        <Sun className="mr-2 h-4 w-4" />
+                        Light
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setTheme("dark")}>
+                        <Moon className="mr-2 h-4 w-4" />
+                        Dark
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setTheme("system")}>
+                        <Monitor className="mr-2 h-4 w-4" />
+                        System
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p>Theme</p>
+                </TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link to={createButtonConfig.path}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-10 w-10 hover:bg-accent/50"
+                    >
+                      <createButtonConfig.icon className="h-5 w-5" />
+                    </Button>
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p>{createButtonConfig.label}</p>
+                </TooltipContent>
+              </Tooltip>
+
+              <div className="h-px w-8 bg-border mt-2"></div>
+
+              {loading ? (
+                <div className="h-10 w-10 rounded-full bg-muted animate-pulse"></div>
+              ) : isAuthenticated && user ? (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link to={typeof desktopNavigationItems[6].path === 'function' ? desktopNavigationItems[6].path(profile, isAuthenticated) : desktopNavigationItems[6].path}>
+                      <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center hover:opacity-90 transition-opacity cursor-pointer">
+                        <span className="text-white font-semibold text-sm">
+                          {user.email?.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent side="right">
+                    <p>{profile?.name || user.user_metadata?.name || user.email?.split('@')[0] || 'User'}</p>
+                    <p className="text-xs text-muted-foreground">{profile?.username ? `@${profile.username}` : ''}</p>
+                  </TooltipContent>
+                </Tooltip>
+              ) : (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link to="/auth">
+                      <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80 transition-colors cursor-pointer">
+                        <User className="h-5 w-5 text-muted-foreground" />
+                      </div>
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent side="right">
+                    <p>Sign in</p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
+
+              <div className="h-px w-8 bg-border mt-2"></div>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={toggleLeft}
+                    className="h-8 w-8 hover:bg-accent/50"
+                  >
+                    <PanelLeftOpen className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p>Expand sidebar</p>
+                </TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={collapseAll}
+                    className="h-8 w-8 hover:bg-accent/50"
+                  >
+                    <Minimize2 className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p>Focus Mode</p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
+          </TooltipProvider>
+        </div>
+      </aside>
+    )
+  }
 
   return (
-    <aside className="hidden lg:flex lg:w-64 xl:w-72 flex-col h-full bg-background/30 overflow-hidden">
+    <aside className="hidden lg:flex lg:w-64 xl:w-72 flex-col h-full bg-background/30 overflow-hidden transition-all duration-300">
       <div className="flex-1 p-4 space-y-4 overflow-y-auto"> 
         <Card className="shadow-sm hover:shadow-md transition-shadow duration-300">
           <CardHeader className="pb-3">
@@ -143,6 +327,46 @@ export function Navigation() {
                 </div>
               </div>
             )}
+
+            {/* Collapse Controls */}
+            <div className="h-px bg-border mx-2 mt-4"></div>
+            <div className="flex gap-2 mt-2">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={toggleLeft}
+                      className="flex-1 h-9 hover:bg-accent/50"
+                    >
+                      <PanelLeftClose className="h-4 w-4 mr-2" />
+                      Collapse
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Collapse this sidebar</p>
+                  </TooltipContent>
+                </Tooltip>
+
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={collapseAll}
+                      className="flex-1 h-9 hover:bg-accent/50"
+                    >
+                      <Minimize2 className="h-4 w-4 mr-2" />
+                      Focus
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Focus Mode (Collapse all sidebars)</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
           </CardContent>
         </Card>
 
