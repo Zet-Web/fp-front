@@ -1,4 +1,4 @@
-// YurService page with database-driven resource catalog and context-based card state management
+// YurService page with database-driven resource catalog
 
 import { useState, useMemo } from "react"
 import { Input } from "@/components/ui/input"
@@ -10,13 +10,13 @@ import { RegionSelect } from "./components/RegionSelect"
 import { useYurServiceData } from "./hooks/use-yurservice-data"
 import { mapDatabaseResourceToUI } from "./lib/resource-mapper"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { ResourceCardProvider } from "./contexts/ResourceCardContext"
 
 const ITEMS_PER_PAGE = 18
 
 export function YurServicePage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedRegionId, setSelectedRegionId] = useState<string>("all")
+  const [expandedCardId, setExpandedCardId] = useState<string | null>(null)
   const [courtPage, setCourtPage] = useState(1)
   const [govPage, setGovPage] = useState(1)
   const [toolPage, setToolPage] = useState(1)
@@ -75,8 +75,7 @@ export function YurServicePage() {
   }
 
   return (
-    <ResourceCardProvider>
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="max-w-7xl mx-auto space-y-6">
       <div>
         <h1 className="text-3xl font-bold mb-2">Resource Catalog</h1>
         <p className="text-muted-foreground">
@@ -142,7 +141,12 @@ export function YurServicePage() {
                     <ResourceCard
                       key={resource.id}
                       resource={uiResource}
-                      cardId={cardId}
+                      isExpanded={expandedCardId === cardId}
+                      onToggle={() =>
+                        setExpandedCardId(
+                          expandedCardId === cardId ? null : cardId
+                        )
+                      }
                     />
                   )
                 })}
@@ -172,7 +176,12 @@ export function YurServicePage() {
                     <ResourceCard
                       key={resource.id}
                       resource={uiResource}
-                      cardId={cardId}
+                      isExpanded={expandedCardId === cardId}
+                      onToggle={() =>
+                        setExpandedCardId(
+                          expandedCardId === cardId ? null : cardId
+                        )
+                      }
                     />
                   )
                 })}
@@ -201,7 +210,12 @@ export function YurServicePage() {
                     <ResourceCard
                       key={resource.id}
                       resource={uiResource}
-                      cardId={cardId}
+                      isExpanded={expandedCardId === cardId}
+                      onToggle={() =>
+                        setExpandedCardId(
+                          expandedCardId === cardId ? null : cardId
+                        )
+                      }
                     />
                   )
                 })}
@@ -220,7 +234,6 @@ export function YurServicePage() {
           )}
         </div>
       )}
-      </div>
-    </ResourceCardProvider>
+    </div>
   )
 }
