@@ -23,11 +23,19 @@ export function ConnectionCard({ node, mutualConnections, onClick }: ConnectionC
             onClick={onClick}
             className="flex-shrink-0 hover:opacity-80 transition-opacity"
           >
-            <div className="h-16 w-16 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-md">
-              <span className="text-white font-semibold text-lg">
-                {node.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-              </span>
-            </div>
+            {node.avatarUrl ? (
+              <img
+                src={node.avatarUrl}
+                alt={node.name}
+                className="h-16 w-16 rounded-full object-cover shadow-md"
+              />
+            ) : (
+              <div className="h-16 w-16 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-md">
+                <span className="text-white font-semibold text-lg">
+                  {node.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                </span>
+              </div>
+            )}
           </button>
 
           <div className="flex-1 min-w-0">

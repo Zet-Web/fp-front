@@ -30,11 +30,19 @@ export function NodeDetailModal({ node, open, onOpenChange }: NodeDetailModalPro
         </DialogHeader>
 
         <div className="flex flex-col items-center text-center py-4">
-          <div className="h-20 w-20 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg mb-4">
-            <span className="text-white font-semibold text-2xl">
-              {node.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-            </span>
-          </div>
+          {node.avatarUrl ? (
+            <img
+              src={node.avatarUrl}
+              alt={node.name}
+              className="h-20 w-20 rounded-full object-cover shadow-lg mb-4"
+            />
+          ) : (
+            <div className="h-20 w-20 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg mb-4">
+              <span className="text-white font-semibold text-2xl">
+                {node.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+              </span>
+            </div>
+          )}
 
           <h2 className="text-xl font-bold text-foreground mb-1">
             {node.name}

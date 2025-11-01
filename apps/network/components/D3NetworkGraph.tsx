@@ -99,31 +99,54 @@ export function D3NetworkGraph({ data, onNodeClick, width = 800, height = 600 }:
           d.fy = null;
         }));
 
-    node.append('circle')
-      .attr('r', d => getNodeRadius(d))
-      .attr('fill', d => {
-        if (d.isCurrentUser) return currentTheme === 'dark' ? '#60a5fa' : '#3b82f6';
-        if (d.role === 'Сообщество') return currentTheme === 'dark' ? '#a78bfa' : '#8b5cf6';
-        return currentTheme === 'dark' ? '#4b5563' : '#d1d5db';
-      })
-      .attr('stroke', d => {
-        if (d.isCurrentUser) return currentTheme === 'dark' ? '#93c5fd' : '#2563eb';
-        return currentTheme === 'dark' ? '#6b7280' : '#9ca3af';
-      })
-      .attr('stroke-width', d => getNodeStrokeWidth(d));
+    node.each(function(d) {
+      const nodeGroup = d3.select(this);
 
-    node.append('text')
-      .text(d => d.name.split(' ').map(n => n[0]).join('').slice(0, 2))
-      .attr('text-anchor', 'middle')
-      .attr('dy', '0.35em')
-      .attr('font-size', d => d.isCurrentUser ? '12px' : d.level === 1 ? '10px' : '8px')
-      .attr('font-weight', d => d.isCurrentUser ? 'bold' : 'normal')
-      .attr('fill', d => {
-        if (d.isCurrentUser) return '#ffffff';
-        if (d.role === 'Сообщество') return '#ffffff';
-        return currentTheme === 'dark' ? '#e5e7eb' : '#374151';
-      })
-      .attr('pointer-events', 'none');
+      if (d.avatarUrl) {
+        nodeGroup.append('defs')
+          .append('pattern')
+          .attr('id', `avatar-${d.id}`)
+          .attr('width', 1)
+          .attr('height', 1)
+          .attr('patternContentUnits', 'objectBoundingBox')
+          .append('image')
+          .attr('href', d.avatarUrl)
+          .attr('width', 1)
+          .attr('height', 1)
+          .attr('preserveAspectRatio', 'xMidYMid slice');
+
+        nodeGroup.append('circle')
+          .attr('r', getNodeRadius(d))
+          .attr('fill', `url(#avatar-${d.id})`)
+          .attr('stroke', d.isCurrentUser
+            ? (currentTheme === 'dark' ? '#93c5fd' : '#2563eb')
+            : (currentTheme === 'dark' ? '#6b7280' : '#9ca3af'))
+          .attr('stroke-width', getNodeStrokeWidth(d));
+      } else {
+        nodeGroup.append('circle')
+          .attr('r', getNodeRadius(d))
+          .attr('fill', d.isCurrentUser
+            ? (currentTheme === 'dark' ? '#60a5fa' : '#3b82f6')
+            : (d.role === 'Сообщество'
+              ? (currentTheme === 'dark' ? '#a78bfa' : '#8b5cf6')
+              : (currentTheme === 'dark' ? '#4b5563' : '#d1d5db')))
+          .attr('stroke', d.isCurrentUser
+            ? (currentTheme === 'dark' ? '#93c5fd' : '#2563eb')
+            : (currentTheme === 'dark' ? '#6b7280' : '#9ca3af'))
+          .attr('stroke-width', getNodeStrokeWidth(d));
+
+        nodeGroup.append('text')
+          .text(d.name.split(' ').map(n => n[0]).join('').slice(0, 2))
+          .attr('text-anchor', 'middle')
+          .attr('dy', '0.35em')
+          .attr('font-size', d.isCurrentUser ? '12px' : d.level === 1 ? '10px' : '8px')
+          .attr('font-weight', d.isCurrentUser ? 'bold' : 'normal')
+          .attr('fill', d.isCurrentUser || d.role === 'Сообщество'
+            ? '#ffffff'
+            : (currentTheme === 'dark' ? '#e5e7eb' : '#374151'))
+          .attr('pointer-events', 'none');
+      }
+    });
 
     node.append('title')
       .text(d => `${d.name}\n${d.role || ''}\n${d.connectionType.join(', ')}`);
