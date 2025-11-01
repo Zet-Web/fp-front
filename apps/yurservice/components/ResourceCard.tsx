@@ -1,12 +1,11 @@
-// Expandable card component for displaying resource information with overlay expansion
+// Expandable card component for displaying resource information
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { ChevronDown, ChevronUp, ExternalLink, Globe, Phone, Mail, MapPin, Clock, Share, List, X } from "lucide-react"
+import { ChevronDown, ChevronUp, ExternalLink, Globe, Phone, Mail, MapPin, Clock, Share, List } from "lucide-react"
 import type { Resource, ResourceLink } from "../types/resource"
 import { useToast } from "@/hooks/use-toast"
-import { useEffect } from "react"
 
 interface ResourceCardProps {
   resource: Resource
@@ -63,204 +62,148 @@ export function ResourceCard({ resource, isExpanded, onToggle }: ResourceCardPro
 
   const sortedLinks = organizeLinks(resource.links)
 
-  useEffect(() => {
-    if (isExpanded) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
-    }
-    return () => {
-      document.body.style.overflow = ''
-    }
-  }, [isExpanded])
-
   return (
-    <>
-      <Card className="hover:shadow-md transition-shadow">
-        <CardHeader className="pb-3">
-          <div className="flex items-start gap-3">
-            <Avatar className="h-10 w-10 shrink-0">
-              {resource.imageUrl && (
-                <AvatarImage src={resource.imageUrl} alt={resource.name} />
-              )}
-              <AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold">
-                {getInitials(resource.name)}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1 min-w-0 cursor-pointer" onClick={onToggle}>
-              <CardTitle className="text-lg">{resource.name}</CardTitle>
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onToggle}
-              className="p-2 shrink-0"
-            >
-              {isExpanded ? (
-                <ChevronUp className="h-4 w-4" />
-              ) : (
-                <ChevronDown className="h-4 w-4" />
-              )}
-            </Button>
+    <Card className="hover:shadow-md transition-shadow">
+      <CardHeader className="pb-3">
+        <div className="flex items-start gap-3">
+          <Avatar className="h-10 w-10 shrink-0">
+            {resource.imageUrl && (
+              <AvatarImage src={resource.imageUrl} alt={resource.name} />
+            )}
+            <AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold">
+              {getInitials(resource.name)}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex-1 min-w-0 cursor-pointer" onClick={onToggle}>
+            <CardTitle className="text-lg">{resource.name}</CardTitle>
           </div>
-        </CardHeader>
-
-        <CardContent className="pt-0">
           <Button
-            variant="default"
+            variant="ghost"
             size="sm"
-            className="w-full"
-            onClick={() => handleLinkClick(resource.mainUrl)}
-          >
-            {resource.mainButtonLabel || 'Visit Website'}
-          </Button>
-        </CardContent>
-      </Card>
-
-      {isExpanded && (
-        <>
-          <div
-            className="fixed inset-0 bg-black/50 z-40 animate-in fade-in duration-200"
             onClick={onToggle}
-          />
-          <Card className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-[90vw] max-w-2xl max-h-[85vh] overflow-y-auto animate-in zoom-in-95 fade-in duration-200">
-            <CardHeader className="pb-3">
-              <div className="flex items-start gap-3">
-                <Avatar className="h-10 w-10 shrink-0">
-                  {resource.imageUrl && (
-                    <AvatarImage src={resource.imageUrl} alt={resource.name} />
-                  )}
-                  <AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold">
-                    {getInitials(resource.name)}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <CardTitle className="text-lg">{resource.name}</CardTitle>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={onToggle}
-                  className="p-2 shrink-0"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
+            className="p-2 shrink-0"
+          >
+            {isExpanded ? (
+              <ChevronUp className="h-4 w-4" />
+            ) : (
+              <ChevronDown className="h-4 w-4" />
+            )}
+          </Button>
+        </div>
+      </CardHeader>
+
+      <CardContent className="pt-0">
+        <Button
+          variant="default"
+          size="sm"
+          className="w-full"
+          onClick={() => handleLinkClick(resource.mainUrl)}
+        >
+          {resource.mainButtonLabel || 'Visit Website'}
+        </Button>
+
+        {isExpanded && (
+          <div className="space-y-4 pt-4 mt-4 border-t">
+            {resource.description && (
+              <div>
+                <p className="text-sm text-muted-foreground">
+                  {resource.description}
+                </p>
               </div>
-            </CardHeader>
+            )}
 
-            <CardContent className="pt-0">
-              <Button
-                variant="default"
-                size="sm"
-                className="w-full"
-                onClick={() => handleLinkClick(resource.mainUrl)}
-              >
-                {resource.mainButtonLabel || 'Visit Website'}
-              </Button>
+            {sortedLinks.length > 0 && (
+              <div>
+                <h4 className="text-sm font-medium mb-2">Quick Links</h4>
+                <div className="space-y-1">
+                  {sortedLinks.map((link, index) => (
+                    <Button
+                      key={index}
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start text-sm h-auto py-2 px-3"
+                      onClick={() => handleLinkClick(link.url)}
+                    >
+                      <ExternalLink className="h-3 w-3 mr-2 shrink-0" />
+                      <span className="text-left">{link.label}</span>
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            )}
 
-              <div className="space-y-4 pt-4 mt-4 border-t">
-                {resource.description && (
-                  <div>
-                    <p className="text-sm text-muted-foreground">
-                      {resource.description}
-                    </p>
-                  </div>
-                )}
-
-                {sortedLinks.length > 0 && (
-                  <div>
-                    <h4 className="text-sm font-medium mb-2">Quick Links</h4>
-                    <div className="space-y-1">
-                      {sortedLinks.map((link, index) => (
-                        <Button
-                          key={index}
-                          variant="ghost"
-                          size="sm"
-                          className="w-full justify-start text-sm h-auto py-2 px-3"
-                          onClick={() => handleLinkClick(link.url)}
-                        >
-                          <ExternalLink className="h-3 w-3 mr-2 shrink-0" />
-                          <span className="text-left">{link.label}</span>
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {(resource.websiteUrl || resource.servicesUrl) && (
-                  <div className="flex gap-2">
-                    {resource.websiteUrl && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="flex-1"
-                        onClick={() => handleLinkClick(resource.websiteUrl!)}
-                      >
-                        <Globe className="h-3 w-3 mr-2" />
-                        Website
-                      </Button>
-                    )}
-                    {resource.servicesUrl && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="flex-1"
-                        onClick={() => handleLinkClick(resource.servicesUrl!)}
-                      >
-                        <List className="h-3 w-3 mr-2" />
-                        Services
-                      </Button>
-                    )}
-                  </div>
-                )}
-
-                {resource.contacts && (
-                  <div>
-                    <h4 className="text-sm font-medium mb-2">Contact Information</h4>
-                    <div className="space-y-2 text-sm text-muted-foreground">
-                      {resource.contacts.phone && (
-                        <div className="flex items-start gap-2">
-                          <Phone className="h-4 w-4 mt-0.5 shrink-0" />
-                          <span>{resource.contacts.phone}</span>
-                        </div>
-                      )}
-                      {resource.contacts.email && (
-                        <div className="flex items-start gap-2">
-                          <Mail className="h-4 w-4 mt-0.5 shrink-0" />
-                          <span>{resource.contacts.email}</span>
-                        </div>
-                      )}
-                      {resource.contacts.address && (
-                        <div className="flex items-start gap-2">
-                          <MapPin className="h-4 w-4 mt-0.5 shrink-0" />
-                          <span>{resource.contacts.address}</span>
-                        </div>
-                      )}
-                      {resource.contacts.hours && (
-                        <div className="flex items-start gap-2">
-                          <Clock className="h-4 w-4 mt-0.5 shrink-0" />
-                          <span>{resource.contacts.hours}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                <div className="flex justify-end mt-4">
+            {(resource.websiteUrl || resource.servicesUrl) && (
+              <div className="flex gap-2">
+                {resource.websiteUrl && (
                   <Button
-                    variant="ghost"
+                    variant="outline"
                     size="sm"
-                    onClick={handleShare}
-                    className="p-2 h-8 w-8"
+                    className="flex-1"
+                    onClick={() => handleLinkClick(resource.websiteUrl!)}
                   >
-                    <Share className="h-4 w-4" />
+                    <Globe className="h-3 w-3 mr-2" />
+                    Website
                   </Button>
+                )}
+                {resource.servicesUrl && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                    onClick={() => handleLinkClick(resource.servicesUrl!)}
+                  >
+                    <List className="h-3 w-3 mr-2" />
+                    Services
+                  </Button>
+                )}
+              </div>
+            )}
+
+            {resource.contacts && (
+              <div>
+                <h4 className="text-sm font-medium mb-2">Contact Information</h4>
+                <div className="space-y-2 text-sm text-muted-foreground">
+                  {resource.contacts.phone && (
+                    <div className="flex items-start gap-2">
+                      <Phone className="h-4 w-4 mt-0.5 shrink-0" />
+                      <span>{resource.contacts.phone}</span>
+                    </div>
+                  )}
+                  {resource.contacts.email && (
+                    <div className="flex items-start gap-2">
+                      <Mail className="h-4 w-4 mt-0.5 shrink-0" />
+                      <span>{resource.contacts.email}</span>
+                    </div>
+                  )}
+                  {resource.contacts.address && (
+                    <div className="flex items-start gap-2">
+                      <MapPin className="h-4 w-4 mt-0.5 shrink-0" />
+                      <span>{resource.contacts.address}</span>
+                    </div>
+                  )}
+                  {resource.contacts.hours && (
+                    <div className="flex items-start gap-2">
+                      <Clock className="h-4 w-4 mt-0.5 shrink-0" />
+                      <span>{resource.contacts.hours}</span>
+                    </div>
+                  )}
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        </>
-      )}
-    </>
+            )}
+
+            <div className="flex justify-end mt-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleShare}
+                className="p-2 h-8 w-8"
+              >
+                <Share className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   )
 }
