@@ -9,12 +9,10 @@ export function useAuth() {
   const [session, setSession] = useState<Session | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
   const [initialLoadComplete, setInitialLoadComplete] = useState(false)
-  const [profileLoading, setProfileLoading] = useState(false)
 
   // Fetch user profile from profiles table using session from context
   const fetchUserProfile = async (userId: string, sessionToUse: Session) => {
-    setProfileLoading(true)
-    let profileFetched = false
+    let profileFetched = false;
 
     // Try to load from local storage first for immediate UI update
     const cachedProfile = localStorage.getItem(`profile_${userId}`)
@@ -33,7 +31,6 @@ export function useAuth() {
       if (!sessionToUse?.access_token) {
         console.error('[useAuth] ERROR: No access token available')
         setProfile(null)
-        setProfileLoading(false)
         return
       }
 
@@ -51,13 +48,12 @@ export function useAuth() {
         const errorData = await response.json().catch(() => ({ error: response.statusText }))
         console.error('[useAuth] ERROR: Edge Function returned error:', response.status, errorData.error)
         setProfile(null)
-        setProfileLoading(false)
         return
       }
 
       const data = await response.json()
       setProfile(data)
-      profileFetched = true
+      profileFetched = true;
 
       // Save to cache for future use
       localStorage.setItem(`profile_${userId}`, JSON.stringify(data))
@@ -67,7 +63,10 @@ export function useAuth() {
       console.error('[useAuth] EXCEPTION: Failed to fetch profile:', error)
       setProfile(null)
     } finally {
-      setProfileLoading(false)
+      // Ensure loading state is properly handled even if profile fetch fails
+      if (!profileFetched && !localStorage.getItem(`profile_${userId}`)) {
+        console.warn('[useAuth] Profile fetch failed, but stopping loading state to prevent infinite loading')
+      }
     }
   }
 
@@ -105,43 +104,31 @@ export function useAuth() {
 
     // Listen for auth changes (but don't call getSession again)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, newSession) => {
+      async (event, session) => {
         if (!isSubscribed) return
 
         console.log('[useAuth] Auth state change:', event)
+
+        setSession(session)
+        setUser(session?.user ?? null)
 
         // Handle different auth events
         switch (event) {
           case 'SIGNED_IN':
             console.log('[useAuth] User signed in')
-            setSession(newSession)
-            setUser(newSession?.user ?? null)
-            // Fetch profile for newly signed in user
-            if (newSession?.user) {
-              (async () => {
-                await fetchUserProfile(newSession.user.id, newSession)
-              })()
+            // Only fetch if we don't already have profile data from initial load
+            if (session?.user && !profile) {
+              await fetchUserProfile(session.user.id, session)
             }
             break
           case 'SIGNED_OUT':
             console.log('[useAuth] User signed out')
-            setSession(null)
-            setUser(null)
             setProfile(null)
             break
           case 'TOKEN_REFRESHED':
             console.log('[useAuth] Token refreshed')
-            setSession(newSession)
-            setUser(newSession?.user ?? null)
-            break
-          case 'USER_UPDATED':
-            console.log('[useAuth] User updated')
-            setSession(newSession)
-            setUser(newSession?.user ?? null)
             break
           default:
-            setSession(newSession)
-            setUser(newSession?.user ?? null)
             break
         }
       }
@@ -170,8 +157,8 @@ export function useAuth() {
     }
   }
 
-  // Derive loading state - loading until initial load completes OR while fetching profile
-  const loading = !initialLoadComplete || (!!user && profileLoading)
+  // Derive loading state - only loading until initial load completes
+  const loading = !initialLoadComplete
 
   return {
     user,
