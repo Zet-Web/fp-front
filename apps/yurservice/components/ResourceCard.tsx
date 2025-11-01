@@ -1,4 +1,4 @@
-// Expandable card component for displaying resource information
+// Expandable card component for displaying resource information with context-based state management
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -6,14 +6,15 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ChevronDown, ChevronUp, ExternalLink, Globe, Phone, Mail, MapPin, Clock, Share, List } from "lucide-react"
 import type { Resource, ResourceLink } from "../types/resource"
 import { useToast } from "@/hooks/use-toast"
+import { useResourceCard } from "../contexts/ResourceCardContext"
 
 interface ResourceCardProps {
   resource: Resource
-  isExpanded: boolean
-  onToggle: () => void
+  cardId: string
 }
 
-export function ResourceCard({ resource, isExpanded, onToggle }: ResourceCardProps) {
+export function ResourceCard({ resource, cardId }: ResourceCardProps) {
+  const { isCardExpanded, toggleCard } = useResourceCard()
   const { toast } = useToast()
 
   const handleLinkClick = (url: string) => {
@@ -61,6 +62,8 @@ export function ResourceCard({ resource, isExpanded, onToggle }: ResourceCardPro
   }
 
   const sortedLinks = organizeLinks(resource.links)
+  const isExpanded = isCardExpanded(cardId)
+  const handleToggle = () => toggleCard(cardId)
 
   return (
     <Card className="hover:shadow-md transition-shadow">
@@ -74,13 +77,13 @@ export function ResourceCard({ resource, isExpanded, onToggle }: ResourceCardPro
               {getInitials(resource.name)}
             </AvatarFallback>
           </Avatar>
-          <div className="flex-1 min-w-0 cursor-pointer" onClick={onToggle}>
+          <div className="flex-1 min-w-0 cursor-pointer" onClick={handleToggle}>
             <CardTitle className="text-lg">{resource.name}</CardTitle>
           </div>
           <Button
             variant="ghost"
             size="sm"
-            onClick={onToggle}
+            onClick={handleToggle}
             className="p-2 shrink-0"
           >
             {isExpanded ? (
