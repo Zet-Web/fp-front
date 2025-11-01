@@ -149,8 +149,9 @@ export function D3NetworkGraph({ data, onNodeClick, width = 800, height = 600 }:
       }
 
 
-      const labelFontSize = d.isCurrentUser ? 11 : d.level === 1 ? 9 : 7;
+      const labelFontSize = d.isCurrentUser ? 12 : d.level === 1 ? 10 : 8;
 const labelY = nodeRadius + labelFontSize + 4;
+
 
 
 
