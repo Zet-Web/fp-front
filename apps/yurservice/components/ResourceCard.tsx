@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { ChevronDown, ChevronUp, ExternalLink, Globe, Phone, Mail, MapPin, Clock, Share2, List } from "lucide-react"
+import { ChevronDown, ChevronUp, ExternalLink, Globe, Phone, Mail, MapPin, Clock, Link, List } from "lucide-react"
 import type { Resource, ResourceLink } from "../types/resource"
 import { useToast } from "@/hooks/use-toast"
 
@@ -198,7 +198,7 @@ export function ResourceCard({ resource, isExpanded, onToggle }: ResourceCardPro
                 onClick={handleShare}
                 className="p-2 h-8 w-8"
               >
-                <Share2 className="h-4 w-4" />
+                <Link className="h-4 w-4" />
               </Button>
             </div>
           </div>
