@@ -5,12 +5,11 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { ChevronUp, ChevronDown, ExternalLink, Copy, Plus, X } from "lucide-react"
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect } from "react"
 import { ContactInfoEntry } from "@/types/profile"
 import { CONTACT_TYPES, getContactIcon, generateContactLink, getContactDisplayValue, validateContactEntry, getContactTypeConfig } from "@/lib/contact-utils"
 import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/lib/supabase"
-import { useSectionEdit } from "../hooks/use-section-edit"
 
 interface UserProfile {
   id: string
@@ -33,7 +32,7 @@ interface ContactsSectionProps {
   onUpdateProfile: (updates: Partial<UserProfile>) => void
 }
 
-export function ContactsSection({ user, isOwnProfile, isEditing: externalIsEditing, onUpdateProfile }: ContactsSectionProps) {
+export function ContactsSection({ user, isOwnProfile, isEditing, onUpdateProfile }: ContactsSectionProps) {
   const [contactEntries, setContactEntries] = useState<ContactInfoEntry[]>([])
   const [showAddForm, setShowAddForm] = useState(false)
   const [newEntry, setNewEntry] = useState<Partial<ContactInfoEntry>>({
@@ -43,13 +42,6 @@ export function ContactsSection({ user, isOwnProfile, isEditing: externalIsEditi
   })
   const { toast } = useToast()
 
-  const saveContacts = useCallback(async () => {
-    console.log('Saving contacts:', contactEntries)
-    await new Promise(resolve => setTimeout(resolve, 500))
-  }, [contactEntries])
-
-  const { isEditing, isSaving, markDirty } = useSectionEdit('contacts', saveContacts)
-
   useEffect(() => {
     const entries = (user.contact_info || []).sort((a, b) => a.order - b.order)
     setContactEntries(entries)
@@ -58,7 +50,6 @@ export function ContactsSection({ user, isOwnProfile, isEditing: externalIsEditi
   const updateContactEntries = (updatedEntries: ContactInfoEntry[]) => {
     setContactEntries(updatedEntries)
     onUpdateProfile({ contact_info: updatedEntries })
-    markDirty()
   }
 
   const moveUp = (index: number) => {

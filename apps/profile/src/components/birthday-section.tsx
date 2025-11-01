@@ -5,9 +5,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { Cake, Plus, X } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect } from "react"
 import { format, parse, isValid } from "date-fns"
-import { useSectionEdit } from "../hooks/use-section-edit"
 
 interface UserProfile {
   id: string
@@ -31,20 +30,13 @@ interface BirthdaySectionProps {
   onUpdateProfile: (updates: Partial<UserProfile>) => void
 }
 
-export function BirthdaySection({ user, isOwnProfile, isEditing: externalIsEditing, onUpdateProfile }: BirthdaySectionProps) {
+export function BirthdaySection({ user, isOwnProfile, isEditing, onUpdateProfile }: BirthdaySectionProps) {
   const [showAddForm, setShowAddForm] = useState(false)
   const [selectedDay, setSelectedDay] = useState<string>('not-set')
   const [selectedMonth, setSelectedMonth] = useState<string>('not-set')
   const [selectedYear, setSelectedYear] = useState<string>('not-set')
   const [visibility, setVisibility] = useState<'full' | 'day_month' | 'year' | 'not_show'>('full')
   const [showAge, setShowAge] = useState<boolean>(true)
-
-  const saveBirthday = useCallback(async () => {
-    console.log('Saving birthday:', { birthday: user.birthday, visibility, showAge })
-    await new Promise(resolve => setTimeout(resolve, 500))
-  }, [user.birthday, visibility, showAge])
-
-  const { isEditing, isSaving, markDirty } = useSectionEdit('birthday', saveBirthday)
 
   const months = [
     { value: '01', label: 'January' },
@@ -164,7 +156,6 @@ export function BirthdaySection({ user, isOwnProfile, isEditing: externalIsEditi
       birthday_visibility: visibility,
       birthday_show_age: showAge
     })
-    markDirty()
     setShowAddForm(false)
   }
 
@@ -174,7 +165,6 @@ export function BirthdaySection({ user, isOwnProfile, isEditing: externalIsEditi
       birthday_visibility: null,
       birthday_show_age: null
     })
-    markDirty()
     setSelectedDay('not-set')
     setSelectedMonth('not-set')
     setSelectedYear('not-set')
