@@ -30,7 +30,7 @@ export function useYurServiceData(): UseYurServiceDataReturn {
               *,
               region:list_region(*)
             `)
-            .order('order', { ascending: true, nullsFirst: false })
+            .order('order', { ascending: false, nullsFirst: false })
             .order('title', { ascending: true }),
           supabase
             .from('list_region')

@@ -3,23 +3,23 @@
 import { useState, useMemo } from "react"
 import { Input } from "@/components/ui/input"
 import { Card, CardHeader, CardTitle } from "@/components/ui/card"
-import { Search, Filter, AlertCircle } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Search, AlertCircle } from "lucide-react"
 import { ResourceCard } from "./components/ResourceCard"
+import { RegionSelect } from "./components/RegionSelect"
 import { useYurServiceData } from "./hooks/use-yurservice-data"
 import { mapDatabaseResourceToUI } from "./lib/resource-mapper"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+
+const ITEMS_PER_PAGE = 24
 
 export function YurServicePage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedRegionId, setSelectedRegionId] = useState<string>("all")
   const [expandedCardId, setExpandedCardId] = useState<string | null>(null)
+  const [courtPage, setCourtPage] = useState(1)
+  const [govPage, setGovPage] = useState(1)
+  const [toolPage, setToolPage] = useState(1)
 
   const { resources, regions, isLoading, error } = useYurServiceData()
 
@@ -28,7 +28,7 @@ export function YurServicePage() {
       const matchesSearch =
         searchQuery === "" ||
         resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        resource.about.toLowerCase().includes(searchQuery.toLowerCase())
+        (resource.about && resource.about.toLowerCase().includes(searchQuery.toLowerCase()))
 
       const matchesRegion =
         selectedRegionId === "all" ||
@@ -52,6 +52,14 @@ export function YurServicePage() {
     () => filteredResources.filter((r) => r.type === "tool"),
     [filteredResources]
   )
+
+  const paginatedCourtResources = courtResources.slice(0, courtPage * ITEMS_PER_PAGE)
+  const paginatedGovResources = govResources.slice(0, govPage * ITEMS_PER_PAGE)
+  const paginatedToolResources = toolResources.slice(0, toolPage * ITEMS_PER_PAGE)
+
+  const hasMoreCourts = courtResources.length > paginatedCourtResources.length
+  const hasMoreGov = govResources.length > paginatedGovResources.length
+  const hasMoreTools = toolResources.length > paginatedToolResources.length
 
   if (error) {
     return (
@@ -89,20 +97,12 @@ export function YurServicePage() {
           </div>
 
           <div className="flex gap-2">
-            <Select value={selectedRegionId} onValueChange={setSelectedRegionId} disabled={isLoading}>
-              <SelectTrigger className="w-[180px]">
-                <Filter className="h-4 w-4 mr-2" />
-                <SelectValue placeholder="Select region" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Regions</SelectItem>
-                {regions.map((region) => (
-                  <SelectItem key={region.id} value={region.id.toString()}>
-                    {region.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <RegionSelect
+              regions={regions}
+              selectedRegionId={selectedRegionId}
+              onRegionChange={setSelectedRegionId}
+              disabled={isLoading}
+            />
           </div>
         </div>
 
@@ -137,7 +137,7 @@ export function YurServicePage() {
                 </CardHeader>
               </Card>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-                {courtResources.map((resource) => {
+                {paginatedCourtResources.map((resource) => {
                   const uiResource = mapDatabaseResourceToUI(resource)
                   return (
                     <ResourceCard
@@ -155,6 +155,16 @@ export function YurServicePage() {
                   )
                 })}
               </div>
+              {hasMoreCourts && (
+                <div className="flex justify-center mt-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => setCourtPage((prev) => prev + 1)}
+                  >
+                    Load More
+                  </Button>
+                </div>
+              )}
             </section>
           )}
 
@@ -166,7 +176,7 @@ export function YurServicePage() {
                 </CardHeader>
               </Card>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-                {govResources.map((resource) => {
+                {paginatedGovResources.map((resource) => {
                   const uiResource = mapDatabaseResourceToUI(resource)
                   return (
                     <ResourceCard
@@ -184,6 +194,16 @@ export function YurServicePage() {
                   )
                 })}
               </div>
+              {hasMoreGov && (
+                <div className="flex justify-center mt-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => setGovPage((prev) => prev + 1)}
+                  >
+                    Load More
+                  </Button>
+                </div>
+              )}
             </section>
           )}
 
@@ -195,7 +215,7 @@ export function YurServicePage() {
                 </CardHeader>
               </Card>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-                {toolResources.map((resource) => {
+                {paginatedToolResources.map((resource) => {
                   const uiResource = mapDatabaseResourceToUI(resource)
                   return (
                     <ResourceCard
@@ -213,6 +233,16 @@ export function YurServicePage() {
                   )
                 })}
               </div>
+              {hasMoreTools && (
+                <div className="flex justify-center mt-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => setToolPage((prev) => prev + 1)}
+                  >
+                    Load More
+                  </Button>
+                </div>
+              )}
             </section>
           )}
         </div>

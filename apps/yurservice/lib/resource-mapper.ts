@@ -3,6 +3,18 @@
 import type { YurServiceResource } from '../types/database'
 import type { Resource, ResourceLink, ResourceContact } from '../types/resource'
 
+function parseBlockData(blockString: string | any): { title?: string; link?: string } | null {
+  try {
+    if (typeof blockString === 'string') {
+      const parsed = JSON.parse(blockString)
+      return parsed
+    }
+    return blockString
+  } catch (e) {
+    return null
+  }
+}
+
 export function mapDatabaseResourceToUI(dbResource: YurServiceResource): Resource {
   const links: ResourceLink[] = []
 
@@ -20,11 +32,12 @@ export function mapDatabaseResourceToUI(dbResource: YurServiceResource): Resourc
   ]
 
   blocks.forEach((block) => {
-    if (block && block.label && block.url) {
+    const parsed = parseBlockData(block)
+    if (parsed && parsed.title && parsed.link) {
       links.push({
-        label: block.label,
-        url: block.url,
-        type: block.type || 'other',
+        label: parsed.title,
+        url: parsed.link,
+        type: 'service',
       })
     }
   })
@@ -39,8 +52,9 @@ export function mapDatabaseResourceToUI(dbResource: YurServiceResource): Resourc
         }
       : undefined
 
+  const blockTop = parseBlockData(dbResource.block_top)
   const mainUrl =
-    dbResource.block_top?.url ||
+    blockTop?.link ||
     dbResource.website_url ||
     dbResource.services_url ||
     links[0]?.url ||
@@ -49,7 +63,7 @@ export function mapDatabaseResourceToUI(dbResource: YurServiceResource): Resourc
   return {
     id: dbResource.id,
     name: dbResource.title,
-    description: dbResource.about,
+    description: dbResource.about || '',
     mainUrl,
     links,
     contacts,
