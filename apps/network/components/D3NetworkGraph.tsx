@@ -149,8 +149,9 @@ export function D3NetworkGraph({ data, onNodeClick, width = 800, height = 600 }:
       }
 
 
-      const labelFontSize = d.isCurrentUser ? 10 : d.level === 1 ? 8 : 7;
-const labelY = nodeRadius + labelFontSize + 3;
+      const labelFontSize = d.isCurrentUser ? 11 : d.level === 1 ? 9 : 7;
+const labelY = nodeRadius + labelFontSize + 4;
+
 
 
 
@@ -181,10 +182,8 @@ const labelY = nodeRadius + labelFontSize + 3;
 
 .attr('font-size', `${labelFontSize}px`)
 .attr('font-weight', '400')
-.attr('fill', currentTheme === 'dark' ? 'rgba(156, 163, 175, 0.5)' : 'rgba(107, 114, 128, 0.6)')
+.attr('fill', currentTheme === 'dark' ? 'rgba(156, 163, 175, 0.7)' : 'rgba(107, 114, 128, 0.7)')
 .attr('pointer-events', 'none');
-
-
 
     });
 
