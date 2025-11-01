@@ -17,6 +17,7 @@ export function ResourceCard({ resource }: ResourceCardProps) {
   const { toast } = useToast()
 
   const handleToggle = () => {
+    console.log(`Toggle card: ${resource.name}, current state: ${isExpanded}, new state: ${!isExpanded}`)
     setIsExpanded(!isExpanded)
   }
 
