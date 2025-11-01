@@ -5,12 +5,12 @@ apps/auth
 # apps/header
 # apps/home
 apps/mobileNav
-№ apps/navigation
+# apps/navigation
 apps/profile
 apps/post
 apps/settings
-app/yurservice
-app/network
+# app/yurservice
+# app/network
 
 supabase/
 
