@@ -77,28 +77,18 @@ export function ResourceCard({ resource, isExpanded, onToggle }: ResourceCardPro
           <div className="flex-1 min-w-0 cursor-pointer" onClick={onToggle}>
             <CardTitle className="text-lg">{resource.name}</CardTitle>
           </div>
-          <div className="flex items-center gap-1 shrink-0">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleShare}
-              className="p-2"
-            >
-              <Share2 className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onToggle}
-              className="p-2"
-            >
-              {isExpanded ? (
-                <ChevronUp className="h-4 w-4" />
-              ) : (
-                <ChevronDown className="h-4 w-4" />
-              )}
-            </Button>
-          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onToggle}
+            className="p-2 shrink-0"
+          >
+            {isExpanded ? (
+              <ChevronUp className="h-4 w-4" />
+            ) : (
+              <ChevronDown className="h-4 w-4" />
+            )}
+          </Button>
         </div>
       </CardHeader>
 
@@ -202,6 +192,17 @@ export function ResourceCard({ resource, isExpanded, onToggle }: ResourceCardPro
                 </div>
               </div>
             )}
+
+            <div className="flex justify-end mt-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleShare}
+                className="p-2 h-8 w-8"
+              >
+                <Share2 className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         )}
       </CardContent>

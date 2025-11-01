@@ -135,16 +135,15 @@ export function YurServicePage() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {paginatedCourtResources.map((resource) => {
                   const uiResource = mapDatabaseResourceToUI(resource)
+                  const cardId = `court-${resource.id}`
                   return (
                     <ResourceCard
                       key={resource.id}
                       resource={uiResource}
-                      isExpanded={expandedCardId === resource.id.toString()}
+                      isExpanded={expandedCardId === cardId}
                       onToggle={() =>
                         setExpandedCardId(
-                          expandedCardId === resource.id.toString()
-                            ? null
-                            : resource.id.toString()
+                          expandedCardId === cardId ? null : cardId
                         )
                       }
                     />
@@ -170,16 +169,15 @@ export function YurServicePage() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {paginatedGovResources.map((resource) => {
                   const uiResource = mapDatabaseResourceToUI(resource)
+                  const cardId = `gov-${resource.id}`
                   return (
                     <ResourceCard
                       key={resource.id}
                       resource={uiResource}
-                      isExpanded={expandedCardId === resource.id.toString()}
+                      isExpanded={expandedCardId === cardId}
                       onToggle={() =>
                         setExpandedCardId(
-                          expandedCardId === resource.id.toString()
-                            ? null
-                            : resource.id.toString()
+                          expandedCardId === cardId ? null : cardId
                         )
                       }
                     />
@@ -205,16 +203,15 @@ export function YurServicePage() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {paginatedToolResources.map((resource) => {
                   const uiResource = mapDatabaseResourceToUI(resource)
+                  const cardId = `tool-${resource.id}`
                   return (
                     <ResourceCard
                       key={resource.id}
                       resource={uiResource}
-                      isExpanded={expandedCardId === resource.id.toString()}
+                      isExpanded={expandedCardId === cardId}
                       onToggle={() =>
                         setExpandedCardId(
-                          expandedCardId === resource.id.toString()
-                            ? null
-                            : resource.id.toString()
+                          expandedCardId === cardId ? null : cardId
                         )
                       }
                     />
