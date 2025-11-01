@@ -11,7 +11,7 @@ import { useYurServiceData } from "./hooks/use-yurservice-data"
 import { mapDatabaseResourceToUI } from "./lib/resource-mapper"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
-const ITEMS_PER_PAGE = 24
+const ITEMS_PER_PAGE = 18
 
 export function YurServicePage() {
   const [searchQuery, setSearchQuery] = useState("")
