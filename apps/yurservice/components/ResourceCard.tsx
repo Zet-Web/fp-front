@@ -1,5 +1,6 @@
-// Expandable card component for displaying resource information
+// Expandable card component for displaying resource information with independent state
 
+import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -9,11 +10,10 @@ import { useToast } from "@/hooks/use-toast"
 
 interface ResourceCardProps {
   resource: Resource
-  isExpanded: boolean
-  onToggle: () => void
 }
 
-export function ResourceCard({ resource, isExpanded, onToggle }: ResourceCardProps) {
+export function ResourceCard({ resource }: ResourceCardProps) {
+  const [isExpanded, setIsExpanded] = useState(false)
   const { toast } = useToast()
 
   const handleLinkClick = (url: string) => {
@@ -74,13 +74,13 @@ export function ResourceCard({ resource, isExpanded, onToggle }: ResourceCardPro
               {getInitials(resource.name)}
             </AvatarFallback>
           </Avatar>
-          <div className="flex-1 min-w-0 cursor-pointer" onClick={onToggle}>
+          <div className="flex-1 min-w-0 cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
             <CardTitle className="text-lg">{resource.name}</CardTitle>
           </div>
           <Button
             variant="ghost"
             size="sm"
-            onClick={onToggle}
+            onClick={() => setIsExpanded(!isExpanded)}
             className="p-2 shrink-0"
           >
             {isExpanded ? (
