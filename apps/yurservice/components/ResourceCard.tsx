@@ -3,11 +3,9 @@
 import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { ChevronDown, ChevronUp, ExternalLink, Globe, Phone, Mail, MapPin, Clock } from "lucide-react"
 import type { Resource, ResourceLink } from "../types/resource"
-import { CATEGORY_LABELS } from "../types/resource"
 
 interface ResourceCardProps {
   resource: Resource
@@ -48,15 +46,7 @@ export function ResourceCard({ resource, isExpanded, onToggle }: ResourceCardPro
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
-            <CardTitle className="text-lg mb-2">{resource.name}</CardTitle>
-            <div className="flex flex-wrap gap-2">
-              <Badge variant="secondary" className="text-xs">
-                {CATEGORY_LABELS[resource.category as keyof typeof CATEGORY_LABELS]}
-              </Badge>
-              <Badge variant="outline" className="text-xs">
-                {resource.region}
-              </Badge>
-            </div>
+            <CardTitle className="text-lg">{resource.name}</CardTitle>
           </div>
           <Button
             variant="ghost"
