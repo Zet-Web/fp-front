@@ -96,7 +96,7 @@ export function ResourceCard({ resource, isExpanded, onToggle }: ResourceCardPro
         <Button
           variant="default"
           size="sm"
-          className="w-full"
+          className="w-full text-left"
           onClick={() => handleLinkClick(resource.mainUrl)}
         >
           {resource.mainButtonLabel || 'Visit Website'}
