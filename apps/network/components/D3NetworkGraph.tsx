@@ -180,9 +180,10 @@ const labelY = nodeRadius + labelFontSize + 3;
         .attr('y', labelY)
 
 .attr('font-size', `${labelFontSize}px`)
-.attr('font-weight', d.isCurrentUser ? '500' : '400')
-.attr('fill', currentTheme === 'dark' ? 'rgba(255, 255, 255, 0.55)' : 'rgba(0, 0, 0, 0.55)')
+.attr('font-weight', '400')
+.attr('fill', currentTheme === 'dark' ? 'rgba(156, 163, 175, 0.5)' : 'rgba(107, 114, 128, 0.6)')
 .attr('pointer-events', 'none');
+
 
 
     });
