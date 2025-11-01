@@ -19,7 +19,7 @@ export const desktopNavigationItems: NavItem[] = [
   { icon: MessageCircle, label: "Messages", path: "/messages" },
   { icon: Bookmark, label: "Bookmarks", path: "/bookmarks" },
   { icon: Users, label: "Communities", path: "/communities" },
-  { icon: Library, label: "Resources", path: "/yurcatalog" },
+  { icon: Library, label: "Resources", path: "/yurservice" },
   {
     icon: User,
     label: "Profile",
