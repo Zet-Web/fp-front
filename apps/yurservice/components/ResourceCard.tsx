@@ -16,6 +16,11 @@ export function ResourceCard({ resource }: ResourceCardProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const { toast } = useToast()
 
+  const handleToggle = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    setIsExpanded(prev => !prev)
+  }
+
   const handleLinkClick = (url: string) => {
     window.open(url, "_blank", "noopener,noreferrer,nofollow")
   }
@@ -74,13 +79,13 @@ export function ResourceCard({ resource }: ResourceCardProps) {
               {getInitials(resource.name)}
             </AvatarFallback>
           </Avatar>
-          <div className="flex-1 min-w-0 cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
+          <div className="flex-1 min-w-0 cursor-pointer" onClick={handleToggle}>
             <CardTitle className="text-lg">{resource.name}</CardTitle>
           </div>
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setIsExpanded(!isExpanded)}
+            onClick={handleToggle}
             className="p-2 shrink-0"
           >
             {isExpanded ? (

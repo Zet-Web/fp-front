@@ -137,7 +137,7 @@ export function YurServicePage() {
                   const uiResource = mapDatabaseResourceToUI(resource)
                   return (
                     <ResourceCard
-                      key={resource.id}
+                      key={`court-${resource.id}`}
                       resource={uiResource}
                     />
                   )
@@ -165,7 +165,7 @@ export function YurServicePage() {
                   const uiResource = mapDatabaseResourceToUI(resource)
                   return (
                     <ResourceCard
-                      key={resource.id}
+                      key={`gov-${resource.id}`}
                       resource={uiResource}
                     />
                   )
@@ -192,7 +192,7 @@ export function YurServicePage() {
                   const uiResource = mapDatabaseResourceToUI(resource)
                   return (
                     <ResourceCard
-                      key={resource.id}
+                      key={`tool-${resource.id}`}
                       resource={uiResource}
                     />
                   )
