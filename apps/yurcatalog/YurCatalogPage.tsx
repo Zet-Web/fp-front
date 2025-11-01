@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
-export function YurCatalogPage() {
+export function YurServicePage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedRegion, setSelectedRegion] = useState("All Regions")
   const [selectedCategory, setSelectedCategory] = useState("all")
