@@ -23,7 +23,15 @@ export function Navigation() {
   const location = useLocation()
   const { user, profile, isAuthenticated, loading } = useAuthContext()
   const { setTheme } = useTheme()
-  const { leftCollapsed, toggleLeft, collapseAll } = useSidebar()
+  const { leftCollapsed, rightCollapsed, toggleLeft, collapseAll, expandAll } = useSidebar()
+
+  const handleFocusMode = () => {
+    if (leftCollapsed && rightCollapsed) {
+      expandAll()
+    } else {
+      collapseAll()
+    }
+  }
 
   if (leftCollapsed) {
     return (
@@ -184,14 +192,14 @@ export function Navigation() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={collapseAll}
+                    onClick={handleFocusMode}
                     className="h-8 w-8 hover:bg-accent/50"
                   >
                     <Minimize2 className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side="right">
-                  <p>Focus Mode</p>
+                  <p>{leftCollapsed && rightCollapsed ? 'Expand All' : 'Focus Mode'}</p>
                 </TooltipContent>
               </Tooltip>
             </div>
@@ -354,15 +362,15 @@ export function Navigation() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={collapseAll}
+                      onClick={handleFocusMode}
                       className="flex-1 h-9 hover:bg-accent/50"
                     >
                       <Minimize2 className="h-4 w-4 mr-2" />
-                      Focus
+                      {leftCollapsed && rightCollapsed ? 'Expand' : 'Focus'}
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Focus Mode (Collapse all sidebars)</p>
+                    <p>{leftCollapsed && rightCollapsed ? 'Expand all sidebars' : 'Focus Mode (Collapse all sidebars)'}</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>

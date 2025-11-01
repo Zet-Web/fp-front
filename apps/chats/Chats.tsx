@@ -18,8 +18,16 @@ import { useState } from "react"
 
 export function Chats() {
   const { chats, loading, activeChat, handleChatClick, getTotalUnreadCount } = useChatsData()
-  const { rightCollapsed, toggleRight, collapseAll } = useSidebar()
+  const { leftCollapsed, rightCollapsed, toggleRight, collapseAll, expandAll } = useSidebar()
   const [searchQuery, setSearchQuery] = useState("")
+
+  const handleFocusMode = () => {
+    if (leftCollapsed && rightCollapsed) {
+      expandAll()
+    } else {
+      collapseAll()
+    }
+  }
 
   const filteredChats = chats.filter(chat =>
     chat.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -144,14 +152,14 @@ export function Chats() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={collapseAll}
+                    onClick={handleFocusMode}
                     className="h-8 w-8 hover:bg-accent/50"
                   >
                     <Minimize2 className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side="left">
-                  <p>Focus Mode</p>
+                  <p>{leftCollapsed && rightCollapsed ? 'Expand All' : 'Focus Mode'}</p>
                 </TooltipContent>
               </Tooltip>
             </div>
@@ -237,15 +245,15 @@ export function Chats() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={collapseAll}
+                    onClick={handleFocusMode}
                     className="flex-1 h-9 hover:bg-accent/50"
                   >
                     <Minimize2 className="h-4 w-4 mr-2" />
-                    Focus
+                    {leftCollapsed && rightCollapsed ? 'Expand' : 'Focus'}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Focus Mode (Collapse all sidebars)</p>
+                  <p>{leftCollapsed && rightCollapsed ? 'Expand all sidebars' : 'Focus Mode (Collapse all sidebars)'}</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
