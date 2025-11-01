@@ -148,8 +148,10 @@ export function D3NetworkGraph({ data, onNodeClick, width = 800, height = 600 }:
           .attr('pointer-events', 'none');
       }
 
-      const labelFontSize = d.isCurrentUser ? 14 : d.level === 1 ? 11 : 9;
+
+      const labelFontSize = d.isCurrentUser ? 11 : d.level === 1 ? 9 : 7;
       const labelY = nodeRadius + labelFontSize + 4;
+
       const padding = 4;
 
       const tempText = nodeGroup.append('text')
