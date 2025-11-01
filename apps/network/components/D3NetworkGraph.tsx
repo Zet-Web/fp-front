@@ -67,7 +67,7 @@ export function D3NetworkGraph({ data, onNodeClick, width = 800, height = 600 }:
         .distance(100))
       .force('charge', d3.forceManyBody().strength(-300))
       .force('center', d3.forceCenter(w / 2, h / 2))
-      .force('collision', d3.forceCollide().radius(d => getNodeRadius(d as NetworkNode) + 10));
+      .force('collision', d3.forceCollide().radius(d => getNodeRadius(d as NetworkNode) + 30));
 
     const link = g.append('g')
       .selectAll('line')
@@ -101,6 +101,7 @@ export function D3NetworkGraph({ data, onNodeClick, width = 800, height = 600 }:
 
     node.each(function(d) {
       const nodeGroup = d3.select(this);
+      const nodeRadius = getNodeRadius(d);
 
       if (d.avatarUrl) {
         nodeGroup.append('defs')
@@ -116,7 +117,7 @@ export function D3NetworkGraph({ data, onNodeClick, width = 800, height = 600 }:
           .attr('preserveAspectRatio', 'xMidYMid slice');
 
         nodeGroup.append('circle')
-          .attr('r', getNodeRadius(d))
+          .attr('r', nodeRadius)
           .attr('fill', `url(#avatar-${d.id})`)
           .attr('stroke', d.isCurrentUser
             ? (currentTheme === 'dark' ? '#93c5fd' : '#2563eb')
@@ -124,7 +125,7 @@ export function D3NetworkGraph({ data, onNodeClick, width = 800, height = 600 }:
           .attr('stroke-width', getNodeStrokeWidth(d));
       } else {
         nodeGroup.append('circle')
-          .attr('r', getNodeRadius(d))
+          .attr('r', nodeRadius)
           .attr('fill', d.isCurrentUser
             ? (currentTheme === 'dark' ? '#60a5fa' : '#3b82f6')
             : (d.role === 'Сообщество'
@@ -146,6 +147,37 @@ export function D3NetworkGraph({ data, onNodeClick, width = 800, height = 600 }:
             : (currentTheme === 'dark' ? '#e5e7eb' : '#374151'))
           .attr('pointer-events', 'none');
       }
+
+      const labelFontSize = d.isCurrentUser ? 14 : d.level === 1 ? 11 : 9;
+      const labelY = nodeRadius + labelFontSize + 4;
+      const padding = 4;
+
+      const tempText = nodeGroup.append('text')
+        .text(d.name)
+        .attr('font-size', `${labelFontSize}px`)
+        .attr('visibility', 'hidden');
+
+      const bbox = tempText.node()?.getBBox();
+      const textWidth = bbox?.width || 0;
+      tempText.remove();
+
+      nodeGroup.append('rect')
+        .attr('x', -textWidth / 2 - padding)
+        .attr('y', labelY - labelFontSize - padding / 2)
+        .attr('width', textWidth + padding * 2)
+        .attr('height', labelFontSize + padding)
+        .attr('fill', currentTheme === 'dark' ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.75)')
+        .attr('rx', 3)
+        .attr('pointer-events', 'none');
+
+      nodeGroup.append('text')
+        .text(d.name)
+        .attr('text-anchor', 'middle')
+        .attr('y', labelY)
+        .attr('font-size', `${labelFontSize}px`)
+        .attr('font-weight', d.isCurrentUser ? '600' : '500')
+        .attr('fill', currentTheme === 'dark' ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.75)')
+        .attr('pointer-events', 'none');
     });
 
     node.append('title')
