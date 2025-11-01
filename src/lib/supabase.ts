@@ -43,13 +43,6 @@ export const authReady = new Promise<Session | null>((resolve) => {
   }
 })()
 
-supabase.auth.onAuthStateChange((event, session) => {
-  console.log('🔐 [Auth State Change]', event, session ? 'Session active' : 'No session')
-
-  if (event === 'TOKEN_REFRESHED') {
-    console.log('♻️ [Auth] Token refreshed automatically')
-  }
-})
 
 export function getAuthReadyState() {
   return initialSessionFetched
