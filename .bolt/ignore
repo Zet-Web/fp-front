@@ -7,9 +7,9 @@ apps/home
 apps/mobileNav
 apps/navigation
 apps/profile
-# apps/post
+apps/post
 apps/settings
-# app/yurcatalog
+# app/yurservice
 
 supabase/
 
