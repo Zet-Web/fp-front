@@ -96,7 +96,7 @@ export function ResourceCard({ resource, isExpanded, onToggle }: ResourceCardPro
         <Button
           variant="default"
           size="sm"
-          className="w-full bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-700 dark:hover:bg-cyan-800 text-white shadow-sm"
+          className="w-full bg-rose-600 hover:bg-rose-700 dark:bg-rose-700 dark:hover:bg-rose-800 text-white shadow-sm"
           onClick={() => handleLinkClick(resource.mainUrl)}
           onClick={() => handleLinkClick(resource.mainUrl)}
         >
