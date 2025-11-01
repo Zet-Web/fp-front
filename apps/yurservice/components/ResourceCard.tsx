@@ -1,11 +1,11 @@
 // Expandable card component for displaying resource information
 
-import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { ChevronDown, ChevronUp, ExternalLink, Globe, Phone, Mail, MapPin, Clock } from "lucide-react"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { ChevronDown, ChevronUp, ExternalLink, Globe, Phone, Mail, MapPin, Clock, Share2, List } from "lucide-react"
 import type { Resource, ResourceLink } from "../types/resource"
+import { useToast } from "@/hooks/use-toast"
 
 interface ResourceCardProps {
   resource: Resource
@@ -14,8 +14,34 @@ interface ResourceCardProps {
 }
 
 export function ResourceCard({ resource, isExpanded, onToggle }: ResourceCardProps) {
+  const { toast } = useToast()
+
   const handleLinkClick = (url: string) => {
     window.open(url, "_blank", "noopener,noreferrer,nofollow")
+  }
+
+  const handleShare = () => {
+    const baseUrl = window.location.origin + window.location.pathname
+    const shareUrl = resource.slug
+      ? `${baseUrl}?resource=${resource.slug}`
+      : resource.websiteUrl || resource.mainUrl
+
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(shareUrl)
+        .then(() => {
+          toast({
+            title: "Link copied",
+            description: "Resource link has been copied to clipboard",
+          })
+        })
+        .catch(() => {
+          toast({
+            title: "Copy failed",
+            description: "Failed to copy link to clipboard",
+            variant: "destructive",
+          })
+        })
+    }
   }
 
   const getInitials = (name: string) => {
@@ -41,25 +67,38 @@ export function ResourceCard({ resource, isExpanded, onToggle }: ResourceCardPro
       <CardHeader className="pb-3">
         <div className="flex items-start gap-3">
           <Avatar className="h-10 w-10 shrink-0">
+            {resource.imageUrl && (
+              <AvatarImage src={resource.imageUrl} alt={resource.name} />
+            )}
             <AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold">
               {getInitials(resource.name)}
             </AvatarFallback>
           </Avatar>
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 cursor-pointer" onClick={onToggle}>
             <CardTitle className="text-lg">{resource.name}</CardTitle>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onToggle}
-            className="shrink-0"
-          >
-            {isExpanded ? (
-              <ChevronUp className="h-4 w-4" />
-            ) : (
-              <ChevronDown className="h-4 w-4" />
-            )}
-          </Button>
+          <div className="flex items-center gap-1 shrink-0">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleShare}
+              className="p-2"
+            >
+              <Share2 className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onToggle}
+              className="p-2"
+            >
+              {isExpanded ? (
+                <ChevronUp className="h-4 w-4" />
+              ) : (
+                <ChevronDown className="h-4 w-4" />
+              )}
+            </Button>
+          </div>
         </div>
       </CardHeader>
 
@@ -71,17 +110,19 @@ export function ResourceCard({ resource, isExpanded, onToggle }: ResourceCardPro
           onClick={() => handleLinkClick(resource.mainUrl)}
         >
           <Globe className="h-4 w-4 mr-2" />
-          Visit Website
+          {resource.mainButtonLabel || 'Visit Website'}
           <ExternalLink className="h-3 w-3 ml-2" />
         </Button>
 
         {isExpanded && (
           <div className="space-y-4 pt-4 mt-4 border-t">
-            <div>
-              <p className="text-sm text-muted-foreground mb-4">
-                {resource.description}
-              </p>
-            </div>
+            {resource.description && (
+              <div>
+                <p className="text-sm text-muted-foreground">
+                  {resource.description}
+                </p>
+              </div>
+            )}
 
             {sortedLinks.length > 0 && (
               <div>
@@ -100,6 +141,33 @@ export function ResourceCard({ resource, isExpanded, onToggle }: ResourceCardPro
                     </Button>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {(resource.websiteUrl || resource.servicesUrl) && (
+              <div className="flex gap-2">
+                {resource.websiteUrl && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                    onClick={() => handleLinkClick(resource.websiteUrl!)}
+                  >
+                    <Globe className="h-3 w-3 mr-2" />
+                    Website
+                  </Button>
+                )}
+                {resource.servicesUrl && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                    onClick={() => handleLinkClick(resource.servicesUrl!)}
+                  >
+                    <List className="h-3 w-3 mr-2" />
+                    Services
+                  </Button>
+                )}
               </div>
             )}
 

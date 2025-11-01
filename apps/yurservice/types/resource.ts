@@ -18,6 +18,11 @@ export interface Resource {
   name: string
   description: string
   mainUrl: string
+  mainButtonLabel?: string
+  imageUrl?: string
+  websiteUrl?: string
+  servicesUrl?: string
+  slug?: string
   links: ResourceLink[]
   contacts?: ResourceContact
 }

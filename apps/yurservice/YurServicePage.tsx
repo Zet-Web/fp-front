@@ -131,12 +131,8 @@ export function YurServicePage() {
         <div className="space-y-8">
           {courtResources.length > 0 && (
             <section>
-              <Card className="shadow-sm">
-                <CardHeader>
-                  <CardTitle className="text-xl">Courts</CardTitle>
-                </CardHeader>
-              </Card>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+              <h2 className="text-xl font-semibold mb-4">Courts</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {paginatedCourtResources.map((resource) => {
                   const uiResource = mapDatabaseResourceToUI(resource)
                   return (
@@ -170,12 +166,8 @@ export function YurServicePage() {
 
           {govResources.length > 0 && (
             <section>
-              <Card className="shadow-sm">
-                <CardHeader>
-                  <CardTitle className="text-xl">Government</CardTitle>
-                </CardHeader>
-              </Card>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+              <h2 className="text-xl font-semibold mb-4">Government</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {paginatedGovResources.map((resource) => {
                   const uiResource = mapDatabaseResourceToUI(resource)
                   return (
@@ -209,12 +201,8 @@ export function YurServicePage() {
 
           {toolResources.length > 0 && (
             <section>
-              <Card className="shadow-sm">
-                <CardHeader>
-                  <CardTitle className="text-xl">Tools</CardTitle>
-                </CardHeader>
-              </Card>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+              <h2 className="text-xl font-semibold mb-4">Tools</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {paginatedToolResources.map((resource) => {
                   const uiResource = mapDatabaseResourceToUI(resource)
                   return (
