@@ -176,10 +176,12 @@ export function D3NetworkGraph({ data, onNodeClick, width = 800, height = 600 }:
         .text(d.name)
         .attr('text-anchor', 'middle')
         .attr('y', labelY)
+
         .attr('font-size', `${labelFontSize}px`)
-        .attr('font-weight', d.isCurrentUser ? '600' : '500')
-        .attr('fill', currentTheme === 'dark' ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.75)')
+        .attr('font-weight', '400')
+        .attr('fill', currentTheme === 'dark' ? 'rgba(156, 163, 175, 0.7)' : 'rgba(107, 114, 128, 0.7)')
         .attr('pointer-events', 'none');
+
     });
 
     node.append('title')
