@@ -1,8 +1,8 @@
-# apps/test
+apps/test
 apps/404
 apps/auth
 apps/chats
-# apps/header
+apps/header
 apps/home
 apps/mobileNav
 apps/navigation
