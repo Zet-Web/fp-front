@@ -20,8 +20,8 @@ export const MOCK_NETWORK_NODES: NetworkNode[] = [
   },
   {
     id: 'ruslan-galiullin',
-    name: 'Руслан Галиуллин',
-    username: 'ruslan-galiullin',
+    name: 'Владимир Сергеев',
+    username: 'vlad',
     about: 'Юрист | Специалист по корпоративному праву',
     avatarUrl: 'https://images.pexels.com/photos/3777943/pexels-photo-3777943.jpeg?auto=compress&cs=tinysrgb&w=200',
     role: 'Юрист',
