@@ -23,7 +23,7 @@ import { Cake, Plus, X } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState, useEffect } from "react";
 import { format, parse, isValid } from "date-fns";
-import { UserProfile } from "../types/profile";
+import { BirthdayVisibility, UserProfile } from "../types/profile";
 
 interface BirthdaySectionProps {
   user: UserProfile;
@@ -40,9 +40,9 @@ export function BirthdaySection({
   const [selectedDay, setSelectedDay] = useState<string>("not-set");
   const [selectedMonth, setSelectedMonth] = useState<string>("not-set");
   const [selectedYear, setSelectedYear] = useState<string>("not-set");
-  const [visibility, setVisibility] = useState<
-    "full" | "day_month" | "year" | "not_show"
-  >("full");
+  const [visibility, setVisibility] = useState<BirthdayVisibility>(
+    BirthdayVisibility.full
+  );
   const [showAge, setShowAge] = useState<boolean>(true);
 
   const months = [
@@ -196,13 +196,11 @@ export function BirthdaySection({
     setSelectedDay("not-set");
     setSelectedMonth("not-set");
     setSelectedYear("not-set");
-    setVisibility("full");
+    setVisibility(BirthdayVisibility.full);
     setShowAge(true);
   };
 
-  const handleVisibilityChange = (
-    newVisibility: "full" | "day_month" | "year" | "not_show"
-  ) => {
+  const handleVisibilityChange = (newVisibility: BirthdayVisibility) => {
     setVisibility(newVisibility);
     if (user.birthday) {
       onUpdateProfile({
@@ -612,7 +610,12 @@ export function BirthdaySection({
 
         <div>
           <Label htmlFor="new-visibility">Display As</Label>
-          <Select value={visibility} onValueChange={setVisibility}>
+          <Select
+            value={visibility}
+            onValueChange={(value) =>
+              setVisibility(value as BirthdayVisibility)
+            }
+          >
             <SelectTrigger id="new-visibility" className="mt-2">
               <SelectValue />
             </SelectTrigger>

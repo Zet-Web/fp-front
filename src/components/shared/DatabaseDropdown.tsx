@@ -1,29 +1,41 @@
-import { useState, useEffect, useCallback } from "react"
-import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { ChevronDownIcon, Loader2 } from "lucide-react"
-import { supabase } from "@/lib/supabase"
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { ChevronDownIcon, Loader2 } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 interface DatabaseDropdownProps {
-  table: string
-  valueColumn: string
-  labelColumn: string
-  value: string
-  onChange: (value: string, label: string) => void
-  placeholder?: string
-  searchPlaceholder?: string
-  label?: string
-  labelClassName?: string
-  disabled?: boolean
-  className?: string
-  id?: string
-  orderBy?: string
+  table: string;
+  valueColumn: string;
+  labelColumn: string;
+  value: string | number;
+  onChange: (value: string, label: string) => void;
+  placeholder?: string;
+  searchPlaceholder?: string;
+  label?: string;
+  labelClassName?: string;
+  disabled?: boolean;
+  className?: string;
+  id?: string;
+  orderBy?: string;
 }
 
 interface DataItem {
-  [key: string]: any
+  [key: string]: any;
 }
 
 export function DatabaseDropdown({
@@ -39,48 +51,59 @@ export function DatabaseDropdown({
   disabled = false,
   className = "",
   id,
-  orderBy
+  orderBy,
 }: DatabaseDropdownProps) {
-  const [data, setData] = useState<DataItem[]>([])
-  const [isLoading, setIsLoading] = useState(false)
-  const [open, setOpen] = useState(false)
-  const [searchInput, setSearchInput] = useState('')
+  const [data, setData] = useState<DataItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [searchInput, setSearchInput] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
-      setIsLoading(true)
+      setIsLoading(true);
       try {
-        let query = supabase.from(table).select(`${valueColumn}, ${labelColumn}`)
+        let query = supabase
+          .from(table)
+          .select(`${valueColumn}, ${labelColumn}`);
 
         if (orderBy) {
-          query = query.order(orderBy, { ascending: true })
+          query = query.order(orderBy, { ascending: true });
         }
 
-        const { data: fetchedData, error } = await query
+        const { data: fetchedData, error } = await query;
 
         if (error) {
-          console.error(`Error fetching ${table}:`, error)
+          console.error(`Error fetching ${table}:`, error);
         } else {
-          setData(fetchedData || [])
+          setData(fetchedData || []);
         }
       } catch (error) {
-        console.error(`Error fetching ${table}:`, error)
+        console.error(`Error fetching ${table}:`, error);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
-    fetchData()
-  }, [table, valueColumn, labelColumn, orderBy])
+    fetchData();
+  }, [table, valueColumn, labelColumn, orderBy]);
 
-  const getFilteredData = useCallback((searchInput: string) => {
-    if (!searchInput) return data
-    return data.filter(item =>
-      item[labelColumn]?.toLowerCase().includes(searchInput.toLowerCase())
-    )
-  }, [data, labelColumn])
+  const getFilteredData = useCallback(
+    (searchInput: string) => {
+      if (!searchInput) return data;
+      return data.filter((item) =>
+        item[labelColumn]?.toLowerCase().includes(searchInput.toLowerCase())
+      );
+    },
+    [data, labelColumn]
+  );
 
-  const displayValue = data.find(item => item[valueColumn] === value)?.[labelColumn] || value || placeholder
+  const displayValue = useMemo(
+    () =>
+      data.find((item) => item[valueColumn] === value)?.[labelColumn] ||
+      value ||
+      placeholder,
+    [data, labelColumn, placeholder, value, valueColumn]
+  );
 
   return (
     <div className={className}>
@@ -125,9 +148,9 @@ export function DatabaseDropdown({
                       key={item[valueColumn]}
                       value={item[labelColumn]}
                       onSelect={() => {
-                        onChange(item[valueColumn], item[labelColumn])
-                        setSearchInput('')
-                        setOpen(false)
+                        onChange(item[valueColumn], item[labelColumn]);
+                        setSearchInput("");
+                        setOpen(false);
                       }}
                     >
                       {item[labelColumn]}
@@ -140,5 +163,5 @@ export function DatabaseDropdown({
         </PopoverContent>
       </Popover>
     </div>
-  )
+  );
 }

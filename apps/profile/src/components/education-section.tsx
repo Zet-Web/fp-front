@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { GraduationCap, Edit, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SectionCard } from "@/components/shared/SectionCard";
 import { SortableListControls } from "@/components/shared/SortableListControls";
 import { InlineEditActions } from "@/components/shared/InlineEditActions";
@@ -11,71 +11,32 @@ import { PeriodSelector, PeriodData } from "@/components/shared/PeriodSelector";
 import { DatabaseDropdown } from "@/components/shared/DatabaseDropdown";
 import { SearchableDropdown } from "@/components/shared/SearchableDropdown";
 import { formatPeriod } from "@/lib/date-utils";
-
-interface Education {
-  id: number;
-  degree: string;
-  school: string;
-  period: string;
-  start_month?: string;
-  start_year?: string;
-  end_month?: string;
-  end_year?: string;
-  is_current?: boolean;
-  description: string;
-}
-
-const initialEducation = [
-  {
-    id: 1,
-    degree: "Bachelor of Science in Computer Science",
-    school: "Tech University",
-    period: "2016 - 2020",
-    description:
-      "Graduated Magna Cum Laude with focus on Software Engineering and Web Development.",
-  },
-  {
-    id: 2,
-    degree: "AWS Certified Solutions Architect",
-    school: "Amazon Web Services",
-    period: "2021",
-    description:
-      "Professional certification in cloud architecture and AWS services.",
-  },
-];
+import { defaultEducationValue } from "../utils/education-utils";
+import { ProfileEducation } from "../types/education";
+import { UserAdditionalInfo } from "../types/profile";
 
 interface EducationSectionProps {
   isEditing: boolean;
+  additionalInfo: UserAdditionalInfo | null;
+  onUpdateAdditionalInfo: (updates: Partial<UserAdditionalInfo>) => void;
 }
 
-export function EducationSection({ isEditing }: EducationSectionProps) {
-  const [education, setEducation] = useState(initialEducation);
+export function EducationSection({
+  isEditing,
+  additionalInfo,
+  onUpdateAdditionalInfo,
+}: EducationSectionProps) {
+  const [education, setEducation] = useState<ProfileEducation[]>([]);
   const [editingEducation, setEditingEducation] = useState<number | null>(null);
   const [showAddEducationForm, setShowAddEducationForm] = useState(false);
-  const [newEducation, setNewEducation] = useState({
-    degree: "",
-    school: "",
-    period: "",
-    start_month: "not-set",
-    start_year: "not-set",
-    end_month: "not-set",
-    end_year: "not-set",
-    is_current: false,
-    description: "",
-  });
-  const [editForm, setEditForm] = useState({
-    degree: "",
-    school: "",
-    period: "",
-    start_month: "not-set",
-    start_year: "not-set",
-    end_month: "not-set",
-    end_year: "not-set",
-    is_current: false,
-    description: "",
-  });
+  const [newEducation, setNewEducation] = useState(defaultEducationValue);
+  const [editForm, setEditForm] = useState(defaultEducationValue);
 
-  const formatPeriodData = (edu: Education) => {
+  useEffect(() => {
+    if (additionalInfo?.education) setEducation(additionalInfo?.education);
+  }, [additionalInfo?.education]);
+
+  const formatPeriodData = (edu: ProfileEducation) => {
     return (
       formatPeriod({
         startMonth: edu.start_month,
@@ -110,57 +71,62 @@ export function EducationSection({ isEditing }: EducationSectionProps) {
   };
 
   const addEducation = () => {
-    if (newEducation.degree && newEducation.school) {
-      setEducation((prev) => [
-        ...prev,
-        {
-          id: Date.now(),
-          ...newEducation,
-        },
-      ]);
-      setNewEducation({
-        degree: "",
-        school: "",
-        period: "",
-        start_month: "not-set",
-        start_year: "not-set",
-        end_month: "not-set",
-        end_year: "not-set",
-        is_current: false,
-        description: "",
-      });
+    if (newEducation.degree && newEducation.university) {
+      const addedEducation = {
+        id: Date.now(),
+        ...newEducation,
+      };
+      const updatedEducations = [...education, addedEducation];
+      setEducation(updatedEducations);
+      onUpdateAdditionalInfo({ education: updatedEducations });
+      setNewEducation(defaultEducationValue);
       setShowAddEducationForm(false);
     }
   };
 
   const removeEducation = (id: number) => {
-    setEducation((prev) => prev.filter((edu) => edu.id !== id));
+    const newEducations = [...education].filter((edu) => edu.id !== id);
+    setEducation(newEducations);
+    onUpdateAdditionalInfo({ education: newEducations });
   };
 
-  const startEditing = (edu: Education) => {
+  const startEditing = (edu: ProfileEducation) => {
     setEditingEducation(edu.id);
     setEditForm({
       degree: edu.degree,
-      school: edu.school,
+      degree_id: edu.degree_id,
+      university: edu.university,
+      university_id: edu.university_id,
       period: edu.period,
-      start_month: edu.start_month || "not-set",
-      start_year: edu.start_year || "not-set",
-      end_month: edu.end_month || "not-set",
-      end_year: edu.end_year || "not-set",
-      is_current: edu.is_current || false,
+      start_month: edu.start_month,
+      start_year: edu.start_year,
+      end_month: edu.end_month,
+      end_year: edu.end_year,
+      is_current: edu.is_current,
       description: edu.description,
     });
   };
 
   const saveEdit = (id: number) => {
-    setEducation((prev) =>
-      prev.map((edu) => (edu.id === id ? { ...edu, ...editForm } : edu))
-    );
+    const originalEducation = education.filter((edu) => edu.id === id)[0];
+
+    const editedEduction = {
+      ...originalEducation,
+      ...editForm,
+    };
+    const updatedEducations = [
+      ...education.filter((edu) => edu.id !== id),
+      editedEduction,
+    ];
+    setEducation(updatedEducations);
+    onUpdateAdditionalInfo({ education: updatedEducations });
+
     setEditingEducation(null);
   };
 
   const cancelEdit = () => {
     setEditingEducation(null);
+    setEditForm(defaultEducationValue);
   };
 
   const handlePeriodChange = (period: PeriodData, isNew: boolean) => {
@@ -201,25 +167,34 @@ export function EducationSection({ isEditing }: EducationSectionProps) {
                   <DatabaseDropdown
                     table="list_study_field"
                     valueColumn="id"
-                    labelColumn="name_ru"
-                    value={editForm.degree}
-                    onChange={(_, label) =>
-                      setEditForm((prev) => ({ ...prev, degree: label }))
+                    labelColumn="name"
+                    value={editForm.degree_id}
+                    onChange={(value, label) =>
+                      setEditForm((prev) => ({
+                        ...prev,
+                        degree: { id: Number(value), name: label },
+                        degree_id: Number(value),
+                      }))
                     }
                     label="Degree"
                     placeholder="Select degree..."
                     searchPlaceholder="Search degrees..."
-                    orderBy="name_ru"
+                    orderBy="name"
                   />
 
                   <SearchableDropdown
                     table="list_university"
-                    searchColumns={["name", "name_ru"]}
+                    searchColumns={["name", "name"]}
                     valueColumn="id"
-                    labelColumn="name_ru"
-                    value={editForm.school}
-                    onChange={(_, label) =>
-                      setEditForm((prev) => ({ ...prev, school: label }))
+                    labelColumn="name"
+                    value={editForm.university_id}
+                    labelValue={editForm?.university?.name}
+                    onChange={(value, label) =>
+                      setEditForm((prev) => ({
+                        ...prev,
+                        university: { id: Number(value), name: label },
+                        university_id: Number(value),
+                      }))
                     }
                     label="School/Institution"
                     placeholder="Select university..."
@@ -229,11 +204,11 @@ export function EducationSection({ isEditing }: EducationSectionProps) {
 
                 <PeriodSelector
                   value={{
-                    startMonth: editForm.start_month,
-                    startYear: editForm.start_year,
-                    endMonth: editForm.end_month,
-                    endYear: editForm.end_year,
-                    isCurrent: editForm.is_current,
+                    start_month: editForm.start_month || "",
+                    start_year: editForm.start_year || "",
+                    end_month: editForm.end_month || "",
+                    end_year: editForm.end_year || "",
+                    is_current: Boolean(editForm.is_current),
                   }}
                   onChange={(period) => handlePeriodChange(period, false)}
                   currentLabel="I currently study here"
@@ -258,7 +233,7 @@ export function EducationSection({ isEditing }: EducationSectionProps) {
             ) : (
               <>
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
-                  <h3 className="font-semibold text-lg">{edu.degree}</h3>
+                  <h3 className="font-semibold text-lg">{edu.degree?.name}</h3>
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-muted-foreground">
                       {formatPeriodData(edu)}
@@ -297,7 +272,9 @@ export function EducationSection({ isEditing }: EducationSectionProps) {
                     )}
                   </div>
                 </div>
-                <p className="text-primary font-medium mb-2">{edu.school}</p>
+                <p className="text-primary font-medium mb-2">
+                  {edu.university?.name}
+                </p>
                 <p className="text-muted-foreground">{edu.description}</p>
               </>
             )}
@@ -311,25 +288,34 @@ export function EducationSection({ isEditing }: EducationSectionProps) {
               <DatabaseDropdown
                 table="list_study_field"
                 valueColumn="id"
-                labelColumn="name_ru"
-                value={newEducation.degree}
-                onChange={(_, label) =>
-                  setNewEducation((prev) => ({ ...prev, degree: label }))
+                labelColumn="name"
+                value={editForm.degree_id}
+                onChange={(value, label) =>
+                  setNewEducation((prev) => ({
+                    ...prev,
+                    degree: { id: Number(value), name: label },
+                    degree_id: Number(value),
+                  }))
                 }
                 label="Faculty"
                 placeholder="Select degree..."
                 searchPlaceholder="Search degrees..."
-                orderBy="name_ru"
+                orderBy="name"
               />
 
               <SearchableDropdown
                 table="list_university"
-                searchColumns={["name", "name_ru"]}
+                searchColumns={["name", "name"]}
                 valueColumn="id"
-                labelColumn="name_ru"
-                value={newEducation.school}
-                onChange={(_, label) =>
-                  setNewEducation((prev) => ({ ...prev, school: label }))
+                labelColumn="name"
+                value={newEducation.university_id}
+                labelValue={newEducation?.university?.name}
+                onChange={(value, label) =>
+                  setNewEducation((prev) => ({
+                    ...prev,
+                    university: { id: Number(value), name: label },
+                    university_id: Number(value),
+                  }))
                 }
                 label="University"
                 placeholder="Select university..."
@@ -339,11 +325,11 @@ export function EducationSection({ isEditing }: EducationSectionProps) {
 
             <PeriodSelector
               value={{
-                startMonth: newEducation.start_month,
-                startYear: newEducation.start_year,
-                endMonth: newEducation.end_month,
-                endYear: newEducation.end_year,
-                isCurrent: newEducation.is_current,
+                start_month: editForm.start_month || "",
+                start_year: editForm.start_year || "",
+                end_month: editForm.end_month || "",
+                end_year: editForm.end_year || "",
+                is_current: Boolean(editForm.is_current),
               }}
               onChange={(period) => handlePeriodChange(period, true)}
               currentLabel="I currently study here"

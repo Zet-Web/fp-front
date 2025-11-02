@@ -5,14 +5,12 @@ import { UserProfile } from "../types/profile";
 
 interface AdditionalInfoSectionProps {
   user: UserProfile;
-  isOwnProfile: boolean;
   isEditing: boolean;
   onUpdateProfile: (updates: Partial<UserProfile>) => void;
 }
 
 export function AdditionalInfoSection({
   user,
-  isOwnProfile,
   isEditing,
   onUpdateProfile,
 }: AdditionalInfoSectionProps) {

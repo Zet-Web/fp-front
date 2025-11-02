@@ -36,40 +36,10 @@ import { useEffect, useState } from "react";
 import { ProfileExperience } from "../types/experience";
 import { defaultExperienceValue } from "../utils/experiences-utils";
 import { UserAdditionalInfo } from "../types/profile";
-
-const initialExperiences: ProfileExperience[] = [
-  {
-    id: 1,
-    title: "Senior Full-Stack Developer",
-    company: "TechCorp Solutions",
-    period: "2022 - Present",
-    description:
-      "Lead development of scalable web applications using React, Node.js, and AWS. Mentored junior developers and architected microservices infrastructure.",
-    achievements: [
-      "Improved application performance by 40% through code optimization",
-      "Led a team of 5 developers on multiple client projects",
-      "Implemented CI/CD pipelines reducing deployment time by 60%",
-    ],
-  },
-  {
-    id: 2,
-    title: "Full-Stack Developer",
-    company: "StartupXYZ",
-    period: "2020 - 2022",
-    description:
-      "Developed and maintained multiple web applications using modern JavaScript frameworks. Collaborated with designers and product managers to deliver user-focused solutions.",
-    achievements: [
-      "Built 3 major product features from concept to production",
-      "Reduced bug reports by 50% through comprehensive testing",
-      "Contributed to 200% user growth through performance improvements",
-    ],
-  },
-];
-
 interface ExperienceSectionProps {
   additionalInfo: UserAdditionalInfo | null;
-  isEditing: boolean;
   onUpdateAdditionalInfo: (updates: Partial<UserAdditionalInfo>) => void;
+  isEditing: boolean;
 }
 
 export function ExperienceSection({
@@ -77,8 +47,9 @@ export function ExperienceSection({
   additionalInfo,
   onUpdateAdditionalInfo,
 }: ExperienceSectionProps) {
-  const [experiences, setExperiences] =
-    useState<ProfileExperience[]>(initialExperiences);
+  const [experiences, setExperiences] = useState<ProfileExperience[]>(
+    additionalInfo?.experience || []
+  );
   const [editingExperience, setEditingExperience] = useState<number | null>(
     null
   );
@@ -181,7 +152,9 @@ export function ExperienceSection({
   };
 
   const removeExperience = (id: number) => {
-    setExperiences((prev) => prev.filter((exp) => exp.id !== id));
+    const newExperiences = [...experiences].filter((exp) => exp.id !== id);
+    setExperiences(newExperiences);
+    onUpdateAdditionalInfo({ experience: newExperiences });
   };
 
   const startEditing = (exp: ProfileExperience) => {

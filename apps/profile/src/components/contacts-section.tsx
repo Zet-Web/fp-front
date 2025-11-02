@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -191,6 +192,7 @@ export function ContactsSection({
         description: "Contact information has been copied.",
       });
     } catch (error) {
+      console.error(error);
       toast({
         title: "Failed to copy",
         description: "Could not copy to clipboard.",

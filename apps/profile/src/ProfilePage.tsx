@@ -227,7 +227,6 @@ export function ProfilePage() {
             <InformationSection
               additionalInfo={addititonalInfo}
               user={profileData}
-              isOwnProfile={isOwnProfile}
               isEditing={isEditing}
               onUpdateProfile={handleUpdateProfileData}
               onUpdateAdditionalInfo={handleUpdateAdditionalInfo}

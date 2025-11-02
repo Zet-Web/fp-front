@@ -9,7 +9,6 @@ import { UserAdditionalInfo, UserProfile } from "../types/profile";
 interface InformationSectionProps {
   user: UserProfile;
   additionalInfo: UserAdditionalInfo | null;
-  isOwnProfile: boolean;
   isEditing: boolean;
   onUpdateProfile: (updates: Partial<UserProfile>) => void;
   onUpdateAdditionalInfo: (updates: Partial<UserAdditionalInfo>) => void;
@@ -17,7 +16,6 @@ interface InformationSectionProps {
 
 export function InformationSection({
   user,
-  isOwnProfile,
   isEditing,
   onUpdateProfile,
   additionalInfo,
@@ -27,19 +25,26 @@ export function InformationSection({
     <div className="space-y-6">
       <ContactsSection
         additionalInfo={additionalInfo}
-        isEditing={isEditing}
         onUpdateAdditionalInfo={onUpdateAdditionalInfo}
+        isEditing={isEditing}
       />
       <ExperienceSection
         additionalInfo={additionalInfo}
-        isEditing={isEditing}
         onUpdateAdditionalInfo={onUpdateAdditionalInfo}
+        isEditing={isEditing}
       />
-      <EducationSection isEditing={isEditing} />
-      <AwardsSection isEditing={isEditing} />
+      <EducationSection
+        additionalInfo={additionalInfo}
+        onUpdateAdditionalInfo={onUpdateAdditionalInfo}
+        isEditing={isEditing}
+      />
+      <AwardsSection
+        additionalInfo={additionalInfo}
+        onUpdateAdditionalInfo={onUpdateAdditionalInfo}
+        isEditing={isEditing}
+      />
       <AdditionalInfoSection
         user={user}
-        isOwnProfile={isOwnProfile}
         isEditing={isEditing}
         onUpdateProfile={onUpdateProfile}
       />
