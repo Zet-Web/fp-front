@@ -13,19 +13,8 @@ import {
 import { useState } from "react";
 import { LocationSelector } from "./LocationSelector";
 import { LocationItem } from "../types/location";
-
-interface UserProfile {
-  id: string;
-  name: string | null;
-  username: string | null;
-  avatar_url: string | null;
-  about: string | null;
-  telegram_username: string | null;
-  profile_type: string | null;
-  badge: string[] | null;
-  contact_info: any[] | null;
-  cover_url?: string | null;
-}
+import { UserProfile } from "../types/profile";
+import { FPApi } from "@/lib/api";
 
 interface HeroSectionProps {
   user: UserProfile;
@@ -88,10 +77,20 @@ export function HeroSection({
     setIsUploadingAvatar(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      const tempUrl = URL.createObjectURL(file);
-      onUpdateProfile({ avatar_url: tempUrl });
-      console.log("Avatar uploaded (simulated):", file.name);
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await FPApi.axios.post<{ publicUrl: string }>(
+        "profile/upload-avatar",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      onUpdateProfile({ avatar_url: res.data.publicUrl });
     } catch (error) {
       console.error("Avatar upload failed:", error);
     } finally {
@@ -109,10 +108,20 @@ export function HeroSection({
     setIsUploadingCover(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      const tempUrl = URL.createObjectURL(file);
-      onUpdateProfile({ cover_url: tempUrl });
-      console.log("Cover uploaded (simulated):", file.name);
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await FPApi.axios.post<{ publicUrl: string }>(
+        "profile/upload-cover",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      onUpdateProfile({ cover_url: res.data.publicUrl });
     } catch (error) {
       console.error("Cover upload failed:", error);
     } finally {
@@ -274,7 +283,7 @@ export function HeroSection({
           </div>
 
           <div className="ml-6 mt-2 flex gap-3">
-            {isOwnProfile || true ? (
+            {isOwnProfile ? (
               <>
                 {isEditing ? (
                   <>

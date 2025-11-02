@@ -1,33 +1,24 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Textarea } from "@/components/ui/textarea"
-import { FileText } from "lucide-react"
-
-interface UserProfile {
-  id: string
-  name: string | null
-  username: string | null
-  email?: string
-  avatar_url: string | null
-  about: string | null
-  telegram_username: string | null
-  profile_type: string | null
-  badge: string[] | null
-  birthday: string | null
-  birthday_visibility: 'full' | 'month_day' | 'year' | 'day_month' | 'day' | 'month' | null
-  additional_info: string | null
-}
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import { FileText } from "lucide-react";
+import { UserProfile } from "../types/profile";
 
 interface AdditionalInfoSectionProps {
-  user: UserProfile
-  isOwnProfile: boolean
-  isEditing: boolean
-  onUpdateProfile: (updates: Partial<UserProfile>) => void
+  user: UserProfile;
+  isOwnProfile: boolean;
+  isEditing: boolean;
+  onUpdateProfile: (updates: Partial<UserProfile>) => void;
 }
 
-export function AdditionalInfoSection({ user, isOwnProfile, isEditing, onUpdateProfile }: AdditionalInfoSectionProps) {
+export function AdditionalInfoSection({
+  user,
+  isOwnProfile,
+  isEditing,
+  onUpdateProfile,
+}: AdditionalInfoSectionProps) {
   const handleAdditionalInfoChange = (value: string) => {
-    onUpdateProfile({ additional_info: value })
-  }
+    onUpdateProfile({ additional_info: value });
+  };
 
   return (
     <Card className="hover:shadow-lg transition-shadow duration-300">
@@ -40,7 +31,7 @@ export function AdditionalInfoSection({ user, isOwnProfile, isEditing, onUpdateP
       <CardContent>
         {isEditing ? (
           <Textarea
-            value={user.additional_info || ''}
+            value={user.additional_info || ""}
             onChange={(e) => handleAdditionalInfoChange(e.target.value)}
             className="resize-none"
             placeholder="Add any additional information..."
@@ -57,5 +48,5 @@ export function AdditionalInfoSection({ user, isOwnProfile, isEditing, onUpdateP
         )}
       </CardContent>
     </Card>
-  )
+  );
 }

@@ -1,26 +1,26 @@
 // Feed component with filtering, sorting, lazy loading and skeleton states
 
-import { useState, useEffect, useRef, useCallback } from "react"
-import { Link } from "react-router-dom"
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { PostCard } from "./PostCard"
-import { EditablePostCard } from "./EditablePostCard"
-import { constructPostUrl } from "../lib/post-utils"
-import type { PostWithAuthor } from "../types/post"
-import { Skeleton } from "@/components/ui/skeleton"
-import { toast } from "sonner"
+import { useState, useEffect, useRef, useCallback } from "react";
+import { Link } from "react-router-dom";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { PostCard } from "./PostCard";
+import { EditablePostCard } from "./EditablePostCard";
+import { constructPostUrl } from "../lib/post-utils";
+import type { PostWithAuthor } from "../types/post";
+import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "sonner";
 
 interface FeedProps {
-  posts: PostWithAuthor[]
-  filterByUserId?: string
-  emptyMessage?: string
+  posts: PostWithAuthor[];
+  filterByUserId?: string;
+  emptyMessage?: string;
   emptyAction?: {
-    label: string
-    onClick: () => void
-  }
-  itemsPerPage?: number
-  currentUserId?: string
+    label: string;
+    onClick: () => void;
+  };
+  itemsPerPage?: number;
+  currentUserId?: string;
 }
 
 function PostSkeleton() {
@@ -40,7 +40,7 @@ function PostSkeleton() {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
 
 export function Feed({
@@ -49,140 +49,150 @@ export function Feed({
   emptyMessage = "No posts to display",
   emptyAction,
   itemsPerPage = 10,
-  currentUserId
+  currentUserId,
 }: FeedProps) {
-  const [displayedPosts, setDisplayedPosts] = useState<PostWithAuthor[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [hasMore, setHasMore] = useState(true)
-  const [page, setPage] = useState(1)
-  const [savedPostIds, setSavedPostIds] = useState<Set<string>>(new Set())
-  const [editingPostId, setEditingPostId] = useState<string | null>(null)
-  const [localPosts, setLocalPosts] = useState<PostWithAuthor[]>(posts)
-  const observerRef = useRef<HTMLDivElement>(null)
+  const [displayedPosts, setDisplayedPosts] = useState<PostWithAuthor[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(1);
+  const [savedPostIds, setSavedPostIds] = useState<Set<string>>(new Set());
+  const [editingPostId, setEditingPostId] = useState<string | null>(null);
+  const [localPosts, setLocalPosts] = useState<PostWithAuthor[]>(posts);
+  const observerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setLocalPosts(posts)
-  }, [posts])
+    setLocalPosts(posts);
+  }, [posts]);
 
   const filteredPosts = filterByUserId
-    ? localPosts.filter(post => post.author_id === filterByUserId)
-    : localPosts
+    ? localPosts.filter((post) => post.author_id === filterByUserId)
+    : localPosts;
 
   const sortedPosts = [...filteredPosts].sort((a, b) => {
-    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-  })
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+  });
 
   const loadMorePosts = useCallback(() => {
-    const startIndex = (page - 1) * itemsPerPage
-    const endIndex = page * itemsPerPage
-    const newPosts = sortedPosts.slice(startIndex, endIndex)
+    const startIndex = (page - 1) * itemsPerPage;
+    const endIndex = page * itemsPerPage;
+    const newPosts = sortedPosts.slice(startIndex, endIndex);
 
     if (newPosts.length > 0) {
-      setDisplayedPosts(prev => [...prev, ...newPosts])
-      setPage(prev => prev + 1)
+      setDisplayedPosts((prev) => [...prev, ...newPosts]);
+      setPage((prev) => prev + 1);
 
       if (endIndex >= sortedPosts.length) {
-        setHasMore(false)
+        setHasMore(false);
       }
     } else {
-      setHasMore(false)
+      setHasMore(false);
     }
-  }, [page, sortedPosts, itemsPerPage])
+  }, [page, sortedPosts, itemsPerPage]);
 
   useEffect(() => {
-    setIsLoading(true)
-    setPage(1)
+    setIsLoading(true);
+    setPage(1);
     const timer = setTimeout(() => {
-      const initialPosts = sortedPosts.slice(0, itemsPerPage)
-      setDisplayedPosts(initialPosts)
-      setHasMore(sortedPosts.length > itemsPerPage)
-      setIsLoading(false)
+      const initialPosts = sortedPosts.slice(0, itemsPerPage);
+      setDisplayedPosts(initialPosts);
+      setHasMore(sortedPosts.length > itemsPerPage);
+      setIsLoading(false);
 
-      const initialSavedIds = new Set(sortedPosts.filter(p => p.is_saved).map(p => p.id))
-      setSavedPostIds(initialSavedIds)
-    }, 500)
+      const initialSavedIds = new Set(
+        sortedPosts.filter((p) => p.is_saved).map((p) => p.id)
+      );
+      setSavedPostIds(initialSavedIds);
+    }, 500);
 
-    return () => clearTimeout(timer)
-  }, [sortedPosts, itemsPerPage])
+    return () => clearTimeout(timer);
+  }, [sortedPosts, itemsPerPage]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && hasMore && !isLoading) {
-          loadMorePosts()
+          loadMorePosts();
         }
       },
       { threshold: 0.1 }
-    )
+    );
 
     if (observerRef.current) {
-      observer.observe(observerRef.current)
+      observer.observe(observerRef.current);
     }
 
     return () => {
       if (observerRef.current) {
-        observer.unobserve(observerRef.current)
+        observer.unobserve(observerRef.current);
       }
-    }
-  }, [hasMore, isLoading, loadMorePosts])
+    };
+  }, [hasMore, isLoading, loadMorePosts]);
 
   const handleBookmarkClick = (postId: string) => {
-    setSavedPostIds(prev => {
-      const newSet = new Set(prev)
+    setSavedPostIds((prev) => {
+      const newSet = new Set(prev);
       if (newSet.has(postId)) {
-        newSet.delete(postId)
-        toast.success('Post removed from saved')
+        newSet.delete(postId);
+        toast.success("Post removed from saved");
       } else {
-        newSet.add(postId)
-        toast.success('Post saved')
+        newSet.add(postId);
+        toast.success("Post saved");
       }
-      return newSet
-    })
-  }
+      return newSet;
+    });
+  };
 
   const handleShareClick = async (post: PostWithAuthor) => {
-    const postUrl = `${window.location.origin}${constructPostUrl(post.url, post.slug)}`
+    const postUrl = `${window.location.origin}${constructPostUrl(
+      post.url,
+      post.slug
+    )}`;
 
     try {
-      await navigator.clipboard.writeText(postUrl)
-      toast.success('Link copied to clipboard')
+      await navigator.clipboard.writeText(postUrl);
+      toast.success("Link copied to clipboard");
     } catch (error) {
-      toast.error('Failed to copy link')
+      toast.error("Failed to copy link");
     }
-  }
+  };
 
   const handleEditClick = (postId: string) => {
-    setEditingPostId(postId)
-  }
+    setEditingPostId(postId);
+  };
 
-  const handleSavePost = (postId: string, updates: {
-    title?: string
-    excerpt: string
-    content?: string
-    cover_image?: string
-    images: string[]
-    type: any
-    status: any
-    is_pinned: boolean
-    slug?: string
-  }) => {
-    setLocalPosts(prev => prev.map(post =>
-      post.id === postId
-        ? { ...post, ...updates, updated_at: new Date().toISOString() }
-        : post
-    ))
-    setEditingPostId(null)
-    toast.success('Post updated successfully')
-  }
+  const handleSavePost = (
+    postId: string,
+    updates: {
+      title?: string;
+      excerpt: string;
+      content?: string;
+      cover_image?: string;
+      images: string[];
+      type: any;
+      status: any;
+      is_pinned: boolean;
+      slug?: string;
+    }
+  ) => {
+    setLocalPosts((prev) =>
+      prev.map((post) =>
+        post.id === postId
+          ? { ...post, ...updates, updated_at: new Date().toISOString() }
+          : post
+      )
+    );
+    setEditingPostId(null);
+    toast.success("Post updated successfully");
+  };
 
   const handleCancelEdit = () => {
-    setEditingPostId(null)
-  }
+    setEditingPostId(null);
+  };
 
   const handleDeletePost = (postId: string) => {
-    setLocalPosts(prev => prev.filter(post => post.id !== postId))
-    toast.success('Post deleted successfully')
-  }
+    setLocalPosts((prev) => prev.filter((post) => post.id !== postId));
+    toast.success("Post deleted successfully");
+  };
 
   if (isLoading && displayedPosts.length === 0) {
     return (
@@ -191,7 +201,7 @@ export function Feed({
           <PostSkeleton key={index} />
         ))}
       </div>
-    )
+    );
   }
 
   if (displayedPosts.length === 0) {
@@ -206,14 +216,14 @@ export function Feed({
           )}
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
     <div className="space-y-6">
       {displayedPosts.map((post) => {
-        const isEditing = editingPostId === post.id
-        const isOwner = currentUserId ? post.author_id === currentUserId : true
+        const isEditing = editingPostId === post.id;
+        const isOwner = currentUserId ? post.author_id === currentUserId : true;
 
         if (isEditing) {
           return (
@@ -233,7 +243,7 @@ export function Feed({
                 onCancel={handleCancelEdit}
               />
             </div>
-          )
+          );
         }
 
         return (
@@ -256,7 +266,7 @@ export function Feed({
               onDeleteClick={() => handleDeletePost(post.id)}
             />
           </Link>
-        )
+        );
       })}
 
       {hasMore && (
@@ -267,9 +277,11 @@ export function Feed({
 
       {!hasMore && displayedPosts.length > 0 && (
         <div className="text-center py-8">
-          <p className="text-sm text-muted-foreground">You've reached the end</p>
+          <p className="text-sm text-muted-foreground">
+            You've reached the end
+          </p>
         </div>
       )}
     </div>
-  )
+  );
 }

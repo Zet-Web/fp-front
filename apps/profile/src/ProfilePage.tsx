@@ -4,10 +4,19 @@ import { InformationSection } from "./components/information-section";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { useProfileData } from "./hooks/use-profile-data";
-import { useLocationData } from "./hooks/useLocationData";
+import { useLocationData } from "./hooks/use-location-data";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { LocationItem } from "./types/location";
+import { UserAdditionalInfo, UserProfile } from "./types/profile";
+import { getObjectDifferences } from "@/utils/getObjectDifferences";
+import { FPApi } from "@/lib/api";
+
+enum ProfileTabs {
+  information = "information",
+  posts = "posts",
+}
 
 export function ProfilePage() {
   const {
@@ -17,32 +26,51 @@ export function ProfilePage() {
     isOwnProfile,
     requestedUsername,
     redirectPath,
+    refetchProfile,
+    addititonalInfo,
+    setNeedLoadAdditionalInfo,
   } = useProfileData();
+
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  const [currentTab, setCurrentTab] = useState<ProfileTabs>(ProfileTabs.posts);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [profileData, setProfileData] = useState(user);
+  const [currentAdditionalInfo, setCurrentAdditionalInfo] =
+    useState(addititonalInfo);
+
+  const [cities, setCities] = useState<LocationItem[]>([]);
+  const [countries, setCountries] = useState<LocationItem[]>([]);
 
   const {
-    cities,
-    countries,
     addLocation,
     removeLocation,
     clearAllLocations,
     getFormattedLocationString,
-    refetchLocations,
+    handleSaveLocation,
   } = useLocationData({
-    profileId: user?.id || null,
-    isOwnProfile,
+    user,
+    cities,
+    setCities,
+    countries,
+    setCountries,
   });
 
-  // Update local profile data when user data changes
   useEffect(() => {
     if (user) {
       setProfileData(user);
+      setCities(user.cities);
+      setCountries(user.countries);
     }
   }, [user]);
+
+  useEffect(() => {
+    if (addititonalInfo) {
+      setCurrentAdditionalInfo(addititonalInfo);
+    }
+  }, [addititonalInfo]);
 
   // Handle redirection when user visits /profile
   useEffect(() => {
@@ -55,64 +83,58 @@ export function ProfilePage() {
     setIsEditing(!isEditing);
     if (isEditing) {
       setProfileData(user);
-      refetchLocations();
+      setCities(user?.cities || []);
+      setCountries(user?.countries || []);
+      setCurrentAdditionalInfo(addititonalInfo);
     }
+  };
+
+  const updateProfileData = async () => {
+    if (!user || !profileData) return;
+
+    const dataToUpdate: Partial<UserProfile> = getObjectDifferences(
+      user,
+      profileData
+    );
+
+    await FPApi.axios.patch("/profile/update", dataToUpdate);
+  };
+
+  const updateAdditionalInfo = async () => {
+    if (!addititonalInfo || !currentAdditionalInfo) return;
+    const dataToUpdate: Partial<UserAdditionalInfo> = currentAdditionalInfo;
+
+    await FPApi.axios.patch("/profile/update-additional-info", dataToUpdate);
   };
 
   const handleSaveChanges = async () => {
-    console.log("=========================================");
-    console.log(
-      "🚀 [Profile Save] Starting profile save operation at:",
-      new Date().toISOString()
-    );
-    console.log("=========================================");
-
-    // TEMPORARY: Save locally without database for testing
-    console.log(
-      "🧪 [Profile Save] TEMPORARY MODE: Saving locally without database"
-    );
     setIsSaving(true);
 
     try {
-      // Simulate API delay for realistic testing
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      console.log("✅ [Profile Save] Local save completed successfully");
-      console.log("📋 [Profile Save] Updated profile data:", {
-        name: profileData?.name,
-        about: profileData?.about,
-        hasContactInfo: !!profileData?.contact_info,
-        contactInfoCount: profileData?.contact_info?.length || 0,
-      });
-
-      // Exit edit mode
+      await handleSaveLocation();
+      await updateProfileData();
+      await updateAdditionalInfo();
+      await refetchProfile(true);
       setIsEditing(false);
-
-      toast({
-        title: "Profile updated (locally)",
-        description: "Your changes have been saved locally for testing.",
-      });
-
-      console.log("=========================================");
-      console.log("✅ [Profile Save] Temporary local save completed");
-      console.log("=========================================");
     } catch (error) {
-      console.error("❌ [Profile Save] Temporary save failed:", error);
-      toast({
-        title: "Error",
-        description: "Failed to save changes locally.",
-        variant: "destructive",
-      });
+      toast({ title: (error as Error)?.message || "Saving error" });
     } finally {
       setIsSaving(false);
     }
-
-    return;
   };
 
-  const updateProfileData = (updates: Partial<typeof profileData>) => {
+  const handleUpdateProfileData = (updates: Partial<UserProfile>) => {
     setProfileData((prev) => (prev ? { ...prev, ...updates } : null));
   };
+
+  const handleUpdateAdditionalInfo = (updates: Partial<UserAdditionalInfo>) => {
+    setCurrentAdditionalInfo((prev) => (prev ? { ...prev, ...updates } : null));
+  };
+
+  useEffect(() => {
+    if (currentTab === ProfileTabs.information) setNeedLoadAdditionalInfo(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentTab]);
 
   // Show loading state
   if (isLoading) {
@@ -173,7 +195,7 @@ export function ProfilePage() {
           isSaving={isSaving}
           onEditToggle={handleEditToggle}
           onSaveChanges={handleSaveChanges}
-          onUpdateProfile={updateProfileData}
+          onUpdateProfile={handleUpdateProfileData}
           cities={cities}
           countries={countries}
           locationString={getFormattedLocationString()}
@@ -182,7 +204,12 @@ export function ProfilePage() {
           onClearAllLocations={clearAllLocations}
         />
 
-        <Tabs defaultValue="posts" className="w-full">
+        <Tabs
+          value={currentTab}
+          onValueChange={(value) => setCurrentTab(value as ProfileTabs)}
+          defaultValue="posts"
+          className="w-full"
+        >
           <TabsList className="grid w-full grid-cols-2 mb-6">
             <TabsTrigger value="posts" className="text-sm font-medium">
               Posts
@@ -198,10 +225,12 @@ export function ProfilePage() {
 
           <TabsContent value="information" className="mt-0">
             <InformationSection
+              additionalInfo={addititonalInfo}
               user={profileData}
               isOwnProfile={isOwnProfile}
               isEditing={isEditing}
-              onUpdateProfile={updateProfileData}
+              onUpdateProfile={handleUpdateProfileData}
+              onUpdateAdditionalInfo={handleUpdateAdditionalInfo}
             />
           </TabsContent>
         </Tabs>

@@ -1,19 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useAuthContext } from "@/components/auth-provider";
 import { FPApi } from "@/lib/api";
-
-interface UserProfile {
-  id: string;
-  name: string | null;
-  username: string | null;
-  avatar_url: string | null;
-  about: string | null;
-  telegram_username: string | null;
-  profile_type: string | null;
-  badge: string[] | null;
-  contact_info: unknown[] | null;
-  created_at?: string;
-}
+import { UserAdditionalInfo, UserProfile } from "../types/profile";
 
 interface ProfileState {
   user: UserProfile | null;
@@ -22,9 +10,12 @@ interface ProfileState {
   isOwnProfile: boolean;
   requestedUsername: string | null;
   redirectPath: string | null;
+  addititonalInfo: UserAdditionalInfo | null;
 }
 
 export function useProfileData() {
+  const [needLoadAdditionalInfo, setNeedLoadAdditionalInfo] = useState(false);
+
   const [profileState, setProfileState] = useState<ProfileState>({
     user: null,
     isLoading: true,
@@ -32,6 +23,7 @@ export function useProfileData() {
     isOwnProfile: false,
     requestedUsername: null,
     redirectPath: null,
+    addititonalInfo: null,
   });
 
   const { profile: authProfile, isAuthenticated } = useAuthContext();
@@ -55,6 +47,45 @@ export function useProfileData() {
 
     return null;
   }, []);
+
+  const fetchAdditionalInfoByUsername = async (
+    username: string
+  ): Promise<UserAdditionalInfo | null> => {
+    try {
+      const response = await FPApi.axios.get<UserAdditionalInfo>(
+        `/profile/additional-info/${username}`
+      );
+      const data = response.data;
+      return data || null;
+    } catch (error) {
+      console.error("Error additional info:", error);
+      throw error;
+    }
+  };
+
+  const loadAdditionalInfo = useCallback(async () => {
+    const requestedUsername =
+      isAuthenticated && !!authProfile
+        ? authProfile.username
+        : extractUsernameFromUrl();
+
+    if (!requestedUsername) return;
+
+    try {
+      const additionalInfo = await fetchAdditionalInfoByUsername(
+        requestedUsername
+      );
+      if (additionalInfo) {
+        setProfileState((prev) => ({
+          ...prev,
+          addititonalInfo: additionalInfo,
+          isLoading: false,
+        }));
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }, [authProfile, extractUsernameFromUrl, isAuthenticated]);
 
   const fetchProfileByUsername = async (
     username: string
@@ -126,6 +157,7 @@ export function useProfileData() {
                 isLoading: false,
                 error: "Profile not found",
                 user: null,
+                addititonalInfo: null,
               }));
             }
           } catch (error) {
@@ -166,7 +198,7 @@ export function useProfileData() {
     }
   };
 
-  const refetchProfile = async () => {
+  const refetchProfile = async (silent?: boolean) => {
     const currentUsername = profileState.requestedUsername;
     if (!currentUsername) {
       return;
@@ -175,11 +207,14 @@ export function useProfileData() {
     try {
       setProfileState((prev) => ({
         ...prev,
-        isLoading: true,
+        isLoading: !silent,
         error: null,
       }));
 
       const profileData = await fetchProfileByUsername(currentUsername);
+      const additionalInfo = await fetchAdditionalInfoByUsername(
+        currentUsername
+      );
 
       if (profileData) {
         const isOwnProfile =
@@ -188,6 +223,7 @@ export function useProfileData() {
         setProfileState((prev) => ({
           ...prev,
           user: profileData,
+          addititonalInfo: additionalInfo,
           isLoading: false,
           error: null,
           isOwnProfile,
@@ -213,14 +249,20 @@ export function useProfileData() {
     setProfileState((prev) => ({
       ...prev,
       user: null,
+      addititonalInfo: null,
       isOwnProfile: false,
     }));
   };
+
+  useEffect(() => {
+    if (needLoadAdditionalInfo) loadAdditionalInfo();
+  }, [loadAdditionalInfo, needLoadAdditionalInfo]);
 
   return {
     ...profileState,
     updateProfile,
     refetchProfile,
     logout,
+    setNeedLoadAdditionalInfo,
   };
 }
