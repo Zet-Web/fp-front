@@ -7,8 +7,8 @@ apps/auth
 apps/mobileNav
 # apps/navigation
 apps/profile
-apps/post
-apps/settings
+# apps/post
+# apps/settings
 # app/yurservice
 # app/network
 
