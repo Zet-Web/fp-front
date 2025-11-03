@@ -11,7 +11,7 @@ interface UseTelegramAuthReturn {
 }
 
 const initiatingHostOrigin = "/home";
-const devHostOrigin = "/home";
+const devHostOrigin = "http://localhost:5173";
 
 export function useTelegramAuth(): UseTelegramAuthReturn {
   const [isLoading, setIsLoading] = useState(true);
