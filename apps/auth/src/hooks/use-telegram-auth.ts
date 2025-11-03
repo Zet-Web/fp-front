@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthState, AuthStatusResponse } from "../types/auth";
@@ -10,6 +11,7 @@ interface UseTelegramAuthReturn {
 }
 
 const initiatingHostOrigin = "http://localhost:5173";
+const devHostOrigin = "http://localhost:5173";
 
 export function useTelegramAuth(): UseTelegramAuthReturn {
   const [isLoading, setIsLoading] = useState(true);
@@ -23,9 +25,7 @@ export function useTelegramAuth(): UseTelegramAuthReturn {
   const initializedRef = useRef<boolean>(false);
   const hasAuthCompletedRef = useRef<boolean>(false);
 
-  // Initialize auth flow on component mount
   useEffect(() => {
-    // Prevent double initialization in StrictMode
     if (!initializedRef.current) {
       initializedRef.current = true;
       initializeAuth();
@@ -58,7 +58,6 @@ export function useTelegramAuth(): UseTelegramAuthReturn {
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ state: stateRef.current }),
@@ -66,13 +65,11 @@ export function useTelegramAuth(): UseTelegramAuthReturn {
       );
     } catch (error) {
       console.error("Failed to delete auth state:", error);
-      // Don't throw error as this is cleanup operation
     }
   };
 
   const handleTelegramAuth = () => {
     if (telegramUrl) {
-      // Always open Telegram URL in new tab
       window.open(telegramUrl, "_blank");
     }
   };
@@ -82,16 +79,11 @@ export function useTelegramAuth(): UseTelegramAuthReturn {
       setIsLoading(true);
       setError(null);
 
-      // Use localhost for development - this should be configurable in production
-      
-
-      // Generate auth state
       const response = await fetch(
         `${import.meta.env.VITE_BACKEND_URL}/auth/generate-auth-state`,
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ initiatingHostOrigin }),
@@ -111,12 +103,9 @@ export function useTelegramAuth(): UseTelegramAuthReturn {
       stateRef.current = data.state;
       setTelegramUrl(data.redirect_url);
 
-      // Start polling for auth completion
       startPolling();
 
-      // Set timeout for auto-redirect
       timeoutRef.current = setTimeout(() => {
-        // Clean up auth state if authentication was not completed
         if (!hasAuthCompletedRef.current) {
           deleteAuthState();
         }
@@ -134,7 +123,6 @@ export function useTelegramAuth(): UseTelegramAuthReturn {
     if (!stateRef.current) return;
 
     pollingIntervalRef.current = setInterval(async () => {
-      // Stop polling if authentication has already completed
       if (hasAuthCompletedRef.current) {
         cleanup();
         return;
@@ -144,16 +132,10 @@ export function useTelegramAuth(): UseTelegramAuthReturn {
         const response = await fetch(
           `${import.meta.env.VITE_BACKEND_URL}/auth/get-auth-session/${
             stateRef.current
-          }`,
-          {
-            headers: {
-              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-            },
-          }
+          }`
         );
 
         if (!response.ok) {
-          // If auth has completed, don't treat server cleanup as an error
           if (hasAuthCompletedRef.current) {
             cleanup();
             return;
@@ -164,27 +146,29 @@ export function useTelegramAuth(): UseTelegramAuthReturn {
         const data: AuthStatusResponse = await response.json();
 
         if (data.success && data.completed && data.magic_link) {
-          // Authentication completed successfully
           hasAuthCompletedRef.current = true;
           cleanup();
 
-          // Redirect to magic link for automatic authentication
-          window.location.href = data.magic_link;
+          if (import.meta.env.DEV) {
+            const rawMagicLink = data.magic_link;
+            const redirectQueryParam = 'redirect_to=';
+            const magicLinkWithoutReqirect = rawMagicLink.split('redirect_to=')[0];
+            window.location.href = `${magicLinkWithoutReqirect}${redirectQueryParam}${devHostOrigin}`
+          } else {
+            window.location.href = data.magic_link;
+          }
         }
       } catch (err) {
-        // Only show error if authentication hasn't completed successfully
         if (!hasAuthCompletedRef.current) {
-          console.error("Polling error:", err);
           setError(
             err instanceof Error ? err.message : "Authentication failed"
           );
           cleanup();
         } else {
-          // Auth completed, just cleanup without error
           cleanup();
         }
       }
-    }, 3000); // Poll every 3 seconds
+    }, 3000); 
   };
 
   return {

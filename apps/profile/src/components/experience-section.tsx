@@ -1,226 +1,211 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Briefcase, Plus, Edit, Trash2, ChevronUp, ChevronDown, Check, X } from "lucide-react"
-import { useState } from "react"
-
-interface Experience {
-  id: number
-  title: string
-  company: string
-  period: string
-  start_month?: string
-  start_year?: string
-  end_month?: string
-  end_year?: string
-  is_current?: boolean
-  description: string
-  achievements: string[]
-}
-
-const initialExperiences: Experience[] = [
-  {
-    id: 1,
-    title: "Senior Full-Stack Developer",
-    company: "TechCorp Solutions",
-    period: "2022 - Present",
-    description: "Lead development of scalable web applications using React, Node.js, and AWS. Mentored junior developers and architected microservices infrastructure.",
-    achievements: [
-      "Improved application performance by 40% through code optimization",
-      "Led a team of 5 developers on multiple client projects",
-      "Implemented CI/CD pipelines reducing deployment time by 60%"
-    ]
-  },
-  {
-    id: 2,
-    title: "Full-Stack Developer",
-    company: "StartupXYZ",
-    period: "2020 - 2022",
-    description: "Developed and maintained multiple web applications using modern JavaScript frameworks. Collaborated with designers and product managers to deliver user-focused solutions.",
-    achievements: [
-      "Built 3 major product features from concept to production",
-      "Reduced bug reports by 50% through comprehensive testing",
-      "Contributed to 200% user growth through performance improvements"
-    ]
-  }
-]
-
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Briefcase,
+  Plus,
+  Edit,
+  Trash2,
+  ChevronUp,
+  ChevronDown,
+  Check,
+  X,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { ProfileExperience } from "../types/experience";
+import { defaultExperienceValue } from "../utils/experiences-utils";
+import { UserAdditionalInfo } from "../types/profile";
 interface ExperienceSectionProps {
-  isEditing: boolean
+  additionalInfo: UserAdditionalInfo | null;
+  onUpdateAdditionalInfo: (updates: Partial<UserAdditionalInfo>) => void;
+  isEditing: boolean;
 }
 
-export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
-  const [experiences, setExperiences] = useState(initialExperiences)
-  const [editingExperience, setEditingExperience] = useState<number | null>(null)
-  const [showAddExperienceForm, setShowAddExperienceForm] = useState(false)
-  const [newExperience, setNewExperience] = useState({
-    title: '',
-    company: '',
-    period: '',
-    start_month: 'not-set',
-    start_year: 'not-set',
-    end_month: 'not-set',
-    end_year: 'not-set',
-    is_current: false,
-    description: '',
-    achievements: ['']
-  })
-  const [editForm, setEditForm] = useState({
-    title: '',
-    company: '',
-    period: '',
-    start_month: 'not-set',
-    start_year: 'not-set',
-    end_month: 'not-set',
-    end_year: 'not-set',
-    is_current: false,
-    description: '',
-    achievements: ['']
-  })
+export function ExperienceSection({
+  isEditing,
+  additionalInfo,
+  onUpdateAdditionalInfo,
+}: ExperienceSectionProps) {
+  const [experiences, setExperiences] = useState<ProfileExperience[]>(
+    additionalInfo?.experience || []
+  );
+  const [editingExperience, setEditingExperience] = useState<number | null>(
+    null
+  );
+  const [showAddExperienceForm, setShowAddExperienceForm] = useState(false);
+  const [newExperience, setNewExperience] = useState(defaultExperienceValue);
+  const [editForm, setEditForm] = useState(defaultExperienceValue);
+
+  useEffect(() => {
+    if (additionalInfo?.experience) setExperiences(additionalInfo?.experience);
+  }, [additionalInfo?.experience]);
 
   const months = [
-    { value: '01', label: 'January' },
-    { value: '02', label: 'February' },
-    { value: '03', label: 'March' },
-    { value: '04', label: 'April' },
-    { value: '05', label: 'May' },
-    { value: '06', label: 'June' },
-    { value: '07', label: 'July' },
-    { value: '08', label: 'August' },
-    { value: '09', label: 'September' },
-    { value: '10', label: 'October' },
-    { value: '11', label: 'November' },
-    { value: '12', label: 'December' }
-  ]
+    { value: "01", label: "January" },
+    { value: "02", label: "February" },
+    { value: "03", label: "March" },
+    { value: "04", label: "April" },
+    { value: "05", label: "May" },
+    { value: "06", label: "June" },
+    { value: "07", label: "July" },
+    { value: "08", label: "August" },
+    { value: "09", label: "September" },
+    { value: "10", label: "October" },
+    { value: "11", label: "November" },
+    { value: "12", label: "December" },
+  ];
 
   const generateYears = () => {
-    const currentYear = new Date().getFullYear()
-    const years = []
+    const currentYear = new Date().getFullYear();
+    const years = [];
     for (let year = currentYear; year >= 1930; year--) {
-      years.push(year.toString())
+      years.push(year.toString());
     }
-    return years
-  }
+    return years;
+  };
 
-  const formatPeriod = (exp: Experience) => {
-    if (exp.start_year && exp.start_year !== 'not-set') {
-      const startMonth = exp.start_month !== 'not-set' && exp.start_month ? months.find(m => m.value === exp.start_month)?.label : ''
-      const startYear = exp.start_year
-      const start = startMonth ? `${startMonth} ${startYear}` : startYear
+  const formatPeriod = (exp: ProfileExperience) => {
+    if (exp.start_year && exp.start_year !== "not-set") {
+      const startMonth =
+        exp.start_month !== "not-set" && exp.start_month
+          ? months.find((m) => m.value === exp.start_month)?.label
+          : "";
+      const startYear = exp.start_year;
+      const start = startMonth ? `${startMonth} ${startYear}` : startYear;
 
       if (exp.is_current) {
-        return `${start} - Present`
+        return `${start} - Present`;
       }
 
-      if (exp.end_year && exp.end_year !== 'not-set') {
-        const endMonth = exp.end_month !== 'not-set' && exp.end_month ? months.find(m => m.value === exp.end_month)?.label : ''
-        const endYear = exp.end_year
-        const end = endMonth ? `${endMonth} ${endYear}` : endYear
-        return `${start} - ${end}`
+      if (exp.end_year && exp.end_year !== "not-set") {
+        const endMonth =
+          exp.end_month !== "not-set" && exp.end_month
+            ? months.find((m) => m.value === exp.end_month)?.label
+            : "";
+        const endYear = exp.end_year;
+        const end = endMonth ? `${endMonth} ${endYear}` : endYear;
+        return `${start} - ${end}`;
       }
 
-      return start
+      return start;
     }
 
-    return exp.period || ''
-  }
+    return exp.period || "";
+  };
 
   const moveUp = (index: number) => {
-    if (index === 0) return
+    if (index === 0) return;
 
-    const newExperiences = [...experiences]
-    const temp = newExperiences[index - 1]
-    newExperiences[index - 1] = newExperiences[index]
-    newExperiences[index] = temp
+    const newExperiences = [...experiences];
+    const temp = newExperiences[index - 1];
+    newExperiences[index - 1] = newExperiences[index];
+    newExperiences[index] = temp;
 
-    setExperiences(newExperiences)
-  }
+    setExperiences(newExperiences);
+  };
 
   const moveDown = (index: number) => {
-    if (index === experiences.length - 1) return
+    if (index === experiences.length - 1) return;
 
-    const newExperiences = [...experiences]
-    const temp = newExperiences[index + 1]
-    newExperiences[index + 1] = newExperiences[index]
-    newExperiences[index] = temp
+    const newExperiences = [...experiences];
+    const temp = newExperiences[index + 1];
+    newExperiences[index + 1] = newExperiences[index];
+    newExperiences[index] = temp;
 
-    setExperiences(newExperiences)
-  }
+    setExperiences(newExperiences);
+  };
 
   const addExperience = () => {
     if (newExperience.title && newExperience.company) {
-      setExperiences(prev => [...prev, {
+      const addedExperience = {
         id: Date.now(),
         ...newExperience,
-        achievements: newExperience.achievements.filter(a => a.trim())
-      }])
-      setNewExperience({
-        title: '',
-        company: '',
-        period: '',
-        start_month: 'not-set',
-        start_year: 'not-set',
-        end_month: 'not-set',
-        end_year: 'not-set',
-        is_current: false,
-        description: '',
-        achievements: ['']
-      })
-      setShowAddExperienceForm(false)
+        achievements: newExperience.achievements.filter((a) => a.trim()),
+      };
+      const updatedExperiences = [...experiences, addedExperience];
+      setExperiences(updatedExperiences);
+      onUpdateAdditionalInfo({ experience: updatedExperiences });
+      setNewExperience(defaultExperienceValue);
+      setShowAddExperienceForm(false);
     }
-  }
+  };
 
   const removeExperience = (id: number) => {
-    setExperiences(prev => prev.filter(exp => exp.id !== id))
-  }
+    const newExperiences = [...experiences].filter((exp) => exp.id !== id);
+    setExperiences(newExperiences);
+    onUpdateAdditionalInfo({ experience: newExperiences });
+  };
 
-  const startEditing = (exp: Experience) => {
-    setEditingExperience(exp.id)
+  const startEditing = (exp: ProfileExperience) => {
+    setEditingExperience(exp.id);
     setEditForm({
       title: exp.title,
       company: exp.company,
       period: exp.period,
-      start_month: exp.start_month || 'not-set',
-      start_year: exp.start_year || 'not-set',
-      end_month: exp.end_month || 'not-set',
-      end_year: exp.end_year || 'not-set',
+      start_month: exp.start_month || "not-set",
+      start_year: exp.start_year || "not-set",
+      end_month: exp.end_month || "not-set",
+      end_year: exp.end_year || "not-set",
       is_current: exp.is_current || false,
       description: exp.description,
-      achievements: exp.achievements.length > 0 ? exp.achievements : ['']
-    })
-  }
+      achievements: exp.achievements.length > 0 ? exp.achievements : [""],
+    });
+  };
 
   const saveEdit = (id: number) => {
-    setExperiences(prev => prev.map(exp =>
-      exp.id === id ? {
-        ...exp,
-        ...editForm,
-        achievements: editForm.achievements.filter(a => a.trim())
-      } : exp
-    ))
-    setEditingExperience(null)
-  }
+    const originalExperience = experiences.filter((exp) => exp.id === id)[0];
+
+    const editedExperience = {
+      ...originalExperience,
+      ...editForm,
+      achievements: editForm.achievements.filter((a) => a.trim()),
+    };
+    const updatedExperiences = [
+      ...experiences.filter((exp) => exp.id !== id),
+      editedExperience,
+    ];
+    setExperiences(updatedExperiences);
+    onUpdateAdditionalInfo({ experience: updatedExperiences });
+
+    setEditingExperience(null);
+  };
 
   const cancelEdit = () => {
-    setEditingExperience(null)
+    setEditingExperience(null);
     setEditForm({
-      title: '',
-      company: '',
-      period: '',
-      start_month: 'not-set',
-      start_year: 'not-set',
-      end_month: 'not-set',
-      end_year: 'not-set',
+      title: "",
+      company: "",
+      period: "",
+      start_month: "not-set",
+      start_year: "not-set",
+      end_month: "not-set",
+      end_year: "not-set",
       is_current: false,
-      description: '',
-      achievements: ['']
-    })
-  }
+      description: "",
+      achievements: [""],
+    });
+  };
 
   return (
     <Card className="hover:shadow-lg transition-shadow duration-300">
@@ -294,7 +279,12 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
                       <Input
                         id="edit-exp-title"
                         value={editForm.title}
-                        onChange={(e) => setEditForm(prev => ({ ...prev, title: e.target.value }))}
+                        onChange={(e) =>
+                          setEditForm((prev) => ({
+                            ...prev,
+                            title: e.target.value,
+                          }))
+                        }
                         placeholder="Senior Developer"
                       />
                     </div>
@@ -303,7 +293,12 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
                       <Input
                         id="edit-exp-company"
                         value={editForm.company}
-                        onChange={(e) => setEditForm(prev => ({ ...prev, company: e.target.value }))}
+                        onChange={(e) =>
+                          setEditForm((prev) => ({
+                            ...prev,
+                            company: e.target.value,
+                          }))
+                        }
                         placeholder="Company Name"
                       />
                     </div>
@@ -312,8 +307,21 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
                     <Label>Period (Optional)</Label>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                       <div>
-                        <Label htmlFor="edit-start-month" className="text-xs text-muted-foreground">Start Month</Label>
-                        <Select value={editForm.start_month} onValueChange={(value) => setEditForm(prev => ({ ...prev, start_month: value }))}>
+                        <Label
+                          htmlFor="edit-start-month"
+                          className="text-xs text-muted-foreground"
+                        >
+                          Start Month
+                        </Label>
+                        <Select
+                          value={editForm.start_month}
+                          onValueChange={(value) =>
+                            setEditForm((prev) => ({
+                              ...prev,
+                              start_month: value,
+                            }))
+                          }
+                        >
                           <SelectTrigger id="edit-start-month">
                             <SelectValue placeholder="Month" />
                           </SelectTrigger>
@@ -328,8 +336,21 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
                         </Select>
                       </div>
                       <div>
-                        <Label htmlFor="edit-start-year" className="text-xs text-muted-foreground">Start Year</Label>
-                        <Select value={editForm.start_year} onValueChange={(value) => setEditForm(prev => ({ ...prev, start_year: value }))}>
+                        <Label
+                          htmlFor="edit-start-year"
+                          className="text-xs text-muted-foreground"
+                        >
+                          Start Year
+                        </Label>
+                        <Select
+                          value={editForm.start_year}
+                          onValueChange={(value) =>
+                            setEditForm((prev) => ({
+                              ...prev,
+                              start_year: value,
+                            }))
+                          }
+                        >
                           <SelectTrigger id="edit-start-year">
                             <SelectValue placeholder="Year" />
                           </SelectTrigger>
@@ -344,10 +365,20 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
                         </Select>
                       </div>
                       <div>
-                        <Label htmlFor="edit-end-month" className="text-xs text-muted-foreground">End Month</Label>
+                        <Label
+                          htmlFor="edit-end-month"
+                          className="text-xs text-muted-foreground"
+                        >
+                          End Month
+                        </Label>
                         <Select
                           value={editForm.end_month}
-                          onValueChange={(value) => setEditForm(prev => ({ ...prev, end_month: value }))}
+                          onValueChange={(value) =>
+                            setEditForm((prev) => ({
+                              ...prev,
+                              end_month: value,
+                            }))
+                          }
                           disabled={editForm.is_current}
                         >
                           <SelectTrigger id="edit-end-month">
@@ -364,10 +395,20 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
                         </Select>
                       </div>
                       <div>
-                        <Label htmlFor="edit-end-year" className="text-xs text-muted-foreground">End Year</Label>
+                        <Label
+                          htmlFor="edit-end-year"
+                          className="text-xs text-muted-foreground"
+                        >
+                          End Year
+                        </Label>
                         <Select
                           value={editForm.end_year}
-                          onValueChange={(value) => setEditForm(prev => ({ ...prev, end_year: value }))}
+                          onValueChange={(value) =>
+                            setEditForm((prev) => ({
+                              ...prev,
+                              end_year: value,
+                            }))
+                          }
                           disabled={editForm.is_current}
                         >
                           <SelectTrigger id="edit-end-year">
@@ -388,9 +429,17 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
                       <Checkbox
                         id="edit-is-current"
                         checked={editForm.is_current}
-                        onCheckedChange={(checked) => setEditForm(prev => ({ ...prev, is_current: checked as boolean }))}
+                        onCheckedChange={(checked) =>
+                          setEditForm((prev) => ({
+                            ...prev,
+                            is_current: checked as boolean,
+                          }))
+                        }
                       />
-                      <Label htmlFor="edit-is-current" className="text-sm font-normal cursor-pointer">
+                      <Label
+                        htmlFor="edit-is-current"
+                        className="text-sm font-normal cursor-pointer"
+                      >
                         I currently work here
                       </Label>
                     </div>
@@ -400,7 +449,12 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
                     <Textarea
                       id="edit-exp-description"
                       value={editForm.description}
-                      onChange={(e) => setEditForm(prev => ({ ...prev, description: e.target.value }))}
+                      onChange={(e) =>
+                        setEditForm((prev) => ({
+                          ...prev,
+                          description: e.target.value,
+                        }))
+                      }
                       placeholder="Describe your role and responsibilities..."
                       rows={3}
                     />
@@ -411,7 +465,9 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
                     <h3 className="font-semibold text-lg">{exp.title}</h3>
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-muted-foreground">{formatPeriod(exp)}</span>
+                      <span className="text-sm text-muted-foreground">
+                        {formatPeriod(exp)}
+                      </span>
                       {isEditing && (
                         <div className="flex gap-1">
                           <Button
@@ -432,25 +488,39 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
                           >
                             <ChevronDown className="w-4 h-4" />
                           </Button>
-                          <Button size="sm" variant="ghost" onClick={() => startEditing(exp)} className="h-7 w-7 p-0">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => startEditing(exp)}
+                            className="h-7 w-7 p-0"
+                          >
                             <Edit className="w-4 h-4" />
                           </Button>
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
-                              <Button size="sm" variant="ghost" className="h-7 w-7 p-0">
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                className="h-7 w-7 p-0"
+                              >
                                 <Trash2 className="w-4 h-4" />
                               </Button>
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>Delete Experience</AlertDialogTitle>
+                                <AlertDialogTitle>
+                                  Delete Experience
+                                </AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  Are you sure you want to delete this work experience? This action cannot be undone.
+                                  Are you sure you want to delete this work
+                                  experience? This action cannot be undone.
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => removeExperience(exp.id)}>
+                                <AlertDialogAction
+                                  onClick={() => removeExperience(exp.id)}
+                                >
                                   Delete
                                 </AlertDialogAction>
                               </AlertDialogFooter>
@@ -461,7 +531,9 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
                     </div>
                   </div>
                   <p className="text-primary font-medium mb-2">{exp.company}</p>
-                  <p className="text-muted-foreground mb-3">{exp.description}</p>
+                  <p className="text-muted-foreground mb-3">
+                    {exp.description}
+                  </p>
                   {exp.achievements.length > 0 && (
                     <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
                       {exp.achievements.map((achievement, achievementIndex) => (
@@ -483,7 +555,12 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
                   <Input
                     id="exp-title"
                     value={newExperience.title}
-                    onChange={(e) => setNewExperience(prev => ({ ...prev, title: e.target.value }))}
+                    onChange={(e) =>
+                      setNewExperience((prev) => ({
+                        ...prev,
+                        title: e.target.value,
+                      }))
+                    }
                     placeholder="Senior Developer"
                   />
                 </div>
@@ -492,7 +569,12 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
                   <Input
                     id="exp-company"
                     value={newExperience.company}
-                    onChange={(e) => setNewExperience(prev => ({ ...prev, company: e.target.value }))}
+                    onChange={(e) =>
+                      setNewExperience((prev) => ({
+                        ...prev,
+                        company: e.target.value,
+                      }))
+                    }
                     placeholder="Company Name"
                   />
                 </div>
@@ -501,8 +583,21 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
                 <Label>Period (Optional)</Label>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                   <div>
-                    <Label htmlFor="new-start-month" className="text-xs text-muted-foreground">Start Month</Label>
-                    <Select value={newExperience.start_month} onValueChange={(value) => setNewExperience(prev => ({ ...prev, start_month: value }))}>
+                    <Label
+                      htmlFor="new-start-month"
+                      className="text-xs text-muted-foreground"
+                    >
+                      Start Month
+                    </Label>
+                    <Select
+                      value={newExperience.start_month}
+                      onValueChange={(value) =>
+                        setNewExperience((prev) => ({
+                          ...prev,
+                          start_month: value,
+                        }))
+                      }
+                    >
                       <SelectTrigger id="new-start-month">
                         <SelectValue placeholder="Month" />
                       </SelectTrigger>
@@ -517,8 +612,21 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
                     </Select>
                   </div>
                   <div>
-                    <Label htmlFor="new-start-year" className="text-xs text-muted-foreground">Start Year</Label>
-                    <Select value={newExperience.start_year} onValueChange={(value) => setNewExperience(prev => ({ ...prev, start_year: value }))}>
+                    <Label
+                      htmlFor="new-start-year"
+                      className="text-xs text-muted-foreground"
+                    >
+                      Start Year
+                    </Label>
+                    <Select
+                      value={newExperience.start_year}
+                      onValueChange={(value) =>
+                        setNewExperience((prev) => ({
+                          ...prev,
+                          start_year: value,
+                        }))
+                      }
+                    >
                       <SelectTrigger id="new-start-year">
                         <SelectValue placeholder="Year" />
                       </SelectTrigger>
@@ -533,10 +641,20 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
                     </Select>
                   </div>
                   <div>
-                    <Label htmlFor="new-end-month" className="text-xs text-muted-foreground">End Month</Label>
+                    <Label
+                      htmlFor="new-end-month"
+                      className="text-xs text-muted-foreground"
+                    >
+                      End Month
+                    </Label>
                     <Select
                       value={newExperience.end_month}
-                      onValueChange={(value) => setNewExperience(prev => ({ ...prev, end_month: value }))}
+                      onValueChange={(value) =>
+                        setNewExperience((prev) => ({
+                          ...prev,
+                          end_month: value,
+                        }))
+                      }
                       disabled={newExperience.is_current}
                     >
                       <SelectTrigger id="new-end-month">
@@ -553,10 +671,20 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
                     </Select>
                   </div>
                   <div>
-                    <Label htmlFor="new-end-year" className="text-xs text-muted-foreground">End Year</Label>
+                    <Label
+                      htmlFor="new-end-year"
+                      className="text-xs text-muted-foreground"
+                    >
+                      End Year
+                    </Label>
                     <Select
                       value={newExperience.end_year}
-                      onValueChange={(value) => setNewExperience(prev => ({ ...prev, end_year: value }))}
+                      onValueChange={(value) =>
+                        setNewExperience((prev) => ({
+                          ...prev,
+                          end_year: value,
+                        }))
+                      }
                       disabled={newExperience.is_current}
                     >
                       <SelectTrigger id="new-end-year">
@@ -577,9 +705,17 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
                   <Checkbox
                     id="new-is-current"
                     checked={newExperience.is_current}
-                    onCheckedChange={(checked) => setNewExperience(prev => ({ ...prev, is_current: checked as boolean }))}
+                    onCheckedChange={(checked) =>
+                      setNewExperience((prev) => ({
+                        ...prev,
+                        is_current: checked as boolean,
+                      }))
+                    }
                   />
-                  <Label htmlFor="new-is-current" className="text-sm font-normal cursor-pointer">
+                  <Label
+                    htmlFor="new-is-current"
+                    className="text-sm font-normal cursor-pointer"
+                  >
                     I currently work here
                   </Label>
                 </div>
@@ -589,14 +725,22 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
                 <Textarea
                   id="exp-description"
                   value={newExperience.description}
-                  onChange={(e) => setNewExperience(prev => ({ ...prev, description: e.target.value }))}
+                  onChange={(e) =>
+                    setNewExperience((prev) => ({
+                      ...prev,
+                      description: e.target.value,
+                    }))
+                  }
                   placeholder="Describe your role and responsibilities..."
                   rows={3}
                 />
               </div>
               <div className="flex gap-2">
                 <Button onClick={addExperience}>Add</Button>
-                <Button variant="outline" onClick={() => setShowAddExperienceForm(false)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowAddExperienceForm(false)}
+                >
                   Cancel
                 </Button>
               </div>
@@ -605,5 +749,5 @@ export function ExperienceSection({ isEditing }: ExperienceSectionProps) {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

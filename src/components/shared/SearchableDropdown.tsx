@@ -1,32 +1,45 @@
-import { useState, useEffect } from "react"
-import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { ChevronDownIcon, Loader2 } from "lucide-react"
-import { supabase } from "@/lib/supabase"
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState, useEffect } from "react";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { ChevronDownIcon, Loader2 } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 interface SearchableDropdownProps {
-  table: string
-  searchColumns: string[]
-  valueColumn: string
-  labelColumn: string
-  value: string
-  onChange: (value: string, label: string) => void
-  placeholder?: string
-  searchPlaceholder?: string
-  label?: string
-  labelClassName?: string
-  disabled?: boolean
-  className?: string
-  id?: string
-  minSearchLength?: number
-  debounceMs?: number
-  limit?: number
+  table: string;
+  searchColumns: string[];
+  valueColumn: string;
+  labelColumn: string;
+  labelValue?: string;
+  value: string | number;
+  onChange: (value: string, label: string) => void;
+  placeholder?: string;
+  searchPlaceholder?: string;
+  label?: string;
+  labelClassName?: string;
+  disabled?: boolean;
+  className?: string;
+  id?: string;
+  minSearchLength?: number;
+  debounceMs?: number;
+  limit?: number;
 }
 
 interface DataItem {
-  [key: string]: any
+  [key: string]: any;
 }
 
 export function SearchableDropdown({
@@ -34,6 +47,7 @@ export function SearchableDropdown({
   searchColumns,
   valueColumn,
   labelColumn,
+  labelValue,
   value,
   onChange,
   placeholder = "Select...",
@@ -45,49 +59,60 @@ export function SearchableDropdown({
   id,
   minSearchLength = 3,
   debounceMs = 500,
-  limit = 50
+  limit = 50,
 }: SearchableDropdownProps) {
-  const [data, setData] = useState<DataItem[]>([])
-  const [isLoading, setIsLoading] = useState(false)
-  const [open, setOpen] = useState(false)
-  const [searchQuery, setSearchQuery] = useState('')
+  const [data, setData] = useState<DataItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const timeoutId = setTimeout(async () => {
       if (searchQuery.length >= minSearchLength) {
-        setIsLoading(true)
+        setIsLoading(true);
         try {
           const searchConditions = searchColumns
-            .map(col => `${col}.ilike.%${searchQuery}%`)
-            .join(',')
+            .map((col) => `${col}.ilike.%${searchQuery}%`)
+            .join(",");
 
           const { data: fetchedData, error } = await supabase
             .from(table)
             .select(`${valueColumn}, ${labelColumn}`)
             .or(searchConditions)
-            .limit(limit)
+            .limit(limit);
 
           if (error) {
-            console.error(`Error searching ${table}:`, error)
-            setData([])
+            console.error(`Error searching ${table}:`, error);
+            setData([]);
           } else {
-            setData(fetchedData || [])
+            setData(fetchedData || []);
           }
         } catch (error) {
-          console.error(`Error searching ${table}:`, error)
-          setData([])
+          console.error(`Error searching ${table}:`, error);
+          setData([]);
         } finally {
-          setIsLoading(false)
+          setIsLoading(false);
         }
-      } else {
-        setData([])
       }
-    }, debounceMs)
+    }, debounceMs);
 
-    return () => clearTimeout(timeoutId)
-  }, [searchQuery, table, searchColumns, valueColumn, labelColumn, minSearchLength, debounceMs, limit])
+    return () => clearTimeout(timeoutId);
+  }, [
+    searchQuery,
+    table,
+    searchColumns,
+    valueColumn,
+    labelColumn,
+    minSearchLength,
+    debounceMs,
+    limit,
+  ]);
 
-  const displayValue = value || placeholder
+  const displayValue =
+    data.find((item) => item[valueColumn] === value)?.[labelColumn] ||
+    labelValue ||
+    value ||
+    placeholder;
 
   return (
     <div className={className}>
@@ -123,11 +148,15 @@ export function SearchableDropdown({
                 </div>
               )}
               {!isLoading && searchQuery.length < minSearchLength && (
-                <CommandEmpty>Type at least {minSearchLength} characters to search</CommandEmpty>
+                <CommandEmpty>
+                  Type at least {minSearchLength} characters to search
+                </CommandEmpty>
               )}
-              {!isLoading && searchQuery.length >= minSearchLength && data.length === 0 && (
-                <CommandEmpty>No results found</CommandEmpty>
-              )}
+              {!isLoading &&
+                searchQuery.length >= minSearchLength &&
+                data.length === 0 && (
+                  <CommandEmpty>No results found</CommandEmpty>
+                )}
               {!isLoading && data.length > 0 && (
                 <CommandGroup>
                   {data.map((item) => (
@@ -135,9 +164,9 @@ export function SearchableDropdown({
                       key={item[valueColumn]}
                       value={item[labelColumn]}
                       onSelect={() => {
-                        onChange(item[valueColumn], item[labelColumn])
-                        setSearchQuery('')
-                        setOpen(false)
+                        onChange(item[valueColumn], item[labelColumn]);
+                        setSearchQuery("");
+                        setOpen(false);
                       }}
                     >
                       {item[labelColumn]}
@@ -150,5 +179,5 @@ export function SearchableDropdown({
         </PopoverContent>
       </Popover>
     </div>
-  )
+  );
 }

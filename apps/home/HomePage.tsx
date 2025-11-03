@@ -1,34 +1,33 @@
 // Home page with feed of posts from the network
 
-import { useState, useMemo } from "react"
-import { Feed } from "../../shared-src/components/Feed"
-import { FeedFilters } from "../../shared-src/components/FeedFilters"
-import { MOCK_POSTS, FOLLOWED_USER_IDS } from "../../shared-src/lib/mock-posts"
-import { PostType } from "../../shared-src/types/post"
+import { useState, useMemo } from "react";
+import { Feed } from "../../shared-src/components/Feed";
+import { FeedFilters } from "../../shared-src/components/FeedFilters";
+import { MOCK_POSTS, FOLLOWED_USER_IDS } from "../../shared-src/lib/mock-posts";
 import {
   DEFAULT_FILTERS,
   applyFeedFilters,
   getUniqueCountries,
   getCitiesByCountry,
   getEmptyStateMessage,
-  type FeedFilters as FeedFiltersType
-} from "../../shared-src/lib/feed-filters"
+  type FeedFilters as FeedFiltersType,
+} from "../../shared-src/lib/feed-filters";
 
 export function HomePage() {
-  const [filters, setFilters] = useState<FeedFiltersType>(DEFAULT_FILTERS)
+  const [filters, setFilters] = useState<FeedFiltersType>(DEFAULT_FILTERS);
 
   const filteredPosts = useMemo(() => {
-    return applyFeedFilters(MOCK_POSTS, filters, FOLLOWED_USER_IDS)
-  }, [filters])
+    return applyFeedFilters(MOCK_POSTS, filters, FOLLOWED_USER_IDS);
+  }, [filters]);
 
-  const countries = useMemo(() => getUniqueCountries(MOCK_POSTS), [])
+  const countries = useMemo(() => getUniqueCountries(MOCK_POSTS), []);
   const cities = useMemo(() => {
     return filters.location.country
       ? getCitiesByCountry(MOCK_POSTS, filters.location.country)
-      : []
-  }, [filters.location.country])
+      : [];
+  }, [filters.location.country]);
 
-  const emptyMessage = getEmptyStateMessage(filters)
+  const emptyMessage = getEmptyStateMessage(filters);
 
   return (
     <div className="h-full w-full flex flex-col">
@@ -41,8 +40,12 @@ export function HomePage() {
             countries={countries}
             cities={cities}
             onViewChange={(view) => setFilters({ ...filters, view })}
-            onPostTypeChange={(postType) => setFilters({ ...filters, postType })}
-            onLocationChange={(location) => setFilters({ ...filters, location })}
+            onPostTypeChange={(postType) =>
+              setFilters({ ...filters, postType })
+            }
+            onLocationChange={(location) =>
+              setFilters({ ...filters, location })
+            }
           />
         </div>
       </div>
@@ -58,5 +61,5 @@ export function HomePage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

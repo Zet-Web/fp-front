@@ -21,18 +21,15 @@ let initialSessionFetched = false
 
 export const authReady = new Promise<Session | null>((resolve) => {
   authReadyResolver = resolve
-})
+});
 
-;(async () => {
+(async () => {
   try {
-    console.log('🔄 [Auth Init] Starting initial session hydration')
     const { data: { session }, error } = await supabase.auth.getSession()
 
     if (error) {
-      console.error('❌ [Auth Init] Error during initial session fetch:', error)
       authReadyResolver(null)
     } else {
-      console.log('✅ [Auth Init] Initial session hydrated:', session ? 'Active session' : 'No session')
       authReadyResolver(session)
     }
     initialSessionFetched = true
@@ -42,14 +39,6 @@ export const authReady = new Promise<Session | null>((resolve) => {
     initialSessionFetched = true
   }
 })()
-
-supabase.auth.onAuthStateChange((event, session) => {
-  console.log('🔐 [Auth State Change]', event, session ? 'Session active' : 'No session')
-
-  if (event === 'TOKEN_REFRESHED') {
-    console.log('♻️ [Auth] Token refreshed automatically')
-  }
-})
 
 export function getAuthReadyState() {
   return initialSessionFetched

@@ -1,19 +1,35 @@
-import { useState, useCallback, useEffect } from 'react'
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { MapPin, Building2, Globe, X, Plus, Loader2 } from 'lucide-react'
-import { LocationItem, ReferenceListItem } from '../types/location'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useState, useCallback, useEffect } from "react";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { MapPin, Building2, Globe, X, Plus, Loader2 } from "lucide-react";
+import {
+  LocationItem,
+  LocationTypeEnum,
+  ReferenceListItem,
+} from "../types/location";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { FPApi } from "@/lib/api";
 
 interface LocationSelectorProps {
-  cities: LocationItem[]
-  countries: LocationItem[]
-  onAddLocation: (location: LocationItem) => boolean
-  onRemoveLocation: (location: LocationItem) => void
-  onClearAll: () => void
-  maxLocations?: number
+  cities: LocationItem[];
+  countries: LocationItem[];
+  onAddLocation: (location: LocationItem) => boolean;
+  onRemoveLocation: (location: LocationItem) => void;
+  onClearAll: () => void;
+  maxLocations?: number;
 }
 
 export function LocationSelector({
@@ -22,110 +38,91 @@ export function LocationSelector({
   onAddLocation,
   onRemoveLocation,
   onClearAll,
-  maxLocations = 3
+  maxLocations = 3,
 }: LocationSelectorProps) {
-  const [open, setOpen] = useState(false)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [cityResults, setCityResults] = useState<ReferenceListItem[]>([])
-  const [countryResults, setCountryResults] = useState<ReferenceListItem[]>([])
-  const [isSearching, setIsSearching] = useState(false)
-  const [activeTab, setActiveTab] = useState<'city' | 'country'>('city')
+  const [open, setOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [cityResults, setCityResults] = useState<ReferenceListItem[]>([]);
+  const [countryResults, setCountryResults] = useState<ReferenceListItem[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [activeTab, setActiveTab] = useState<"city" | "country">("city");
 
-  const allLocations = [...cities, ...countries]
-  const isMaxReached = allLocations.length >= maxLocations
+  const allLocations = [...cities, ...countries];
+  const isMaxReached = allLocations.length >= maxLocations;
 
-  const fetchReferenceLists = useCallback(async (listType: 'city' | 'country', query: string) => {
-    if (query.length < 2) {
-      if (listType === 'city') {
-        setCityResults([])
-      } else {
-        setCountryResults([])
-      }
-      return
-    }
-
-    setIsSearching(true)
-
-    try {
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
-
-      if (!supabaseUrl || !supabaseAnonKey) {
-        throw new Error('Supabase configuration missing')
-      }
-
-      const response = await fetch(`${supabaseUrl}/functions/v1/fetch-reference-lists`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${supabaseAnonKey}`,
-        },
-        body: JSON.stringify({
-          list_type: listType,
-          search_query: query
-        })
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch reference data')
-      }
-
-      const data = await response.json()
-
-      if (data.success && data.items) {
-        if (listType === 'city') {
-          setCityResults(data.items)
+  const fetchReferenceLists = useCallback(
+    async (locationType: "city" | "country", searchQuery: string) => {
+      if (searchQuery.length < 2) {
+        if (locationType === "city") {
+          setCityResults([]);
         } else {
-          setCountryResults(data.items)
+          setCountryResults([]);
         }
+        return;
       }
-    } catch (error) {
-      console.error('Error fetching reference lists:', error)
-    } finally {
-      setIsSearching(false)
-    }
-  }, [])
+
+      setIsSearching(true);
+
+      try {
+        const response = await FPApi.axios.get(`/location/search`, {
+          params: { locationType, searchQuery },
+        });
+        const data = response.data;
+
+        if (data.items) {
+          if (locationType === "city") {
+            setCityResults(data.items);
+          } else {
+            setCountryResults(data.items);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching reference lists:", error);
+      } finally {
+        setIsSearching(false);
+      }
+    },
+    []
+  );
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (searchQuery) {
-        fetchReferenceLists(activeTab, searchQuery)
+        fetchReferenceLists(activeTab, searchQuery);
       } else {
-        setCityResults([])
-        setCountryResults([])
+        setCityResults([]);
+        setCountryResults([]);
       }
-    }, 300)
+    }, 300);
 
-    return () => clearTimeout(timeoutId)
-  }, [searchQuery, activeTab, fetchReferenceLists])
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery, activeTab, fetchReferenceLists]);
 
-  const handleAddLocation = (type: 'city' | 'country', item: ReferenceListItem) => {
+  const handleAddLocation = (
+    type: LocationTypeEnum,
+    item: ReferenceListItem
+  ) => {
     const location: LocationItem = {
       type,
       id: item.id,
       name: item.name,
-      metadata: {
-        country: item.country,
-        code: item.code,
-        population: item.population
-      }
-    }
+    };
 
-    const success = onAddLocation(location)
+    const success = onAddLocation(location);
     if (success) {
-      setSearchQuery('')
-      setCityResults([])
-      setCountryResults([])
-      setOpen(false)
+      setSearchQuery("");
+      setCityResults([]);
+      setCountryResults([]);
+      setOpen(false);
     }
-  }
+  };
 
   const handleTabChange = (value: string) => {
-    setActiveTab(value as 'city' | 'country')
-    setSearchQuery('')
-    setCityResults([])
-    setCountryResults([])
-  }
+    setActiveTab(value as "city" | "country");
+    setSearchQuery("");
+    setCityResults([]);
+    setCountryResults([]);
+  };
 
   return (
     <div className="space-y-3">
@@ -186,11 +183,15 @@ export function LocationSelector({
               className="gap-2"
             >
               <Plus className="w-4 h-4" />
-              {allLocations.length === 0 ? 'Add location' : 'Add another'}
+              {allLocations.length === 0 ? "Add location" : "Add another"}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-[300px] p-0" align="start">
-            <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+            <Tabs
+              value={activeTab}
+              onValueChange={handleTabChange}
+              className="w-full"
+            >
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="city" className="text-xs">
                   <Building2 className="w-3 h-3 mr-1" />
@@ -216,18 +217,24 @@ export function LocationSelector({
                       </div>
                     )}
                     {!isSearching && searchQuery.length < 2 && (
-                      <CommandEmpty>Type at least 2 characters to search</CommandEmpty>
+                      <CommandEmpty>
+                        Type at least 2 characters to search
+                      </CommandEmpty>
                     )}
-                    {!isSearching && searchQuery.length >= 2 && cityResults.length === 0 && (
-                      <CommandEmpty>No cities found</CommandEmpty>
-                    )}
+                    {!isSearching &&
+                      searchQuery.length >= 2 &&
+                      cityResults.length === 0 && (
+                        <CommandEmpty>No cities found</CommandEmpty>
+                      )}
                     {!isSearching && cityResults.length > 0 && (
                       <CommandGroup>
                         {cityResults.map((city) => (
                           <CommandItem
                             key={city.id}
                             value={city.name}
-                            onSelect={() => handleAddLocation('city', city)}
+                            onSelect={() =>
+                              handleAddLocation(LocationTypeEnum.city, city)
+                            }
                           >
                             <Building2 className="w-4 h-4 mr-2" />
                             <span>{city.name}</span>
@@ -253,18 +260,27 @@ export function LocationSelector({
                       </div>
                     )}
                     {!isSearching && searchQuery.length < 2 && (
-                      <CommandEmpty>Type at least 2 characters to search</CommandEmpty>
+                      <CommandEmpty>
+                        Type at least 2 characters to search
+                      </CommandEmpty>
                     )}
-                    {!isSearching && searchQuery.length >= 2 && countryResults.length === 0 && (
-                      <CommandEmpty>No countries found</CommandEmpty>
-                    )}
+                    {!isSearching &&
+                      searchQuery.length >= 2 &&
+                      countryResults.length === 0 && (
+                        <CommandEmpty>No countries found</CommandEmpty>
+                      )}
                     {!isSearching && countryResults.length > 0 && (
                       <CommandGroup>
                         {countryResults.map((country) => (
                           <CommandItem
                             key={country.id}
                             value={country.name}
-                            onSelect={() => handleAddLocation('country', country)}
+                            onSelect={() =>
+                              handleAddLocation(
+                                LocationTypeEnum.country,
+                                country
+                              )
+                            }
                           >
                             <Globe className="w-4 h-4 mr-2" />
                             <span>{country.name}</span>
@@ -302,5 +318,5 @@ export function LocationSelector({
         </p>
       )}
     </div>
-  )
+  );
 }
