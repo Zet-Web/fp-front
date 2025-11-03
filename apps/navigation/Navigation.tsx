@@ -403,7 +403,7 @@ export function Navigation() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={toggleLeft} 
+                      onClick={toggleLeft}
                       className="flex-1 h-9 hover:bg-accent/50"
                     >
                       <PanelLeftClose className="h-4 w-4" />
