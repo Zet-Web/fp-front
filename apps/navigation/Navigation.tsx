@@ -406,8 +406,7 @@ export function Navigation() {
                       onClick={toggleLeft}
                       className="flex-1 h-9 hover:bg-accent/50"
                     >
-                      <PanelLeftClose className="h-4 w-4 mr-2" />
-                      Collapse 
+                      <PanelLeftClose className="h-4 w-4" />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -423,8 +422,7 @@ export function Navigation() {
                       onClick={handleFocusMode}
                       className="flex-1 h-9 hover:bg-accent/50"
                     >
-                      <Minimize2 className="h-4 w-4 mr-2" />
-                      {leftCollapsed && rightCollapsed ? "Expand" : "Focus"}
+                      
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
