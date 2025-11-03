@@ -438,6 +438,8 @@ export function Navigation() {
               </TooltipProvider>
             </div>
 
+          </CardContent>
+        </Card>
 
         {/* Version Display */}
         <div className="px-4 pb-4">
