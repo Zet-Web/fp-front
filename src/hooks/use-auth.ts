@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase, authReady } from "@/lib/supabase";
-import { Profile } from "@/types/profile";
 import { FPApi } from "@/lib/api";
+import { UserProfile } from "@/apps/profile/src/types/profile";
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
 
   const fetchUserProfile = async (userId: string, sessionToUse: Session) => {
@@ -50,6 +50,10 @@ export function useAuth() {
         );
       }
     }
+  };
+
+  const updateProfilePartial = (updates: Partial<UserProfile>) => {
+    setProfile((prev) => (prev ? { ...prev, ...updates } : null));
   };
 
   useEffect(() => {
@@ -137,5 +141,6 @@ export function useAuth() {
     loading,
     signOut,
     isAuthenticated: !!user,
+    updateProfilePartial
   };
 }

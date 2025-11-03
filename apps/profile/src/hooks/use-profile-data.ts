@@ -2,6 +2,9 @@ import { useState, useEffect, useCallback } from "react";
 import { useAuthContext } from "@/components/auth-provider";
 import { FPApi } from "@/lib/api";
 import { UserAdditionalInfo, UserProfile } from "../types/profile";
+import { useLocation } from "react-router-dom";
+
+const DEFAULT_PROFILE_PATH = "profile";
 
 interface ProfileState {
   user: UserProfile | null;
@@ -14,7 +17,10 @@ interface ProfileState {
 }
 
 export function useProfileData() {
+  const location = useLocation();
+
   const [needLoadAdditionalInfo, setNeedLoadAdditionalInfo] = useState(false);
+  const [isAdditionalInfoLoading, setAdditionalInfoLoading] = useState(false);
 
   const [profileState, setProfileState] = useState<ProfileState>({
     user: null,
@@ -29,7 +35,7 @@ export function useProfileData() {
   const { profile: authProfile, isAuthenticated } = useAuthContext();
 
   const extractUsernameFromUrl = useCallback((): string | null => {
-    const urlParams = new URLSearchParams(window.location.search);
+    const urlParams = new URLSearchParams(location.search);
     const username = urlParams.get("username");
 
     if (username) {
@@ -37,16 +43,20 @@ export function useProfileData() {
       return username;
     }
 
-    const pathSegments = window.location.pathname.split("/").filter(Boolean);
+    const pathSegments = location.pathname.split("/").filter(Boolean);
     if (pathSegments.length > 0) {
       const lastSegment = pathSegments[pathSegments.length - 1];
       if (/^[a-zA-Z0-9_-]{3,30}$/.test(lastSegment)) {
+        if (lastSegment === DEFAULT_PROFILE_PATH && authProfile?.username) {
+          return authProfile.username;
+        }
+
         return lastSegment;
       }
     }
 
     return null;
-  }, []);
+  }, [authProfile?.username, location.pathname, location.search]);
 
   const fetchAdditionalInfoByUsername = async (
     username: string
@@ -64,13 +74,11 @@ export function useProfileData() {
   };
 
   const loadAdditionalInfo = useCallback(async () => {
-    const requestedUsername =
-      isAuthenticated && !!authProfile
-        ? authProfile.username
-        : extractUsernameFromUrl();
+    const requestedUsername = extractUsernameFromUrl();
 
     if (!requestedUsername) return;
 
+    setAdditionalInfoLoading(true);
     try {
       const additionalInfo = await fetchAdditionalInfoByUsername(
         requestedUsername
@@ -84,8 +92,10 @@ export function useProfileData() {
       }
     } catch (error) {
       console.error(error);
+    } finally {
+      setAdditionalInfoLoading(false);
     }
-  }, [authProfile, extractUsernameFromUrl, isAuthenticated]);
+  }, [extractUsernameFromUrl]);
 
   const fetchProfileByUsername = async (
     username: string
@@ -105,10 +115,7 @@ export function useProfileData() {
   useEffect(() => {
     const initializeProfileData = async () => {
       try {
-        const requestedUsername =
-          isAuthenticated && !!authProfile
-            ? authProfile.username
-            : extractUsernameFromUrl();
+        const requestedUsername = extractUsernameFromUrl();
 
         setProfileState((prev) => ({
           ...prev,
@@ -183,7 +190,6 @@ export function useProfileData() {
     };
 
     initializeProfileData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [extractUsernameFromUrl, isAuthenticated, authProfile?.username]);
 
   const updateProfile = (updatedProfile: Partial<UserProfile>) => {
@@ -264,5 +270,6 @@ export function useProfileData() {
     refetchProfile,
     logout,
     setNeedLoadAdditionalInfo,
+    isAdditionalInfoLoading,
   };
 }

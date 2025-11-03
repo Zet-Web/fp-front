@@ -12,6 +12,7 @@ import { LocationItem } from "./types/location";
 import { UserAdditionalInfo, UserProfile } from "./types/profile";
 import { getObjectDifferences } from "@/utils/getObjectDifferences";
 import { FPApi } from "@/lib/api";
+import { useAuthContext } from "@/components/auth-provider";
 
 enum ProfileTabs {
   information = "information",
@@ -19,6 +20,7 @@ enum ProfileTabs {
 }
 
 export function ProfilePage() {
+  const { updateProfilePartial } = useAuthContext();
   const {
     user,
     isLoading,
@@ -29,6 +31,7 @@ export function ProfilePage() {
     refetchProfile,
     addititonalInfo,
     setNeedLoadAdditionalInfo,
+    isAdditionalInfoLoading,
   } = useProfileData();
 
   const navigate = useNavigate();
@@ -98,6 +101,7 @@ export function ProfilePage() {
     );
 
     await FPApi.axios.patch("/profile/update", dataToUpdate);
+    updateProfilePartial(dataToUpdate);
   };
 
   const updateAdditionalInfo = async () => {
@@ -230,6 +234,7 @@ export function ProfilePage() {
               isEditing={isEditing}
               onUpdateProfile={handleUpdateProfileData}
               onUpdateAdditionalInfo={handleUpdateAdditionalInfo}
+              isAdditionalInfoLoading={isAdditionalInfoLoading}
             />
           </TabsContent>
         </Tabs>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Moon, Sun, Monitor } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,11 +15,20 @@ import {
   desktopNavigationItems,
   createButtonConfig,
 } from "@shared/lib/navigation-config";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export function Navigation() {
   const location = useLocation();
-  const { user, profile, isAuthenticated, loading } = useAuthContext();
+  const { profile: user, isAuthenticated, loading } = useAuthContext();
   const { setTheme } = useTheme();
+
+  const displayName = user?.name || user?.username || "User";
+  const avatarFallback = displayName
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
 
   return (
     <aside className="hidden lg:flex lg:w-64 xl:w-72 flex-col h-full bg-background/30 overflow-hidden">
@@ -45,7 +55,7 @@ export function Navigation() {
             {desktopNavigationItems.map((item) => {
               const itemPath =
                 typeof item.path === "function"
-                  ? item.path(profile, isAuthenticated)
+                  ? item.path(user, isAuthenticated)
                   : item.path;
 
               return (
@@ -125,25 +135,26 @@ export function Navigation() {
               <Link
                 to={
                   typeof desktopNavigationItems[6].path === "function"
-                    ? desktopNavigationItems[6].path(profile, isAuthenticated)
+                    ? desktopNavigationItems[6].path(user, isAuthenticated)
                     : desktopNavigationItems[6].path
                 }
                 className="flex items-center space-x-3 px-4 py-2 hover:bg-accent/50 transition-colors rounded-md mt-2"
               >
-                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                  <span className="text-white font-semibold text-sm">
-                    {user.email?.charAt(0).toUpperCase()}
-                  </span>
-                </div>
+                <Avatar className="w-10 h-10">
+                  <AvatarImage
+                    src={user.avatar_url || undefined}
+                    alt="Profile"
+                  />
+                  <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-sm text-white">
+                    {avatarFallback}
+                  </AvatarFallback>
+                </Avatar>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-foreground truncate">
-                    {profile?.name ||
-                      user.user_metadata?.name ||
-                      user.email?.split("@")[0] ||
-                      "User"}
+                    {displayName}
                   </p>
                   <p className="text-xs text-muted-foreground truncate">
-                    {profile?.username ? `@${profile.username}` : ""}
+                    {user?.username ? `@${user.username}` : ""}
                   </p>
                 </div>
               </Link>

@@ -49,7 +49,7 @@ export const CONTACT_TYPES: ContactTypeConfig[] = [
     value: ContactType.telegram,
     label: "Telegram",
     icon: MessageCircle,
-    urlPrefix: "t.me/",
+    urlPrefix: "https://t.me/",
     placeholder: "username (3-32 characters)",
     validateValue: (value: string) => {
       return /^[a-zA-Z0-9_]{5,32}$/.test(value.replace("@", ""));
@@ -72,7 +72,7 @@ export const CONTACT_TYPES: ContactTypeConfig[] = [
     value: ContactType.github,
     label: "GitHub",
     icon: Github,
-    urlPrefix: "github.com/",
+    urlPrefix: "https://github.com/",
     placeholder: "username",
     validateValue: (value: string) => {
       return /^[a-zA-Z0-9]([a-zA-Z0-9-]{0,38}[a-zA-Z0-9])?$/.test(value);
@@ -83,7 +83,7 @@ export const CONTACT_TYPES: ContactTypeConfig[] = [
     value: ContactType.linkedin,
     label: "LinkedIn",
     icon: Linkedin,
-    urlPrefix: "linkedin.com/in/",
+    urlPrefix: "https://linkedin.com/in/",
     placeholder: "username",
     validateValue: (value: string) => {
       return /^[a-zA-Z0-9-]{3,100}$/.test(value);
@@ -94,7 +94,7 @@ export const CONTACT_TYPES: ContactTypeConfig[] = [
     value: ContactType.twitter,
     label: "Twitter",
     icon: Twitter,
-    urlPrefix: "twitter.com/",
+    urlPrefix: "https://twitter.com/",
     placeholder: "username",
     validateValue: (value: string) => {
       return /^[a-zA-Z0-9_]{1,15}$/.test(value.replace("@", ""));

@@ -1,15 +1,16 @@
 import { createContext, useContext, ReactNode } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { useAuth } from "@/hooks/use-auth";
-import { Profile } from "@/types/profile";
+import { UserProfile } from "@/apps/profile/src/types/profile";
 
 interface AuthContextType {
   user: User | null;
   session: Session | null;
-  profile: Profile | null;
+  profile: UserProfile | null;
   loading: boolean;
   signOut: () => Promise<void>;
   isAuthenticated: boolean;
+  updateProfilePartial: (updates: Partial<UserProfile>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);

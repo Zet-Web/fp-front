@@ -15,6 +15,7 @@ import { LocationSelector } from "./LocationSelector";
 import { LocationItem } from "../types/location";
 import { UserProfile } from "../types/profile";
 import { FPApi } from "@/lib/api";
+import { useAuthContext } from "@/components/auth-provider";
 
 interface HeroSectionProps {
   user: UserProfile;
@@ -47,6 +48,7 @@ export function HeroSection({
   onRemoveLocation,
   onClearAllLocations,
 }: HeroSectionProps) {
+  const { updateProfilePartial } = useAuthContext();
   const [isFollowing, setIsFollowing] = useState(false);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const [isUploadingCover, setIsUploadingCover] = useState(false);
@@ -90,7 +92,17 @@ export function HeroSection({
         }
       );
 
-      onUpdateProfile({ avatar_url: res.data.publicUrl });
+      if (!res.data?.publicUrl) return;
+
+      const uniqueVersion = new Date().getTime();
+      const newUrl = `${res.data.publicUrl}?v=${uniqueVersion}`;
+      await FPApi.axios.patch("/profile/update", {
+        avatar_url: newUrl,
+      });
+      onUpdateProfile({
+        avatar_url: newUrl,
+      });
+      updateProfilePartial({ avatar_url: newUrl });
     } catch (error) {
       console.error("Avatar upload failed:", error);
     } finally {
@@ -121,7 +133,16 @@ export function HeroSection({
         }
       );
 
-      onUpdateProfile({ cover_url: res.data.publicUrl });
+      if (!res.data?.publicUrl) return;
+
+      const uniqueVersion = new Date().getTime();
+      const newUrl = `${res.data.publicUrl}?v=${uniqueVersion}`;
+      await FPApi.axios.patch("/profile/update", {
+        cover_url: newUrl,
+      });
+      onUpdateProfile({
+        cover_url: newUrl,
+      });
     } catch (error) {
       console.error("Cover upload failed:", error);
     } finally {
