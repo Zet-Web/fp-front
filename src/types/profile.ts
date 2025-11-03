@@ -1,12 +1,6 @@
 // Profile types based on database schema
-export interface ContactInfoEntry {
-  id: string;
-  type: 'phone' | 'email' | 'telegram' | 'whatsapp' | 'github' | 'linkedin' | 'twitter' | 'website' | 'link';
-  value: string;
-  label?: string;
-  order: number;
-  is_whatsapp?: boolean;
-}
+
+import { ContactInfoEntry } from "@/apps/profile/src/types/contacts";
 
 export interface Profile {
   id: string;
