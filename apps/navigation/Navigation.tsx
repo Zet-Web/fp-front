@@ -394,49 +394,50 @@ export function Navigation() {
               </div>
             )}
 
-            {/* Collapse Controls */}
+                        {/* Collapse Controls */}
             <div className="h-px bg-border mx-2 mt-4"></div>
-            <div className="flex gap-2 mt-2">
+            <div className="relative mt-2">
               <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={toggleLeft}
-                      className="flex-1 h-9 hover:bg-accent/50"
-                    >
-                      <PanelLeftClose className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Collapse this sidebar</p>
-                  </TooltipContent>
-                </Tooltip>
+                <div className="absolute -right-6 top-0 flex flex-col gap-2">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={toggleLeft}
+                        className="h-8 w-8 hover:bg-accent/50"
+                      >
+                        <PanelLeftClose className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Collapse this sidebar</p>
+                    </TooltipContent>
+                  </Tooltip>
 
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={handleFocusMode}
-                      className="flex-1 h-9 hover:bg-accent/50"
-                    >
-                      <Minimize2 className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>
-                      {leftCollapsed && rightCollapsed
-                        ? "Expand all sidebars"
-                        : "Focus Mode (Collapse all sidebars)"}
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={handleFocusMode}
+                        className="h-8 w-8 hover:bg-accent/50"
+                      >
+                        <Minimize2 className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>
+                        {leftCollapsed && rightCollapsed
+                          ? "Expand all sidebars"
+                          : "Focus Mode (Collapse all sidebars)"}
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
               </TooltipProvider>
             </div>
-          </CardContent>
-        </Card>
+
 
         {/* Version Display */}
         <div className="px-4 pb-4">
