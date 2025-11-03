@@ -16,7 +16,7 @@ export const desktopNavigationItems: NavItem[] = [
   { icon: Home, label: "Home", path: "/" },
   { icon: Search, label: "Explore", path: "/explore" },
   { icon: Network, label: "Network", path: "/network" },
-  { icon: Library, label: "Resources", path: "/yurservice" },
+  { icon: Library, label: "Yurservice", path: "/yurservice" },
   {
     icon: User,
     label: "Profile",
