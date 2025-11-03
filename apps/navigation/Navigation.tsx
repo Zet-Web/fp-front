@@ -402,7 +402,7 @@ export function Navigation() {
                   <TooltipTrigger asChild>
                     <Button
                       variant="ghost"
-                      size="sm"
+                      size="icon"
                       onClick={toggleLeft}
                       className="flex-1 h-9 hover:bg-accent/50"
                     >
@@ -418,7 +418,7 @@ export function Navigation() {
                   <TooltipTrigger asChild>
                     <Button
                       variant="ghost"
-                      size="sm"
+                      size="icon"
                       onClick={handleFocusMode}
                       className="flex-1 h-9 hover:bg-accent/50"
                     >
