@@ -10,8 +10,8 @@ interface UseTelegramAuthReturn {
   handleTelegramAuth: () => void;
 }
 
-const initiatingHostOrigin = "/";
-const devHostOrigin = "/";
+const initiatingHostOrigin = "/home";
+const devHostOrigin = "/home";
 
 export function useTelegramAuth(): UseTelegramAuthReturn {
   const [isLoading, setIsLoading] = useState(true);
