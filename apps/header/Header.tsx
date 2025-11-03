@@ -15,11 +15,7 @@ export function Header() {
     if (path === '/settings') return 'Settings'
     if (path === '/auth') return 'Authentication'
     if (path === '/test') return 'Test'
-    if (path === '/chats' || path === '/messages') return 'Messages'
-    if (path === '/notifications') return 'Notifications'
-    if (path === '/bookmarks') return 'Bookmarks'
     if (path === '/explore') return 'Explore'
-    if (path === '/communities') return 'Communities'
     if (path.startsWith('/post/')) return 'Post'
     if (path === '/profile' || (profile?.username && path === `/${profile.username}`)) {
       return profile?.name || profile?.username || 'Profile'
