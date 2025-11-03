@@ -29,6 +29,7 @@ import {
   createButtonConfig,
 } from "@shared/lib/navigation-config";
 import { useSidebar } from "@/contexts/sidebar-context";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export function Navigation() {
   const location = useLocation();
@@ -36,6 +37,14 @@ export function Navigation() {
   const { setTheme } = useTheme();
   const { leftCollapsed, rightCollapsed, toggleLeft, collapseAll, expandAll } =
     useSidebar();
+
+  const displayName = profile?.name || profile?.username || "User";
+  const avatarFallback = displayName
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
 
   const handleFocusMode = () => {
     if (leftCollapsed && rightCollapsed) {
@@ -173,11 +182,15 @@ export function Navigation() {
                           : desktopNavigationItems[6].path
                       }
                     >
-                      <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center hover:opacity-90 transition-opacity cursor-pointer">
-                        <span className="text-white font-semibold text-sm">
-                          {user.email?.charAt(0).toUpperCase()}
-                        </span>
-                      </div>
+                      <Avatar className="w-10 h-10">
+                        <AvatarImage
+                          src={profile?.avatar_url || undefined}
+                          alt="Profile"
+                        />
+                        <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-sm text-white">
+                          {avatarFallback}
+                        </AvatarFallback>
+                      </Avatar>
                     </Link>
                   </TooltipTrigger>
                   <TooltipContent side="right">
@@ -361,11 +374,15 @@ export function Navigation() {
                 }
                 className="flex items-center space-x-3 px-4 py-2 hover:bg-accent/50 transition-colors rounded-md mt-2"
               >
-                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                  <span className="text-white font-semibold text-sm">
-                    {user.email?.charAt(0).toUpperCase()}
-                  </span>
-                </div>
+                <Avatar className="w-10 h-10">
+                  <AvatarImage
+                    src={profile?.avatar_url || undefined}
+                    alt="Profile"
+                  />
+                  <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-sm text-white">
+                    {avatarFallback}
+                  </AvatarFallback>
+                </Avatar>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-foreground truncate">
                     {profile?.name ||
