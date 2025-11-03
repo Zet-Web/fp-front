@@ -1,14 +1,14 @@
 // Reusable post card component displaying a single post with author information
 
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,24 +18,24 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
-import { Share, MoreHorizontal, Bookmark, Pencil, Trash2 } from "lucide-react"
-import { useState } from "react"
-import type { PostAuthor } from "../types/post"
+} from "@/components/ui/alert-dialog";
+import { Share, MoreHorizontal, Bookmark, Pencil, Trash2 } from "lucide-react";
+import { useState } from "react";
+import type { PostAuthor } from "../types/post";
 
 interface PostCardProps {
-  title: string
-  content: string
-  images: string[]
-  author: PostAuthor
-  showActions?: boolean
-  onMoreClick?: () => void
-  onBookmarkClick?: () => void
-  onShareClick?: () => void
-  onEditClick?: () => void
-  onDeleteClick?: () => void
-  isSaved?: boolean
-  isOwner?: boolean
+  title: string;
+  content: string;
+  images: string[];
+  author: PostAuthor;
+  showActions?: boolean;
+  onMoreClick?: () => void;
+  onBookmarkClick?: () => void;
+  onShareClick?: () => void;
+  onEditClick?: () => void;
+  onDeleteClick?: () => void;
+  isSaved?: boolean;
+  isOwner?: boolean;
 }
 
 export function PostCard({
@@ -50,12 +50,18 @@ export function PostCard({
   onEditClick,
   onDeleteClick,
   isSaved = false,
-  isOwner = false
+  isOwner = false,
 }: PostCardProps) {
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
-  const displayName = author.name || author.username || 'User'
-  const displayUsername = author.username || author.telegram_username || 'user'
-  const avatarFallback = displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const displayName = author?.name || author?.username || "User";
+  const displayUsername =
+    author?.username || author?.telegram_username || "user";
+  const avatarFallback = displayName
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
 
   return (
     <Card className="hover:shadow-md transition-shadow duration-300">
@@ -63,7 +69,10 @@ export function PostCard({
         <div className="flex gap-3">
           <div className="flex-shrink-0">
             <Avatar className="w-12 h-12">
-              <AvatarImage src={author.avatar_url || undefined} alt={displayName} />
+              <AvatarImage
+                src={author?.avatar_url || undefined}
+                alt={displayName}
+              />
               <AvatarFallback>{avatarFallback}</AvatarFallback>
             </Avatar>
           </div>
@@ -72,14 +81,24 @@ export function PostCard({
             <div className="flex items-start justify-between mb-2">
               <div className="flex items-center gap-1">
                 <h3 className="font-semibold text-sm">{displayName}</h3>
-                {author.badge?.includes('verified') && (
+                {author?.badge?.includes("verified") && (
                   <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
-                    <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    <svg
+                      className="w-2.5 h-2.5 text-white"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                   </div>
                 )}
-                <span className="text-sm text-muted-foreground">@{displayUsername}</span>
+                <span className="text-sm text-muted-foreground">
+                  @{displayUsername}
+                </span>
               </div>
               {showActions && isOwner && (
                 <div className="flex items-center gap-1 flex-shrink-0">
@@ -90,8 +109,8 @@ export function PostCard({
                         size="sm"
                         className="text-muted-foreground hover:text-foreground p-1 bg-transparent hover:bg-transparent"
                         onClick={(e) => {
-                          e.preventDefault()
-                          onMoreClick?.()
+                          e.preventDefault();
+                          onMoreClick?.();
                         }}
                       >
                         <MoreHorizontal className="w-4 h-4" />
@@ -100,8 +119,8 @@ export function PostCard({
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem
                         onClick={(e) => {
-                          e.preventDefault()
-                          onEditClick?.()
+                          e.preventDefault();
+                          onEditClick?.();
                         }}
                       >
                         <Pencil className="w-4 h-4 mr-2" />
@@ -109,8 +128,8 @@ export function PostCard({
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={(e) => {
-                          e.preventDefault()
-                          setShowDeleteDialog(true)
+                          e.preventDefault();
+                          setShowDeleteDialog(true);
                         }}
                         className="text-destructive focus:text-destructive"
                       >
@@ -144,19 +163,23 @@ export function PostCard({
                   size="sm"
                   className="text-muted-foreground hover:text-foreground p-1 bg-transparent hover:bg-transparent"
                   onClick={(e) => {
-                    e.preventDefault()
-                    onBookmarkClick?.()
+                    e.preventDefault();
+                    onBookmarkClick?.();
                   }}
                 >
-                  <Bookmark className={`w-4 h-4 transition-colors ${isSaved ? 'fill-blue-500 text-blue-500' : ''}`} />
+                  <Bookmark
+                    className={`w-4 h-4 transition-colors ${
+                      isSaved ? "fill-blue-500 text-blue-500" : ""
+                    }`}
+                  />
                 </Button>
                 <Button
                   variant="ghost"
                   size="sm"
                   className="text-muted-foreground hover:text-foreground p-1 bg-transparent hover:bg-transparent"
                   onClick={(e) => {
-                    e.preventDefault()
-                    onShareClick?.()
+                    e.preventDefault();
+                    onShareClick?.();
                   }}
                 >
                   <Share className="w-4 h-4" />
@@ -172,16 +195,17 @@ export function PostCard({
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Post</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this post? This action cannot be undone.
+              Are you sure you want to delete this post? This action cannot be
+              undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={(e) => {
-                e.preventDefault()
-                onDeleteClick?.()
-                setShowDeleteDialog(false)
+                e.preventDefault();
+                onDeleteClick?.();
+                setShowDeleteDialog(false);
               }}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
@@ -191,5 +215,5 @@ export function PostCard({
         </AlertDialogContent>
       </AlertDialog>
     </Card>
-  )
+  );
 }

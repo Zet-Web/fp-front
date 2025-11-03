@@ -1,136 +1,133 @@
-// Individual post page component displaying a single post by URL code or creating a new post
-
-import { useParams, useNavigate } from "react-router-dom"
-import { useEffect, useState } from "react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { PostCard } from "../../../shared-src/components/PostCard"
-import { EditablePostCard } from "../../../shared-src/components/EditablePostCard"
-import { extractUrlCodeFromParam, isValidUrlCode } from "../../../shared-src/lib/post-utils"
-import { MOCK_POSTS } from "../../../shared-src/lib/mock-posts"
-import { PostType, PostStatus } from "../../../shared-src/types/post"
-import type { PostWithAuthor } from "../../../shared-src/types/post"
+import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { PostCard } from "../../../shared-src/components/PostCard";
+import { EditablePostCard } from "../../../shared-src/components/EditablePostCard";
+import { MOCK_POSTS } from "../../../shared-src/lib/mock-posts";
+import { PostType, PostStatus } from "../../../shared-src/types/post";
+import type { PostWithAuthor } from "../../../shared-src/types/post";
+import { useAuthContext } from "@/components/auth-provider";
+import { FPApi } from "@/lib/api";
 
 export function PostPage() {
-  const { urlCode } = useParams<{ urlCode: string }>()
-  const navigate = useNavigate()
-  const [post, setPost] = useState<PostWithAuthor | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [isEditing, setIsEditing] = useState(false)
-  const [isCreateMode, setIsCreateMode] = useState(false)
+  const { urlCode } = useParams<{ urlCode: string }>();
+  const navigate = useNavigate();
+  const [post, setPost] = useState<PostWithAuthor | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isCreateMode, setIsCreateMode] = useState(false);
 
-  const currentUserId = "mock-user-id"
+  const { profile } = useAuthContext();
+
+  const currentUserId = profile?.id || "";
 
   useEffect(() => {
-    const loadPost = () => {
-      setIsLoading(true)
-      setError(null)
+    const loadPost = async () => {
+      setIsLoading(true);
+      setError(null);
 
       if (!urlCode) {
-        setIsCreateMode(true)
-        setIsEditing(true)
+        setIsCreateMode(true);
+        setIsEditing(true);
         setPost({
           id: crypto.randomUUID(),
-          title: '',
-          excerpt: '',
-          content: '',
+          title: "",
+          excerpt: "",
+          content: "",
           cover_image: undefined,
           images: [],
           type: PostType.ARTICLE,
           status: PostStatus.DRAFT,
           is_pinned: false,
-          url: '',
+          url: "",
           slug: undefined,
           author: {
-            id: currentUserId,
-            name: "Current User",
-            username: "currentuser",
-            telegram_username: null,
-            avatar_url: null,
-            badge: null
+            id: profile?.id || "",
+            name: profile?.name || "",
+            username: profile?.username || "",
+            telegram_username: profile?.telegram_username || null,
+            avatar_url: profile?.avatar_url || null,
+            badge: null,
           },
           created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        })
-        setIsLoading(false)
-        return
+          updated_at: new Date().toISOString(),
+        });
+        setIsLoading(false);
+        return;
       }
 
-      const extractedCode = extractUrlCodeFromParam(urlCode)
-
-      if (!isValidUrlCode(extractedCode)) {
-        setError("Invalid post URL format")
-        setIsLoading(false)
-        return
-      }
-
-      const foundPost = MOCK_POSTS.find(p => p.url === extractedCode)
+      const res = await FPApi.axios.get<{ post: PostWithAuthor }>(
+        `/post/get-by-url/${urlCode}`
+      );
+      const foundPost = res.data;
 
       if (!foundPost) {
-        setError("Post not found")
-        setIsLoading(false)
-        return
+        setError("Post not found");
+        setIsLoading(false);
+        return;
       }
 
-      setPost(foundPost)
-      setIsCreateMode(false)
-      setIsEditing(false)
-      setIsLoading(false)
-    }
+      setPost(foundPost.post);
+      setIsCreateMode(false);
+      setIsEditing(false);
+      setIsLoading(false);
+    };
 
-    loadPost()
-  }, [urlCode])
+    loadPost();
+  }, [profile, urlCode]);
 
-  const handleSave = (updates: any) => {
-    if (!post) return
+  const handleSave = async (updates: Partial<PostWithAuthor>) => {
+    if (!post) return;
 
     const updatedPost = {
       ...post,
       ...updates,
-      updated_at: new Date().toISOString()
-    }
+      updated_at: new Date().toISOString(),
+    };
 
     if (isCreateMode) {
-      const newUrlCode = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
-      updatedPost.url = newUrlCode
-      MOCK_POSTS.unshift(updatedPost)
-      console.log('New post created:', updatedPost)
-      navigate(`/post/${newUrlCode}`)
+      const res = await FPApi.axios.post<{ url: string }>(
+        "/post/create",
+        updatedPost
+      );
+
+      navigate(`/post/${res.data.url}`);
     } else {
-      const postIndex = MOCK_POSTS.findIndex(p => p.id === post.id)
+      const postIndex = MOCK_POSTS.findIndex((p) => p.id === post.id);
       if (postIndex !== -1) {
-        MOCK_POSTS[postIndex] = updatedPost
-        console.log('Post updated:', updatedPost)
+        MOCK_POSTS[postIndex] = updatedPost;
+        console.log("Post updated:", updatedPost);
       }
-      setPost(updatedPost)
-      setIsEditing(false)
+      setPost(updatedPost);
+      setIsEditing(false);
     }
-  }
+  };
 
   const handleCancel = () => {
     if (isCreateMode) {
-      navigate("/")
+      navigate("/");
     } else {
-      setIsEditing(false)
+      setIsEditing(false);
     }
-  }
+  };
 
   const handleEdit = () => {
-    setIsEditing(true)
-  }
+    setIsEditing(true);
+  };
 
   const handleDelete = () => {
-    if (!post) return
-    const postIndex = MOCK_POSTS.findIndex(p => p.id === post.id)
+    if (!post) return;
+    const postIndex = MOCK_POSTS.findIndex((p) => p.id === post.id);
     if (postIndex !== -1) {
-      MOCK_POSTS.splice(postIndex, 1)
-      console.log('Post deleted')
+      MOCK_POSTS.splice(postIndex, 1);
+      console.log("Post deleted");
     }
-    navigate("/")
-  }
+    navigate("/");
+  };
 
-  const isOwner = post?.author.id === currentUserId
+  const isOwner = post?.author?.id === currentUserId;
 
   if (isLoading) {
     return (
@@ -142,7 +139,7 @@ export function PostPage() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   if (error || !post) {
@@ -155,7 +152,7 @@ export function PostPage() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   return (
@@ -177,18 +174,29 @@ export function PostPage() {
             onCancel={handleCancel}
           />
         ) : (
-          <PostCard
-            title={post.title}
-            content={post.excerpt}
-            images={post.cover_image ? [post.cover_image, ...post.images] : post.images}
-            author={post.author}
-            showActions={true}
-            isOwner={isOwner}
-            onEditClick={handleEdit}
-            onDeleteClick={handleDelete}
-          />
+          <>
+            {post && (
+              <PostCard
+                title={post.title || ""}
+                content={post.content || ""}
+                images={
+                  post.cover_image
+                    ? [post.cover_image, ...post.images]
+                    : post.images && Array.isArray(post.images)
+                    ? post.images
+                    : []
+                }
+                author={post.author}
+                showActions={true}
+                isOwner={isOwner}
+                onEditClick={handleEdit}
+                onDeleteClick={handleDelete}
+                isSaved={post.is_saved}
+              />
+            )}
+          </>
         )}
       </div>
     </div>
-  )
+  );
 }
