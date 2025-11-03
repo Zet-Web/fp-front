@@ -1,6 +1,6 @@
 // Centralized navigation configuration for consistent navigation across desktop and mobile
 
-import { Home, User, Settings, MessageCircle, Bell, Search, Bookmark, Users, Plus } from "lucide-react"
+import { Home, User, Settings, MessageCircle, Bell, Search, Bookmark, Users, Plus, Library, Network } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 import type { Profile } from "@/types/profile"
 
@@ -15,13 +15,15 @@ export interface NavItem {
 export const desktopNavigationItems: NavItem[] = [
   { icon: Home, label: "Home", path: "/" },
   { icon: Search, label: "Explore", path: "/explore" },
+  { icon: Network, label: "Network", path: "/network" },
   { icon: Bell, label: "Notifications", path: "/notifications" },
   { icon: MessageCircle, label: "Messages", path: "/messages" },
   { icon: Bookmark, label: "Bookmarks", path: "/bookmarks" },
   { icon: Users, label: "Communities", path: "/communities" },
-  { 
-    icon: User, 
-    label: "Profile", 
+  { icon: Library, label: "Resources", path: "/yurservice" },
+  {
+    icon: User,
+    label: "Profile",
     path: (profile, isAuthenticated) => {
       if (isAuthenticated && profile?.username) {
         return `/${profile.username}`

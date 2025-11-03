@@ -14,6 +14,7 @@ export function Header() {
     if (path === '/' || path === '/home') return null
     if (path === '/settings') return 'Settings'
     if (path === '/auth') return 'Authentication'
+    if (path === '/test') return 'Test'
     if (path === '/chats' || path === '/messages') return 'Messages'
     if (path === '/notifications') return 'Notifications'
     if (path === '/bookmarks') return 'Bookmarks'
@@ -26,7 +27,7 @@ export function Header() {
     if (path.startsWith('/')) {
       const username = path.substring(1)
       if (username && !username.includes('/')) {
-        return `@${username}`
+        return username
       }
     }
 

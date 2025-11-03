@@ -23,11 +23,23 @@ Current list of apps (if Bolt not see, then they ignored temporarily):
 - navigation - List of pages like menu. It is page on mobile, and left sidebar on desktop.
 - mobileNav - Bottom navigation bar and side sheet menu for mobile devices.
 - chats - List of users chats like messenger. It is page on mobile, and right sidebar on desktop.
+- network - Network visualization with D3.js interactive graph and list view for connections.
 - profile - Manages profiles.
 - settings - User settings management.
 
 # Auth flow:
 Authentication begins in the Auth app using Supabase to handle Telegram login and generate a magic link. After redirecting, the Supabase client extracts and stores the JWT and refresh_token in Local Storage, maintaining a persistent session. This enables automatic token refresh and access to user profile data (name, username, avatar, bio, etc.). Profile data in `public.profiles` is linked to `auth.users`, allowing secure, session-based retrieval and management of user details.
 All profiles have own usernames.
+
+# Network Visualization:
+The Network page provides an interactive visualization of business connections using D3.js force-directed graph layout. Users can explore their network through multiple levels of connections (direct, 2nd degree, 3rd degree) with different relationship types (colleagues, clients, partners, community members). The page features:
+- Interactive D3.js graph with zoom, pan, and drag functionality
+- List view with sorting and pagination
+- Advanced filtering by connection type, community, and level
+- Statistics dashboard showing network metrics and insights
+- Modal dialogs for detailed connection information
+- Theme-aware visualization adapting to light/dark modes
+- Smooth transitions between views using Framer Motion
+Currently uses mock data for testing; ready for database integration.
 
 ---

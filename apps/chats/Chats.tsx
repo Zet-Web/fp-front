@@ -1,15 +1,33 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Search, MessageSquare, Users, TrendingUp } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Search, MessageSquare, Users, TrendingUp, PanelRightClose, PanelRightOpen, Minimize2 } from "lucide-react"
 import { Input } from "@/components/ui/input"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { ChatItem } from "./components/ChatItem"
 import { useChatsData } from "./hooks/use-chats-data"
+import { useSidebar } from "@/contexts/sidebar-context"
 import { useState } from "react"
 
 export function Chats() {
   const { chats, loading, activeChat, handleChatClick, getTotalUnreadCount } = useChatsData()
+  const { leftCollapsed, rightCollapsed, toggleRight, collapseAll, expandAll } = useSidebar()
   const [searchQuery, setSearchQuery] = useState("")
+
+  const handleFocusMode = () => {
+    if (leftCollapsed && rightCollapsed) {
+      expandAll()
+    } else {
+      collapseAll()
+    }
+  }
 
   const filteredChats = chats.filter(chat =>
     chat.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -40,8 +58,119 @@ export function Chats() {
     </div>
   )
 
+  if (rightCollapsed) {
+    return (
+      <Card className="h-full w-full flex flex-col lg:w-16 lg:flex-shrink-0 shadow-sm transition-all duration-300">
+        <CardContent className="p-2 flex-1 min-h-0 flex flex-col">
+          <TooltipProvider>
+            <div className="flex flex-col items-center space-y-3 py-3">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center">
+                    <MessageSquare className="h-5 w-5 text-white" />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side="left">
+                  <p>Chats</p>
+                </TooltipContent>
+              </Tooltip>
+
+              <div className="h-px w-8 bg-border"></div>
+
+              {loading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <Skeleton key={i} className="h-10 w-10 rounded-full" />
+                ))
+              ) : filteredChats.length === 0 ? (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center">
+                      <MessageSquare className="h-5 w-5 text-muted-foreground" />
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent side="left">
+                    <p>No chats</p>
+                  </TooltipContent>
+                </Tooltip>
+              ) : (
+                <ScrollArea className="h-full w-full">
+                  <div className="flex flex-col items-center space-y-3 py-2">
+                    {filteredChats.map((chat) => (
+                      <Tooltip key={chat.id}>
+                        <TooltipTrigger asChild>
+                          <div
+                            onClick={() => handleChatClick(chat.id)}
+                            className={`relative cursor-pointer ${
+                              activeChat === chat.id ? 'ring-2 ring-blue-500 rounded-full' : ''
+                            }`}
+                          >
+                            <Avatar className="h-10 w-10">
+                              <AvatarImage src={chat.avatar} alt={chat.name} />
+                              <AvatarFallback className="text-sm">
+                                {chat.name.charAt(0).toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+                            {chat.unreadCount > 0 && (
+                              <div className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-blue-500 text-white text-xs flex items-center justify-center font-semibold">
+                                {chat.unreadCount > 9 ? '9+' : chat.unreadCount}
+                              </div>
+                            )}
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent side="left">
+                          <p className="font-medium">{chat.name}</p>
+                          <p className="text-xs text-muted-foreground truncate max-w-[200px]">
+                            {chat.lastMessage}
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    ))}
+                  </div>
+                </ScrollArea>
+              )}
+
+              <div className="h-px w-8 bg-border mt-auto"></div>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={toggleRight}
+                    className="h-8 w-8 hover:bg-accent/50"
+                  >
+                    <PanelRightOpen className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="left">
+                  <p>Expand sidebar</p>
+                </TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={handleFocusMode}
+                    className="h-8 w-8 hover:bg-accent/50"
+                  >
+                    <Minimize2 className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="left">
+                  <p>{leftCollapsed && rightCollapsed ? 'Expand All' : 'Focus Mode'}</p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
+          </TooltipProvider>
+        </CardContent>
+      </Card>
+    )
+  }
+
   return (
-    <Card className="h-full w-full flex flex-col lg:w-80 lg:flex-shrink-0 shadow-sm">
+    <Card className="h-full w-full flex flex-col lg:w-80 lg:flex-shrink-0 shadow-sm transition-all duration-300">
       
       <CardContent className="p-0 flex-1 min-h-0 flex flex-col">
         {/* Search */}
@@ -88,6 +217,47 @@ export function Chats() {
               </div>
             </ScrollArea>
           )}
+        </div>
+
+        {/* Collapse Controls */}
+        <div className="border-t border-border p-4">
+          <div className="flex gap-2">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={toggleRight}
+                    className="flex-1 h-9 hover:bg-accent/50"
+                  >
+                    <PanelRightClose className="h-4 w-4 mr-2" />
+                    Collapse
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Collapse this sidebar</p>
+                </TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleFocusMode}
+                    className="flex-1 h-9 hover:bg-accent/50"
+                  >
+                    <Minimize2 className="h-4 w-4 mr-2" />
+                    {leftCollapsed && rightCollapsed ? 'Expand' : 'Focus'}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{leftCollapsed && rightCollapsed ? 'Expand all sidebars' : 'Focus Mode (Collapse all sidebars)'}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
         </div>
       </CardContent>
     </Card>
