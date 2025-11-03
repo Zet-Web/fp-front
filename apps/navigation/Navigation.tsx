@@ -407,7 +407,7 @@ export function Navigation() {
                       className="flex-1 h-9 hover:bg-accent/50"
                     >
                       <PanelLeftClose className="h-4 w-4 mr-2" />
-
+                      Collapse 
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
