@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Share, MoreHorizontal, Bookmark, Pencil, Trash2 } from "lucide-react"
 import { useState } from "react"
-import type { PostAuthor } from "../types/post"
+import type { PostAuthor } from "./post"
 
 interface PostCardProps {
   title: string

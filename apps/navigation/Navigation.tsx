@@ -27,7 +27,7 @@ import { useTheme } from "next-themes";
 import {
   desktopNavigationItems,
   createButtonConfig,
-} from "@shared/lib/navigation-config";
+} from "@shared/navigation/navigation-config";
 import { useSidebar } from "@/contexts/sidebar-context";
 
 export function Navigation() {

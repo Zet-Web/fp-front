@@ -4,12 +4,12 @@ import { useParams, useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { PostCard } from "../../../shared-src/components/PostCard"
-import { EditablePostCard } from "../../../shared-src/components/EditablePostCard"
-import { extractUrlCodeFromParam, isValidUrlCode } from "../../../shared-src/lib/post-utils"
-import { MOCK_POSTS } from "../../../shared-src/lib/mock-posts"
-import { PostType, PostStatus } from "../../../shared-src/types/post"
-import type { PostWithAuthor } from "../../../shared-src/types/post"
+import { PostCard } from "../../../shared-src/post/PostCard"
+import { EditablePostCard } from "../../../shared-src/post/EditablePostCard"
+import { extractUrlCodeFromParam, isValidUrlCode } from "../../../shared-src/post/post-utils"
+import { MOCK_POSTS } from "../../../shared-src/feed/mock-posts"
+import { PostType, PostStatus } from "../../../shared-src/post/post"
+import type { PostWithAuthor } from "../../../shared-src/post/post"
 
 export function PostPage() {
   const { urlCode } = useParams<{ urlCode: string }>()

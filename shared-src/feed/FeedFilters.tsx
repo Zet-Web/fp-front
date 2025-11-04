@@ -9,8 +9,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { PostType, type FeedView } from "../types/post"
-import { POST_TYPE_LABELS } from "../lib/feed-filters"
+import { PostType, type FeedView } from "../post/post"
+import { POST_TYPE_LABELS } from "./feed-filters"
 import { FeedLocationDropdown } from "./FeedLocationDropdown"
 
 interface FeedFiltersProps {

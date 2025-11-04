@@ -1,5 +1,5 @@
-import { Feed } from "../../../../shared-src/components/Feed";
-import { MOCK_POSTS } from "../../../../shared-src/lib/mock-posts";
+import { Feed } from "../../../../shared-src/feed/Feed";
+import { MOCK_POSTS } from "../../../../shared-src/feed/mock-posts";
 import { UserProfile } from "../types/profile";
 
 interface PostsSectionProps {

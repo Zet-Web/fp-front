@@ -4,10 +4,10 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { PostCard } from "./PostCard";
-import { EditablePostCard } from "./EditablePostCard";
-import { constructPostUrl } from "../lib/post-utils";
-import type { PostWithAuthor } from "../types/post";
+import { PostCard } from "../post/PostCard";
+import { EditablePostCard } from "../post/EditablePostCard";
+import { constructPostUrl } from "../post/post-utils";
+import type { PostWithAuthor } from "../post/post";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 

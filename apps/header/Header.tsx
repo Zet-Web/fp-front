@@ -1,12 +1,24 @@
-import { ChevronLeft } from "lucide-react"
+import { ChevronLeft, Sun, Moon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useNavigate, useLocation } from "react-router-dom"
 import { useAuthContext } from "@/components/auth-provider"
+import { useTheme } from "next-themes"
+import { useEffect, useState } from "react"
 
 export function Header() {
   const navigate = useNavigate()
   const location = useLocation()
   const { profile } = useAuthContext()
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark")
+  }
 
   const getPageTitle = () => {
     const path = location.pathname
@@ -60,9 +72,29 @@ export function Header() {
             <span className="sr-only">Go back</span>
           </Button>
         )}
-        <h1 className="text-lg font-semibold text-foreground truncate">
+        <h1 className="text-lg font-semibold text-foreground truncate flex-1">
           {pageTitle}
         </h1>
+        {mounted && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={toggleTheme}
+            className="flex items-center gap-2 h-9 px-3"
+          >
+            {theme === "dark" ? (
+              <>
+                <Moon className="h-4 w-4" />
+                <span className="text-sm">Dark</span>
+              </>
+            ) : (
+              <>
+                <Sun className="h-4 w-4" />
+                <span className="text-sm">Light</span>
+              </>
+            )}
+          </Button>
+        )}
       </div>
     </header>
   )

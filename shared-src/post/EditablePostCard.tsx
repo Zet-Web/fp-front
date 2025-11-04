@@ -10,8 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox"
 import { X, Upload, Loader2 } from "lucide-react"
 import { useState } from "react"
-import type { PostAuthor } from "../types/post"
-import { PostType, PostStatus } from "../types/post"
+import type { PostAuthor } from "./post"
+import { PostType, PostStatus } from "./post"
 
 interface EditablePostCardProps {
   title?: string
