@@ -1,18 +1,17 @@
 apps/test
 apps/404
-# apps/auth
-# apps/chats
-# apps/header
+apps/auth
+apps/chats
+apps/header
 # apps/home
 # apps/mobileNav
 # apps/navigation
 # apps/profile
 # apps/post
-# apps/settings
-# app/yurservice
-# app/network
+apps/settings
+app/yurservice
+app/network
 
-# supabase/
 
 # src/components
 # shared-src
