@@ -1,9 +1,7 @@
 # Project
-
 This project is a modern business social networking application with built-in AI and SaaS functionality.
 
 # Code Structure
-
 The project follows a modular and organized code structure to enhance maintainability, optimize performance, and facilitate development.
 Goal is optimize and good organize code, save tokens, avoit AI mistakes by decide apps and shared-src to own folders and active using ignore file.
 
