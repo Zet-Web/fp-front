@@ -10,12 +10,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -99,45 +93,6 @@ export function Navigation() {
                 );
               })}
 
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-10 w-10 hover:bg-accent/50"
-                      >
-                        <div className="relative h-5 w-5">
-                          <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                          <Moon className="absolute inset-0 h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                        </div>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                      align="start"
-                      side="right"
-                      className="w-48"
-                    >
-                      <DropdownMenuItem onClick={() => setTheme("light")}>
-                        <Sun className="mr-2 h-4 w-4" />
-                        Light
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setTheme("dark")}>
-                        <Moon className="mr-2 h-4 w-4" />
-                        Dark
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setTheme("system")}>
-                        <Monitor className="mr-2 h-4 w-4" />
-                        System
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TooltipTrigger>
-                <TooltipContent side="right">
-                  <p>Theme</p>
-                </TooltipContent>
-              </Tooltip>
 
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -244,6 +199,30 @@ export function Navigation() {
                   </p>
                 </TooltipContent>
               </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      const themes = ["light", "dark", "system"] as const;
+                      const currentIndex = themes.indexOf(localStorage.getItem("theme") as any || "system");
+                      const nextTheme = themes[(currentIndex + 1) % themes.length];
+                      setTheme(nextTheme);
+                    }}
+                    className="h-8 w-8 hover:bg-accent/50"
+                  >
+                    <div className="relative h-4 w-4">
+                      <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                      <Moon className="absolute inset-0 h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                    </div>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p>{localStorage.getItem("theme") === "light" ? "Light" : localStorage.getItem("theme") === "dark" ? "Dark" : "System"}</p>
+                </TooltipContent>
+              </Tooltip>
             </div>
           </TooltipProvider>
         </div>
@@ -298,35 +277,6 @@ export function Navigation() {
               );
             })}
 
-            {/* Theme Toggle item */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start h-12 px-4 hover:bg-accent/50 transition-colors"
-                >
-                  <div className="relative h-5 w-5 mr-3">
-                    <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                    <Moon className="absolute inset-0 h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                  </div>
-                  <span className="text-base">Theme</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-48">
-                <DropdownMenuItem onClick={() => setTheme("light")}>
-                  <Sun className="mr-2 h-4 w-4" />
-                  Light
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("dark")}>
-                  <Moon className="mr-2 h-4 w-4" />
-                  Dark
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("system")}>
-                  <Monitor className="mr-2 h-4 w-4" />
-                  System
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
 
             {/* Create item */}
             <Button
@@ -431,6 +381,30 @@ export function Navigation() {
                         ? "Expand all sidebars"
                         : "Focus Mode (Collapse all sidebars)"}
                     </p>
+                  </TooltipContent>
+                </Tooltip>
+
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => {
+                        const themes = ["light", "dark", "system"] as const;
+                        const currentIndex = themes.indexOf(localStorage.getItem("theme") as any || "system");
+                        const nextTheme = themes[(currentIndex + 1) % themes.length];
+                        setTheme(nextTheme);
+                      }}
+                      className="flex-1 h-9 hover:bg-accent/50"
+                    >
+                      <div className="relative h-4 w-4">
+                        <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                        <Moon className="absolute inset-0 h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                      </div>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{localStorage.getItem("theme") === "light" ? "Light" : localStorage.getItem("theme") === "dark" ? "Dark" : "System"}</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
