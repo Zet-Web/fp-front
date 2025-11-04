@@ -13,3 +13,5 @@ Goal is optimize and good organize code, save tokens, avoit AI mistakes by decid
 # Backend
 - Using Supabase Self Hosted.
 - Using direct database requests, call SQL functions, request serverless functions in the own server (NestJs).
+
+Design system description and rules in the design_system.md file.
