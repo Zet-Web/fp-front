@@ -9,3 +9,7 @@ Goal is optimize and good organize code, save tokens, avoit AI mistakes by decid
 2. src/ - core directory for main entities and shared resources used across all applications.
 3. shared-src/ - components, UI blocks, sections, etc (with logic) that using by some apps (not need for all apps).
 4. base files - index, config, etc.
+
+# Backend
+- Using Supabase Self Hosted.
+- Using direct database requests, call SQL functions, request serverless functions in the own server (NestJs).
