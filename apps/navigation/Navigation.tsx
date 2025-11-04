@@ -2,7 +2,6 @@ import {
   User,
   Moon,
   Sun,
-  Monitor,
   PanelLeftClose,
   PanelLeftOpen,
   Minimize2,
@@ -206,8 +205,8 @@ export function Navigation() {
                     variant="ghost"
                     size="icon"
                     onClick={() => {
-                      const themes = ["light", "dark", "system"] as const;
-                      const currentIndex = themes.indexOf(localStorage.getItem("theme") as any || "system");
+                      const themes = ["light", "dark"] as const;
+                      const currentIndex = themes.indexOf(localStorage.getItem("theme") as any || "light");
                       const nextTheme = themes[(currentIndex + 1) % themes.length];
                       setTheme(nextTheme);
                     }}
@@ -220,7 +219,7 @@ export function Navigation() {
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side="right">
-                  <p>{localStorage.getItem("theme") === "light" ? "Light" : localStorage.getItem("theme") === "dark" ? "Dark" : "System"}</p>
+                  <p>{localStorage.getItem("theme") === "dark" ? "Dark" : "Light"}</p>
                 </TooltipContent>
               </Tooltip>
             </div>
@@ -390,8 +389,8 @@ export function Navigation() {
                       variant="ghost"
                       size="icon"
                       onClick={() => {
-                        const themes = ["light", "dark", "system"] as const;
-                        const currentIndex = themes.indexOf(localStorage.getItem("theme") as any || "system");
+                        const themes = ["light", "dark"] as const;
+                        const currentIndex = themes.indexOf(localStorage.getItem("theme") as any || "light");
                         const nextTheme = themes[(currentIndex + 1) % themes.length];
                         setTheme(nextTheme);
                       }}
@@ -404,7 +403,7 @@ export function Navigation() {
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>{localStorage.getItem("theme") === "light" ? "Light" : localStorage.getItem("theme") === "dark" ? "Dark" : "System"}</p>
+                    <p>{localStorage.getItem("theme") === "dark" ? "Dark" : "Light"}</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
