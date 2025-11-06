@@ -21,14 +21,18 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Share, MoreHorizontal, Bookmark, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
-import type { PostAuthor } from "../types/post";
+import { PostAuthor, PostType } from "../types/post";
 import { PostContentViewer } from "./PostContentViewer";
+import QuizTake from "../../apps/quiz/src/QuizTake";
 
 interface PostCardProps {
+  postId: number;
   title: string;
+  excerpt: string;
   content: string;
   images: string[];
   author: PostAuthor;
+  type: PostType;
   showActions?: boolean;
   onMoreClick?: () => void;
   onBookmarkClick?: () => void;
@@ -39,11 +43,13 @@ interface PostCardProps {
   isOwner?: boolean;
 }
 
-export function PostCard({
+export function FullPostCard({
+  postId,
   title,
   content,
   images,
   author,
+  type,
   showActions = true,
   onMoreClick,
   onBookmarkClick,
@@ -52,6 +58,7 @@ export function PostCard({
   onDeleteClick,
   isSaved = false,
   isOwner = false,
+  excerpt,
 }: PostCardProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const displayName = author?.name || author?.username || "User";
@@ -143,12 +150,12 @@ export function PostCard({
               )}
             </div>
 
-            <h4 className="font-semibold text-base mb-3">{title}</h4>
-
-            <PostContentViewer html={content} />
+            <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight text-balance">
+              {title}
+            </h1>
 
             {images.length > 0 && (
-              <div className="mb-4">
+              <div className="my-4">
                 <img
                   src={images[0]}
                   alt="Post content"
@@ -156,6 +163,12 @@ export function PostCard({
                 />
               </div>
             )}
+
+            <p className="leading-7 [&:not(:first-child)]:mt-6">{excerpt}</p>
+
+            <PostContentViewer html={content} />
+
+            {type === PostType.POLL && <QuizTake postId={postId} />}
 
             {showActions && (
               <div className="flex justify-end gap-1 mt-2">

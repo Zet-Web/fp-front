@@ -3,10 +3,9 @@
 import { useState, useMemo } from "react";
 import { Feed } from "../../shared-src/components/Feed";
 import { FeedFilters } from "../../shared-src/components/FeedFilters";
-import { MOCK_POSTS, FOLLOWED_USER_IDS } from "../../shared-src/lib/mock-posts";
+import { MOCK_POSTS } from "../../shared-src/lib/mock-posts";
 import {
   DEFAULT_FILTERS,
-  applyFeedFilters,
   getUniqueCountries,
   getCitiesByCountry,
   getEmptyStateMessage,
@@ -15,10 +14,6 @@ import {
 
 export function HomePage() {
   const [filters, setFilters] = useState<FeedFiltersType>(DEFAULT_FILTERS);
-
-  const filteredPosts = useMemo(() => {
-    return applyFeedFilters(MOCK_POSTS, filters, FOLLOWED_USER_IDS);
-  }, [filters]);
 
   const countries = useMemo(() => getUniqueCountries(MOCK_POSTS), []);
   const cities = useMemo(() => {
@@ -53,10 +48,9 @@ export function HomePage() {
       <div className="flex-1 overflow-y-auto">
         <div className="container mx-auto px-4 py-6 max-w-4xl">
           <Feed
-            posts={filteredPosts}
+            filters={filters}
             emptyMessage={emptyMessage}
             itemsPerPage={5}
-            currentUserId="test-user-1"
           />
         </div>
       </div>

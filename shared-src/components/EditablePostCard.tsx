@@ -19,6 +19,9 @@ import { useState } from "react";
 import type { PostAuthor } from "../types/post";
 import { PostType, PostStatus } from "../types/post";
 import { FPApi } from "@/lib/api";
+import { TiptapEditor } from "./TipTapEditor";
+import QuizForm from "../../apps/quiz/src/QuizForm";
+import { QuizFormData } from "@/apps/quiz/types/quiz";
 
 interface EditablePostCardProps {
   title?: string;
@@ -31,17 +34,20 @@ interface EditablePostCardProps {
   isPinned: boolean;
   slug?: string;
   author: PostAuthor;
-  onSave: (updates: {
-    title?: string;
-    excerpt: string;
-    content?: string;
-    cover_image?: string;
-    images: string[];
-    type: PostType;
-    status: PostStatus;
-    is_pinned: boolean;
-    slug?: string;
-  }) => void;
+  onSave: (
+    updates: {
+      title?: string;
+      excerpt: string;
+      content?: string;
+      cover_image?: string;
+      images: string[];
+      type: PostType;
+      status: PostStatus;
+      is_pinned: boolean;
+      slug?: string;
+    },
+    quizData?: QuizFormData | null
+  ) => void;
   onCancel: () => void;
 }
 
@@ -71,6 +77,21 @@ export function EditablePostCard({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isUploadingCover, setIsUploadingCover] = useState(false);
   const [showUrlInput, setShowUrlInput] = useState(false);
+
+  // Quiz
+  const [isQuizFormDisabled, setQuizFormDisabled] = useState(false);
+  const [quizData, setQuizData] = useState<QuizFormData | null>(null);
+
+  const handleSumbitQuizForm = (data: QuizFormData) => {
+    if (!data) setQuizData(null);
+
+    setQuizData(data);
+    setQuizFormDisabled(true);
+  };
+
+  const handleEditQuizForm = () => {
+    setQuizFormDisabled(false);
+  };
 
   const displayName = author.name || author.username || "User";
   const displayUsername = author.username || author.telegram_username || "user";
@@ -102,17 +123,20 @@ export function EditablePostCard({
       return;
     }
 
-    onSave({
-      title: editedTitle.trim() || undefined,
-      excerpt: editedExcerpt.trim(),
-      content: editedContent.trim() || undefined,
-      cover_image: editedCoverImage.trim() || undefined,
-      images: editedImages,
-      type: editedType,
-      status: editedStatus,
-      is_pinned: editedIsPinned,
-      slug: editedSlug.trim() || undefined,
-    });
+    onSave(
+      {
+        title: editedTitle.trim() || undefined,
+        excerpt: editedExcerpt.trim(),
+        content: editedContent.trim() || undefined,
+        cover_image: editedCoverImage.trim() || undefined,
+        images: editedImages,
+        type: editedType,
+        status: editedStatus,
+        is_pinned: editedIsPinned,
+        slug: editedSlug.trim() || undefined,
+      },
+      quizData
+    );
   };
 
   const removeImage = (index: number) => {
@@ -417,13 +441,9 @@ export function EditablePostCard({
                 >
                   Content
                 </Label>
-                <Textarea
-                  id="edit-content"
+                <TiptapEditor
                   value={editedContent}
-                  onChange={(e) => setEditedContent(e.target.value)}
-                  placeholder="Full post content (optional)"
-                  rows={6}
-                  className="resize-none"
+                  onChange={(e) => setEditedContent(e)}
                 />
               </div>
 
@@ -479,11 +499,26 @@ export function EditablePostCard({
                 >
                   Save
                 </Button>
+
+                {editedType === PostType.POLL &&
+                  !!quizData &&
+                  isQuizFormDisabled && (
+                    <Button variant="secondary" onClick={handleEditQuizForm}>
+                      Edit quiz
+                    </Button>
+                  )}
+
                 <Button variant="outline" onClick={onCancel}>
                   Cancel
                 </Button>
               </div>
             </div>
+            {editedType === PostType.POLL && (
+              <QuizForm
+                onSubmit={handleSumbitQuizForm}
+                isQuizFormDisabled={isQuizFormDisabled}
+              />
+            )}
           </div>
         </div>
       </CardContent>

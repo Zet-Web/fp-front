@@ -14,7 +14,7 @@ export enum PostStatus {
 }
 
 export interface Post {
-  id: string
+  id: number
   url: string
   slug?: string
   title?: string

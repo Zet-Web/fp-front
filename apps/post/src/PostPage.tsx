@@ -2,13 +2,14 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { PostCard } from "../../../shared-src/components/PostCard";
 import { EditablePostCard } from "../../../shared-src/components/EditablePostCard";
 import { MOCK_POSTS } from "../../../shared-src/lib/mock-posts";
 import { PostType, PostStatus } from "../../../shared-src/types/post";
 import type { PostWithAuthor } from "../../../shared-src/types/post";
 import { useAuthContext } from "@/components/auth-provider";
 import { FPApi } from "@/lib/api";
+import { FullPostCard } from "../../../shared-src/components/FullPostCard";
+import { QuizFormData } from "@/apps/quiz/types/quiz";
 
 export function PostPage() {
   const { urlCode } = useParams<{ urlCode: string }>();
@@ -32,7 +33,7 @@ export function PostPage() {
         setIsCreateMode(true);
         setIsEditing(true);
         setPost({
-          id: crypto.randomUUID(),
+          id: 0,
           title: "",
           excerpt: "",
           content: "",
@@ -78,7 +79,10 @@ export function PostPage() {
     loadPost();
   }, [profile, urlCode]);
 
-  const handleSave = async (updates: Partial<PostWithAuthor>) => {
+  const handleSave = async (
+    updates: Partial<PostWithAuthor>,
+    quizData?: QuizFormData | null
+  ) => {
     if (!post) return;
 
     const updatedPost = {
@@ -88,12 +92,37 @@ export function PostPage() {
     };
 
     if (isCreateMode) {
-      const res = await FPApi.axios.post<{ url: string }>(
+      const createPostRes = await FPApi.axios.post<{ url: string; id: number }>(
         "/post/create",
         updatedPost
       );
 
-      navigate(`/post/${res.data.url}`);
+      console.log("createPostRes", createPostRes);
+
+      if (quizData) {
+        const createQuizReq = {
+          postId: createPostRes.data.id,
+          title: quizData.title,
+          description: quizData.description,
+          anonymous: quizData.settings.anonymous,
+          allowPause: quizData.settings.allowPause,
+          oneAttemptPerUser: quizData.settings.oneAttemptPerUser,
+          showCorrectAnswers: quizData.settings.showCorrectAnswers,
+          hasTimer: quizData.settings.hasTimer,
+          timerMinutes: quizData.settings.timerMinutes,
+          visibility: quizData.settings.visibility,
+          questions: quizData.questions,
+        };
+
+        const createQuiz = await FPApi.axios.post(
+          "/quiz/create",
+          createQuizReq
+        );
+
+        console.log("createQuiz", createQuiz);
+      }
+
+      navigate(`/post/${createPostRes.data.url}`);
     } else {
       const postIndex = MOCK_POSTS.findIndex((p) => p.id === post.id);
       if (postIndex !== -1) {
@@ -176,9 +205,11 @@ export function PostPage() {
         ) : (
           <>
             {post && (
-              <PostCard
+              <FullPostCard
+                postId={post.id}
                 title={post.title || ""}
                 content={post.content || ""}
+                excerpt={post.excerpt}
                 images={
                   post.cover_image
                     ? [post.cover_image, ...post.images]
@@ -187,6 +218,7 @@ export function PostPage() {
                     : []
                 }
                 author={post.author}
+                type={post.type}
                 showActions={true}
                 isOwner={isOwner}
                 onEditClick={handleEdit}
