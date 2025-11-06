@@ -46,15 +46,6 @@ export function useBookmarkResource(): UseBookmarkResourceReturn {
   }, [fetchSavedResources])
 
   const toggleBookmark = useCallback(async (resourceId: number) => {
-    if (!user) {
-      toast({
-        title: "Sign in required",
-        description: "Please sign in to save resources",
-        variant: "destructive",
-      })
-      return
-    }
-
     const isSaved = savedResourceIds.has(resourceId)
 
     setSavedResourceIds(prev => {
@@ -66,6 +57,16 @@ export function useBookmarkResource(): UseBookmarkResourceReturn {
       }
       return next
     })
+
+    if (!user) {
+      toast({
+        title: isSaved ? "Resource removed" : "Resource saved",
+        description: isSaved
+          ? "Resource has been removed from your saved list (test mode)"
+          : "Resource has been added to your saved list (test mode)",
+      })
+      return
+    }
 
     try {
       if (isSaved) {
