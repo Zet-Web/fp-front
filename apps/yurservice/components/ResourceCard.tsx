@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { ChevronDown, ChevronUp, ExternalLink, Globe, Phone, Mail, MapPin, Clock, Share, List } from "lucide-react"
+import { ChevronDown, ChevronUp, ExternalLink, Globe, Phone, Mail, MapPin, Clock, Share, List, Bookmark } from "lucide-react"
 import type { Resource, ResourceLink } from "../types/resource"
 import { useToast } from "@/hooks/use-toast"
 
@@ -11,9 +11,11 @@ interface ResourceCardProps {
   resource: Resource
   isExpanded: boolean
   onToggle: () => void
+  isSaved?: boolean
+  onToggleBookmark?: (resourceId: number) => void
 }
 
-export function ResourceCard({ resource, isExpanded, onToggle }: ResourceCardProps) {
+export function ResourceCard({ resource, isExpanded, onToggle, isSaved = false, onToggleBookmark }: ResourceCardProps) {
   const { toast } = useToast()
 
   const handleLinkClick = (url: string) => {
@@ -191,7 +193,15 @@ export function ResourceCard({ resource, isExpanded, onToggle }: ResourceCardPro
               </div>
             )}
 
-            <div className="flex justify-end mt-4">
+            <div className="flex justify-end gap-2 mt-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onToggleBookmark?.(resource.id as number)}
+                className="p-2 h-8 w-8"
+              >
+                <Bookmark className={`h-4 w-4 ${isSaved ? 'fill-current' : ''}`} />
+              </Button>
               <Button
                 variant="ghost"
                 size="sm"
