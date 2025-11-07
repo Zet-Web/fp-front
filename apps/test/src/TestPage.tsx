@@ -14,6 +14,7 @@ import { Separator } from '@/components/ui/separator';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { Search, MapPin, Package, Briefcase, ShoppingBag, Wrench, Users, Sparkles, FileText, CalendarDays, MapPinned, Briefcase as BriefcaseIcon, GraduationCap, Award, Mail, Phone, Link as LinkIcon, Send, Bot, BookOpen, Plus, Edit2, Trash2, ExternalLink, CheckSquare, X, MessageCircle, Clock, UserCheck, UserPlus, UserX, ChevronLeft } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
+import { QuizTab } from '../quiz/QuizTab';
 
 type CategoryType = 'products' | 'services' | 'goods' | 'tools';
 
@@ -58,7 +59,8 @@ const tabMap: Record<string, string> = {
   '1': 'catalog',
   '2': 'scrolling',
   '3': 'profile',
-  '4': 'chat'
+  '4': 'chat',
+  '5': 'quiz'
 };
 
 const tab2Map: Record<string, string> = {
@@ -152,11 +154,12 @@ export function TestPage() {
 
 
         <Tabs value={activeTab1} onValueChange={setActiveTab1} className="w-full">
-          <TabsList className="grid w-full grid-cols-1 md:grid-cols-4 h-auto">
+          <TabsList className="grid w-full grid-cols-1 md:grid-cols-5 h-auto">
             <TabsTrigger value="catalog">Catalog Directory</TabsTrigger>
             <TabsTrigger value="scrolling">Scrolling Tabs</TabsTrigger>
             <TabsTrigger value="profile">Public Profile</TabsTrigger>
             <TabsTrigger value="chat">Profile 2</TabsTrigger>
+            <TabsTrigger value="quiz">Quiz</TabsTrigger>
           </TabsList>
 
           <TabsContent value="catalog" className="space-y-6">
@@ -1132,6 +1135,10 @@ export function TestPage() {
                 </Card>
               </div>
             </div>
+          </TabsContent>
+
+          <TabsContent value="quiz" className="space-y-6">
+            <QuizTab />
           </TabsContent>
         </Tabs>
       </div>
