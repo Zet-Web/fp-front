@@ -1,4 +1,4 @@
-// Enhanced TipTap editor component with extended formatting options, character counter, and table support
+// Enhanced TipTap editor component with extended formatting options and character counter
 
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -6,10 +6,6 @@ import Placeholder from "@tiptap/extension-placeholder";
 import Underline from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
 import CharacterCount from "@tiptap/extension-character-count";
-import { Table } from "@tiptap/extension-table";
-import { TableRow } from "@tiptap/extension-table-row";
-import { TableCell } from "@tiptap/extension-table-cell";
-import { TableHeader } from "@tiptap/extension-table-header";
 import { EditorToolbar } from "./EditorToolbar";
 
 type Props = {
@@ -39,24 +35,6 @@ export function TiptapEditor({
         openOnClick: false,
         HTMLAttributes: {
           class: "font-medium text-primary underline underline-offset-4 cursor-pointer",
-        },
-      }),
-      Table.configure({
-        resizable: true,
-        allowTableNodeSelection: true,
-        HTMLAttributes: {
-          class: "border-collapse table-auto w-full",
-        },
-      }),
-      TableRow,
-      TableHeader.configure({
-        HTMLAttributes: {
-          class: "border px-4 py-2 text-left font-bold",
-        },
-      }),
-      TableCell.configure({
-        HTMLAttributes: {
-          class: "border px-4 py-2 text-left",
         },
       }),
       Placeholder.configure({
