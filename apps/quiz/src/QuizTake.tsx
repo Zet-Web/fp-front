@@ -246,7 +246,7 @@ export default function QuizTake({ postId }: Props) {
 
           <Button onClick={handleStartQuiz} className="w-full gap-2 mt-4" size="lg">
             <Play className="h-4 w-4" />
-            Начать квиз
+            Начать
           </Button>
         </CardContent>
       </Card>
