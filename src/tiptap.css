@@ -20,7 +20,7 @@
   scroll-margin-top: 1rem;
   font-weight: 600;
   font-size: 1.875rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  border-bottom: 1px solid hsl(var(--border));
   padding-bottom: 0.5rem;
 }
 
@@ -55,13 +55,13 @@
   padding: 1rem;
   border-radius: 8px;
   overflow-x: auto;
-  background: rgba(0, 0, 0, 0.04);
+  background: hsl(var(--muted));
 }
 .ProseMirror code,
 .post-content code {
   padding: 0.125rem 0.25rem;
   border-radius: 6px;
-  background: rgba(0, 0, 0, 0.04);
+  background: hsl(var(--muted));
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono",
     "Courier New", monospace;
 }
@@ -71,11 +71,49 @@
 .post-content blockquote {
   margin-top: 1rem;
   padding-left: 1rem;
-  border-left: 3px solid rgba(0, 0, 0, 0.08);
-  color: rgba(0, 0, 0, 0.7);
+  border-left: 3px solid hsl(var(--border));
+  color: hsl(var(--muted-foreground));
   font-style: italic;
 }
 
+/* Horizontal rule */
+.ProseMirror hr,
+.post-content hr {
+  margin: 2rem 0;
+  border: 0;
+  border-top: 1px solid hsl(var(--border));
+}
+
+/* Links */
+.ProseMirror a,
+.post-content a {
+  color: hsl(var(--primary));
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.ProseMirror a:hover,
+.post-content a:hover {
+  opacity: 0.8;
+}
+
+/* Underline */
+.ProseMirror u,
+.post-content u {
+  text-decoration: underline;
+}
+
+/* Strikethrough */
+.ProseMirror s,
+.post-content s {
+  text-decoration: line-through;
+}
+
+/* Focus styles */
+.ProseMirror:focus {
+  outline: none;
+}
+
 .tiptap-toolbar .is-active {
-  background-color: rgba(0, 0, 0, 0.06);
+  background-color: hsl(var(--accent));
 }

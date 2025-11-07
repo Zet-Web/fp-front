@@ -1203,10 +1203,10 @@
     "@supabase/realtime-js" "2.15.4"
     "@supabase/storage-js" "^2.10.4"
 
-"@tiptap/core@^3.10.2":
-  version "3.10.2"
-  resolved "https://registry.npmjs.org/@tiptap/core/-/core-3.10.2.tgz"
-  integrity sha512-rWgo/9g5lSWT3/00wPvG+3EEuPqDxegYMp0v7YkSuURi43Btf+SG4yGtQ5Si9ICF0NJjeZoHLusrjeVltcrsSw==
+"@tiptap/core@^3.10.2", "@tiptap/core@^3.10.3":
+  version "3.10.3"
+  resolved "https://registry.npmjs.org/@tiptap/core/-/core-3.10.3.tgz"
+  integrity sha512-FJoIm819in9/5JS2MM1SpN1nsR+ke+hbb3jCA8KMiBifNqUpUboHZSzyi6BmjZDogkQV0dA5+GSoEmYWir6fNw==
 
 "@tiptap/extension-blockquote@^3.10.2":
   version "3.10.2"
@@ -1229,6 +1229,11 @@
   version "3.10.2"
   resolved "https://registry.npmjs.org/@tiptap/extension-bullet-list/-/extension-bullet-list-3.10.2.tgz"
   integrity sha512-WVUklxiqWHpJnkGGNL3mygDKRDUuhh5HhmKUrBrNlvb+yQgglau+S94F4bobvtiwYBSHWS4HdGTXTQhdX9QfwQ==
+
+"@tiptap/extension-character-count@^3.10.3":
+  version "3.10.3"
+  resolved "https://registry.npmjs.org/@tiptap/extension-character-count/-/extension-character-count-3.10.3.tgz"
+  integrity sha512-Ho4WnZBS8DnqRTJsAOCPrk1rBUJUd/5MB8noV3U46PPwJ+TV81pAxBGclQ2iCQQQPiXpdVQ3Bb0Rb2xFJIzUKQ==
 
 "@tiptap/extension-code-block@^3.10.2":
   version "3.10.2"
@@ -1332,15 +1337,15 @@
   resolved "https://registry.npmjs.org/@tiptap/extension-underline/-/extension-underline-3.10.2.tgz"
   integrity sha512-/n/+YXYYGmOOQl8zPZiyZFRtOmsnTe1TfEjNcsJcIUGW4X5teddp4lVTcvGO3aaufH48FcYnSVJya7A9dw3ABg==
 
-"@tiptap/extensions@^3.10.2":
-  version "3.10.2"
-  resolved "https://registry.npmjs.org/@tiptap/extensions/-/extensions-3.10.2.tgz"
-  integrity sha512-XyvMn6B6PCPsgV6VMLiS1QXI1OKarBAYwXmqsE+gCzzYyXxYX4sLUlQ8JKysREyIGMHxSg5vgOajsgXgFMrvyA==
+"@tiptap/extensions@^3.10.2", "@tiptap/extensions@^3.10.3":
+  version "3.10.3"
+  resolved "https://registry.npmjs.org/@tiptap/extensions/-/extensions-3.10.3.tgz"
+  integrity sha512-ZskPmV+d42hMml+ZN1wJ9+LYxGandYy/kqWorv1VwCyi6G5LLxSGSqvobvmdXhNlGX1fqNSKZTdfJkU5Ja3Axw==
 
-"@tiptap/pm@^3.10.2":
-  version "3.10.2"
-  resolved "https://registry.npmjs.org/@tiptap/pm/-/pm-3.10.2.tgz"
-  integrity sha512-qXsp7guPLoir49Fh6IOzg6IAJA3tYYy/1316vv7DhJwmdF9GebkwgFcei2XGk6vKlwv18jWV+BlqDv9iwQ5Alg==
+"@tiptap/pm@^3.10.2", "@tiptap/pm@^3.10.3":
+  version "3.10.3"
+  resolved "https://registry.npmjs.org/@tiptap/pm/-/pm-3.10.3.tgz"
+  integrity sha512-jd0CYg/ivsv9zgsc3vRQ3vOaD+s2Vr0NAl2U3ODFyWdpC5XsHFcSuFCwQovBGy2HtBUnxhRO+BnmND57Mmylxw==
   dependencies:
     prosemirror-changeset "^2.3.0"
     prosemirror-collab "^1.3.1"
