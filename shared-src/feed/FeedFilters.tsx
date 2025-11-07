@@ -80,7 +80,7 @@ export function FeedFilters({
                 <SelectItem value={PostType.ARTICLE}>{POST_TYPE_LABELS[PostType.ARTICLE]}</SelectItem>
                 <SelectItem value={PostType.EVENT}>{POST_TYPE_LABELS[PostType.EVENT]}</SelectItem>
                 <SelectItem value={PostType.VACANCY}>{POST_TYPE_LABELS[PostType.VACANCY]}</SelectItem>
-                <SelectItem value={PostType.POLL}>{POST_TYPE_LABELS[PostType.POLL]}</SelectItem>
+                <SelectItem value={PostType.POLL}>{POST_TYPE_LABELS[PostType.QUIZ]}</SelectItem>
                 <SelectItem value={PostType.UPDATE}>{POST_TYPE_LABELS[PostType.UPDATE]}</SelectItem>
               </SelectContent>
             </Select>
