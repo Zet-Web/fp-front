@@ -4,7 +4,7 @@ export enum PostType {
   ARTICLE = 'article',
   EVENT = 'event',
   VACANCY = 'vacancy',
-  POLL = 'poll'
+  QUIZ = 'quiz'
 }
 
 export enum PostStatus {
