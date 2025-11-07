@@ -43,6 +43,7 @@ export function TiptapEditor({
       }),
       Table.configure({
         resizable: true,
+        allowTableNodeSelection: true,
         HTMLAttributes: {
           class: "border-collapse table-auto w-full",
         },

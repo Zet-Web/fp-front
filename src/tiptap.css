@@ -259,3 +259,14 @@
   cursor: ew-resize;
   cursor: col-resize;
 }
+
+/* Table node selection visual feedback */
+.ProseMirror .ProseMirror-selectednode {
+  outline: 3px solid hsl(var(--primary)) !important;
+  background-color: hsl(var(--primary) / 0.1) !important;
+}
+
+.ProseMirror table.ProseMirror-selectednode {
+  outline: 3px solid hsl(var(--primary)) !important;
+  background-color: hsl(var(--primary) / 0.05) !important;
+}
