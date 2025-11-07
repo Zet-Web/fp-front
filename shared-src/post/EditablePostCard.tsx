@@ -422,7 +422,7 @@ export function EditablePostCard({
                   onChange={(e) => setEditedExcerpt(e.target.value)}
                   placeholder="Short preview text (required, max 200 characters)"
                   rows={3}
-                  className={`resize-none ${
+                  className={`resize-none leading-7 ${
                     errors.excerpt ? "border-destructive" : ""
                   }`}
                   maxLength={EXCERPT_MAX_LENGTH}

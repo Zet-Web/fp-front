@@ -1,7 +1,7 @@
 .ProseMirror,
 .post-content {
   font-size: 1rem;
-  line-height: 1;
+  line-height: 1.75rem;
   color: var(--foreground);
   max-width: none;
 }
@@ -12,7 +12,8 @@
   text-align: center;
   font-weight: 800;
   font-size: 2.25rem;
-  letter-spacing: -0.02em;
+  line-height: 2.5rem;
+  letter-spacing: -0.025em;
 }
 
 .ProseMirror h2,
@@ -20,6 +21,8 @@
   scroll-margin-top: 1rem;
   font-weight: 600;
   font-size: 1.875rem;
+  line-height: 2.25rem;
+  letter-spacing: -0.025em;
   border-bottom: 1px solid hsl(var(--border));
   padding-bottom: 0.5rem;
 }
@@ -28,11 +31,18 @@
 .post-content h3 {
   font-weight: 600;
   font-size: 1.5rem;
+  line-height: 2rem;
+  letter-spacing: -0.025em;
 }
 
 .ProseMirror p,
 .post-content p {
   margin: 0;
+  line-height: 1.75rem;
+}
+
+.ProseMirror p:not(:first-child),
+.post-content p:not(:first-child) {
   margin-top: 1.5rem;
 }
 

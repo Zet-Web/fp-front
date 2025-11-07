@@ -50,7 +50,7 @@ export function TiptapEditor({
     },
     editorProps: {
       attributes: {
-        class: "ProseMirror p-4 min-h-[200px] focus:outline-none",
+        class: "ProseMirror p-4 min-h-[200px] focus:outline-none leading-7",
       },
     },
   });
