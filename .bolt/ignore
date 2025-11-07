@@ -9,8 +9,8 @@ apps/navigation
 apps/profile
 # apps/post
 apps/settings
-app/yurservice
-app/network
+apps/yurservice
+apps/network
 # apps/quiz
 
 
