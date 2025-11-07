@@ -1,16 +1,17 @@
 apps/test
-# apps/404
+apps/404
 # apps/auth
-# apps/chats
-# apps/header
+apps/chats
+apps/header
 # apps/home
-# apps/mobileNav
-# apps/navigation
+apps/mobileNav
+apps/navigation
 # apps/profile
 # apps/post
-# apps/settings
+apps/settings
 app/yurservice
 app/network
+# app/quiz
 
 
 # src/components
