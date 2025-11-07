@@ -513,7 +513,7 @@ export function EditablePostCard({
                 </Button>
               </div>
             </div>
-            {editedType === PostType.POLL && (
+            {editedType === PostType.QUIZ && (
               <QuizForm
                 onSubmit={handleSumbitQuizForm}
                 isQuizFormDisabled={isQuizFormDisabled}
