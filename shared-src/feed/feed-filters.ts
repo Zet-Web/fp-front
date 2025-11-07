@@ -1,6 +1,6 @@
 // Feed filter utilities and logic for filtering posts
 
-import { PostType, type PostWithAuthor, type FeedView } from "../types/post"
+import { PostType, type PostWithAuthor, type FeedView } from "../post/post"
 
 export interface FeedFilters {
   view: FeedView

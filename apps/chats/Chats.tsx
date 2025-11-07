@@ -227,12 +227,11 @@ export function Chats() {
                 <TooltipTrigger asChild>
                   <Button
                     variant="ghost"
-                    size="sm"
+                    size="icon"
                     onClick={toggleRight}
                     className="flex-1 h-9 hover:bg-accent/50"
                   >
                     <PanelRightClose className="h-4 w-4 mr-2" />
-                    Collapse
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -244,12 +243,11 @@ export function Chats() {
                 <TooltipTrigger asChild>
                   <Button
                     variant="ghost"
-                    size="sm"
+                    size="icon"
                     onClick={handleFocusMode}
                     className="flex-1 h-9 hover:bg-accent/50"
                   >
                     <Minimize2 className="h-4 w-4 mr-2" />
-                    {leftCollapsed && rightCollapsed ? 'Expand' : 'Focus'}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>

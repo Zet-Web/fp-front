@@ -236,11 +236,10 @@ export function MainSettings({ settings, allTimezones, onUpdate, hasUnsavedChang
               <SelectContent>
                 <SelectItem value="light">Light</SelectItem>
                 <SelectItem value="dark">Dark</SelectItem>
-                <SelectItem value="system">System</SelectItem>
               </SelectContent>
             </Select>
             <p className="text-xs text-muted-foreground">
-              Choose your preferred theme or follow system settings
+              Choose your preferred theme
             </p>
           </div>
         </CardContent>

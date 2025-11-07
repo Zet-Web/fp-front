@@ -1,6 +1,6 @@
 import { FPApi } from "@/lib/api";
 import { FeedFilters } from "./feed-filters";
-import { PostWithAuthor } from "../types/post";
+import { PostWithAuthor } from "../post/post";
 
 export type FetchPostResponse = {
     posts: PostWithAuthor[]; count: number;

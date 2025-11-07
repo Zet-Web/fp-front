@@ -19,7 +19,7 @@ Cards include hover effects (hover:shadow-md transition-shadow) for clear visual
 Lucide icons are used exclusively throughout the application for consistency. Icons follow size conventions: w-4 h-4 for inline elements, w-5 h-5 for standard actions, w-6 h-6 for prominent features. Avatar components use consistent sizing with fallback initials.
 
 ## Interactive Elements
-Buttons use variants from Shadcn UI (default, outline, ghost, destructive) with consistent hover states. All interactive elements provide visual feedback through color changes, shadows, or transforms. Loading states use skeleton components or spinners with animations.
+Buttons use variants from Shadcn UI (default, outline, ghost, destructive) with consistent hover states. All interactive elements provide visual feedback through color changes, shadows, or transforms. Loading states use skeleton components or spinners with animations. Tooltips use popover background (bg-popover) with border and shadow for clarity, displaying text in popover-foreground color to maintain readability in both light and dark themes without using accent colors.
 
 ## Content Structure
 Clear visual hierarchy is established through typography scale, spacing, and color contrast. Section cards group related content with headers using consistent title styling. Empty states provide clear messaging and call-to-action buttons when no content exists.

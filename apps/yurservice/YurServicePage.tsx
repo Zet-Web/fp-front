@@ -8,8 +8,10 @@ import { Search, AlertCircle } from "lucide-react"
 import { ResourceCard } from "./components/ResourceCard"
 import { RegionSelect } from "./components/RegionSelect"
 import { useYurServiceData } from "./hooks/use-yurservice-data"
+import { useBookmarkResource } from "./hooks/use-bookmark-resource"
 import { mapDatabaseResourceToUI } from "./lib/resource-mapper"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { useAuth } from "@/hooks/use-auth"
 
 const ITEMS_PER_PAGE = 18
 
@@ -20,43 +22,56 @@ export function YurServicePage() {
   const [courtPage, setCourtPage] = useState(1)
   const [govPage, setGovPage] = useState(1)
   const [toolPage, setToolPage] = useState(1)
+  const [savedPage, setSavedPage] = useState(1)
 
+  const { user } = useAuth()
   const { resources, regions, isLoading, error } = useYurServiceData()
+  const { savedResourceIds, toggleBookmark } = useBookmarkResource()
 
-  const filteredResources = useMemo(() => {
+  const searchFilteredResources = useMemo(() => {
     return resources.filter((resource) => {
       const matchesSearch =
         searchQuery === "" ||
         resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (resource.about && resource.about.toLowerCase().includes(searchQuery.toLowerCase()))
 
+      return matchesSearch
+    })
+  }, [searchQuery, resources])
+
+  const savedResources = useMemo(() => {
+    if (!user || savedResourceIds.size === 0) return []
+    return searchFilteredResources.filter((r) => savedResourceIds.has(r.id))
+  }, [searchFilteredResources, savedResourceIds, user])
+
+  const courtResources = useMemo(() => {
+    return searchFilteredResources.filter((r) => {
+      if (r.type !== "court") return false
+
       const matchesRegion =
         selectedRegionId === "all" ||
-        (resource.region_id !== null && resource.region_id.toString() === selectedRegionId)
+        (r.region_id !== null && r.region_id.toString() === selectedRegionId)
 
-      return matchesSearch && matchesRegion
+      return matchesRegion
     })
-  }, [searchQuery, selectedRegionId, resources])
-
-  const courtResources = useMemo(
-    () => filteredResources.filter((r) => r.type === "court"),
-    [filteredResources]
-  )
+  }, [searchFilteredResources, selectedRegionId])
 
   const govResources = useMemo(
-    () => filteredResources.filter((r) => r.type === "gov"),
-    [filteredResources]
+    () => searchFilteredResources.filter((r) => r.type === "gov"),
+    [searchFilteredResources]
   )
 
   const toolResources = useMemo(
-    () => filteredResources.filter((r) => r.type === "tool"),
-    [filteredResources]
+    () => searchFilteredResources.filter((r) => r.type === "tool"),
+    [searchFilteredResources]
   )
 
+  const paginatedSavedResources = savedResources.slice(0, savedPage * ITEMS_PER_PAGE)
   const paginatedCourtResources = courtResources.slice(0, courtPage * ITEMS_PER_PAGE)
   const paginatedGovResources = govResources.slice(0, govPage * ITEMS_PER_PAGE)
   const paginatedToolResources = toolResources.slice(0, toolPage * ITEMS_PER_PAGE)
 
+  const hasMoreSaved = savedResources.length > paginatedSavedResources.length
   const hasMoreCourts = courtResources.length > paginatedCourtResources.length
   const hasMoreGov = govResources.length > paginatedGovResources.length
   const hasMoreTools = toolResources.length > paginatedToolResources.length
@@ -111,7 +126,8 @@ export function YurServicePage() {
             "Loading resources..."
           ) : (
             <>
-              Showing {filteredResources.length} of {resources.length} resources
+              Showing {searchFilteredResources.length} of {resources.length} resources
+              {selectedRegionId !== "all" && " (region filter applies to Courts only)"}
             </>
           )}
         </div>
@@ -121,7 +137,7 @@ export function YurServicePage() {
         <Card className="p-12 text-center">
           <p className="text-muted-foreground">Loading resources...</p>
         </Card>
-      ) : filteredResources.length === 0 ? (
+      ) : searchFilteredResources.length === 0 ? (
         <Card className="p-12 text-center">
           <p className="text-muted-foreground">
             No resources found matching your criteria
@@ -129,6 +145,43 @@ export function YurServicePage() {
         </Card>
       ) : (
         <div className="space-y-8">
+          {savedResources.length > 0 && user && (
+            <section>
+              <h2 className="text-xl font-semibold mb-4">Saved</h2>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {paginatedSavedResources.map((resource) => {
+                  const uiResource = mapDatabaseResourceToUI(resource)
+                  const cardId = `saved-${resource.id}`
+                  return (
+                    <ResourceCard
+                      key={resource.id}
+                      resource={uiResource}
+                      isExpanded={expandedCardId === cardId}
+                      onToggle={() =>
+                        setExpandedCardId(
+                          expandedCardId === cardId ? null : cardId
+                        )
+                      }
+                      isSaved={savedResourceIds.has(resource.id)}
+                      onToggleBookmark={toggleBookmark}
+                    />
+                  )
+                })}
+              </div>
+              {hasMoreSaved && (
+                <div className="flex justify-center mt-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => setSavedPage((prev) => prev + 1)}
+                  >
+                    Load More
+                  </Button>
+                </div>
+              )}
+            </section>
+          )}
+
           {courtResources.length > 0 && (
             <section>
               <h2 className="text-xl font-semibold mb-4">Courts</h2>
@@ -147,6 +200,8 @@ export function YurServicePage() {
                           expandedCardId === cardId ? null : cardId
                         )
                       }
+                      isSaved={savedResourceIds.has(resource.id)}
+                      onToggleBookmark={toggleBookmark}
                     />
                   )
                 })}
@@ -182,6 +237,8 @@ export function YurServicePage() {
                           expandedCardId === cardId ? null : cardId
                         )
                       }
+                      isSaved={savedResourceIds.has(resource.id)}
+                      onToggleBookmark={toggleBookmark}
                     />
                   )
                 })}
@@ -216,6 +273,8 @@ export function YurServicePage() {
                           expandedCardId === cardId ? null : cardId
                         )
                       }
+                      isSaved={savedResourceIds.has(resource.id)}
+                      onToggleBookmark={toggleBookmark}
                     />
                   )
                 })}

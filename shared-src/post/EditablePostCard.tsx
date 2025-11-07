@@ -16,12 +16,12 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { X, Upload, Loader2 } from "lucide-react";
 import { useState } from "react";
-import type { PostAuthor } from "../types/post";
-import { PostType, PostStatus } from "../types/post";
-import { FPApi } from "@/lib/api";
-import { TiptapEditor } from "./TipTapEditor";
-import QuizForm from "../../apps/quiz/src/QuizForm";
+import type { PostAuthor } from "./post";
+import { PostType, PostStatus } from "./post";
 import { QuizFormData } from "@/apps/quiz/types/quiz";
+import { FPApi } from "@/lib/api";
+import { TiptapEditor } from "../feed/TipTapEditor";
+import QuizForm from "@/apps/quiz/src/QuizForm";
 
 interface EditablePostCardProps {
   title?: string;

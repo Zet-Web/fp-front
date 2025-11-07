@@ -1,15 +1,17 @@
+// Individual post page component displaying a single post by URL code or creating a new post
+
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { EditablePostCard } from "../../../shared-src/components/EditablePostCard";
-import { MOCK_POSTS } from "../../../shared-src/lib/mock-posts";
-import { PostType, PostStatus } from "../../../shared-src/types/post";
-import type { PostWithAuthor } from "../../../shared-src/types/post";
+import { EditablePostCard } from "../../../shared-src/post/EditablePostCard";
+import { MOCK_POSTS } from "../../../shared-src/feed/mock-posts";
+import { PostType, PostStatus } from "../../../shared-src/post/post";
+import type { PostWithAuthor } from "../../../shared-src/post/post";
 import { useAuthContext } from "@/components/auth-provider";
 import { FPApi } from "@/lib/api";
-import { FullPostCard } from "../../../shared-src/components/FullPostCard";
 import { QuizFormData } from "@/apps/quiz/types/quiz";
+import { FullPostCard } from "@/shared-src/feed/FullPostCard";
 
 export function PostPage() {
   const { urlCode } = useParams<{ urlCode: string }>();

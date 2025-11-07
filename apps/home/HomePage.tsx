@@ -1,16 +1,16 @@
 // Home page with feed of posts from the network
 
 import { useState, useMemo } from "react";
-import { Feed } from "../../shared-src/components/Feed";
-import { FeedFilters } from "../../shared-src/components/FeedFilters";
-import { MOCK_POSTS } from "../../shared-src/lib/mock-posts";
+import { Feed } from "../../shared-src/feed/Feed";
+import { FeedFilters } from "../../shared-src/feed/FeedFilters";
+import { MOCK_POSTS } from "../../shared-src/feed/mock-posts";
 import {
   DEFAULT_FILTERS,
   getUniqueCountries,
   getCitiesByCountry,
   getEmptyStateMessage,
   type FeedFilters as FeedFiltersType,
-} from "../../shared-src/lib/feed-filters";
+} from "../../shared-src/feed/feed-filters";
 
 export function HomePage() {
   const [filters, setFilters] = useState<FeedFiltersType>(DEFAULT_FILTERS);

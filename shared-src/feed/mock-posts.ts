@@ -1,6 +1,6 @@
 // Mock post data for testing and development
 
-import { PostType, PostStatus, type PostWithAuthor } from "../types/post"
+import { PostType, PostStatus, type PostWithAuthor } from "../post/post"
 
 const FOLLOWED_USER_IDS = ["test-user-1", "test-user-3"]
 
