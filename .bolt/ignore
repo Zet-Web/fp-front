@@ -9,7 +9,7 @@ apps/test
 # apps/profile
 # apps/post
 # apps/settings
-# app/yurservice
+app/yurservice
 app/network
 
 
