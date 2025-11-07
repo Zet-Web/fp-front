@@ -11,9 +11,20 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { QuizFormData, quizSchema } from "../types/quiz";
 import { Label } from "@/components/ui/label";
-import { Plus, Trash2, FileText, Settings2, ListChecks, GripVertical, Check } from "lucide-react";
+import { Plus, Trash2, FileText, Settings2, ListChecks, Check, ChevronUp, ChevronDown, HelpCircle } from "lucide-react";
 
 type Props = {
   onSubmit: (data: QuizFormData) => void;
@@ -53,9 +64,19 @@ export default function QuizForm({ onSubmit, isQuizFormDisabled }: Props) {
 
   const onFormSubmit = handleSubmit(onSubmit);
 
+  const moveQuestionUp = (index: number) => {
+    if (index === 0) return;
+    questionsField.swap(index, index - 1);
+  };
+
+  const moveQuestionDown = (index: number) => {
+    if (index === questionsField.fields.length - 1) return;
+    questionsField.swap(index, index + 1);
+  };
+
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      <Card className="shadow-md hover:shadow-lg transition-shadow">
+      <Card className="shadow-sm hover:shadow-md transition-shadow">
         <CardHeader>
           <div className="flex items-center gap-2">
             <FileText className="h-5 w-5 text-blue-500" />
@@ -103,7 +124,7 @@ export default function QuizForm({ onSubmit, isQuizFormDisabled }: Props) {
         </CardContent>
       </Card>
 
-      <Card className="shadow-md hover:shadow-lg transition-shadow">
+      <Card className="shadow-sm hover:shadow-md transition-shadow">
         <CardHeader>
           <div className="flex items-center gap-2">
             <Settings2 className="h-5 w-5 text-blue-500" />
@@ -317,7 +338,7 @@ export default function QuizForm({ onSubmit, isQuizFormDisabled }: Props) {
           <Button
             type="button"
             disabled={isQuizFormDisabled}
-            onClick={() => questionsField.append({ text: "", answers: [] })}
+            onClick={() => questionsField.append({ text: "", explanation: "", answers: [] })}
             className="gap-2"
           >
             <Plus className="h-4 w-4" />
@@ -337,7 +358,7 @@ export default function QuizForm({ onSubmit, isQuizFormDisabled }: Props) {
                 variant="outline"
                 disabled={isQuizFormDisabled}
                 onClick={() =>
-                  questionsField.append({ text: "", answers: [] })
+                  questionsField.append({ text: "", explanation: "", answers: [] })
                 }
                 className="gap-2"
               >
@@ -349,45 +370,102 @@ export default function QuizForm({ onSubmit, isQuizFormDisabled }: Props) {
         ) : (
           <div className="space-y-4">
             {questionsField.fields.map((q, index) => (
-              <Card key={q.id} className="shadow-md hover:shadow-lg transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-3">
-                    <GripVertical className="h-5 w-5 text-muted-foreground mt-3 cursor-move flex-shrink-0" />
-                    <div className="flex-1 space-y-4">
-                      <div className="flex items-center justify-between">
-                        <Badge variant="secondary">Вопрос {index + 1}</Badge>
+              <Card key={q.id} className="shadow-sm hover:shadow-md transition-shadow">
+                <CardContent className="p-4">
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <Badge variant="secondary">Вопрос {index + 1}</Badge>
+                      <div className="flex gap-1">
                         <Button
-                          variant="ghost"
                           size="sm"
+                          variant="ghost"
                           type="button"
-                          disabled={isQuizFormDisabled}
-                          onClick={() => questionsField.remove(index)}
-                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                          onClick={() => moveQuestionUp(index)}
+                          disabled={index === 0 || isQuizFormDisabled}
+                          className="h-7 w-7 p-0"
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <ChevronUp className="h-4 w-4" />
                         </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          type="button"
+                          onClick={() => moveQuestionDown(index)}
+                          disabled={index === questionsField.fields.length - 1 || isQuizFormDisabled}
+                          className="h-7 w-7 p-0"
+                        >
+                          <ChevronDown className="h-4 w-4" />
+                        </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              type="button"
+                              disabled={isQuizFormDisabled}
+                              className="h-7 w-7 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Удалить вопрос</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Вы уверены, что хотите удалить этот вопрос? Это действие нельзя отменить.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Отмена</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => questionsField.remove(index)}
+                              >
+                                Удалить
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </div>
+                    </div>
 
+                    <Controller
+                      control={control}
+                      name={`questions.${index}.text`}
+                      render={({ field }) => (
+                        <Input
+                          {...field}
+                          placeholder="Введите текст вопроса"
+                          className="text-base"
+                        />
+                      )}
+                    />
+
+                    <div className="space-y-3">
+                      <Label className="text-sm font-semibold">Варианты ответов</Label>
+                      <AnswersField
+                        control={control}
+                        qIndex={index}
+                        isQuizFormDisabled={isQuizFormDisabled}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                        <Label className="text-sm font-medium">Пояснение (необязательно)</Label>
+                      </div>
                       <Controller
                         control={control}
-                        name={`questions.${index}.text`}
+                        name={`questions.${index}.explanation`}
                         render={({ field }) => (
-                          <Input
+                          <Textarea
                             {...field}
-                            placeholder="Введите текст вопроса"
-                            className="text-base"
+                            placeholder="Объясните, почему этот ответ правильный..."
+                            rows={3}
+                            className="resize-none"
                           />
                         )}
                       />
-
-                      <div className="space-y-3">
-                        <Label className="text-sm font-semibold">Варианты ответов</Label>
-                        <AnswersField
-                          control={control}
-                          qIndex={index}
-                          isQuizFormDisabled={isQuizFormDisabled}
-                        />
-                      </div>
                     </div>
                   </div>
                 </CardContent>

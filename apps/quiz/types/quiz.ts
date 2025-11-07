@@ -17,6 +17,7 @@ export const quizSchema = z
       .array(
         z.object({
           text: z.string().min(1, "Введите вопрос"),
+          explanation: z.string().optional(),
           answers: z
             .array(
               z.object({
@@ -69,6 +70,7 @@ export interface QuizQuestion {
   id: number;
   quiz_id: number;
   text: string;
+  explanation?: string;
   created_at: string;
   position: number;
   answers: QuizAnswer[];
