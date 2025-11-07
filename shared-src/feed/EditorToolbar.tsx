@@ -18,19 +18,10 @@ import {
   Minus,
   Undo,
   Redo,
-  Table as TableIcon,
-  Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { LinkDialog } from "./LinkDialog";
-import { TableDialog } from "./TableDialog";
 
 interface ToolbarButtonProps {
   onClick: () => void;
@@ -64,7 +55,6 @@ function ToolbarButton({
 
 export function EditorToolbar({ editor }: { editor: Editor | null }) {
   const [isLinkDialogOpen, setIsLinkDialogOpen] = useState(false);
-  const [isTableDialogOpen, setIsTableDialogOpen] = useState(false);
 
   if (!editor) return null;
 
@@ -87,16 +77,7 @@ export function EditorToolbar({ editor }: { editor: Editor | null }) {
     editor.chain().focus().unsetLink().run();
   };
 
-  const handleInsertTable = (rows: number, cols: number) => {
-    editor
-      .chain()
-      .focus()
-      .insertTable({ rows, cols, withHeaderRow: true })
-      .run();
-  };
-
   const currentLink = editor.getAttributes("link").href || "";
-  const isInTable = editor.isActive("table");
 
   return (
     <>
@@ -237,38 +218,6 @@ export function EditorToolbar({ editor }: { editor: Editor | null }) {
           >
             <Minus className="h-4 w-4" />
           </ToolbarButton>
-
-          {/* Table dropdown */}
-          {isInTable ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-8 w-8 p-0 is-active"
-                  title="Table options"
-                  type="button"
-                >
-                  <TableIcon className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start">
-                <DropdownMenuItem
-                  onClick={() => editor.chain().focus().deleteTable().run()}
-                >
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Delete table
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : (
-            <ToolbarButton
-              onClick={() => setIsTableDialogOpen(true)}
-              title="Insert table"
-            >
-              <TableIcon className="h-4 w-4" />
-            </ToolbarButton>
-          )}
         </div>
       </div>
 
@@ -278,12 +227,6 @@ export function EditorToolbar({ editor }: { editor: Editor | null }) {
         onSave={handleSaveLink}
         onRemove={handleRemoveLink}
         initialUrl={currentLink}
-      />
-
-      <TableDialog
-        isOpen={isTableDialogOpen}
-        onClose={() => setIsTableDialogOpen(false)}
-        onInsert={handleInsertTable}
       />
     </>
   );
