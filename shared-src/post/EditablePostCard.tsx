@@ -489,36 +489,40 @@ export function EditablePostCard({
                 </div>
               )}
 
-              <div className="flex gap-2 pt-2">
-                <Button
-                  onClick={handleSave}
-                  disabled={
-                    !editedExcerpt.trim() ||
-                    editedExcerpt.length > EXCERPT_MAX_LENGTH
-                  }
-                >
-                  Save
-                </Button>
-
-                {editedType === PostType.QUIZ &&
-                  !!quizData &&
-                  isQuizFormDisabled && (
-                    <Button variant="secondary" onClick={handleEditQuizForm}>
-                      Edit quiz
-                    </Button>
-                  )}
-
-                <Button variant="outline" onClick={onCancel}>
-                  Cancel
-                </Button>
-              </div>
             </div>
             {editedType === PostType.QUIZ && (
-              <QuizForm
-                onSubmit={handleSumbitQuizForm}
-                isQuizFormDisabled={isQuizFormDisabled}
-              />
+              <div className="mt-6">
+                <QuizForm
+                  onSubmit={handleSumbitQuizForm}
+                  isQuizFormDisabled={isQuizFormDisabled}
+                />
+              </div>
             )}
+
+            <div className="flex gap-2 pt-6 border-t mt-6">
+              <Button
+                onClick={handleSave}
+                disabled={
+                  !editedExcerpt.trim() ||
+                  editedExcerpt.length > EXCERPT_MAX_LENGTH ||
+                  (editedType === PostType.QUIZ && !quizData)
+                }
+              >
+                Save
+              </Button>
+
+              {editedType === PostType.QUIZ &&
+                !!quizData &&
+                isQuizFormDisabled && (
+                  <Button variant="secondary" onClick={handleEditQuizForm}>
+                    Edit quiz
+                  </Button>
+                )}
+
+              <Button variant="outline" onClick={onCancel}>
+                Cancel
+              </Button>
+            </div>
           </div>
         </div>
       </CardContent>

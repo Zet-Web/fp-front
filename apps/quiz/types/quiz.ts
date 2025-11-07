@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const quizSchema = z
   .object({
-    title: z.string().min(1, "Название обязательно"),
+    title: z.string().optional(),
     description: z.string().optional(),
     settings: z.object({
       anonymous: z.boolean(),

@@ -75,63 +75,16 @@ export default function QuizForm({ onSubmit, isQuizFormDisabled }: Props) {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      <Card className="shadow-sm hover:shadow-md transition-shadow">
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <FileText className="h-5 w-5 text-blue-500" />
-            <CardTitle>Основная информация</CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <Label htmlFor="title">Название теста *</Label>
-            <Controller
-              control={control}
-              name="title"
-              render={({ field }) => (
-                <Input
-                  {...field}
-                  id="title"
-                  placeholder="Введите название теста"
-                  className="mt-1.5"
-                />
-              )}
-            />
-            {errors.title && (
-              <p className="text-sm text-destructive mt-1">
-                {errors.title.message}
-              </p>
-            )}
-          </div>
-
-          <div>
-            <Label htmlFor="description">Описание (необязательно)</Label>
-            <Controller
-              control={control}
-              name="description"
-              render={({ field }) => (
-                <Textarea
-                  {...field}
-                  id="description"
-                  placeholder="Добавьте описание теста"
-                  className="mt-1.5"
-                  rows={3}
-                />
-              )}
-            />
-          </div>
-        </CardContent>
-      </Card>
+    <div className="space-y-4">
 
       <Card className="shadow-sm hover:shadow-md transition-shadow">
-        <CardHeader>
+        <CardHeader className="p-4">
           <div className="flex items-center gap-2">
             <Settings2 className="h-5 w-5 text-blue-500" />
-            <CardTitle>Настройки теста</CardTitle>
+            <CardTitle className="text-lg">Настройки теста</CardTitle>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-4 pt-0">
           <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <h4 className="text-sm font-medium text-muted-foreground">
@@ -327,164 +280,166 @@ export default function QuizForm({ onSubmit, isQuizFormDisabled }: Props) {
         </CardContent>
       </Card>
 
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-xl font-semibold">Вопросы теста</h3>
-            <p className="text-sm text-muted-foreground mt-1">
-              Добавьте минимум один вопрос с вариантами ответов
-            </p>
+      <Card className="shadow-sm hover:shadow-md transition-shadow">
+        <CardHeader className="p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold">Вопросы теста</h3>
+              <p className="text-xs text-muted-foreground mt-1">
+                Добавьте минимум один вопрос с вариантами ответов
+              </p>
+            </div>
+            <Button
+              type="button"
+              disabled={isQuizFormDisabled}
+              onClick={() => questionsField.append({ text: "", explanation: "", answers: [] })}
+              size="sm"
+              className="gap-1.5"
+            >
+              <Plus className="h-4 w-4" />
+              Добавить
+            </Button>
           </div>
-          <Button
-            type="button"
-            disabled={isQuizFormDisabled}
-            onClick={() => questionsField.append({ text: "", explanation: "", answers: [] })}
-            className="gap-2"
-          >
-            <Plus className="h-4 w-4" />
-            Добавить вопрос
-          </Button>
-        </div>
+        </CardHeader>
 
-        {questionsField.fields.length === 0 ? (
-          <Card className="shadow-sm border-dashed">
-            <CardContent className="flex flex-col items-center justify-center py-12">
-              <ListChecks className="h-12 w-12 text-muted-foreground mb-4" />
-              <p className="text-muted-foreground mb-4">
+        <CardContent className="p-4 pt-0">
+          {questionsField.fields.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-8 border-2 border-dashed rounded-lg">
+              <ListChecks className="h-10 w-10 text-muted-foreground mb-3" />
+              <p className="text-sm text-muted-foreground mb-3">
                 Вопросы ещё не добавлены
               </p>
               <Button
                 type="button"
                 variant="outline"
+                size="sm"
                 disabled={isQuizFormDisabled}
                 onClick={() =>
                   questionsField.append({ text: "", explanation: "", answers: [] })
                 }
-                className="gap-2"
+                className="gap-1.5"
               >
                 <Plus className="h-4 w-4" />
                 Добавить первый вопрос
               </Button>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="space-y-4">
-            {questionsField.fields.map((q, index) => (
-              <Card key={q.id} className="shadow-sm hover:shadow-md transition-shadow">
-                <CardContent className="p-4">
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <Badge variant="secondary">Вопрос {index + 1}</Badge>
-                      <div className="flex gap-1">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          type="button"
-                          onClick={() => moveQuestionUp(index)}
-                          disabled={index === 0 || isQuizFormDisabled}
-                          className="h-7 w-7 p-0"
-                        >
-                          <ChevronUp className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          type="button"
-                          onClick={() => moveQuestionDown(index)}
-                          disabled={index === questionsField.fields.length - 1 || isQuizFormDisabled}
-                          className="h-7 w-7 p-0"
-                        >
-                          <ChevronDown className="h-4 w-4" />
-                        </Button>
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              type="button"
-                              disabled={isQuizFormDisabled}
-                              className="h-7 w-7 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {questionsField.fields.map((q, index) => (
+                <div key={q.id} className="p-3 rounded-lg border bg-card space-y-3">
+                  <div className="flex items-center justify-between">
+                    <Badge variant="secondary" className="text-xs">Вопрос {index + 1}</Badge>
+                    <div className="flex gap-1">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        type="button"
+                        onClick={() => moveQuestionUp(index)}
+                        disabled={index === 0 || isQuizFormDisabled}
+                        className="h-6 w-6 p-0"
+                      >
+                        <ChevronUp className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        type="button"
+                        onClick={() => moveQuestionDown(index)}
+                        disabled={index === questionsField.fields.length - 1 || isQuizFormDisabled}
+                        className="h-6 w-6 p-0"
+                      >
+                        <ChevronDown className="h-3.5 w-3.5" />
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            type="button"
+                            disabled={isQuizFormDisabled}
+                            className="h-6 w-6 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Удалить вопрос</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Вы уверены, что хотите удалить этот вопрос? Это действие нельзя отменить.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Отмена</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => questionsField.remove(index)}
                             >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Удалить вопрос</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Вы уверены, что хотите удалить этот вопрос? Это действие нельзя отменить.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Отмена</AlertDialogCancel>
-                              <AlertDialogAction
-                                onClick={() => questionsField.remove(index)}
-                              >
-                                Удалить
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </div>
+                              Удалить
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
+                  </div>
 
+                  <Controller
+                    control={control}
+                    name={`questions.${index}.text`}
+                    render={({ field }) => (
+                      <Input
+                        {...field}
+                        placeholder="Введите текст вопроса"
+                        className="text-sm"
+                      />
+                    )}
+                  />
+
+                  <div className="space-y-2">
+                    <Label className="text-xs font-semibold">Варианты ответов</Label>
+                    <AnswersField
+                      control={control}
+                      qIndex={index}
+                      isQuizFormDisabled={isQuizFormDisabled}
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <div className="flex items-center gap-1.5">
+                      <HelpCircle className="h-3.5 w-3.5 text-muted-foreground" />
+                      <Label className="text-xs font-medium">Пояснение (необязательно)</Label>
+                    </div>
                     <Controller
                       control={control}
-                      name={`questions.${index}.text`}
+                      name={`questions.${index}.explanation`}
                       render={({ field }) => (
-                        <Input
+                        <Textarea
                           {...field}
-                          placeholder="Введите текст вопроса"
-                          className="text-base"
+                          placeholder="Объясните, почему этот ответ правильный..."
+                          rows={2}
+                          className="resize-none text-sm"
                         />
                       )}
                     />
-
-                    <div className="space-y-3">
-                      <Label className="text-sm font-semibold">Варианты ответов</Label>
-                      <AnswersField
-                        control={control}
-                        qIndex={index}
-                        isQuizFormDisabled={isQuizFormDisabled}
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <HelpCircle className="h-4 w-4 text-muted-foreground" />
-                        <Label className="text-sm font-medium">Пояснение (необязательно)</Label>
-                      </div>
-                      <Controller
-                        control={control}
-                        name={`questions.${index}.explanation`}
-                        render={({ field }) => (
-                          <Textarea
-                            {...field}
-                            placeholder="Объясните, почему этот ответ правильный..."
-                            rows={3}
-                            className="resize-none"
-                          />
-                        )}
-                      />
-                    </div>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
-      </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
-      <div className="flex justify-end pt-4">
-        <Button
-          onClick={onFormSubmit}
-          disabled={!isValid || isQuizFormDisabled}
-          size="lg"
-          className="min-w-[200px]"
-        >
-          {isQuizFormDisabled ? "Сохранение..." : "Сохранить тест"}
-        </Button>
-      </div>
+      {!isQuizFormDisabled && (
+        <div className="flex justify-end">
+          <Button
+            onClick={onFormSubmit}
+            disabled={!isValid}
+            className="gap-2"
+          >
+            <Check className="h-4 w-4" />
+            Подготовить тест
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

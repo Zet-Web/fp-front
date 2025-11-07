@@ -1,4 +1,4 @@
-// Modernized quiz taking interface with card-based design and theme support
+// Compact quiz taking interface with start screen and optimized design
 
 import { useEffect, useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { useAuthContext } from "@/components/auth-provider";
 import { FPApi } from "@/lib/api";
-import { Clock, Award, XCircle, ChevronRight, ChevronLeft, Trophy, CheckCircle2 } from "lucide-react";
+import { Clock, Award, XCircle, ChevronRight, ChevronLeft, Trophy, CheckCircle2, Play } from "lucide-react";
 import {
   QuizResponse,
   QuizResultsTableRow,
@@ -34,6 +34,7 @@ export default function QuizTake({ postId }: Props) {
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [resultsTable, setResultsTable] = useState<QuizResultsTableRow[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [quizStarted, setQuizStarted] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -42,15 +43,10 @@ export default function QuizTake({ postId }: Props) {
       );
       const data = res.data;
       setQuiz(data);
-      setStartedAt(new Date().toISOString());
 
       const init: Record<string, number[]> = {};
       data.questions?.forEach((q) => (init[q.id] = []));
       setAnswers(init);
-
-      if (data.has_timer && data.timer_minutes) {
-        setTimeLeft(data.timer_minutes * 60);
-      }
 
       setLoading(false);
     }
@@ -58,7 +54,7 @@ export default function QuizTake({ postId }: Props) {
   }, [postId]);
 
   useEffect(() => {
-    if (timeLeft === null || finished) return;
+    if (timeLeft === null || finished || !quizStarted) return;
     const t = setInterval(() => {
       setTimeLeft((x) => {
         if (x === null) return null;
@@ -70,14 +66,22 @@ export default function QuizTake({ postId }: Props) {
       });
     }, 1000);
     return () => clearInterval(t);
-  }, [timeLeft, finished]);
+  }, [timeLeft, finished, quizStarted]);
+
+  const handleStartQuiz = () => {
+    setQuizStarted(true);
+    setStartedAt(new Date().toISOString());
+    if (quiz?.has_timer && quiz?.timer_minutes) {
+      setTimeLeft(quiz.timer_minutes * 60);
+    }
+  };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center space-y-4">
-          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="text-muted-foreground">Загрузка квиза...</p>
+      <div className="flex items-center justify-center min-h-[200px]">
+        <div className="text-center space-y-3">
+          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <p className="text-sm text-muted-foreground">Загрузка квиза...</p>
         </div>
       </div>
     );
@@ -85,45 +89,39 @@ export default function QuizTake({ postId }: Props) {
 
   if (!quiz) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Card className="max-w-md w-full shadow-md">
-          <CardContent className="pt-6 text-center space-y-4">
-            <XCircle className="w-16 h-16 text-red-500 mx-auto" />
-            <h2 className="text-xl font-semibold">Квиз не найден</h2>
-            <p className="text-muted-foreground">Запрашиваемый квиз не существует</p>
-          </CardContent>
-        </Card>
-      </div>
+      <Card className="shadow-sm">
+        <CardContent className="p-6 text-center space-y-3">
+          <XCircle className="w-12 h-12 text-red-500 mx-auto" />
+          <h3 className="text-lg font-semibold">Квиз не найден</h3>
+          <p className="text-sm text-muted-foreground">Запрашиваемый квиз не существует</p>
+        </CardContent>
+      </Card>
     );
   }
 
   if (quiz.allow_pause) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Card className="max-w-md w-full shadow-md">
-          <CardContent className="pt-6 text-center space-y-4">
-            <Clock className="w-16 h-16 text-orange-500 mx-auto" />
-            <h2 className="text-xl font-semibold">Квиз на паузе</h2>
-            <p className="text-muted-foreground">Квиз временно недоступен</p>
-          </CardContent>
-        </Card>
-      </div>
+      <Card className="shadow-sm">
+        <CardContent className="p-6 text-center space-y-3">
+          <Clock className="w-12 h-12 text-orange-500 mx-auto" />
+          <h3 className="text-lg font-semibold">Квиз на паузе</h3>
+          <p className="text-sm text-muted-foreground">Квиз временно недоступен</p>
+        </CardContent>
+      </Card>
     );
   }
 
   if (!quiz.anonymous && !profileId) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Card className="max-w-md w-full shadow-md">
-          <CardContent className="pt-6 text-center space-y-4">
-            <XCircle className="w-16 h-16 text-red-500 mx-auto" />
-            <h2 className="text-xl font-semibold">Требуется авторизация</h2>
-            <p className="text-muted-foreground">
-              Только авторизованные пользователи могут пройти этот квиз
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+      <Card className="shadow-sm">
+        <CardContent className="p-6 text-center space-y-3">
+          <XCircle className="w-12 h-12 text-red-500 mx-auto" />
+          <h3 className="text-lg font-semibold">Требуется авторизация</h3>
+          <p className="text-sm text-muted-foreground">
+            Только авторизованные пользователи могут пройти этот квиз
+          </p>
+        </CardContent>
+      </Card>
     );
   }
 
@@ -203,6 +201,58 @@ export default function QuizTake({ postId }: Props) {
     return `${mins}:${String(secs).padStart(2, '0')}`;
   };
 
+  if (!quizStarted) {
+    return (
+      <Card className="shadow-sm hover:shadow-md transition-shadow">
+        <CardContent className="p-6 space-y-4">
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Badge variant="secondary" className="text-sm">
+                {quiz.questions.length} {quiz.questions.length === 1 ? 'вопрос' : 'вопросов'}
+              </Badge>
+              {quiz.has_timer && quiz.timer_minutes && (
+                <Badge variant="outline" className="gap-1.5 text-sm">
+                  <Clock className="h-3.5 w-3.5" />
+                  {quiz.timer_minutes} мин
+                </Badge>
+              )}
+            </div>
+          </div>
+
+          <div className="space-y-3 pt-2">
+            <div className="flex items-start gap-2">
+              <CheckCircle2 className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
+              <p className="text-sm text-muted-foreground">
+                {quiz.anonymous ? 'Анонимное прохождение' : 'Требуется авторизация'}
+              </p>
+            </div>
+            {quiz.one_attempt_per_user && (
+              <div className="flex items-start gap-2">
+                <CheckCircle2 className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                <p className="text-sm text-muted-foreground">
+                  Одна попытка на пользователя
+                </p>
+              </div>
+            )}
+            {quiz.show_correct_answers && (
+              <div className="flex items-start gap-2">
+                <CheckCircle2 className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                <p className="text-sm text-muted-foreground">
+                  Правильные ответы будут показаны после завершения
+                </p>
+              </div>
+            )}
+          </div>
+
+          <Button onClick={handleStartQuiz} className="w-full gap-2 mt-4" size="lg">
+            <Play className="h-4 w-4" />
+            Начать квиз
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
   if (finished) {
     const percentage = result
       ? Math.round((result.score / result.total) * 100)
@@ -218,42 +268,42 @@ export default function QuizTake({ postId }: Props) {
     const performance = getPerformanceLevel(percentage);
 
     return (
-      <div className="max-w-3xl mx-auto space-y-6">
-        <Card className="shadow-md hover:shadow-lg transition-shadow overflow-hidden">
-          <div className="bg-gradient-to-r from-blue-500/10 via-blue-500/5 to-transparent dark:from-blue-500/20 dark:via-blue-500/10 p-8 text-center border-b">
-            <Trophy className="w-16 h-16 mx-auto mb-4 text-blue-500" />
-            <h1 className="text-3xl font-bold mb-2">Квиз завершен!</h1>
-            <p className="text-muted-foreground">Отличная работа</p>
+      <div className="space-y-4">
+        <Card className="shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+          <div className="bg-gradient-to-r from-blue-500/10 via-blue-500/5 to-transparent dark:from-blue-500/20 dark:via-blue-500/10 p-6 text-center border-b">
+            <Trophy className="w-12 h-12 mx-auto mb-3 text-blue-500" />
+            <h2 className="text-2xl font-bold mb-1">Квиз завершен!</h2>
+            <p className="text-sm text-muted-foreground">Отличная работа</p>
           </div>
 
-          <CardContent className="p-8">
-            <div className="text-center space-y-6">
-              <div className="inline-block bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/50 dark:to-blue-900/30 rounded-2xl p-8 border-2 border-blue-200 dark:border-blue-800">
-                <div className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-500">
+          <CardContent className="p-6">
+            <div className="text-center space-y-4">
+              <div className="inline-block bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/50 dark:to-blue-900/30 rounded-xl p-6 border-2 border-blue-200 dark:border-blue-800">
+                <div className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-500">
                   {result?.score}/{result?.total}
                 </div>
-                <div className="text-muted-foreground mt-2 text-lg font-medium">
+                <div className="text-muted-foreground mt-1.5 text-base font-medium">
                   {percentage}% Правильных
                 </div>
-                <Badge className={`mt-3 ${performance.color}`} variant="secondary">
+                <Badge className={`mt-2 ${performance.color}`} variant="secondary">
                   {performance.label}
                 </Badge>
               </div>
 
-              <div className="grid grid-cols-3 gap-4 max-w-md mx-auto">
-                <div className="p-4 rounded-lg bg-accent/50">
-                  <div className="text-2xl font-bold text-foreground">{result?.total}</div>
-                  <div className="text-xs text-muted-foreground">Всего вопросов</div>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="p-3 rounded-lg bg-accent/50">
+                  <div className="text-xl font-bold text-foreground">{result?.total}</div>
+                  <div className="text-xs text-muted-foreground">Всего</div>
                 </div>
-                <div className="p-4 rounded-lg bg-accent/50">
-                  <div className="text-2xl font-bold text-green-600">{result?.score}</div>
-                  <div className="text-xs text-muted-foreground">Правильных</div>
+                <div className="p-3 rounded-lg bg-accent/50">
+                  <div className="text-xl font-bold text-green-600">{result?.score}</div>
+                  <div className="text-xs text-muted-foreground">Верных</div>
                 </div>
-                <div className="p-4 rounded-lg bg-accent/50">
-                  <div className="text-2xl font-bold text-red-600">
+                <div className="p-3 rounded-lg bg-accent/50">
+                  <div className="text-xl font-bold text-red-600">
                     {result ? result.total - result.score : 0}
                   </div>
-                  <div className="text-xs text-muted-foreground">Неправильных</div>
+                  <div className="text-xs text-muted-foreground">Неверных</div>
                 </div>
               </div>
             </div>
@@ -265,26 +315,26 @@ export default function QuizTake({ postId }: Props) {
         )}
 
         {quiz.visibility === "public" && resultsTable.length > 0 && (
-          <Card className="shadow-md hover:shadow-lg transition-shadow">
-            <CardHeader>
+          <Card className="shadow-sm hover:shadow-md transition-shadow">
+            <CardHeader className="p-4">
               <div className="flex items-center gap-2">
-                <Award className="w-6 h-6 text-blue-500" />
-                <h2 className="text-2xl font-bold">Таблица результатов</h2>
+                <Award className="w-5 h-5 text-blue-500" />
+                <h3 className="text-lg font-bold">Таблица результатов</h3>
               </div>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-xs text-muted-foreground">
                 Лучшие результаты по этому квизу
               </p>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-4 pt-0">
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
                     <tr className="border-b">
-                      <th className="text-left py-3 px-4 font-semibold">#</th>
-                      <th className="text-left py-3 px-4 font-semibold">
+                      <th className="text-left py-2 px-3 text-sm font-semibold">#</th>
+                      <th className="text-left py-2 px-3 text-sm font-semibold">
                         Пользователь
                       </th>
-                      <th className="text-right py-3 px-4 font-semibold">
+                      <th className="text-right py-2 px-3 text-sm font-semibold">
                         Счёт
                       </th>
                     </tr>
@@ -295,20 +345,20 @@ export default function QuizTake({ postId }: Props) {
                         key={row.id}
                         className="border-b hover:bg-accent/50 transition-colors"
                       >
-                        <td className="py-3 px-4">
+                        <td className="py-2 px-3">
                           <div className="flex items-center justify-center">
                             {idx === 0 ? (
-                              <Award className="h-5 w-5 text-yellow-500" />
+                              <Award className="h-4 w-4 text-yellow-500" />
                             ) : (
-                              <span className="text-muted-foreground">{idx + 1}</span>
+                              <span className="text-sm text-muted-foreground">{idx + 1}</span>
                             )}
                           </div>
                         </td>
-                        <td className="py-3 px-4">
+                        <td className="py-2 px-3 text-sm">
                           {row.profile?.name ?? "Аноним"}
                         </td>
-                        <td className="py-3 px-4 text-right">
-                          <Badge variant="secondary" className="font-semibold">
+                        <td className="py-2 px-3 text-right">
+                          <Badge variant="secondary" className="text-xs font-semibold">
                             {row.score}/{result?.total}
                           </Badge>
                         </td>
@@ -325,47 +375,40 @@ export default function QuizTake({ postId }: Props) {
   }
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
-      <Card className="shadow-md hover:shadow-lg transition-shadow">
-        <CardHeader className="space-y-4">
-          <div className="space-y-2">
-            <h1 className="text-3xl font-bold">{quiz.title}</h1>
-            {quiz.description && (
-              <p className="text-muted-foreground text-lg">{quiz.description}</p>
-            )}
-          </div>
-
-          <div className="flex items-center justify-between flex-wrap gap-4">
-            <Badge variant="secondary" className="text-sm">
-              Вопрос {currentQuestionIndex + 1} из {totalQuestions}
+    <div className="space-y-4">
+      <Card className="shadow-sm hover:shadow-md transition-shadow">
+        <CardHeader className="p-4 space-y-3">
+          <div className="flex items-center justify-between gap-3">
+            <Badge variant="secondary" className="text-xs">
+              {currentQuestionIndex + 1} / {totalQuestions}
             </Badge>
 
             {quiz.has_timer && timeLeft !== null && (
               <Badge
                 variant={timeLeft < 60 ? 'destructive' : 'secondary'}
-                className="gap-2 text-sm"
+                className="gap-1.5 text-xs"
               >
-                <Clock className="h-4 w-4" />
+                <Clock className="h-3.5 w-3.5" />
                 {formatTime(timeLeft)}
               </Badge>
             )}
           </div>
 
-          <Progress value={progress} className="h-2" />
+          <Progress value={progress} className="h-1.5" />
         </CardHeader>
 
-        <CardContent className="space-y-6">
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold">{currentQuestion.text}</h2>
+        <CardContent className="p-4 pt-0 space-y-4">
+          <div className="space-y-3">
+            <h2 className="text-lg font-semibold leading-snug">{currentQuestion.text}</h2>
 
-            <div className="space-y-3">
+            <div className="space-y-2">
               {currentQuestion.answers.map((a) => {
                 const isSelected = answers[currentQuestion.id]?.includes(a.id);
 
                 return (
                   <label
                     key={a.id}
-                    className={`flex items-start gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                    className={`flex items-start gap-2.5 p-3 rounded-lg border-2 cursor-pointer transition-all ${
                       isSelected
                         ? "border-blue-500 bg-blue-50 dark:bg-blue-950/20"
                         : "border-border hover:border-accent-foreground/20 hover:bg-accent/50"
@@ -378,25 +421,33 @@ export default function QuizTake({ postId }: Props) {
                       }
                       className="mt-0.5"
                     />
-                    <span className="flex-1 text-base">{a.text}</span>
+                    <span className="flex-1 text-sm leading-relaxed">{a.text}</span>
                   </label>
                 );
               })}
             </div>
           </div>
 
-          <div className="flex justify-between items-center pt-4">
+          <div className="flex justify-between items-center pt-2">
             <Button
               variant="outline"
               onClick={handlePrevious}
               disabled={currentQuestionIndex === 0}
-              className="gap-2"
+              size="sm"
+              className="gap-1.5"
             >
               <ChevronLeft className="h-4 w-4" />
               Назад
             </Button>
 
-            <Button onClick={handleNext} disabled={!hasAnswered} className="gap-2">
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <CheckCircle2 className="h-3.5 w-3.5" />
+              <span>
+                {Object.keys(answers).filter(key => answers[key].length > 0).length} / {totalQuestions}
+              </span>
+            </div>
+
+            <Button onClick={handleNext} disabled={!hasAnswered} size="sm" className="gap-1.5">
               {isLastQuestion ? (
                 <>
                   <Trophy className="h-4 w-4" />
@@ -409,17 +460,6 @@ export default function QuizTake({ postId }: Props) {
                 </>
               )}
             </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="shadow-sm">
-        <CardContent className="pt-6">
-          <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-            <CheckCircle2 className="h-4 w-4" />
-            <span>
-              {Object.keys(answers).filter(key => answers[key].length > 0).length} из {totalQuestions} вопросов отвечено
-            </span>
           </div>
         </CardContent>
       </Card>
