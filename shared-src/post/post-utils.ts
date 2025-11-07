@@ -36,11 +36,8 @@ export function generateSlugFromTitle(title: string): string {
  * @param slug - Optional slug derived from title
  * @returns Full URL path (e.g., "/post/Ab3X-hello-world" or "/post/Ab3X")
  */
-export function constructPostUrl(urlCode: string, slug?: string): string {
-  if (!slug) {
+export function constructPostUrl(urlCode: string): string {
     return `/post/${urlCode}`
-  }
-  return `/post/${urlCode}-${slug}`
 }
 
 /**

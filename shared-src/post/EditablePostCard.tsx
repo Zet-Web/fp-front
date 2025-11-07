@@ -1,138 +1,192 @@
 // Enhanced editable post card component for inline post editing with validation
 
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
-import { X, Upload, Loader2 } from "lucide-react"
-import { useState } from "react"
-import type { PostAuthor } from "./post"
-import { PostType, PostStatus } from "./post"
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { X, Upload, Loader2 } from "lucide-react";
+import { useState } from "react";
+import type { PostAuthor } from "./post";
+import { PostType, PostStatus } from "./post";
+import { QuizFormData } from "@/apps/quiz/types/quiz";
+import { FPApi } from "@/lib/api";
+import { TiptapEditor } from "../feed/TipTapEditor";
+import QuizForm from "../../apps/quiz/src/QuizForm";
 
 interface EditablePostCardProps {
-  title?: string
-  excerpt: string
-  content?: string
-  coverImage?: string
-  images: string[]
-  type: PostType
-  status: PostStatus
-  isPinned: boolean
-  slug?: string
-  author: PostAuthor
-  onSave: (updates: {
-    title?: string
-    excerpt: string
-    content?: string
-    cover_image?: string
-    images: string[]
-    type: PostType
-    status: PostStatus
-    is_pinned: boolean
-    slug?: string
-  }) => void
-  onCancel: () => void
+  title?: string;
+  excerpt: string;
+  content?: string;
+  coverImage?: string;
+  images: string[];
+  type: PostType;
+  status: PostStatus;
+  isPinned: boolean;
+  slug?: string;
+  author: PostAuthor;
+  onSave: (
+    updates: {
+      title?: string;
+      excerpt: string;
+      content?: string;
+      cover_image?: string;
+      images: string[];
+      type: PostType;
+      status: PostStatus;
+      is_pinned: boolean;
+      slug?: string;
+    },
+    quizData?: QuizFormData | null
+  ) => void;
+  onCancel: () => void;
 }
 
 export function EditablePostCard({
-  title = '',
+  title = "",
   excerpt,
-  content = '',
+  content = "",
   coverImage,
   images,
   type,
   status,
   isPinned,
-  slug = '',
+  slug = "",
   author,
   onSave,
-  onCancel
+  onCancel,
 }: EditablePostCardProps) {
-  const [editedTitle, setEditedTitle] = useState(title)
-  const [editedExcerpt, setEditedExcerpt] = useState(excerpt)
-  const [editedContent, setEditedContent] = useState(content)
-  const [editedCoverImage, setEditedCoverImage] = useState(coverImage || '')
-  const [editedImages, setEditedImages] = useState(images)
-  const [editedType, setEditedType] = useState(type)
-  const [editedStatus, setEditedStatus] = useState(status)
-  const [editedIsPinned, setEditedIsPinned] = useState(isPinned)
-  const [editedSlug, setEditedSlug] = useState(slug)
-  const [errors, setErrors] = useState<Record<string, string>>({})
-  const [isUploadingCover, setIsUploadingCover] = useState(false)
-  const [showUrlInput, setShowUrlInput] = useState(false)
+  const [editedTitle, setEditedTitle] = useState(title);
+  const [editedExcerpt, setEditedExcerpt] = useState(excerpt);
+  const [editedContent, setEditedContent] = useState(content);
+  const [editedCoverImage, setEditedCoverImage] = useState(coverImage || "");
+  const [editedImages, setEditedImages] = useState(images);
+  const [editedType, setEditedType] = useState(type);
+  const [editedStatus, setEditedStatus] = useState(status);
+  const [editedIsPinned, setEditedIsPinned] = useState(isPinned);
+  const [editedSlug, setEditedSlug] = useState(slug);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isUploadingCover, setIsUploadingCover] = useState(false);
+  const [showUrlInput, setShowUrlInput] = useState(false);
 
-  const displayName = author.name || author.username || 'User'
-  const displayUsername = author.username || author.telegram_username || 'user'
-  const avatarFallback = displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+  // Quiz
+  const [isQuizFormDisabled, setQuizFormDisabled] = useState(false);
+  const [quizData, setQuizData] = useState<QuizFormData | null>(null);
 
-  const EXCERPT_MAX_LENGTH = 200
-  const excerptRemaining = EXCERPT_MAX_LENGTH - editedExcerpt.length
+  const handleSumbitQuizForm = (data: QuizFormData) => {
+    if (!data) setQuizData(null);
+
+    setQuizData(data);
+    setQuizFormDisabled(true);
+  };
+
+  const handleEditQuizForm = () => {
+    setQuizFormDisabled(false);
+  };
+
+  const displayName = author.name || author.username || "User";
+  const displayUsername = author.username || author.telegram_username || "user";
+  const avatarFallback = displayName
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+
+  const EXCERPT_MAX_LENGTH = 200;
+  const excerptRemaining = EXCERPT_MAX_LENGTH - editedExcerpt.length;
 
   const validateForm = (): boolean => {
-    const newErrors: Record<string, string> = {}
+    const newErrors: Record<string, string> = {};
 
     if (!editedExcerpt.trim()) {
-      newErrors.excerpt = 'Preview is required'
+      newErrors.excerpt = "Preview is required";
     } else if (editedExcerpt.length > EXCERPT_MAX_LENGTH) {
-      newErrors.excerpt = `Preview must be ${EXCERPT_MAX_LENGTH} characters or less`
+      newErrors.excerpt = `Preview must be ${EXCERPT_MAX_LENGTH} characters or less`;
     }
 
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSave = () => {
     if (!validateForm()) {
-      return
+      return;
     }
 
-    onSave({
-      title: editedTitle.trim() || undefined,
-      excerpt: editedExcerpt.trim(),
-      content: editedContent.trim() || undefined,
-      cover_image: editedCoverImage.trim() || undefined,
-      images: editedImages,
-      type: editedType,
-      status: editedStatus,
-      is_pinned: editedIsPinned,
-      slug: editedSlug.trim() || undefined
-    })
-  }
+    onSave(
+      {
+        title: editedTitle.trim() || undefined,
+        excerpt: editedExcerpt.trim(),
+        content: editedContent.trim() || undefined,
+        cover_image: editedCoverImage.trim() || undefined,
+        images: editedImages,
+        type: editedType,
+        status: editedStatus,
+        is_pinned: editedIsPinned,
+        slug: editedSlug.trim() || undefined,
+      },
+      quizData
+    );
+  };
 
   const removeImage = (index: number) => {
-    setEditedImages(prev => prev.filter((_, i) => i !== index))
-  }
+    setEditedImages((prev) => prev.filter((_, i) => i !== index));
+  };
 
   const handleCoverImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEditedCoverImage(e.target.value)
-  }
+    setEditedCoverImage(e.target.value);
+  };
 
   const removeCoverImage = () => {
-    setEditedCoverImage('')
-  }
+    setEditedCoverImage("");
+  };
 
-  const handleCoverUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (!file) return
+  const handleCoverUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
 
-    setIsUploadingCover(true)
+    setIsUploadingCover(true);
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500))
-      const tempUrl = URL.createObjectURL(file)
-      setEditedCoverImage(tempUrl)
-      console.log('Cover uploaded (simulated):', file.name)
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await FPApi.axios.post<{ publicUrl: string }>(
+        "post/upload-cover",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (!res.data?.publicUrl) return;
+
+      const uniqueVersion = new Date().getTime();
+      const newUrl = `${res.data.publicUrl}?v=${uniqueVersion}`;
+
+      setEditedCoverImage(newUrl);
+      console.log("Cover uploaded (simulated):", file.name);
     } catch (error) {
-      console.error('Cover upload failed:', error)
+      console.error("Cover upload failed:", error);
     } finally {
-      setIsUploadingCover(false)
-      event.target.value = ''
+      setIsUploadingCover(false);
+      event.target.value = "";
     }
-  }
+  };
 
   return (
     <Card className="shadow-md border-2 border-primary/20">
@@ -140,7 +194,10 @@ export function EditablePostCard({
         <div className="flex gap-3">
           <div className="flex-shrink-0">
             <Avatar className="w-12 h-12">
-              <AvatarImage src={author.avatar_url || undefined} alt={displayName} />
+              <AvatarImage
+                src={author.avatar_url || undefined}
+                alt={displayName}
+              />
               <AvatarFallback>{avatarFallback}</AvatarFallback>
             </Avatar>
           </div>
@@ -148,23 +205,39 @@ export function EditablePostCard({
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1 mb-4">
               <h3 className="font-semibold text-sm">{displayName}</h3>
-              {author.badge?.includes('verified') && (
+              {author.badge?.includes("verified") && (
                 <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
-                  <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  <svg
+                    className="w-2.5 h-2.5 text-white"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                 </div>
               )}
-              <span className="text-sm text-muted-foreground">@{displayUsername}</span>
+              <span className="text-sm text-muted-foreground">
+                @{displayUsername}
+              </span>
             </div>
 
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="edit-type" className="text-sm font-medium mb-2 block">
+                  <Label
+                    htmlFor="edit-type"
+                    className="text-sm font-medium mb-2 block"
+                  >
                     Post Type
                   </Label>
-                  <Select value={editedType} onValueChange={(value) => setEditedType(value as PostType)}>
+                  <Select
+                    value={editedType}
+                    onValueChange={(value) => setEditedType(value as PostType)}
+                  >
                     <SelectTrigger id="edit-type">
                       <SelectValue placeholder="Select type" />
                     </SelectTrigger>
@@ -178,17 +251,29 @@ export function EditablePostCard({
                 </div>
 
                 <div>
-                  <Label htmlFor="edit-status" className="text-sm font-medium mb-2 block">
+                  <Label
+                    htmlFor="edit-status"
+                    className="text-sm font-medium mb-2 block"
+                  >
                     Status
                   </Label>
-                  <Select value={editedStatus} onValueChange={(value) => setEditedStatus(value as PostStatus)}>
+                  <Select
+                    value={editedStatus}
+                    onValueChange={(value) =>
+                      setEditedStatus(value as PostStatus)
+                    }
+                  >
                     <SelectTrigger id="edit-status">
                       <SelectValue placeholder="Select status" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value={PostStatus.DRAFT}>Draft</SelectItem>
-                      <SelectItem value={PostStatus.PUBLISHED}>Published</SelectItem>
-                      <SelectItem value={PostStatus.ARCHIVED}>Archived</SelectItem>
+                      <SelectItem value={PostStatus.PUBLISHED}>
+                        Published
+                      </SelectItem>
+                      <SelectItem value={PostStatus.ARCHIVED}>
+                        Archived
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -198,18 +283,21 @@ export function EditablePostCard({
                 <Checkbox
                   id="edit-pinned"
                   checked={editedIsPinned}
-                  onCheckedChange={(checked) => setEditedIsPinned(checked as boolean)}
+                  onCheckedChange={(checked) =>
+                    setEditedIsPinned(checked as boolean)
+                  }
                 />
-                <Label htmlFor="edit-pinned" className="text-sm font-medium cursor-pointer">
+                <Label
+                  htmlFor="edit-pinned"
+                  className="text-sm font-medium cursor-pointer"
+                >
                   Pin this post
                 </Label>
               </div>
 
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <Label className="text-sm font-medium">
-                    Cover Image
-                  </Label>
+                  <Label className="text-sm font-medium">Cover Image</Label>
                   <Button
                     type="button"
                     variant="ghost"
@@ -217,7 +305,7 @@ export function EditablePostCard({
                     onClick={() => setShowUrlInput(!showUrlInput)}
                     className="text-xs h-auto py-1 px-2"
                   >
-                    {showUrlInput ? 'Upload File' : 'Use URL'}
+                    {showUrlInput ? "Upload File" : "Use URL"}
                   </Button>
                 </div>
                 <div className="space-y-2">
@@ -266,7 +354,9 @@ export function EditablePostCard({
                             ) : (
                               <Upload className="w-4 h-4" />
                             )}
-                            {isUploadingCover ? 'Uploading...' : 'Upload Cover Image'}
+                            {isUploadingCover
+                              ? "Uploading..."
+                              : "Upload Cover Image"}
                           </span>
                         </Button>
                       </label>
@@ -289,7 +379,7 @@ export function EditablePostCard({
                       alt="Cover preview"
                       className="w-full rounded-lg object-cover max-h-48"
                       onError={(e) => {
-                        e.currentTarget.style.display = 'none'
+                        e.currentTarget.style.display = "none";
                       }}
                     />
                   )}
@@ -297,7 +387,10 @@ export function EditablePostCard({
               </div>
 
               <div>
-                <Label htmlFor="edit-title" className="text-sm font-medium mb-2 block">
+                <Label
+                  htmlFor="edit-title"
+                  className="text-sm font-medium mb-2 block"
+                >
                   Title
                 </Label>
                 <Input
@@ -313,7 +406,13 @@ export function EditablePostCard({
                   <Label htmlFor="edit-excerpt" className="text-sm font-medium">
                     Preview <span className="text-destructive">*</span>
                   </Label>
-                  <span className={`text-xs ${excerptRemaining < 20 ? 'text-destructive' : 'text-muted-foreground'}`}>
+                  <span
+                    className={`text-xs ${
+                      excerptRemaining < 20
+                        ? "text-destructive"
+                        : "text-muted-foreground"
+                    }`}
+                  >
                     {excerptRemaining} / {EXCERPT_MAX_LENGTH}
                   </span>
                 </div>
@@ -323,30 +422,36 @@ export function EditablePostCard({
                   onChange={(e) => setEditedExcerpt(e.target.value)}
                   placeholder="Short preview text (required, max 200 characters)"
                   rows={3}
-                  className={`resize-none ${errors.excerpt ? 'border-destructive' : ''}`}
+                  className={`resize-none ${
+                    errors.excerpt ? "border-destructive" : ""
+                  }`}
                   maxLength={EXCERPT_MAX_LENGTH}
                 />
                 {errors.excerpt && (
-                  <p className="text-sm text-destructive mt-1">{errors.excerpt}</p>
+                  <p className="text-sm text-destructive mt-1">
+                    {errors.excerpt}
+                  </p>
                 )}
               </div>
 
               <div>
-                <Label htmlFor="edit-content" className="text-sm font-medium mb-2 block">
+                <Label
+                  htmlFor="edit-content"
+                  className="text-sm font-medium mb-2 block"
+                >
                   Content
                 </Label>
-                <Textarea
-                  id="edit-content"
+                <TiptapEditor
                   value={editedContent}
-                  onChange={(e) => setEditedContent(e.target.value)}
-                  placeholder="Full post content (optional)"
-                  rows={6}
-                  className="resize-none"
+                  onChange={(e) => setEditedContent(e)}
                 />
               </div>
 
               <div>
-                <Label htmlFor="edit-slug" className="text-sm font-medium mb-2 block">
+                <Label
+                  htmlFor="edit-slug"
+                  className="text-sm font-medium mb-2 block"
+                >
                   Slug
                 </Label>
                 <Input
@@ -359,7 +464,9 @@ export function EditablePostCard({
 
               {editedImages.length > 0 && (
                 <div>
-                  <Label className="text-sm font-medium mb-2 block">Additional Images</Label>
+                  <Label className="text-sm font-medium mb-2 block">
+                    Additional Images
+                  </Label>
                   <div className="space-y-2">
                     {editedImages.map((image, index) => (
                       <div key={index} className="relative">
@@ -385,18 +492,36 @@ export function EditablePostCard({
               <div className="flex gap-2 pt-2">
                 <Button
                   onClick={handleSave}
-                  disabled={!editedExcerpt.trim() || editedExcerpt.length > EXCERPT_MAX_LENGTH}
+                  disabled={
+                    !editedExcerpt.trim() ||
+                    editedExcerpt.length > EXCERPT_MAX_LENGTH
+                  }
                 >
                   Save
                 </Button>
+
+                {editedType === PostType.POLL &&
+                  !!quizData &&
+                  isQuizFormDisabled && (
+                    <Button variant="secondary" onClick={handleEditQuizForm}>
+                      Edit quiz
+                    </Button>
+                  )}
+
                 <Button variant="outline" onClick={onCancel}>
                   Cancel
                 </Button>
               </div>
             </div>
+            {editedType === PostType.POLL && (
+              <QuizForm
+                onSubmit={handleSumbitQuizForm}
+                isQuizFormDisabled={isQuizFormDisabled}
+              />
+            )}
           </div>
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

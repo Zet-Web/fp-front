@@ -278,7 +278,7 @@ export function HeroSection({
               />
             ) : (
               <p className="text-foreground mb-4 max-w-2xl">
-                {user.about || " "}
+                {user.about || ""}
               </p>
             )}
 

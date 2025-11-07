@@ -1,6 +1,4 @@
-// Feed component with filtering, sorting, lazy loading and skeleton states
-
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,9 +8,12 @@ import { constructPostUrl } from "../post/post-utils";
 import type { PostWithAuthor } from "../post/post";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
+import { fetchPosts } from "../../shared-src/feed/api";
+import { useAuthContext } from "@/components/auth-provider";
+import { FeedFilters } from "./feed-filters";
 
 interface FeedProps {
-  posts: PostWithAuthor[];
+  filters: FeedFilters;
   filterByUserId?: string;
   emptyMessage?: string;
   emptyAction?: {
@@ -20,7 +21,6 @@ interface FeedProps {
     onClick: () => void;
   };
   itemsPerPage?: number;
-  currentUserId?: string;
 }
 
 function PostSkeleton() {
@@ -44,167 +44,191 @@ function PostSkeleton() {
 }
 
 export function Feed({
-  posts,
+  filters,
   filterByUserId,
   emptyMessage = "No posts to display",
   emptyAction,
   itemsPerPage = 10,
-  currentUserId,
 }: FeedProps) {
-  const [displayedPosts, setDisplayedPosts] = useState<PostWithAuthor[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasMore, setHasMore] = useState(true);
+  // posts: массив постов (id: number)
+  const [posts, setPosts] = useState<PostWithAuthor[]>([]);
   const [page, setPage] = useState(1);
-  const [savedPostIds, setSavedPostIds] = useState<Set<string>>(new Set());
-  const [editingPostId, setEditingPostId] = useState<string | null>(null);
-  const [localPosts, setLocalPosts] = useState<PostWithAuthor[]>(posts);
-  const observerRef = useRef<HTMLDivElement>(null);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [editingPostId, setEditingPostId] = useState<number | null>(null);
 
+  const { profile } = useAuthContext();
+  const currentUserId = profile?.id || "";
+
+  // observer ref and instance
+  const observerRef = useRef<HTMLDivElement | null>(null);
+  const observerInstance = useRef<IntersectionObserver | null>(null);
+
+  // when filters change — reset feed to first page
   useEffect(() => {
-    setLocalPosts(posts);
-  }, [posts]);
-
-  const filteredPosts = filterByUserId
-    ? localPosts.filter((post) => post.author_id === filterByUserId)
-    : localPosts;
-
-  const sortedPosts = [...filteredPosts].sort((a, b) => {
-    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-  });
-
-  const loadMorePosts = useCallback(() => {
-    const startIndex = (page - 1) * itemsPerPage;
-    const endIndex = page * itemsPerPage;
-    const newPosts = sortedPosts.slice(startIndex, endIndex);
-
-    if (newPosts.length > 0) {
-      setDisplayedPosts((prev) => [...prev, ...newPosts]);
-      setPage((prev) => prev + 1);
-
-      if (endIndex >= sortedPosts.length) {
-        setHasMore(false);
-      }
-    } else {
-      setHasMore(false);
-    }
-  }, [page, sortedPosts, itemsPerPage]);
-
-  useEffect(() => {
-    setIsLoading(true);
+    setPosts([]);
     setPage(1);
-    const timer = setTimeout(() => {
-      const initialPosts = sortedPosts.slice(0, itemsPerPage);
-      setDisplayedPosts(initialPosts);
-      setHasMore(sortedPosts.length > itemsPerPage);
-      setIsLoading(false);
+    setHasMore(true);
+    setIsInitialLoading(true);
+  }, [filters]);
 
-      const initialSavedIds = new Set(
-        sortedPosts.filter((p) => p.is_saved).map((p) => p.id)
-      );
-      setSavedPostIds(initialSavedIds);
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [sortedPosts, itemsPerPage]);
-
+  // load posts when page changes (or filters/itemsPerPage)
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasMore && !isLoading) {
-          loadMorePosts();
+    if (!hasMore) return;
+
+    const controller = new AbortController();
+
+    const load = async () => {
+      if (page === 1) {
+        setIsInitialLoading(true);
+      } else {
+        setIsFetchingMore(true);
+      }
+
+      try {
+        const { posts: newPosts = [], count: totalCount } = await fetchPosts(
+          filters,
+          page,
+          itemsPerPage
+        );
+
+        // Dedupe: не добавляем посты с id, которые уже есть
+        const existingIds = new Set(posts.map((p) => p.id));
+        const uniqueNew = newPosts.filter((p) => !existingIds.has(p.id));
+
+        // Если пришло 0 уникальных — возможно бэкенд возвращает дубликаты; завершаем загрузку
+        if (uniqueNew.length === 0) {
+          // если при первой загрузке вообще ничего не пришло, оставляем posts пустым
+          setHasMore(false);
+          return;
         }
-      },
-      { threshold: 0.1 }
-    );
 
-    if (observerRef.current) {
-      observer.observe(observerRef.current);
-    }
+        setPosts((prev) => [...prev, ...uniqueNew]);
 
-    return () => {
-      if (observerRef.current) {
-        observer.unobserve(observerRef.current);
+        // если известен общий count (totalCount) — можно определить hasMore точно
+        if (typeof totalCount === "number") {
+          const loadedSoFar = posts.length + uniqueNew.length;
+          if (loadedSoFar >= totalCount) {
+            setHasMore(false);
+          } else {
+            setHasMore(true);
+          }
+        } else {
+          // fallback: если пришло меньше чем itemsPerPage -> конец
+          if (uniqueNew.length < itemsPerPage) {
+            setHasMore(false);
+          } else {
+            setHasMore(true);
+          }
+        }
+      } catch (err) {
+        // abort === нормально при смене страницы/фильтра; прочие ошибки — показать сообщение
+        if ((err as any)?.name !== "AbortError") {
+          console.error("Failed to fetch posts:", err);
+          toast.error("Failed to load posts");
+        }
+      } finally {
+        setIsInitialLoading(false);
+        setIsFetchingMore(false);
       }
     };
-  }, [hasMore, isLoading, loadMorePosts]);
 
-  const handleBookmarkClick = (postId: string) => {
-    setSavedPostIds((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(postId)) {
-        newSet.delete(postId);
-        toast.success("Post removed from saved");
-      } else {
-        newSet.add(postId);
-        toast.success("Post saved");
+    load();
+
+    return () => {
+      controller.abort();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, filters, itemsPerPage, hasMore]); // posts intentionally omitted to avoid refetch loop
+
+  // IntersectionObserver setup via callback ref (cleaner + stable)
+  const attachObserver = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (observerInstance.current) {
+        observerInstance.current.disconnect();
+        observerInstance.current = null;
       }
-      return newSet;
-    });
+
+      if (!node) return;
+
+      observerRef.current = node;
+      observerInstance.current = new IntersectionObserver(
+        (entries) => {
+          const [entry] = entries;
+          if (
+            entry.isIntersecting &&
+            !isFetchingMore &&
+            !isInitialLoading &&
+            hasMore
+          ) {
+            // увеличиваем страницу (это триггерит эффект загрузки)
+            setPage((p) => p + 1);
+          }
+        },
+        { root: null, rootMargin: "200px", threshold: 0.1 }
+      );
+
+      observerInstance.current.observe(node);
+    },
+    [isFetchingMore, isInitialLoading, hasMore]
+  );
+
+  // filtered posts (по user)
+  const filteredPosts = filterByUserId
+    ? posts.filter((p) => p.author_id === filterByUserId)
+    : posts;
+
+  // HANDLERS
+  const handleBookmarkClick = (id: number) => {
+    // обновляем поле is_saved внутри posts — это гарантирует, что PostCard увидит изменение
+    setPosts((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, is_saved: !p.is_saved } : p))
+    );
   };
 
   const handleShareClick = async (post: PostWithAuthor) => {
-    const postUrl = `${window.location.origin}${constructPostUrl(
-      post.url,
-      post.slug
-    )}`;
-
+    const url = `${window.location.origin}${constructPostUrl(post.url)}`;
     try {
-      await navigator.clipboard.writeText(postUrl);
-      toast.success("Link copied to clipboard");
-    } catch (error) {
-      toast.error("Failed to copy link");
+      await navigator.clipboard.writeText(url);
+      toast.success("Link copied");
+    } catch {
+      toast.error("Failed to copy");
     }
   };
 
-  const handleEditClick = (postId: string) => {
-    setEditingPostId(postId);
-  };
+  const handleEditClick = (id: number) => setEditingPostId(id);
+  const handleCancelEdit = () => setEditingPostId(null);
 
-  const handleSavePost = (
-    postId: string,
-    updates: {
-      title?: string;
-      excerpt: string;
-      content?: string;
-      cover_image?: string;
-      images: string[];
-      type: any;
-      status: any;
-      is_pinned: boolean;
-      slug?: string;
-    }
-  ) => {
-    setLocalPosts((prev) =>
-      prev.map((post) =>
-        post.id === postId
-          ? { ...post, ...updates, updated_at: new Date().toISOString() }
-          : post
+  const handleSavePost = (id: number, updates: Partial<PostWithAuthor>) => {
+    setPosts((prev) =>
+      prev.map((p) =>
+        p.id === id
+          ? { ...p, ...updates, updated_at: new Date().toISOString() }
+          : p
       )
     );
     setEditingPostId(null);
-    toast.success("Post updated successfully");
+    toast.success("Post updated");
   };
 
-  const handleCancelEdit = () => {
-    setEditingPostId(null);
+  const handleDeletePost = (id: number) => {
+    setPosts((prev) => prev.filter((p) => p.id !== id));
+    toast.success("Post deleted");
   };
 
-  const handleDeletePost = (postId: string) => {
-    setLocalPosts((prev) => prev.filter((post) => post.id !== postId));
-    toast.success("Post deleted successfully");
-  };
-
-  if (isLoading && displayedPosts.length === 0) {
+  // RENDERING
+  if (isInitialLoading && posts.length === 0) {
     return (
       <div className="space-y-6">
-        {Array.from({ length: 3 }).map((_, index) => (
-          <PostSkeleton key={index} />
+        {Array.from({ length: 3 }).map((_, i) => (
+          <PostSkeleton key={i} />
         ))}
       </div>
     );
   }
 
-  if (displayedPosts.length === 0) {
+  if (posts.length === 0) {
     return (
       <Card className="shadow-md">
         <CardContent className="p-12 text-center">
@@ -221,44 +245,38 @@ export function Feed({
 
   return (
     <div className="space-y-6">
-      {displayedPosts.map((post) => {
+      {filteredPosts.map((post) => {
         const isEditing = editingPostId === post.id;
-        const isOwner = currentUserId ? post.author_id === currentUserId : true;
+        const isOwner = currentUserId
+          ? post.author_id === currentUserId
+          : false;
 
         if (isEditing) {
           return (
-            <div key={post.id}>
-              <EditablePostCard
-                title={post.title}
-                excerpt={post.excerpt}
-                content={post.content}
-                coverImage={post.cover_image}
-                images={post.images}
-                type={post.type}
-                status={post.status}
-                isPinned={post.is_pinned}
-                slug={post.slug}
-                author={post.author}
-                onSave={(updates) => handleSavePost(post.id, updates)}
-                onCancel={handleCancelEdit}
-              />
-            </div>
+            <EditablePostCard
+              key={post.id}
+              {...post}
+              onSave={(updates) => handleSavePost(post.id, updates)}
+              onCancel={handleCancelEdit}
+            />
           );
         }
 
         return (
-          <Link
-            key={post.id}
-            to={constructPostUrl(post.url, post.slug)}
-            className="block"
-          >
+          <Link key={post.id} to={constructPostUrl(post.url)} className="block">
             <PostCard
-              title={post.title}
-              content={post.content}
-              images={post.images}
+              title={post.title || ""}
+              content={post.excerpt || ""}
+              images={
+                post.cover_image
+                  ? [post.cover_image, ...(post.images ?? [])]
+                  : Array.isArray(post.images)
+                  ? post.images
+                  : []
+              }
               author={post.author}
+              isSaved={!!post.is_saved}
               showActions={true}
-              isSaved={savedPostIds.has(post.id)}
               isOwner={isOwner}
               onBookmarkClick={() => handleBookmarkClick(post.id)}
               onShareClick={() => handleShareClick(post)}
@@ -270,16 +288,8 @@ export function Feed({
       })}
 
       {hasMore && (
-        <div ref={observerRef} className="py-4">
+        <div ref={attachObserver} className="py-4">
           <PostSkeleton />
-        </div>
-      )}
-
-      {!hasMore && displayedPosts.length > 0 && (
-        <div className="text-center py-8">
-          <p className="text-sm text-muted-foreground">
-            You've reached the end
-          </p>
         </div>
       )}
     </div>
