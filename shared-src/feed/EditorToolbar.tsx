@@ -1,4 +1,4 @@
-// Enhanced toolbar component for TipTap editor with grouped formatting options
+// Enhanced toolbar component for TipTap editor with grouped formatting options and table support
 
 import { useState } from "react";
 import { Editor } from "@tiptap/react";
@@ -22,6 +22,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { LinkDialog } from "./LinkDialog";
+import { TableControls } from "./TableControls";
 
 interface ToolbarButtonProps {
   onClick: () => void;
@@ -218,6 +219,7 @@ export function EditorToolbar({ editor }: { editor: Editor | null }) {
           >
             <Minus className="h-4 w-4" />
           </ToolbarButton>
+          <TableControls editor={editor} />
         </div>
       </div>
 

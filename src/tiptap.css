@@ -187,3 +187,75 @@
 .tiptap-toolbar .is-active {
   background-color: hsl(var(--accent));
 }
+
+/* Table styles - Shadcn inspired */
+.ProseMirror table,
+.post-content table {
+  border-collapse: collapse;
+  table-layout: auto;
+  width: 100%;
+  margin: 1.5rem 0;
+  overflow: hidden;
+}
+
+.ProseMirror th,
+.post-content th {
+  border: 1px solid hsl(var(--border));
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 700;
+  background-color: hsl(var(--muted) / 0.5);
+  vertical-align: top;
+}
+
+.ProseMirror td,
+.post-content td {
+  border: 1px solid hsl(var(--border));
+  padding: 0.75rem 1rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.ProseMirror tr,
+.post-content tr {
+  margin: 0;
+  border-top: 1px solid hsl(var(--border));
+}
+
+.ProseMirror tr:nth-child(even),
+.post-content tr:nth-child(even) {
+  background-color: hsl(var(--muted) / 0.3);
+}
+
+.ProseMirror .tableWrapper,
+.post-content .tableWrapper {
+  margin: 1.5rem 0;
+  overflow-x: auto;
+}
+
+.ProseMirror .selectedCell:after {
+  z-index: 2;
+  position: absolute;
+  content: "";
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: hsl(var(--primary) / 0.1);
+  pointer-events: none;
+}
+
+.ProseMirror .column-resize-handle {
+  position: absolute;
+  right: -2px;
+  top: 0;
+  bottom: -2px;
+  width: 4px;
+  background-color: hsl(var(--primary));
+  pointer-events: none;
+}
+
+.ProseMirror.resize-cursor {
+  cursor: ew-resize;
+  cursor: col-resize;
+}
