@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { FileEdit, Play, Trophy } from 'lucide-react';
+import { FileEdit, Play, Trophy, ListChecks, Clock, Eye } from 'lucide-react';
 import { QuizCreate } from './QuizCreate';
 import { QuizTake } from './QuizTake';
 import { QuizResults } from './QuizResults';
@@ -124,20 +124,25 @@ export function QuizTab() {
                   <p className="text-muted-foreground">{mockQuiz.description}</p>
                 </div>
 
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-3">
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 dark:bg-blue-950/20 text-sm">
+                    <ListChecks className="h-4 w-4 text-blue-500" />
+                    <span className="font-medium">{mockQuiz.questions.length}</span>
+                    <span className="text-muted-foreground">Questions</span>
+                  </div>
+
                   {mockQuiz.settings.hasTimer && mockQuiz.settings.timerMinutes && (
-                    <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-accent text-sm">
-                      <span className="text-muted-foreground">Time Limit:</span>
-                      <span className="font-medium">{mockQuiz.settings.timerMinutes} min</span>
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 dark:bg-blue-950/20 text-sm">
+                      <Clock className="h-4 w-4 text-blue-500" />
+                      <span className="font-medium">{mockQuiz.settings.timerMinutes}</span>
+                      <span className="text-muted-foreground">Minutes</span>
                     </div>
                   )}
-                  <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-accent text-sm">
-                    <span className="text-muted-foreground">Questions:</span>
-                    <span className="font-medium">{mockQuiz.questions.length}</span>
-                  </div>
+
                   {mockQuiz.settings.showCorrectAnswers && (
-                    <div className="px-3 py-1 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-sm font-medium">
-                      Shows Answers
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 dark:bg-blue-950/20 text-sm">
+                      <Eye className="h-4 w-4 text-blue-500" />
+                      <span className="font-medium">Answer Review</span>
                     </div>
                   )}
                 </div>

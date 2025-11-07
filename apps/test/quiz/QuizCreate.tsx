@@ -7,10 +7,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Separator } from '@/components/ui/separator';
+import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Trash2, FileText, Settings2, ListChecks } from 'lucide-react';
+import { Plus, Trash2, FileText, Settings2, ListChecks, GripVertical, HelpCircle, Check } from 'lucide-react';
 import { Quiz, QuizQuestion } from './quiz-types';
 
 interface QuizCreateProps {
@@ -184,160 +183,103 @@ export function QuizCreate({ onSubmit }: QuizCreateProps) {
         <CardContent>
           <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-4">
-              <div className="space-y-3">
-                <h4 className="text-sm font-medium text-muted-foreground">
-                  ACCESS & ATTEMPTS
-                </h4>
+              <h4 className="text-sm font-medium text-muted-foreground">ACCESS & ATTEMPTS</h4>
 
-                <div className="flex items-start space-x-3">
-                  <Checkbox
-                    id="anonymous"
-                    checked={anonymous}
-                    onCheckedChange={(checked) => setAnonymous(checked as boolean)}
-                  />
-                  <div className="space-y-1">
-                    <Label htmlFor="anonymous" className="font-normal cursor-pointer">
-                      Anonymous Access
-                    </Label>
-                    <p className="text-xs text-muted-foreground">
-                      Allow unauthenticated users to take the quiz
-                    </p>
-                  </div>
+              <div className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors">
+                <div>
+                  <Label htmlFor="anon" className="font-medium cursor-pointer">
+                    Anonymous Access
+                  </Label>
+                  <p className="text-xs text-muted-foreground">Allow guests</p>
                 </div>
+                <Switch id="anon" checked={anonymous} onCheckedChange={setAnonymous} />
+              </div>
 
-                <div className="flex items-start space-x-3">
-                  <Checkbox
-                    id="allowPause"
-                    checked={allowPause}
-                    onCheckedChange={(checked) => setAllowPause(checked as boolean)}
-                  />
-                  <div className="space-y-1">
-                    <Label htmlFor="allowPause" className="font-normal cursor-pointer">
-                      Pause Quiz
-                    </Label>
-                    <p className="text-xs text-muted-foreground">
-                      Temporarily disable quiz access
-                    </p>
-                  </div>
+              <div className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors">
+                <div>
+                  <Label htmlFor="pause" className="font-medium cursor-pointer">
+                    Pause Quiz
+                  </Label>
+                  <p className="text-xs text-muted-foreground">Disable temporarily</p>
                 </div>
+                <Switch id="pause" checked={allowPause} onCheckedChange={setAllowPause} />
+              </div>
 
-                <div className="flex items-start space-x-3">
-                  <Checkbox
-                    id="oneAttempt"
-                    checked={oneAttempt}
-                    onCheckedChange={(checked) => setOneAttempt(checked as boolean)}
-                  />
-                  <div className="space-y-1">
-                    <Label htmlFor="oneAttempt" className="font-normal cursor-pointer">
-                      One Attempt Per User
-                    </Label>
-                    <p className="text-xs text-muted-foreground">
-                      Each user can only take the quiz once
-                    </p>
-                  </div>
+              <div className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors">
+                <div>
+                  <Label htmlFor="attempt" className="font-medium cursor-pointer">
+                    One Attempt
+                  </Label>
+                  <p className="text-xs text-muted-foreground">Single try per user</p>
                 </div>
+                <Switch id="attempt" checked={oneAttempt} onCheckedChange={setOneAttempt} />
+              </div>
 
-                <div className="flex items-start space-x-3">
-                  <Checkbox
-                    id="showAnswers"
-                    checked={showAnswers}
-                    onCheckedChange={(checked) => setShowAnswers(checked as boolean)}
-                  />
-                  <div className="space-y-1">
-                    <Label htmlFor="showAnswers" className="font-normal cursor-pointer">
-                      Show Correct Answers
-                    </Label>
-                    <p className="text-xs text-muted-foreground">
-                      Display correct answers after completion
-                    </p>
-                  </div>
+              <div className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors">
+                <div>
+                  <Label htmlFor="showAns" className="font-medium cursor-pointer">
+                    Show Answers
+                  </Label>
+                  <p className="text-xs text-muted-foreground">Display after completion</p>
                 </div>
-
-                <Separator />
-
-                <div className="flex items-start space-x-3">
-                  <Checkbox
-                    id="hasTimer"
-                    checked={hasTimer}
-                    onCheckedChange={(checked) => {
-                      setHasTimer(checked as boolean);
-                      if (!checked) setTimerMinutes(null);
-                    }}
-                  />
-                  <div className="space-y-1 flex-1">
-                    <Label htmlFor="hasTimer" className="font-normal cursor-pointer">
-                      Time Limit
-                    </Label>
-                    <p className="text-xs text-muted-foreground">
-                      Set a timer for quiz completion
-                    </p>
-                  </div>
-                </div>
-
-                {hasTimer && (
-                  <div className="ml-8">
-                    <Label htmlFor="timerMinutes" className="text-sm">
-                      Minutes
-                    </Label>
-                    <Input
-                      id="timerMinutes"
-                      type="number"
-                      min="1"
-                      placeholder="Enter minutes"
-                      value={timerMinutes ?? ''}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        setTimerMinutes(val ? parseInt(val, 10) : null);
-                      }}
-                      className="mt-1"
-                    />
-                  </div>
-                )}
+                <Switch id="showAns" checked={showAnswers} onCheckedChange={setShowAnswers} />
               </div>
             </div>
 
             <div className="space-y-4">
-              <h4 className="text-sm font-medium text-muted-foreground">
-                RESULTS VISIBILITY
-              </h4>
+              <h4 className="text-sm font-medium text-muted-foreground">TIME & VISIBILITY</h4>
 
-              <RadioGroup value={visibility} onValueChange={(value) => setVisibility(value as any)}>
-                <div className="flex items-start space-x-3">
-                  <RadioGroupItem value="owner" id="owner" />
-                  <div className="space-y-1">
-                    <Label htmlFor="owner" className="font-normal cursor-pointer">
-                      Owner Only
-                    </Label>
-                    <p className="text-xs text-muted-foreground">
-                      Results visible only to you
-                    </p>
-                  </div>
+              <div className="space-y-3 p-3 rounded-lg border bg-card">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="timer" className="font-medium cursor-pointer">
+                    Time Limit
+                  </Label>
+                  <Switch
+                    id="timer"
+                    checked={hasTimer}
+                    onCheckedChange={(checked) => {
+                      setHasTimer(checked);
+                      if (!checked) setTimerMinutes(null);
+                    }}
+                  />
                 </div>
+                {hasTimer && (
+                  <Input
+                    type="number"
+                    min="1"
+                    placeholder="Minutes"
+                    value={timerMinutes ?? ''}
+                    onChange={(e) => setTimerMinutes(e.target.value ? parseInt(e.target.value) : null)}
+                  />
+                )}
+              </div>
 
-                <div className="flex items-start space-x-3">
-                  <RadioGroupItem value="partners" id="partners" />
-                  <div className="space-y-1">
-                    <Label htmlFor="partners" className="font-normal cursor-pointer">
-                      Owner & Partners
-                    </Label>
-                    <p className="text-xs text-muted-foreground">
-                      Results available to you and partners
-                    </p>
-                  </div>
+              <div className="space-y-3 p-3 rounded-lg border bg-card">
+                <Label className="font-medium">Results Visibility</Label>
+                <div className="space-y-2">
+                  {[
+                    { value: 'owner', label: 'Owner Only', desc: 'Private' },
+                    { value: 'partners', label: 'Partners', desc: 'Limited' },
+                    { value: 'public', label: 'Public', desc: 'Everyone' },
+                  ].map((option) => (
+                    <button
+                      key={option.value}
+                      onClick={() => setVisibility(option.value as any)}
+                      className={`w-full flex items-center justify-between p-2 rounded border transition-all ${
+                        visibility === option.value
+                          ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/20'
+                          : 'border-border hover:border-accent-foreground/20'
+                      }`}
+                    >
+                      <div className="text-left">
+                        <div className="font-medium text-sm">{option.label}</div>
+                        <div className="text-xs text-muted-foreground">{option.desc}</div>
+                      </div>
+                      {visibility === option.value && <Check className="h-4 w-4 text-blue-500" />}
+                    </button>
+                  ))}
                 </div>
-
-                <div className="flex items-start space-x-3">
-                  <RadioGroupItem value="public" id="public" />
-                  <div className="space-y-1">
-                    <Label htmlFor="public" className="font-normal cursor-pointer">
-                      Public
-                    </Label>
-                    <p className="text-xs text-muted-foreground">
-                      Results publicly accessible to all
-                    </p>
-                  </div>
-                </div>
-              </RadioGroup>
+              </div>
             </div>
           </div>
         </CardContent>
@@ -346,13 +288,8 @@ export function QuizCreate({ onSubmit }: QuizCreateProps) {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <div className="flex items-center gap-2">
-              <ListChecks className="h-5 w-5 text-blue-500" />
-              <h3 className="text-xl font-semibold">Quiz Questions</h3>
-            </div>
-            <p className="text-sm text-muted-foreground mt-1">
-              Add questions with multiple choice answers
-            </p>
+            <h3 className="text-xl font-semibold">Questions</h3>
+            <p className="text-sm text-muted-foreground mt-1">Add questions with multiple choice answers</p>
           </div>
           <Button onClick={addQuestion} className="gap-2">
             <Plus className="h-4 w-4" />
@@ -375,79 +312,79 @@ export function QuizCreate({ onSubmit }: QuizCreateProps) {
           <div className="space-y-4">
             {questions.map((question, qIndex) => (
               <Card key={question.id} className="shadow-md hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Badge variant="secondary">Question {qIndex + 1}</Badge>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeQuestion(question.id)}
-                      className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label>Question Text</Label>
-                    <Input
-                      placeholder="Enter your question"
-                      value={question.text}
-                      onChange={(e) => updateQuestion(question.id, e.target.value)}
-                    />
-                  </div>
-
-                  <div className="space-y-3">
-                    <Label>Answer Options (check correct answers)</Label>
-                    {question.answers.map((answer, aIndex) => (
-                      <div key={answer.id} className="flex items-center gap-2">
-                        <Input
-                          placeholder={`Option ${aIndex + 1}`}
-                          value={answer.text}
-                          onChange={(e) =>
-                            updateAnswer(question.id, answer.id, e.target.value)
-                          }
-                          className="flex-1"
-                        />
-                        <div className="flex items-center space-x-2">
-                          <Checkbox
-                            id={`correct-${answer.id}`}
-                            checked={answer.correct}
-                            onCheckedChange={() =>
-                              toggleCorrect(question.id, answer.id)
-                            }
-                          />
-                          <Label
-                            htmlFor={`correct-${answer.id}`}
-                            className="text-sm text-muted-foreground cursor-pointer whitespace-nowrap"
-                          >
-                            Correct
-                          </Label>
-                        </div>
-                        {question.answers.length > 2 && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => removeAnswer(question.id, answer.id)}
-                            className="shrink-0"
-                          >
-                            <Trash2 className="h-4 w-4 text-muted-foreground" />
-                          </Button>
-                        )}
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-3">
+                    <GripVertical className="h-5 w-5 text-muted-foreground mt-3 cursor-move flex-shrink-0" />
+                    <div className="flex-1 space-y-4">
+                      <div className="flex items-center justify-between">
+                        <Badge variant="secondary">Question {qIndex + 1}</Badge>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeQuestion(question.id)}
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
                       </div>
-                    ))}
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => addAnswer(question.id)}
-                      className="w-full gap-2"
-                    >
-                      <Plus className="h-4 w-4" />
-                      Add Answer Option
-                    </Button>
+
+                      <Input
+                        placeholder="Enter question text"
+                        value={question.text}
+                        onChange={(e) => updateQuestion(question.id, e.target.value)}
+                        className="text-base"
+                      />
+
+                      <div className="space-y-3">
+                        <Label className="text-sm font-semibold">Answers</Label>
+                        {question.answers.map((answer, aIndex) => (
+                          <div key={answer.id} className="flex items-center gap-3">
+                            <Checkbox
+                              checked={answer.correct}
+                              onCheckedChange={() => toggleCorrect(question.id, answer.id)}
+                              className="mt-2 flex-shrink-0"
+                            />
+                            <Input
+                              placeholder={`Answer ${aIndex + 1}`}
+                              value={answer.text}
+                              onChange={(e) => updateAnswer(question.id, answer.id, e.target.value)}
+                              className="flex-1"
+                            />
+                            {question.answers.length > 2 && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => removeAnswer(question.id, answer.id)}
+                                className="shrink-0"
+                              >
+                                <Trash2 className="h-4 w-4 text-muted-foreground" />
+                              </Button>
+                            )}
+                          </div>
+                        ))}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => addAnswer(question.id)}
+                          className="w-full gap-2 mt-2"
+                        >
+                          <Plus className="h-4 w-4" />
+                          Add Answer
+                        </Button>
+                      </div>
+
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                          <Label className="text-sm font-medium">Explanation (Optional)</Label>
+                        </div>
+                        <Textarea
+                          placeholder="Explain why this answer is correct..."
+                          rows={3}
+                          className="resize-none"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
