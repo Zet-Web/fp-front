@@ -500,7 +500,7 @@ export function EditablePostCard({
                   Save
                 </Button>
 
-                {editedType === PostType.POLL &&
+                {editedType === PostType.QUIZ &&
                   !!quizData &&
                   isQuizFormDisabled && (
                     <Button variant="secondary" onClick={handleEditQuizForm}>
