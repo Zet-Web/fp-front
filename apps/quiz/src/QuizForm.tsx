@@ -436,7 +436,7 @@ export default function QuizForm({ onSubmit, isQuizFormDisabled }: Props) {
             className="gap-2"
           >
             <Check className="h-4 w-4" />
-            Подготовить тест
+            Сохранить тест
           </Button>
         </div>
       )}
