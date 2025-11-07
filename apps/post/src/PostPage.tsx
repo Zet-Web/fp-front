@@ -11,7 +11,7 @@ import type { PostWithAuthor } from "../../../shared-src/post/post";
 import { useAuthContext } from "@/components/auth-provider";
 import { FPApi } from "@/lib/api";
 import { QuizFormData } from "@/apps/quiz/types/quiz";
-import { FullPostCard } from "@/shared-src/feed/FullPostCard";
+import { FullPostCard } from "../../../shared-src/feed/FullPostCard";
 
 export function PostPage() {
   const { urlCode } = useParams<{ urlCode: string }>();

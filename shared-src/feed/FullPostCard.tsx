@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Share, MoreHorizontal, Bookmark, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { PostAuthor, PostType } from "../types/post";
+import { PostAuthor, PostType } from "../post/post";
 import { PostContentViewer } from "./PostContentViewer";
 import QuizTake from "../../apps/quiz/src/QuizTake";
 

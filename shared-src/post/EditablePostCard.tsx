@@ -21,7 +21,7 @@ import { PostType, PostStatus } from "./post";
 import { QuizFormData } from "@/apps/quiz/types/quiz";
 import { FPApi } from "@/lib/api";
 import { TiptapEditor } from "../feed/TipTapEditor";
-import QuizForm from "@/apps/quiz/src/QuizForm";
+import QuizForm from "../../apps/quiz/src/QuizForm";
 
 interface EditablePostCardProps {
   title?: string;

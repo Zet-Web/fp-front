@@ -8,9 +8,9 @@ import { constructPostUrl } from "../post/post-utils";
 import type { PostWithAuthor } from "../post/post";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { fetchPosts } from "../../shared-src/lib/api";
-import { FeedFilters } from "../lib/feed-filters";
+import { fetchPosts } from "../../shared-src/feed/api";
 import { useAuthContext } from "@/components/auth-provider";
+import { FeedFilters } from "./feed-filters";
 
 interface FeedProps {
   filters: FeedFilters;
