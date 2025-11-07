@@ -187,3 +187,43 @@
 .tiptap-toolbar .is-active {
   background-color: hsl(var(--accent));
 }
+
+/* Tables - Shadcn: w-full, border, px-4 py-2 */
+.ProseMirror table,
+.post-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.ProseMirror th,
+.post-content th {
+  border: 1px solid hsl(var(--border));
+  padding: 1rem;
+  text-align: left;
+  font-weight: 700;
+  background-color: hsl(var(--muted) / 0.5);
+}
+
+.ProseMirror td,
+.post-content td {
+  border: 1px solid hsl(var(--border));
+  padding: 1rem;
+  text-align: left;
+}
+
+.ProseMirror tr:nth-child(even),
+.post-content tr:nth-child(even) {
+  background-color: hsl(var(--muted) / 0.3);
+}
+
+.ProseMirror table p,
+.post-content table p {
+  margin: 0;
+}
+
+.ProseMirror .selectedCell,
+.post-content .selectedCell {
+  background-color: hsl(var(--accent) / 0.3);
+}
