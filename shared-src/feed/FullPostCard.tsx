@@ -168,7 +168,7 @@ export function FullPostCard({
 
             <PostContentViewer html={content} />
 
-            {type === PostType.POLL && <QuizTake postId={postId} />}
+            {type === PostType.QUIZ && <QuizTake postId={postId} />}
 
             {showActions && (
               <div className="flex justify-end gap-1 mt-2">
