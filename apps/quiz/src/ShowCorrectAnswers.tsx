@@ -1,3 +1,5 @@
+// Modernized answer review display with card-based design and theme support
+
 import { useEffect, useState } from "react";
 import { QuizCorrectAnswer } from "../types/quiz";
 import { FPApi } from "@/lib/api";
@@ -25,69 +27,92 @@ export function ShowCorrectAnswers({ quizId, userAnswers }: Props) {
 
   if (loading) {
     return (
-      <Card>
+      <Card className="shadow-md">
         <CardContent className="py-8 text-center">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="text-gray-600 mt-4">Загрузка правильных ответов...</p>
+          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <p className="text-muted-foreground mt-4">Загрузка правильных ответов...</p>
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card>
+    <Card className="shadow-md hover:shadow-lg transition-shadow">
       <CardHeader>
-        <h2 className="text-2xl font-bold flex items-center gap-2">
-          <CheckCircle2 className="w-6 h-6 text-green-500" />
-          Правильные ответы
-        </h2>
+        <div className="flex items-center gap-2">
+          <CheckCircle2 className="h-5 w-5 text-blue-500" />
+          <h2 className="text-2xl font-bold">Проверка ответов</h2>
+        </div>
       </CardHeader>
       <CardContent className="space-y-6">
-        {data.map((q, idx) => (
-          <div key={q.id} className="space-y-3">
-            <div className="font-semibold text-lg">
-              {idx + 1}. {q.title}
-            </div>
-            <div className="space-y-2 pl-4">
-              {q.answers.map((a) => {
-                const userSelected = userAnswers[q.id]?.includes(a.id);
-                const correct = a.correct;
+        {data.map((q, idx) => {
+          const userAnswerIds = userAnswers[q.id] || [];
+          const correctAnswerIds = q.answers
+            .filter((a) => a.correct)
+            .map((a) => a.id);
 
-                return (
-                  <div
-                    key={a.id}
-                    className={`flex items-center gap-2 p-3 rounded-lg ${
-                      correct
-                        ? "bg-green-50 border-2 border-green-200"
-                        : userSelected
-                        ? "bg-red-50 border-2 border-red-200"
-                        : "bg-gray-50"
-                    }`}
-                  >
-                    {correct ? (
-                      <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0" />
-                    ) : userSelected ? (
-                      <XCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
-                    ) : (
-                      <div className="w-5 h-5 flex-shrink-0" />
-                    )}
-                    <span
-                      className={
-                        correct
-                          ? "text-green-800 font-medium"
-                          : userSelected
-                          ? "text-red-800"
-                          : "text-gray-600"
-                      }
-                    >
-                      {a.text}
-                    </span>
+          const allCorrect =
+            userAnswerIds.length === correctAnswerIds.length &&
+            userAnswerIds.every((id) => correctAnswerIds.includes(id));
+
+          return (
+            <div key={q.id} className="space-y-3">
+              <div className="flex items-start gap-3">
+                {allCorrect ? (
+                  <CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                ) : (
+                  <XCircle className="h-5 w-5 text-red-600 mt-0.5 flex-shrink-0" />
+                )}
+                <div className="flex-1">
+                  <div className="font-semibold text-lg">
+                    {idx + 1}. {q.title}
                   </div>
-                );
-              })}
+                </div>
+              </div>
+
+              <div className="ml-8 space-y-2">
+                {q.answers.map((a) => {
+                  const userSelected = userAnswerIds.includes(a.id);
+                  const isCorrectAnswer = a.correct;
+
+                  let className = "flex items-center gap-2 p-3 rounded-lg ";
+                  if (isCorrectAnswer) {
+                    className +=
+                      "bg-green-50 dark:bg-green-950/20 border-2 border-green-200 dark:border-green-800";
+                  } else if (userSelected) {
+                    className +=
+                      "bg-red-50 dark:bg-red-950/20 border-2 border-red-200 dark:border-red-800";
+                  } else {
+                    className += "bg-accent/30";
+                  }
+
+                  return (
+                    <div key={a.id} className={className}>
+                      {isCorrectAnswer ? (
+                        <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0" />
+                      ) : userSelected ? (
+                        <XCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
+                      ) : (
+                        <div className="w-5 h-5 flex-shrink-0" />
+                      )}
+                      <span
+                        className={
+                          isCorrectAnswer
+                            ? "font-medium"
+                            : userSelected
+                            ? "text-muted-foreground"
+                            : "text-muted-foreground"
+                        }
+                      >
+                        {a.text}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </CardContent>
     </Card>
   );
