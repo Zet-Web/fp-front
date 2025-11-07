@@ -40,6 +40,7 @@
     "@radix-ui/react-toggle-group": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.1.2",
     "@supabase/supabase-js": "^2.57.0",
+    "@tiptap/extension-bubble-menu": "^3.10.3",
     "@tiptap/extension-character-count": "^3.10.3",
     "@tiptap/extension-placeholder": "^3.10.2",
     "@tiptap/react": "^3.10.2",

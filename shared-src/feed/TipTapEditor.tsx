@@ -7,6 +7,7 @@ import Underline from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
 import CharacterCount from "@tiptap/extension-character-count";
 import { EditorToolbar } from "./EditorToolbar";
+import { BubbleMenuToolbar } from "./BubbleMenuToolbar";
 
 type Props = {
   value?: string;
@@ -61,6 +62,7 @@ export function TiptapEditor({
   return (
     <div className="rounded-md border bg-card">
       <EditorToolbar editor={editor} />
+      <BubbleMenuToolbar editor={editor} />
       <EditorContent editor={editor} />
       {showCharacterCount && (
         <div className="flex items-center justify-between border-t px-4 py-2 text-xs text-muted-foreground">

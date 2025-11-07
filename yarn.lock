@@ -1218,10 +1218,10 @@
   resolved "https://registry.npmjs.org/@tiptap/extension-bold/-/extension-bold-3.10.2.tgz"
   integrity sha512-lgUpWuBhlZwf+/pVKfqVUpHfA5PDECDyobcXmMrRSpreM+58psZtWDZMZ21K94SmJukRidW7vdNWoTSRSEiY4Q==
 
-"@tiptap/extension-bubble-menu@^3.10.2":
-  version "3.10.2"
-  resolved "https://registry.npmjs.org/@tiptap/extension-bubble-menu/-/extension-bubble-menu-3.10.2.tgz"
-  integrity sha512-gT4PMDXWdUAdijPH35LDUsPv+YIIhEHUuvqPFBGRudrycQ2TlWMmRZ2jYNg1PGBh+/UHVR2l8TNuZ5QSr88ISQ==
+"@tiptap/extension-bubble-menu@^3.10.2", "@tiptap/extension-bubble-menu@^3.10.3":
+  version "3.10.3"
+  resolved "https://registry.npmjs.org/@tiptap/extension-bubble-menu/-/extension-bubble-menu-3.10.3.tgz"
+  integrity sha512-S9cHuaOKYcqi7czg71ZHseMz1/gJzo09k1JdjHmWmo/BShLq4ZMMJJW1QcRnUOisqIhNEgJm+yy1LACZlpwwyg==
   dependencies:
     "@floating-ui/dom" "^1.0.0"
 
