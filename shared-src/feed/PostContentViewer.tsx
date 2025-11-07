@@ -4,5 +4,9 @@ import DOMPurify from "dompurify";
 export function PostContentViewer({ html }: { html: string }) {
   const clean = DOMPurify.sanitize(html, { USE_PROFILES: { html: true } });
 
-  return <div className="post-content py-4 leading-7">{parse(clean)}</div>;
+  return (
+    <div className="post-content">
+      {parse(clean)}
+    </div>
+  );
 }
