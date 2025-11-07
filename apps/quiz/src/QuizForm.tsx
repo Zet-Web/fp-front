@@ -91,7 +91,8 @@ export default function QuizForm({ onSubmit, isQuizFormDisabled }: Props) {
                 ПАРАМЕТРЫ ПРОХОЖДЕНИЯ
               </h4>
 
-              <Controller
+              {/* Commented anonymous*/}
+              {/*<Controller
                 control={control}
                 name="settings.anonymous"
                 render={({ field }) => (
@@ -112,7 +113,7 @@ export default function QuizForm({ onSubmit, isQuizFormDisabled }: Props) {
                     />
                   </div>
                 )}
-              />
+              /> */}
 
               <Controller
                 control={control}
