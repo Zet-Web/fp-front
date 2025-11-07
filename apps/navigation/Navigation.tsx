@@ -38,6 +38,10 @@ export function Navigation() {
     }
   };
 
+  const profileNavItem = desktopNavigationItems.find(
+    (nav) => nav.label === "Profile"
+  );
+
   if (leftCollapsed) {
     return (
       <aside className="hidden lg:flex lg:w-16 xl:w-18 flex-col h-full bg-background/30 overflow-hidden transition-all duration-300">
@@ -92,7 +96,6 @@ export function Navigation() {
                 );
               })}
 
-
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Link to={createButtonConfig.path}>
@@ -119,12 +122,9 @@ export function Navigation() {
                   <TooltipTrigger asChild>
                     <Link
                       to={
-                        typeof desktopNavigationItems[6].path === "function"
-                          ? desktopNavigationItems[6].path(
-                              profile,
-                              isAuthenticated
-                            )
-                          : desktopNavigationItems[6].path
+                        typeof profileNavItem?.path === "function"
+                          ? profileNavItem?.path(profile, isAuthenticated)
+                          : profileNavItem?.path
                       }
                     >
                       <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center hover:opacity-90 transition-opacity cursor-pointer">
@@ -206,8 +206,11 @@ export function Navigation() {
                     size="icon"
                     onClick={() => {
                       const themes = ["light", "dark"] as const;
-                      const currentIndex = themes.indexOf(localStorage.getItem("theme") as any || "light");
-                      const nextTheme = themes[(currentIndex + 1) % themes.length];
+                      const currentIndex = themes.indexOf(
+                        (localStorage.getItem("theme") as any) || "light"
+                      );
+                      const nextTheme =
+                        themes[(currentIndex + 1) % themes.length];
                       setTheme(nextTheme);
                     }}
                     className="h-8 w-8 hover:bg-accent/50"
@@ -219,7 +222,11 @@ export function Navigation() {
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side="right">
-                  <p>{localStorage.getItem("theme") === "dark" ? "Dark" : "Light"}</p>
+                  <p>
+                    {localStorage.getItem("theme") === "dark"
+                      ? "Dark"
+                      : "Light"}
+                  </p>
                 </TooltipContent>
               </Tooltip>
             </div>
@@ -276,7 +283,6 @@ export function Navigation() {
               );
             })}
 
-
             {/* Create item */}
             <Button
               variant="ghost"
@@ -304,9 +310,9 @@ export function Navigation() {
             ) : isAuthenticated && user ? (
               <Link
                 to={
-                  typeof desktopNavigationItems[6].path === "function"
-                    ? desktopNavigationItems[6].path(profile, isAuthenticated)
-                    : desktopNavigationItems[6].path
+                  typeof profileNavItem?.path === "function"
+                    ? profileNavItem?.path(profile, isAuthenticated)
+                    : profileNavItem?.path
                 }
                 className="flex items-center space-x-3 px-4 py-2 hover:bg-accent/50 transition-colors rounded-md mt-2"
               >
@@ -390,8 +396,11 @@ export function Navigation() {
                       size="icon"
                       onClick={() => {
                         const themes = ["light", "dark"] as const;
-                        const currentIndex = themes.indexOf(localStorage.getItem("theme") as any || "light");
-                        const nextTheme = themes[(currentIndex + 1) % themes.length];
+                        const currentIndex = themes.indexOf(
+                          (localStorage.getItem("theme") as any) || "light"
+                        );
+                        const nextTheme =
+                          themes[(currentIndex + 1) % themes.length];
                         setTheme(nextTheme);
                       }}
                       className="flex-1 h-9 hover:bg-accent/50"
@@ -403,7 +412,11 @@ export function Navigation() {
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>{localStorage.getItem("theme") === "dark" ? "Dark" : "Light"}</p>
+                    <p>
+                      {localStorage.getItem("theme") === "dark"
+                        ? "Dark"
+                        : "Light"}
+                    </p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
