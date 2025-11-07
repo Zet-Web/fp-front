@@ -143,9 +143,11 @@ export function PostCard({
               )}
             </div>
 
-            <h4 className="font-semibold text-base mb-3">{title}</h4>
+            <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-3">{title}</h3>
 
-            <PostContentViewer html={content} />
+            <div className="leading-7">
+              <PostContentViewer html={content} />
+            </div>
 
             {images.length > 0 && (
               <div className="mb-4">
