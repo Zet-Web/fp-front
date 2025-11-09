@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { X, Upload, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import type { PostAuthor } from "./post";
 import { PostType, PostStatus } from "./post";
 import { QuizFormData } from "@/apps/quiz/types/quiz";
@@ -49,6 +49,8 @@ interface EditablePostCardProps {
     quizData?: QuizFormData | null
   ) => void;
   onCancel: () => void;
+  isLoading?: boolean;
+  editableQuizData?: QuizFormData | null;
 }
 
 export function EditablePostCard({
@@ -64,6 +66,8 @@ export function EditablePostCard({
   author,
   onSave,
   onCancel,
+  isLoading,
+  editableQuizData,
 }: EditablePostCardProps) {
   const [editedTitle, setEditedTitle] = useState(title);
   const [editedExcerpt, setEditedExcerpt] = useState(excerpt);
@@ -79,19 +83,16 @@ export function EditablePostCard({
   const [showUrlInput, setShowUrlInput] = useState(false);
 
   // Quiz
-  const [isQuizFormDisabled, setQuizFormDisabled] = useState(false);
+  const [isQuizFormValid, setIsQuizFormValid] = useState(true);
   const [quizData, setQuizData] = useState<QuizFormData | null>(null);
 
-  const handleSumbitQuizForm = (data: QuizFormData) => {
-    if (!data) setQuizData(null);
-
+  const handleUpdateQuizFormData = useCallback((data: QuizFormData) => {
     setQuizData(data);
-    setQuizFormDisabled(true);
-  };
+  }, []);
 
-  const handleEditQuizForm = () => {
-    setQuizFormDisabled(false);
-  };
+  const handleQuizValidChange = useCallback((valid: boolean) => {
+    setIsQuizFormValid(valid);
+  }, []);
 
   const displayName = author.name || author.username || "User";
   const displayUsername = author.username || author.telegram_username || "user";
@@ -488,13 +489,13 @@ export function EditablePostCard({
                   </div>
                 </div>
               )}
-
             </div>
             {editedType === PostType.QUIZ && (
               <div className="mt-6">
                 <QuizForm
-                  onSubmit={handleSumbitQuizForm}
-                  isQuizFormDisabled={isQuizFormDisabled}
+                  onFormValuesChange={handleUpdateQuizFormData}
+                  onFormValidChange={handleQuizValidChange}
+                  defaultQuizFormValues={editableQuizData}
                 />
               </div>
             )}
@@ -505,21 +506,14 @@ export function EditablePostCard({
                 disabled={
                   !editedExcerpt.trim() ||
                   editedExcerpt.length > EXCERPT_MAX_LENGTH ||
-                  (editedType === PostType.QUIZ && !quizData)
+                  (editedType === PostType.QUIZ && !isQuizFormValid) ||
+                  isLoading
                 }
               >
-                Save
+                {isLoading ? "Saving..." : "Save"}
               </Button>
 
-              {editedType === PostType.QUIZ &&
-                !!quizData &&
-                isQuizFormDisabled && (
-                  <Button variant="secondary" onClick={handleEditQuizForm}>
-                    Edit quiz
-                  </Button>
-                )}
-
-              <Button variant="outline" onClick={onCancel}>
+              <Button variant="outline" onClick={onCancel} disabled={isLoading}>
                 Cancel
               </Button>
             </div>

@@ -3,144 +3,83 @@ import { User, Session } from "@supabase/supabase-js";
 import { supabase, authReady } from "@/lib/supabase";
 import { FPApi } from "@/lib/api";
 import { UserProfile } from "@/apps/profile/src/types/profile";
-
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const fetchUserProfile = async (userId: string, sessionToUse: Session) => {
-    let profileFetched = false;
-
-    const cachedProfile = localStorage.getItem(`profile_${userId}`);
-    if (cachedProfile) {
-      try {
-        const parsedProfile = JSON.parse(cachedProfile);
-        setProfile(parsedProfile);
-      } catch (e) {
-        console.error(
-          "[useAuth] Failed to parse cached profile, removing bad cache:",
-          e
-        );
-        localStorage.removeItem(`profile_${userId}`);
-      }
-    }
+  const fetchProfile = async (session: Session) => {
+    FPApi.updateAuth(session.access_token);
 
     try {
-      if (!sessionToUse?.access_token) {
-        setProfile(null);
-        return;
-      }
-
-      const response = await FPApi.axios.get("/profile/my");
-
-      const data = await response.data;
+      const { data } = await FPApi.axios.get("/profile/my");
       setProfile(data);
-      profileFetched = true;
-
-      localStorage.setItem(`profile_${userId}`, JSON.stringify(data));
-    } catch (error) {
-      console.error("[useAuth] EXCEPTION: Failed to fetch profile:", error);
+      localStorage.setItem(`profile_${session.user.id}`, JSON.stringify(data));
+    } catch {
       setProfile(null);
-    } finally {
-      if (!profileFetched && !localStorage.getItem(`profile_${userId}`)) {
-        console.warn(
-          "[useAuth] Profile fetch failed, but stopping loading state to prevent infinite loading"
-        );
-      }
     }
-  };
-
-  const updateProfilePartial = (updates: Partial<UserProfile>) => {
-    setProfile((prev) => (prev ? { ...prev, ...updates } : null));
   };
 
   useEffect(() => {
-    let isSubscribed = true;
+    let isMounted = true;
 
-    const initAuth = async () => {
-      try {
-        const initialSession = await authReady;
+    const init = async () => {
+      const initialSession = await authReady;
+      if (!isMounted) return;
 
-        if (!isSubscribed) return;
+      setLoading(true)      
 
-        if (initialSession) {
-          setSession(initialSession);
-          setUser(initialSession.user);
-          FPApi.updateAuth(initialSession.access_token);
-          await fetchUserProfile(initialSession.user.id, initialSession);
-        } else {
-          setSession(null);
-          setUser(null);
-          setProfile(null);
-          FPApi.updateAuth();
-        }
+      if (initialSession) {
+        setSession(initialSession);
+        setUser(initialSession.user);
 
-        setInitialLoadComplete(true);
-      } catch (error) {
-        console.error("[Auth Init] Error during auth initialization:", error);
-        setInitialLoadComplete(true);
+        await fetchProfile(initialSession);
+      } else {
+        FPApi.updateAuth();
+        setSession(null);
+        setUser(null);
+        setProfile(null);
       }
+
+      setLoading(false);
     };
 
-    initAuth();
+    init();
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (!isSubscribed) return;
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (!isMounted) return;
 
-      setSession(session);
+      setSession(session ?? null);
       setUser(session?.user ?? null);
 
-      switch (event) {
-        case "SIGNED_IN":
-          if (session?.user && !profile) {
-            FPApi.updateAuth(session.access_token);
-            await fetchUserProfile(session.user.id, session);
-          }
-          break;
-        case "SIGNED_OUT":
-          FPApi.updateAuth();
-          setProfile(null);
-          break;
-        case "TOKEN_REFRESHED":
-          FPApi.updateAuth(session?.access_token);
-          console.log("[useAuth] Token refreshed");
-          break;
-        default:
-          break;
+      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+        if (session) await fetchProfile(session);
+      }
+
+      if (event === "SIGNED_OUT") {
+        FPApi.updateAuth();
+        setProfile(null);
       }
     });
 
     return () => {
-      isSubscribed = false;
+      isMounted = false;
       subscription.unsubscribe();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const signOut = async () => {
-    if (user?.id) {
-      localStorage.removeItem(`profile_${user.id}`);
-    }
-
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error("[useAuth] Error signing out:", error);
-    }
-  };
-
-  const loading = !initialLoadComplete;
 
   return {
     user,
     session,
     profile,
     loading,
-    signOut,
     isAuthenticated: !!user,
-    updateProfilePartial
+    signOut: async () => {
+      if (user?.id) localStorage.removeItem(`profile_${user.id}`);
+      await supabase.auth.signOut();
+    },
+    updateProfilePartial: (updates: Partial<UserProfile>) =>
+      setProfile(p => p ? { ...p, ...updates } : null)
   };
 }
