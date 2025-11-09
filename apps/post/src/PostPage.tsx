@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { EditablePostCard } from "../../../shared-src/post/EditablePostCard";
-import { MOCK_POSTS } from "../../../shared-src/feed/mock-posts";
 import { PostType, PostStatus } from "../../../shared-src/post/post";
 import type { PostWithAuthor } from "../../../shared-src/post/post";
 import { useAuthContext } from "@/components/auth-provider";
@@ -166,14 +165,12 @@ export function PostPage() {
         }
 
         navigate(`/post/${createPostRes.data.url}`);
-      } else {
-        console.log(updatedPost);
-        const updatedPostRes = await FPApi.axios.patch(
-          "/post/update",
-          updatedPost
-        );
 
-        console.log("updatedPostRes", updatedPostRes.data);
+        toast({
+          title: "Post created!",
+        });
+      } else {
+        await FPApi.axios.patch("/post/update", updatedPost);
 
         if (quizData) {
           const updateQuizReq = {
@@ -191,15 +188,14 @@ export function PostPage() {
             questions: quizData.questions,
           };
 
-          const updatedQuiz = await FPApi.axios.patch(
-            "/quiz/update",
-            updateQuizReq
-          );
-
-          console.log("updatedQuiz", updatedQuiz.data);
+          await FPApi.axios.patch("/quiz/update", updateQuizReq);
         }
 
         await loadPost(post.url);
+
+        toast({
+          title: "Post updated!",
+        });
       }
     } catch (error) {
       toast({
@@ -225,14 +221,22 @@ export function PostPage() {
     setIsEditing(true);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!post) return;
-    const postIndex = MOCK_POSTS.findIndex((p) => p.id === post.id);
-    if (postIndex !== -1) {
-      MOCK_POSTS.splice(postIndex, 1);
-      console.log("Post deleted");
+
+    try {
+      await FPApi.axios.delete(`/post/delete/${post.id}`);
+      toast({
+        title: "Post deleted!",
+      });
+
+      navigate("/");
+    } catch (error) {
+      toast({
+        title: "Delete post error",
+        description: (error as Error)?.message || "Delete error",
+      });
     }
-    navigate("/");
   };
 
   const isOwner = post?.author?.id === currentUserId;

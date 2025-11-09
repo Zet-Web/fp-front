@@ -1,16 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PostCard } from "../post/PostCard";
-import { EditablePostCard } from "../post/EditablePostCard";
 import { constructPostUrl } from "../post/post-utils";
 import type { PostWithAuthor } from "../post/post";
 import { Skeleton } from "@/components/ui/skeleton";
-import { toast } from "sonner";
 import { fetchPosts } from "../../shared-src/feed/api";
 import { useAuthContext } from "@/components/auth-provider";
 import { FeedFilters } from "./feed-filters";
+import { FPApi } from "@/lib/api";
+import { useToast } from "@/hooks/use-toast";
 
 interface FeedProps {
   filters: FeedFilters | null;
@@ -50,18 +50,20 @@ export function Feed({
   emptyAction,
   itemsPerPage = 10,
 }: FeedProps) {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const { profile } = useAuthContext();
+
   const [posts, setPosts] = useState<PostWithAuthor[]>([]);
   const [page, setPage] = useState(1);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const [editingPostId, setEditingPostId] = useState<number | null>(null);
-
-  const { profile } = useAuthContext();
-  const currentUserId = profile?.id || "";
 
   const observerRef = useRef<HTMLDivElement | null>(null);
   const observerInstance = useRef<IntersectionObserver | null>(null);
+
+  const currentUserId = profile?.id || "";
 
   useEffect(() => {
     setPosts([]);
@@ -115,10 +117,10 @@ export function Feed({
           }
         }
       } catch (err) {
-        if ((err as any)?.name !== "AbortError") {
-          console.error("Failed to fetch posts:", err);
-          toast.error("Failed to load posts");
-        }
+        toast({
+          title: "Failed to load posts",
+          description: (err as Error).message || "",
+        });
       } finally {
         setIsInitialLoading(false);
         setIsFetchingMore(false);
@@ -131,7 +133,7 @@ export function Feed({
       controller.abort();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, filters, itemsPerPage, hasMore]); // posts intentionally omitted to avoid refetch loop
+  }, [page, filters, itemsPerPage, hasMore]);
 
   const attachObserver = useCallback(
     (node: HTMLDivElement | null) => {
@@ -167,30 +169,35 @@ export function Feed({
     const url = `${window.location.origin}${constructPostUrl(post.url)}`;
     try {
       await navigator.clipboard.writeText(url);
-      toast.success("Link copied");
+      toast({
+        title: "Link copied",
+      });
     } catch {
-      toast.error("Failed to copy");
+      toast({
+        title: "Failed to copy",
+      });
     }
   };
 
-  const handleEditClick = (id: number) => setEditingPostId(id);
-  const handleCancelEdit = () => setEditingPostId(null);
-
-  const handleSavePost = (id: number, updates: Partial<PostWithAuthor>) => {
-    setPosts((prev) =>
-      prev.map((p) =>
-        p.id === id
-          ? { ...p, ...updates, updated_at: new Date().toISOString() }
-          : p
-      )
-    );
-    setEditingPostId(null);
-    toast.success("Post updated");
+  const handleEditClick = (url: string) => {
+    navigate(`/post/${url}`);
   };
 
-  const handleDeletePost = (id: number) => {
-    setPosts((prev) => prev.filter((p) => p.id !== id));
-    toast.success("Post deleted");
+  const handleDeletePost = async (postId: number) => {
+    if (!postId) return;
+
+    try {
+      await FPApi.axios.delete(`/post/delete/${postId}`);
+      toast({
+        title: "Post deleted!",
+      });
+      setPosts((prev) => prev.filter((p) => p.id !== postId));
+    } catch (error) {
+      toast({
+        title: "Delete post error",
+        description: (error as Error)?.message || "Delete error",
+      });
+    }
   };
 
   if (isInitialLoading && posts.length === 0) {
@@ -221,21 +228,9 @@ export function Feed({
   return (
     <div className="space-y-6">
       {posts.map((post) => {
-        const isEditing = editingPostId === post.id;
         const isOwner = currentUserId
           ? post.author_id === currentUserId
           : false;
-
-        if (isEditing) {
-          return (
-            <EditablePostCard
-              key={post.id}
-              {...post}
-              onSave={(updates) => handleSavePost(post.id, updates)}
-              onCancel={handleCancelEdit}
-            />
-          );
-        }
 
         return (
           <Link key={post.id} to={constructPostUrl(post.url)} className="block">
@@ -255,7 +250,7 @@ export function Feed({
               showActions={true}
               isOwner={isOwner}
               onShareClick={() => handleShareClick(post)}
-              onEditClick={() => handleEditClick(post.id)}
+              onEditClick={() => handleEditClick(post.url)}
               onDeleteClick={() => handleDeletePost(post.id)}
             />
           </Link>
