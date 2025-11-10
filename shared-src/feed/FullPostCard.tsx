@@ -19,11 +19,20 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Share, MoreHorizontal, Bookmark, Pencil, Trash2 } from "lucide-react";
+import {
+  Share,
+  MoreHorizontal,
+  Bookmark,
+  Pencil,
+  Trash2,
+  Loader2,
+} from "lucide-react";
 import { useState } from "react";
 import { PostAuthor, PostType } from "../post/post";
 import { PostContentViewer } from "./PostContentViewer";
 import QuizTake from "../../apps/quiz/src/QuizTake";
+import { useToast } from "@/hooks/use-toast";
+import { FPApi } from "@/lib/api";
 
 interface PostCardProps {
   postId: number;
@@ -35,7 +44,6 @@ interface PostCardProps {
   type: PostType;
   showActions?: boolean;
   onMoreClick?: () => void;
-  onBookmarkClick?: () => void;
   onShareClick?: () => void;
   onEditClick?: () => void;
   onDeleteClick?: () => void;
@@ -52,7 +60,6 @@ export function FullPostCard({
   type,
   showActions = true,
   onMoreClick,
-  onBookmarkClick,
   onShareClick,
   onEditClick,
   onDeleteClick,
@@ -60,7 +67,12 @@ export function FullPostCard({
   isOwner = false,
   excerpt,
 }: PostCardProps) {
+  const { toast } = useToast();
+
+  const [isPostSaved, setIsPostSaved] = useState(isSaved);
+  const [isSaving, setIsSaving] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
   const displayName = author?.name || author?.username || "User";
   const displayUsername =
     author?.username || author?.telegram_username || "user";
@@ -70,6 +82,27 @@ export function FullPostCard({
     .join("")
     .toUpperCase()
     .slice(0, 2);
+
+  const onBookmarkClick = async () => {
+    if (!postId) return;
+
+    setIsSaving(true);
+    try {
+      const res = await FPApi.axios.patch<{ isSaved: boolean }>(
+        `/post/toggle-save/${postId}`
+      );
+
+      const data = res.data;
+      setIsPostSaved(data.isSaved);
+    } catch (error) {
+      toast({
+        title: "Error saving post",
+        description: (error as Error)?.message || "Error",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <Card className="hover:shadow-md transition-shadow duration-300">
@@ -180,12 +213,17 @@ export function FullPostCard({
                     e.preventDefault();
                     onBookmarkClick?.();
                   }}
+                  disabled={isSaving}
                 >
-                  <Bookmark
-                    className={`w-4 h-4 transition-colors ${
-                      isSaved ? "fill-blue-500 text-blue-500" : ""
-                    }`}
-                  />
+                  {isSaving ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Bookmark
+                      className={`w-4 h-4 transition-colors ${
+                        isPostSaved ? "fill-blue-500 text-blue-500" : ""
+                      }`}
+                    />
+                  )}
                 </Button>
                 <Button
                   variant="ghost"

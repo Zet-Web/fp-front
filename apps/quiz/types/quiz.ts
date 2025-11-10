@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const quizSchema = z
   .object({
+    id: z.number().optional(),
     title: z.string().optional(),
     description: z.string().optional(),
     settings: z.object({
@@ -60,7 +61,7 @@ export interface QuizResponse {
   show_correct_answers: boolean;
   has_timer: boolean;
   timer_minutes: number | null;
-  visibility: string;
+  visibility: "owner" | "partners" | "public";
   created_at: string;
   questions: QuizQuestion[];
   alreadyAttempted: boolean;

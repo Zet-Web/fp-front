@@ -1,43 +1,87 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Button } from "@/components/ui/button"
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command"
-import { CommandList } from "@/components/ui/command"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { useSettingsData } from "./hooks/use-settings-data"
-import { Clock, Palette, LogOut, Check, ChevronsUpDown } from "lucide-react"
-import { useTheme } from "next-themes"
-import { useState, useEffect, useMemo } from "react"
-import { useNavigate } from "react-router-dom"
-import { cn } from "@/lib/utils"
-import { useAuthContext } from "@/components/auth-provider"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command";
+import { CommandList } from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { useSettingsData } from "./hooks/use-settings-data";
+import { Clock, Palette, LogOut, Check, ChevronsUpDown } from "lucide-react";
+import { useTheme } from "next-themes";
+import { useState, useMemo, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { cn } from "@/lib/utils";
+import { useAuthContext } from "@/components/auth-provider";
 
 interface UserSettings {
-  timezone: string
-  theme_mode: 'light' | 'dark' | 'system'
+  timezone: string;
+  theme_mode: "light" | "dark" | "system";
 }
 
 interface MainSettingsProps {
-  settings: UserSettings
-  allTimezones: TimezoneOption[]
-  onUpdate: (data: Partial<UserSettings>) => void
-  hasUnsavedChanges: boolean
+  settings: UserSettings;
+  allTimezones: TimezoneOption[];
+  onUpdate: (data: Partial<UserSettings>) => void;
+  hasUnsavedChanges: boolean;
 }
 
 interface TimezoneOption {
-  value: string
-  label: string
-  region: string
-  city: string
-  offset: string
+  value: string;
+  label: string;
+  region: string;
+  city: string;
+  offset: string;
 }
 
 export function SettingsPage() {
-  const { session } = useAuthContext()
-  const settingsData = useSettingsData(session)
-  const { settings, allTimezones, updateSettings, saveChanges, resetChanges, isLoading, error, hasUnsavedChanges } = settingsData
+  const { session, isAuthenticated } = useAuthContext();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/auth");
+      return;
+    }
+  }, [isAuthenticated, navigate]);
+
+  const settingsData = useSettingsData(session);
+  const {
+    settings,
+    allTimezones,
+    updateSettings,
+    saveChanges,
+    resetChanges,
+    isLoading,
+    error,
+    hasUnsavedChanges,
+  } = settingsData;
 
   if (isLoading) {
     return (
@@ -47,7 +91,7 @@ export function SettingsPage() {
           <p className="text-muted-foreground">Loading settings...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -55,12 +99,10 @@ export function SettingsPage() {
       <div className="w-full h-full flex items-center justify-center">
         <div className="text-center">
           <p className="text-destructive mb-4">{error}</p>
-          <Button onClick={() => window.location.reload()}>
-            Try Again
-          </Button>
+          <Button onClick={() => window.location.reload()}>Try Again</Button>
         </div>
       </div>
-    )
+    );
   }
 
   if (!settings) {
@@ -68,24 +110,24 @@ export function SettingsPage() {
       <div className="w-full h-full flex items-center justify-center">
         <p className="text-muted-foreground">No settings found</p>
       </div>
-    )
+    );
   }
 
   const handleSave = async () => {
     try {
-      await saveChanges(session)
+      await saveChanges(session);
     } catch (error) {
-      console.error('Failed to save settings:', error)
+      console.error("Failed to save settings:", error);
     }
-  }
+  };
 
   const handleReset = async () => {
     try {
-      await resetChanges()
+      await resetChanges();
     } catch (error) {
-      console.error('Failed to reset settings:', error)
+      console.error("Failed to reset settings:", error);
     }
-  }
+  };
 
   return (
     <div className="container mx-auto px-6 py-6 max-w-4xl">
@@ -105,56 +147,62 @@ export function SettingsPage() {
 
       {hasUnsavedChanges && (
         <div className="mt-6 flex gap-4">
-          <Button onClick={handleSave}>
-            Save Changes
-          </Button>
+          <Button onClick={handleSave}>Save Changes</Button>
           <Button variant="outline" onClick={handleReset}>
             Reset Changes
           </Button>
         </div>
       )}
     </div>
-  )
+  );
 }
 
-export function MainSettings({ settings, allTimezones, onUpdate, hasUnsavedChanges }: MainSettingsProps) {
-  const { setTheme } = useTheme()
-  const navigate = useNavigate()
-  const { signOut } = useAuthContext()
-  const [timezoneOpen, setTimezoneOpen] = useState(false)
-  const [searchTerm, setSearchTerm] = useState("")
+export function MainSettings({
+  settings,
+  allTimezones,
+  onUpdate,
+  hasUnsavedChanges,
+}: MainSettingsProps) {
+  const { setTheme } = useTheme();
+  const navigate = useNavigate();
+  const { signOut } = useAuthContext();
+  const [timezoneOpen, setTimezoneOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Filter timezones based on search term
   const filteredTimezones = useMemo(() => {
-    if (!searchTerm.trim()) return allTimezones || []
-    
-    const search = searchTerm.toLowerCase()
-    return (allTimezones || []).filter(tz => 
-      tz.label.toLowerCase().includes(search) ||
-      tz.region.toLowerCase().includes(search) ||
-      tz.city.toLowerCase().includes(search) ||
-      tz.value.toLowerCase().includes(search)
-    )
-  }, [allTimezones, searchTerm])
+    if (!searchTerm.trim()) return allTimezones || [];
+
+    const search = searchTerm.toLowerCase();
+    return (allTimezones || []).filter(
+      (tz) =>
+        tz.label.toLowerCase().includes(search) ||
+        tz.region.toLowerCase().includes(search) ||
+        tz.city.toLowerCase().includes(search) ||
+        tz.value.toLowerCase().includes(search)
+    );
+  }, [allTimezones, searchTerm]);
 
   const handleTimezoneChange = (timezone: string) => {
-    onUpdate({ timezone })
-    setTimezoneOpen(false)
-  }
+    onUpdate({ timezone });
+    setTimezoneOpen(false);
+  };
 
-  const handleThemeChange = (theme: 'light' | 'dark' | 'system') => {
-    onUpdate({ theme_mode: theme })
-    setTheme(theme)
-  }
+  const handleThemeChange = (theme: "light" | "dark" | "system") => {
+    onUpdate({ theme_mode: theme });
+    setTheme(theme);
+  };
 
   const handleExit = async () => {
-    await signOut()
-    navigate('/')
-  }
+    await signOut();
+    navigate("/");
+  };
 
   // Find current timezone label
-  const currentTimezone = allTimezones.find(tz => tz.value === settings.timezone)
-  const currentTimezoneLabel = currentTimezone?.label || settings.timezone
+  const currentTimezone = allTimezones.find(
+    (tz) => tz.value === settings.timezone
+  );
+  const currentTimezoneLabel = currentTimezone?.label || settings.timezone;
 
   return (
     <div className="space-y-6">
@@ -183,8 +231,8 @@ export function MainSettings({ settings, allTimezones, onUpdate, hasUnsavedChang
               </PopoverTrigger>
               <PopoverContent className="w-full p-0" align="start">
                 <Command>
-                  <CommandInput 
-                    placeholder="Search timezone..." 
+                  <CommandInput
+                    placeholder="Search timezone..."
                     value={searchTerm}
                     onValueChange={setSearchTerm}
                   />
@@ -200,10 +248,12 @@ export function MainSettings({ settings, allTimezones, onUpdate, hasUnsavedChang
                           <Check
                             className={cn(
                               "mr-2 h-4 w-4",
-                              settings.timezone === timezone.value ? "opacity-100" : "opacity-0"
+                              settings.timezone === timezone.value
+                                ? "opacity-100"
+                                : "opacity-0"
                             )}
                           />
-                         <span>{timezone.label}</span>
+                          <span>{timezone.label}</span>
                         </CommandItem>
                       ))}
                     </CommandGroup>
@@ -229,7 +279,10 @@ export function MainSettings({ settings, allTimezones, onUpdate, hasUnsavedChang
         <CardContent>
           <div className="space-y-2">
             <Label htmlFor="theme">Theme preference</Label>
-            <Select value={settings.theme_mode} onValueChange={handleThemeChange}>
+            <Select
+              value={settings.theme_mode}
+              onValueChange={handleThemeChange}
+            >
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -270,15 +323,17 @@ export function MainSettings({ settings, allTimezones, onUpdate, hasUnsavedChang
                   <AlertDialogHeader>
                     <AlertDialogTitle>Exit Settings?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      {hasUnsavedChanges 
+                      {hasUnsavedChanges
                         ? "You have unsaved changes. Are you sure you want to exit without saving?"
-                        : "Are you sure you want to exit the settings?"
-                      }
+                        : "Are you sure you want to exit the settings?"}
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleExit} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                    <AlertDialogAction
+                      onClick={handleExit}
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    >
                       Exit
                     </AlertDialogAction>
                   </AlertDialogFooter>
@@ -297,5 +352,5 @@ export function MainSettings({ settings, allTimezones, onUpdate, hasUnsavedChang
         </div>
       )}
     </div>
-  )
+  );
 }

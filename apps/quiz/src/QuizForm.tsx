@@ -24,18 +24,32 @@ import {
 } from "@/components/ui/alert-dialog";
 import { QuizFormData, quizSchema } from "../types/quiz";
 import { Label } from "@/components/ui/label";
-import { Plus, Trash2, FileText, Settings2, ListChecks, Check, ChevronUp, ChevronDown, HelpCircle } from "lucide-react";
+import {
+  Plus,
+  Trash2,
+  Settings2,
+  ListChecks,
+  Check,
+  ChevronUp,
+  ChevronDown,
+  HelpCircle,
+} from "lucide-react";
+import { useEffect } from "react";
 
 type Props = {
-  onSubmit: (data: QuizFormData) => void;
-  isQuizFormDisabled?: boolean;
+  onFormValuesChange: (data: QuizFormData) => void;
+  onFormValidChange: (valid: boolean) => void;
+  defaultQuizFormValues?: QuizFormData | null;
 };
 
-export default function QuizForm({ onSubmit, isQuizFormDisabled }: Props) {
+export default function QuizForm({
+  onFormValuesChange,
+  onFormValidChange,
+  defaultQuizFormValues,
+}: Props) {
   const form = useForm<QuizFormData>({
-    disabled: Boolean(isQuizFormDisabled),
     resolver: zodResolver(quizSchema),
-    defaultValues: {
+    defaultValues: defaultQuizFormValues || {
       title: "",
       description: "",
       settings: {
@@ -53,16 +67,18 @@ export default function QuizForm({ onSubmit, isQuizFormDisabled }: Props) {
 
   const {
     control,
-    handleSubmit,
     watch,
-    formState: { isValid, errors },
+    reset,
+    formState: { errors },
   } = form;
+
+  useEffect(() => {
+    if (defaultQuizFormValues) reset(defaultQuizFormValues);
+  }, [defaultQuizFormValues, reset]);
 
   const questionsField = useFieldArray({ control, name: "questions" });
   const hasTimer = watch("settings.hasTimer");
   const visibility = watch("settings.visibility");
-
-  const onFormSubmit = handleSubmit(onSubmit);
 
   const moveQuestionUp = (index: number) => {
     if (index === 0) return;
@@ -74,9 +90,16 @@ export default function QuizForm({ onSubmit, isQuizFormDisabled }: Props) {
     questionsField.swap(index, index + 1);
   };
 
+  useEffect(() => {
+    const subscription = form.watch((values) => {
+      onFormValuesChange(values as QuizFormData);
+      onFormValidChange(form.formState.isValid);
+    });
+    return () => subscription.unsubscribe();
+  }, [form, onFormValuesChange, onFormValidChange]);
+
   return (
     <div className="space-y-4">
-
       <Card className="shadow-sm hover:shadow-md transition-shadow">
         <CardHeader className="p-4">
           <div className="flex items-center gap-2">
@@ -90,38 +113,16 @@ export default function QuizForm({ onSubmit, isQuizFormDisabled }: Props) {
               <h4 className="text-sm font-medium text-muted-foreground">
                 ПАРАМЕТРЫ ПРОХОЖДЕНИЯ
               </h4>
-
-              {/* Commented anonymous*/}
-              {/*<Controller
-                control={control}
-                name="settings.anonymous"
-                render={({ field }) => (
-                  <div className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors">
-                    <div>
-                      <Label htmlFor="anonymous" className="font-medium cursor-pointer">
-                        Анонимное прохождение
-                      </Label>
-                      <p className="text-xs text-muted-foreground">
-                        Тест могут проходить неавторизованные пользователи
-                      </p>
-                    </div>
-                    <Switch
-                      id="anonymous"
-                      disabled={field.disabled}
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </div>
-                )}
-              /> */}
-
               <Controller
                 control={control}
                 name="settings.allowPause"
                 render={({ field }) => (
                   <div className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors">
                     <div>
-                      <Label htmlFor="allowPause" className="font-medium cursor-pointer">
+                      <Label
+                        htmlFor="allowPause"
+                        className="font-medium cursor-pointer"
+                      >
                         Тест на паузе
                       </Label>
                       <p className="text-xs text-muted-foreground">
@@ -144,7 +145,10 @@ export default function QuizForm({ onSubmit, isQuizFormDisabled }: Props) {
                 render={({ field }) => (
                   <div className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors">
                     <div>
-                      <Label htmlFor="oneAttempt" className="font-medium cursor-pointer">
+                      <Label
+                        htmlFor="oneAttempt"
+                        className="font-medium cursor-pointer"
+                      >
                         Одна попытка на пользователя
                       </Label>
                       <p className="text-xs text-muted-foreground">
@@ -167,7 +171,10 @@ export default function QuizForm({ onSubmit, isQuizFormDisabled }: Props) {
                 render={({ field }) => (
                   <div className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors">
                     <div>
-                      <Label htmlFor="showAnswers" className="font-medium cursor-pointer">
+                      <Label
+                        htmlFor="showAnswers"
+                        className="font-medium cursor-pointer"
+                      >
                         Показывать правильные ответы
                       </Label>
                       <p className="text-xs text-muted-foreground">
@@ -192,7 +199,10 @@ export default function QuizForm({ onSubmit, isQuizFormDisabled }: Props) {
 
               <div className="space-y-3 p-3 rounded-lg border bg-card">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="hasTimer" className="font-medium cursor-pointer">
+                  <Label
+                    htmlFor="hasTimer"
+                    className="font-medium cursor-pointer"
+                  >
                     Ограничение по времени
                   </Label>
                   <Controller
@@ -250,9 +260,21 @@ export default function QuizForm({ onSubmit, isQuizFormDisabled }: Props) {
                   render={({ field }) => (
                     <div className="space-y-2">
                       {[
-                        { value: 'owner', label: 'Только владелец', desc: 'Результаты видны только вам' },
-                        { value: 'partners', label: 'Владелец и партнёры', desc: 'Результаты доступны вам и партнёрам' },
-                        { value: 'public', label: 'Все пользователи', desc: 'Результаты публично доступны всем' },
+                        {
+                          value: "owner",
+                          label: "Только владелец",
+                          desc: "Результаты видны только вам",
+                        },
+                        {
+                          value: "partners",
+                          label: "Владелец и партнёры",
+                          desc: "Результаты доступны вам и партнёрам",
+                        },
+                        {
+                          value: "public",
+                          label: "Все пользователи",
+                          desc: "Результаты публично доступны всем",
+                        },
                       ].map((option) => (
                         <button
                           key={option.value}
@@ -261,15 +283,21 @@ export default function QuizForm({ onSubmit, isQuizFormDisabled }: Props) {
                           disabled={field.disabled}
                           className={`w-full flex items-center justify-between p-2 rounded border transition-all ${
                             visibility === option.value
-                              ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/20'
-                              : 'border-border hover:border-accent-foreground/20'
+                              ? "border-blue-500 bg-blue-50 dark:bg-blue-950/20"
+                              : "border-border hover:border-accent-foreground/20"
                           }`}
                         >
                           <div className="text-left">
-                            <div className="font-medium text-sm">{option.label}</div>
-                            <div className="text-xs text-muted-foreground">{option.desc}</div>
+                            <div className="font-medium text-sm">
+                              {option.label}
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              {option.desc}
+                            </div>
                           </div>
-                          {visibility === option.value && <Check className="h-4 w-4 text-blue-500" />}
+                          {visibility === option.value && (
+                            <Check className="h-4 w-4 text-blue-500" />
+                          )}
                         </button>
                       ))}
                     </div>
@@ -292,8 +320,13 @@ export default function QuizForm({ onSubmit, isQuizFormDisabled }: Props) {
             </div>
             <Button
               type="button"
-              disabled={isQuizFormDisabled}
-              onClick={() => questionsField.append({ text: "", explanation: "", answers: [] })}
+              onClick={() =>
+                questionsField.append({
+                  text: "",
+                  explanation: "",
+                  answers: [],
+                })
+              }
               size="sm"
               className="gap-1.5"
             >
@@ -314,9 +347,12 @@ export default function QuizForm({ onSubmit, isQuizFormDisabled }: Props) {
                 type="button"
                 variant="outline"
                 size="sm"
-                disabled={isQuizFormDisabled}
                 onClick={() =>
-                  questionsField.append({ text: "", explanation: "", answers: [] })
+                  questionsField.append({
+                    text: "",
+                    explanation: "",
+                    answers: [],
+                  })
                 }
                 className="gap-1.5"
               >
@@ -327,16 +363,21 @@ export default function QuizForm({ onSubmit, isQuizFormDisabled }: Props) {
           ) : (
             <div className="space-y-3">
               {questionsField.fields.map((q, index) => (
-                <div key={q.id} className="p-3 rounded-lg border bg-card space-y-3">
+                <div
+                  key={q.id}
+                  className="p-3 rounded-lg border bg-card space-y-3"
+                >
                   <div className="flex items-center justify-between">
-                    <Badge variant="secondary" className="text-xs">Вопрос {index + 1}</Badge>
+                    <Badge variant="secondary" className="text-xs">
+                      Вопрос {index + 1}
+                    </Badge>
                     <div className="flex gap-1">
                       <Button
                         size="sm"
                         variant="ghost"
                         type="button"
                         onClick={() => moveQuestionUp(index)}
-                        disabled={index === 0 || isQuizFormDisabled}
+                        disabled={index === 0}
                         className="h-6 w-6 p-0"
                       >
                         <ChevronUp className="h-3.5 w-3.5" />
@@ -346,7 +387,7 @@ export default function QuizForm({ onSubmit, isQuizFormDisabled }: Props) {
                         variant="ghost"
                         type="button"
                         onClick={() => moveQuestionDown(index)}
-                        disabled={index === questionsField.fields.length - 1 || isQuizFormDisabled}
+                        disabled={index === questionsField.fields.length - 1}
                         className="h-6 w-6 p-0"
                       >
                         <ChevronDown className="h-3.5 w-3.5" />
@@ -357,7 +398,6 @@ export default function QuizForm({ onSubmit, isQuizFormDisabled }: Props) {
                             variant="ghost"
                             size="sm"
                             type="button"
-                            disabled={isQuizFormDisabled}
                             className="h-6 w-6 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
@@ -367,7 +407,8 @@ export default function QuizForm({ onSubmit, isQuizFormDisabled }: Props) {
                           <AlertDialogHeader>
                             <AlertDialogTitle>Удалить вопрос</AlertDialogTitle>
                             <AlertDialogDescription>
-                              Вы уверены, что хотите удалить этот вопрос? Это действие нельзя отменить.
+                              Вы уверены, что хотите удалить этот вопрос? Это
+                              действие нельзя отменить.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
@@ -396,18 +437,18 @@ export default function QuizForm({ onSubmit, isQuizFormDisabled }: Props) {
                   />
 
                   <div className="space-y-2">
-                    <Label className="text-xs font-semibold">Варианты ответов</Label>
-                    <AnswersField
-                      control={control}
-                      qIndex={index}
-                      isQuizFormDisabled={isQuizFormDisabled}
-                    />
+                    <Label className="text-xs font-semibold">
+                      Варианты ответов
+                    </Label>
+                    <AnswersField control={control} qIndex={index} />
                   </div>
 
                   <div className="space-y-1.5">
                     <div className="flex items-center gap-1.5">
                       <HelpCircle className="h-3.5 w-3.5 text-muted-foreground" />
-                      <Label className="text-xs font-medium">Пояснение (необязательно)</Label>
+                      <Label className="text-xs font-medium">
+                        Пояснение (необязательно)
+                      </Label>
                     </div>
                     <Controller
                       control={control}
@@ -428,32 +469,11 @@ export default function QuizForm({ onSubmit, isQuizFormDisabled }: Props) {
           )}
         </CardContent>
       </Card>
-
-      {!isQuizFormDisabled && (
-        <div className="flex justify-end">
-          <Button
-            onClick={onFormSubmit}
-            disabled={!isValid}
-            className="gap-2"
-          >
-            <Check className="h-4 w-4" />
-            Сохранить тест
-          </Button>
-        </div>
-      )}
     </div>
   );
 }
 
-function AnswersField({
-  control,
-  qIndex,
-  isQuizFormDisabled,
-}: {
-  control: any;
-  qIndex: number;
-  isQuizFormDisabled?: boolean;
-}) {
+function AnswersField({ control, qIndex }: { control: any; qIndex: number }) {
   const { fields, append, remove } = useFieldArray({
     control,
     name: `questions.${qIndex}.answers`,
@@ -488,7 +508,6 @@ function AnswersField({
           />
           {fields.length > 2 && (
             <Button
-              disabled={isQuizFormDisabled}
               variant="ghost"
               size="sm"
               type="button"
@@ -506,7 +525,6 @@ function AnswersField({
         variant="outline"
         size="sm"
         onClick={() => append({ text: "", correct: false })}
-        disabled={isQuizFormDisabled}
         className="w-full gap-2 mt-2"
       >
         <Plus className="h-4 w-4" />

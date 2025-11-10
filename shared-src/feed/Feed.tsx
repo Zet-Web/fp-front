@@ -1,20 +1,20 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PostCard } from "../post/PostCard";
-import { EditablePostCard } from "../post/EditablePostCard";
 import { constructPostUrl } from "../post/post-utils";
 import type { PostWithAuthor } from "../post/post";
 import { Skeleton } from "@/components/ui/skeleton";
-import { toast } from "sonner";
 import { fetchPosts } from "../../shared-src/feed/api";
 import { useAuthContext } from "@/components/auth-provider";
 import { FeedFilters } from "./feed-filters";
+import { FPApi } from "@/lib/api";
+import { useToast } from "@/hooks/use-toast";
 
 interface FeedProps {
-  filters: FeedFilters;
-  filterByUserId?: string;
+  filters: FeedFilters | null;
+  filterByUsername?: string | null;
   emptyMessage?: string;
   emptyAction?: {
     label: string;
@@ -45,27 +45,26 @@ function PostSkeleton() {
 
 export function Feed({
   filters,
-  filterByUserId,
+  filterByUsername,
   emptyMessage = "No posts to display",
   emptyAction,
   itemsPerPage = 10,
 }: FeedProps) {
-  // posts: массив постов (id: number)
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const { profile } = useAuthContext();
+
   const [posts, setPosts] = useState<PostWithAuthor[]>([]);
   const [page, setPage] = useState(1);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const [editingPostId, setEditingPostId] = useState<number | null>(null);
 
-  const { profile } = useAuthContext();
-  const currentUserId = profile?.id || "";
-
-  // observer ref and instance
   const observerRef = useRef<HTMLDivElement | null>(null);
   const observerInstance = useRef<IntersectionObserver | null>(null);
 
-  // when filters change — reset feed to first page
+  const currentUserId = profile?.id || "";
+
   useEffect(() => {
     setPosts([]);
     setPage(1);
@@ -73,7 +72,6 @@ export function Feed({
     setIsInitialLoading(true);
   }, [filters]);
 
-  // load posts when page changes (or filters/itemsPerPage)
   useEffect(() => {
     if (!hasMore) return;
 
@@ -90,23 +88,20 @@ export function Feed({
         const { posts: newPosts = [], count: totalCount } = await fetchPosts(
           filters,
           page,
-          itemsPerPage
+          itemsPerPage,
+          filterByUsername
         );
 
-        // Dedupe: не добавляем посты с id, которые уже есть
         const existingIds = new Set(posts.map((p) => p.id));
         const uniqueNew = newPosts.filter((p) => !existingIds.has(p.id));
 
-        // Если пришло 0 уникальных — возможно бэкенд возвращает дубликаты; завершаем загрузку
         if (uniqueNew.length === 0) {
-          // если при первой загрузке вообще ничего не пришло, оставляем posts пустым
           setHasMore(false);
           return;
         }
 
         setPosts((prev) => [...prev, ...uniqueNew]);
 
-        // если известен общий count (totalCount) — можно определить hasMore точно
         if (typeof totalCount === "number") {
           const loadedSoFar = posts.length + uniqueNew.length;
           if (loadedSoFar >= totalCount) {
@@ -115,7 +110,6 @@ export function Feed({
             setHasMore(true);
           }
         } else {
-          // fallback: если пришло меньше чем itemsPerPage -> конец
           if (uniqueNew.length < itemsPerPage) {
             setHasMore(false);
           } else {
@@ -123,11 +117,10 @@ export function Feed({
           }
         }
       } catch (err) {
-        // abort === нормально при смене страницы/фильтра; прочие ошибки — показать сообщение
-        if ((err as any)?.name !== "AbortError") {
-          console.error("Failed to fetch posts:", err);
-          toast.error("Failed to load posts");
-        }
+        toast({
+          title: "Failed to load posts",
+          description: (err as Error).message || "",
+        });
       } finally {
         setIsInitialLoading(false);
         setIsFetchingMore(false);
@@ -140,9 +133,8 @@ export function Feed({
       controller.abort();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, filters, itemsPerPage, hasMore]); // posts intentionally omitted to avoid refetch loop
+  }, [page, filters, itemsPerPage, hasMore]);
 
-  // IntersectionObserver setup via callback ref (cleaner + stable)
   const attachObserver = useCallback(
     (node: HTMLDivElement | null) => {
       if (observerInstance.current) {
@@ -162,7 +154,6 @@ export function Feed({
             !isInitialLoading &&
             hasMore
           ) {
-            // увеличиваем страницу (это триггерит эффект загрузки)
             setPage((p) => p + 1);
           }
         },
@@ -174,50 +165,41 @@ export function Feed({
     [isFetchingMore, isInitialLoading, hasMore]
   );
 
-  // filtered posts (по user)
-  const filteredPosts = filterByUserId
-    ? posts.filter((p) => p.author_id === filterByUserId)
-    : posts;
-
-  // HANDLERS
-  const handleBookmarkClick = (id: number) => {
-    // обновляем поле is_saved внутри posts — это гарантирует, что PostCard увидит изменение
-    setPosts((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, is_saved: !p.is_saved } : p))
-    );
-  };
-
   const handleShareClick = async (post: PostWithAuthor) => {
     const url = `${window.location.origin}${constructPostUrl(post.url)}`;
     try {
       await navigator.clipboard.writeText(url);
-      toast.success("Link copied");
+      toast({
+        title: "Link copied",
+      });
     } catch {
-      toast.error("Failed to copy");
+      toast({
+        title: "Failed to copy",
+      });
     }
   };
 
-  const handleEditClick = (id: number) => setEditingPostId(id);
-  const handleCancelEdit = () => setEditingPostId(null);
-
-  const handleSavePost = (id: number, updates: Partial<PostWithAuthor>) => {
-    setPosts((prev) =>
-      prev.map((p) =>
-        p.id === id
-          ? { ...p, ...updates, updated_at: new Date().toISOString() }
-          : p
-      )
-    );
-    setEditingPostId(null);
-    toast.success("Post updated");
+  const handleEditClick = (url: string) => {
+    navigate(`/post/${url}`);
   };
 
-  const handleDeletePost = (id: number) => {
-    setPosts((prev) => prev.filter((p) => p.id !== id));
-    toast.success("Post deleted");
+  const handleDeletePost = async (postId: number) => {
+    if (!postId) return;
+
+    try {
+      await FPApi.axios.delete(`/post/delete/${postId}`);
+      toast({
+        title: "Post deleted!",
+      });
+      setPosts((prev) => prev.filter((p) => p.id !== postId));
+    } catch (error) {
+      toast({
+        title: "Delete post error",
+        description: (error as Error)?.message || "Delete error",
+      });
+    }
   };
 
-  // RENDERING
   if (isInitialLoading && posts.length === 0) {
     return (
       <div className="space-y-6">
@@ -245,26 +227,15 @@ export function Feed({
 
   return (
     <div className="space-y-6">
-      {filteredPosts.map((post) => {
-        const isEditing = editingPostId === post.id;
+      {posts.map((post) => {
         const isOwner = currentUserId
           ? post.author_id === currentUserId
           : false;
 
-        if (isEditing) {
-          return (
-            <EditablePostCard
-              key={post.id}
-              {...post}
-              onSave={(updates) => handleSavePost(post.id, updates)}
-              onCancel={handleCancelEdit}
-            />
-          );
-        }
-
         return (
           <Link key={post.id} to={constructPostUrl(post.url)} className="block">
             <PostCard
+              postId={post.id}
               title={post.title || ""}
               content={post.excerpt || ""}
               images={
@@ -278,9 +249,8 @@ export function Feed({
               isSaved={!!post.is_saved}
               showActions={true}
               isOwner={isOwner}
-              onBookmarkClick={() => handleBookmarkClick(post.id)}
               onShareClick={() => handleShareClick(post)}
-              onEditClick={() => handleEditClick(post.id)}
+              onEditClick={() => handleEditClick(post.url)}
               onDeleteClick={() => handleDeletePost(post.id)}
             />
           </Link>

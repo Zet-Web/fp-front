@@ -5,81 +5,125 @@ import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { EditablePostCard } from "../../../shared-src/post/EditablePostCard";
-import { MOCK_POSTS } from "../../../shared-src/feed/mock-posts";
 import { PostType, PostStatus } from "../../../shared-src/post/post";
 import type { PostWithAuthor } from "../../../shared-src/post/post";
 import { useAuthContext } from "@/components/auth-provider";
 import { FPApi } from "@/lib/api";
-import { QuizFormData } from "@/apps/quiz/types/quiz";
+import { QuizFormData, QuizResponse } from "@/apps/quiz/types/quiz";
 import { FullPostCard } from "../../../shared-src/feed/FullPostCard";
+import { useToast } from "@/hooks/use-toast";
 
 export function PostPage() {
   const { urlCode } = useParams<{ urlCode: string }>();
   const navigate = useNavigate();
+  const { toast } = useToast();
+
   const [post, setPost] = useState<PostWithAuthor | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isCreateMode, setIsCreateMode] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
-  const { profile } = useAuthContext();
+  // Quiz data
+  const [quizData, setQuizData] = useState<QuizFormData | null>(null);
 
+  const { profile, isAuthenticated, loading: authLoading } = useAuthContext();
   const currentUserId = profile?.id || "";
 
-  useEffect(() => {
-    const loadPost = async () => {
-      setIsLoading(true);
-      setError(null);
+  const loadPost = async (postUrlCode?: string) => {
+    setIsLoading(true);
+    setError(null);
 
-      if (!urlCode) {
-        setIsCreateMode(true);
-        setIsEditing(true);
-        setPost({
-          id: 0,
-          title: "",
-          excerpt: "",
-          content: "",
-          cover_image: undefined,
-          images: [],
-          type: PostType.ARTICLE,
-          status: PostStatus.DRAFT,
-          is_pinned: false,
-          url: "",
-          slug: undefined,
-          author: {
-            id: profile?.id || "",
-            name: profile?.name || "",
-            username: profile?.username || "",
-            telegram_username: profile?.telegram_username || null,
-            avatar_url: profile?.avatar_url || null,
-            badge: null,
-          },
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        });
-        setIsLoading(false);
+    if (!postUrlCode) {
+      if (!isAuthenticated) {
+        navigate("/auth");
         return;
       }
 
-      const res = await FPApi.axios.get<{ post: PostWithAuthor }>(
-        `/post/get-by-url/${urlCode}`
-      );
-      const foundPost = res.data;
-
-      if (!foundPost) {
-        setError("Post not found");
-        setIsLoading(false);
-        return;
-      }
-
-      setPost(foundPost.post);
-      setIsCreateMode(false);
-      setIsEditing(false);
+      setIsCreateMode(true);
+      setIsEditing(true);
+      setPost({
+        id: 0,
+        title: "",
+        excerpt: "",
+        content: "",
+        cover_image: undefined,
+        images: [],
+        type: PostType.ARTICLE,
+        status: PostStatus.DRAFT,
+        is_pinned: false,
+        url: "",
+        slug: undefined,
+        author: {
+          id: profile?.id || "",
+          name: profile?.name || "",
+          username: profile?.username || "",
+          telegram_username: profile?.telegram_username || null,
+          avatar_url: profile?.avatar_url || null,
+          badge: null,
+        },
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
       setIsLoading(false);
-    };
+      return;
+    }
 
-    loadPost();
-  }, [profile, urlCode]);
+    const res = await FPApi.axios.get<{ post: PostWithAuthor }>(
+      `/post/get-by-url/${postUrlCode}`
+    );
+    const foundPost = res.data;
+
+    if (
+      !!profile &&
+      profile.id === foundPost.post.author_id &&
+      foundPost.post.type === PostType.QUIZ
+    ) {
+      const res = await FPApi.axios.get<QuizResponse>(
+        `/quiz/by-post/${foundPost.post.id}`
+      );
+
+      const data = res.data;
+
+      if (data) {
+        const mappedQuizData: QuizFormData = {
+          id: data.id,
+          title: data.title,
+          description: data.description,
+          settings: {
+            anonymous: data.anonymous,
+            allowPause: data.allow_pause,
+            oneAttemptPerUser: data.one_attempt_per_user,
+            showCorrectAnswers: data.show_correct_answers,
+            hasTimer: data.has_timer,
+            timerMinutes: data.timer_minutes,
+            visibility: data.visibility,
+          },
+          questions: data.questions,
+        };
+
+        setQuizData(mappedQuizData);
+      }
+    }
+
+    if (!foundPost) {
+      setError("Post not found");
+      setIsLoading(false);
+      return;
+    }
+
+    setPost(foundPost.post);
+    setIsCreateMode(false);
+    setIsEditing(false);
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    if (authLoading) return;
+    loadPost(urlCode);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authLoading, urlCode, profile]);
 
   const handleSave = async (
     updates: Partial<PostWithAuthor>,
@@ -87,51 +131,80 @@ export function PostPage() {
   ) => {
     if (!post) return;
 
-    const updatedPost = {
-      ...post,
-      ...updates,
-      updated_at: new Date().toISOString(),
-    };
+    try {
+      setIsSaving(true);
 
-    if (isCreateMode) {
-      const createPostRes = await FPApi.axios.post<{ url: string; id: number }>(
-        "/post/create",
-        updatedPost
-      );
+      const updatedPost = {
+        ...post,
+        ...updates,
+        updated_at: new Date().toISOString(),
+      };
 
-      console.log("createPostRes", createPostRes);
+      if (isCreateMode) {
+        const createPostRes = await FPApi.axios.post<{
+          url: string;
+          id: number;
+        }>("/post/create", updatedPost);
 
-      if (quizData) {
-        const createQuizReq = {
-          postId: createPostRes.data.id,
-          title: quizData.title,
-          description: quizData.description,
-          anonymous: quizData.settings.anonymous,
-          allowPause: quizData.settings.allowPause,
-          oneAttemptPerUser: quizData.settings.oneAttemptPerUser,
-          showCorrectAnswers: quizData.settings.showCorrectAnswers,
-          hasTimer: quizData.settings.hasTimer,
-          timerMinutes: quizData.settings.timerMinutes,
-          visibility: quizData.settings.visibility,
-          questions: quizData.questions,
-        };
+        if (quizData) {
+          const createQuizReq = {
+            postId: createPostRes.data.id,
+            title: quizData.title,
+            description: quizData.description,
+            anonymous: quizData.settings.anonymous,
+            allowPause: quizData.settings.allowPause,
+            oneAttemptPerUser: quizData.settings.oneAttemptPerUser,
+            showCorrectAnswers: quizData.settings.showCorrectAnswers,
+            hasTimer: quizData.settings.hasTimer,
+            timerMinutes: quizData.settings.timerMinutes,
+            visibility: quizData.settings.visibility,
+            questions: quizData.questions,
+          };
 
-        const createQuiz = await FPApi.axios.post(
-          "/quiz/create",
-          createQuizReq
-        );
+          await FPApi.axios.post("/quiz/create", createQuizReq);
+        }
 
-        console.log("createQuiz", createQuiz);
+        navigate(`/post/${createPostRes.data.url}`);
+
+        toast({
+          title: "Post created!",
+        });
+      } else {
+        await FPApi.axios.patch("/post/update", updatedPost);
+
+        if (quizData) {
+          const updateQuizReq = {
+            id: quizData.id,
+            postId: post.id,
+            title: quizData.title,
+            description: quizData.description,
+            anonymous: quizData.settings.anonymous,
+            allowPause: quizData.settings.allowPause,
+            oneAttemptPerUser: quizData.settings.oneAttemptPerUser,
+            showCorrectAnswers: quizData.settings.showCorrectAnswers,
+            hasTimer: quizData.settings.hasTimer,
+            timerMinutes: quizData.settings.timerMinutes,
+            visibility: quizData.settings.visibility,
+            questions: quizData.questions,
+          };
+
+          await FPApi.axios.patch("/quiz/update", updateQuizReq);
+        }
+
+        await loadPost(post.url);
+
+        toast({
+          title: "Post updated!",
+        });
       }
-
-      navigate(`/post/${createPostRes.data.url}`);
-    } else {
-      const postIndex = MOCK_POSTS.findIndex((p) => p.id === post.id);
-      if (postIndex !== -1) {
-        MOCK_POSTS[postIndex] = updatedPost;
-        console.log("Post updated:", updatedPost);
-      }
-      setPost(updatedPost);
+    } catch (error) {
+      toast({
+        title: "Error while saving post",
+        description: `${(error as Error)?.message || ""}`,
+      });
+    } finally {
+      setIsSaving(false);
+      setIsCreateMode(false);
       setIsEditing(false);
     }
   };
@@ -148,14 +221,22 @@ export function PostPage() {
     setIsEditing(true);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!post) return;
-    const postIndex = MOCK_POSTS.findIndex((p) => p.id === post.id);
-    if (postIndex !== -1) {
-      MOCK_POSTS.splice(postIndex, 1);
-      console.log("Post deleted");
+
+    try {
+      await FPApi.axios.delete(`/post/delete/${post.id}`);
+      toast({
+        title: "Post deleted!",
+      });
+
+      navigate("/");
+    } catch (error) {
+      toast({
+        title: "Delete post error",
+        description: (error as Error)?.message || "Delete error",
+      });
     }
-    navigate("/");
   };
 
   const isOwner = post?.author?.id === currentUserId;
@@ -203,6 +284,8 @@ export function PostPage() {
             author={post.author}
             onSave={handleSave}
             onCancel={handleCancel}
+            isLoading={isSaving}
+            editableQuizData={quizData}
           />
         ) : (
           <>

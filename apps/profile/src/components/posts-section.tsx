@@ -1,5 +1,4 @@
 import { Feed } from "../../../../shared-src/feed/Feed";
-import { MOCK_POSTS } from "../../../../shared-src/feed/mock-posts";
 import { UserProfile } from "../types/profile";
 
 interface PostsSectionProps {
@@ -10,8 +9,8 @@ interface PostsSectionProps {
 export function PostsSection({ user, isOwnProfile }: PostsSectionProps) {
   return (
     <Feed
-      posts={MOCK_POSTS}
-      filterByUserId={user.id}
+      filters={null}
+      filterByUsername={user.username}
       emptyMessage={
         isOwnProfile ? "You haven't posted anything yet." : "No posts to show."
       }
@@ -24,7 +23,6 @@ export function PostsSection({ user, isOwnProfile }: PostsSectionProps) {
           : undefined
       }
       itemsPerPage={10}
-      currentUserId={user.id}
     />
   );
 }
