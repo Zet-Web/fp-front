@@ -2,29 +2,29 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { CatalogTab } from '../catalog/CatalogTab';
 import { ScrollingTab } from '../scrolling/ScrollingTab';
 import { ProfileTab } from '../profile/ProfileTab';
 import { Profile2Tab } from '../profile2/Profile2Tab';
 import { TypographyTab } from '../typography/TypographyTab';
+import { Quiz3Tab } from '../quiz3/Quiz3Tab';
 
 const tabMap: Record<string, string> = {
-  '1': 'catalog',
-  '2': 'scrolling',
-  '3': 'profile',
-  '4': 'profile2',
-  '5': 'typography'
+  '1': 'scrolling',
+  '2': 'profile',
+  '3': 'profile2',
+  '4': 'typography',
+  '5': 'quiz3'
 };
 
 export function TestPage() {
   const [searchParams] = useSearchParams();
   const tabParam = searchParams.get('tab');
-  const initialTab = tabParam ? (tabMap[tabParam] || 'catalog') : 'catalog';
+  const initialTab = tabParam ? (tabMap[tabParam] || 'scrolling') : 'scrolling';
   const [activeTab, setActiveTab] = useState(initialTab);
 
   useEffect(() => {
     if (tabParam) {
-      setActiveTab(tabMap[tabParam] || 'catalog');
+      setActiveTab(tabMap[tabParam] || 'scrolling');
     }
   }, [tabParam]);
 
@@ -49,16 +49,12 @@ export function TestPage() {
     <div className="max-w-7xl mx-auto space-y-6">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-1 md:grid-cols-5 h-auto">
-          <TabsTrigger value="catalog">Catalog Directory</TabsTrigger>
           <TabsTrigger value="scrolling">Scrolling Tabs</TabsTrigger>
           <TabsTrigger value="profile">Public Profile</TabsTrigger>
           <TabsTrigger value="profile2">Profile 2</TabsTrigger>
           <TabsTrigger value="typography">Typography</TabsTrigger>
+          <TabsTrigger value="quiz3">Quiz Variants</TabsTrigger>
         </TabsList>
-
-        <TabsContent value="catalog">
-          <CatalogTab />
-        </TabsContent>
 
         <TabsContent value="scrolling">
           <ScrollingTab />
@@ -74,6 +70,10 @@ export function TestPage() {
 
         <TabsContent value="typography">
           <TypographyTab />
+        </TabsContent>
+
+        <TabsContent value="quiz3">
+          <Quiz3Tab />
         </TabsContent>
       </Tabs>
     </div>
