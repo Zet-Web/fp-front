@@ -35,88 +35,97 @@ export function PostPage() {
     setIsLoading(true);
     setError(null);
 
-    if (!postUrlCode) {
-      if (!isAuthenticated) {
-        navigate("/auth");
+    try {
+      if (!postUrlCode) {
+        if (!isAuthenticated) {
+          navigate("/auth");
+          return;
+        }
+
+        setIsCreateMode(true);
+        setIsEditing(true);
+        setPost({
+          id: 0,
+          title: "",
+          excerpt: "",
+          content: "",
+          cover_image: undefined,
+          images: [],
+          type: PostType.ARTICLE,
+          status: PostStatus.DRAFT,
+          is_pinned: false,
+          url: "",
+          slug: undefined,
+          author: {
+            id: profile?.id || "",
+            name: profile?.name || "",
+            username: profile?.username || "",
+            telegram_username: profile?.telegram_username || null,
+            avatar_url: profile?.avatar_url || null,
+            badge: null,
+          },
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        });
+        setIsLoading(false);
         return;
       }
 
-      setIsCreateMode(true);
-      setIsEditing(true);
-      setPost({
-        id: 0,
-        title: "",
-        excerpt: "",
-        content: "",
-        cover_image: undefined,
-        images: [],
-        type: PostType.ARTICLE,
-        status: PostStatus.DRAFT,
-        is_pinned: false,
-        url: "",
-        slug: undefined,
-        author: {
-          id: profile?.id || "",
-          name: profile?.name || "",
-          username: profile?.username || "",
-          telegram_username: profile?.telegram_username || null,
-          avatar_url: profile?.avatar_url || null,
-          badge: null,
-        },
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      });
-      setIsLoading(false);
-      return;
-    }
-
-    const res = await FPApi.axios.get<{ post: PostWithAuthor }>(
-      `/post/get-by-url/${postUrlCode}`
-    );
-    const foundPost = res.data;
-
-    if (
-      !!profile &&
-      profile.id === foundPost.post.author_id &&
-      foundPost.post.type === PostType.QUIZ
-    ) {
-      const res = await FPApi.axios.get<QuizResponse>(
-        `/quiz/by-post/${foundPost.post.id}`
+      const res = await FPApi.axios.get<{ post: PostWithAuthor }>(
+        `/post/get-by-url/${postUrlCode}`
       );
+      const foundPost = res.data;
 
-      const data = res.data;
+      if (
+        !!profile &&
+        profile.id === foundPost.post.author_id &&
+        foundPost.post.type === PostType.QUIZ
+      ) {
+        const res = await FPApi.axios.get<QuizResponse>(
+          `/quiz/by-post/${foundPost.post.id}`
+        );
 
-      if (data) {
-        const mappedQuizData: QuizFormData = {
-          id: data.id,
-          title: data.title,
-          description: data.description,
-          settings: {
-            anonymous: data.anonymous,
-            allowPause: data.allow_pause,
-            oneAttemptPerUser: data.one_attempt_per_user,
-            showCorrectAnswers: data.show_correct_answers,
-            hasTimer: data.has_timer,
-            timerMinutes: data.timer_minutes,
-            visibility: data.visibility,
-          },
-          questions: data.questions,
-        };
+        const data = res.data;
 
-        setQuizData(mappedQuizData);
+        if (data) {
+          const mappedQuizData: QuizFormData = {
+            id: data.id,
+            title: data.title,
+            description: data.description,
+            settings: {
+              anonymous: data.anonymous,
+              allowPause: data.allow_pause,
+              oneAttemptPerUser: data.one_attempt_per_user,
+              showCorrectAnswers: data.show_correct_answers,
+              hasTimer: data.has_timer,
+              timerMinutes: data.timer_minutes,
+              visibility: data.visibility,
+            },
+            questions: data.questions,
+          };
+
+          setQuizData(mappedQuizData);
+        }
       }
-    }
 
-    if (!foundPost) {
-      setError("Post not found");
+      if (!foundPost) {
+        setError("Post not found");
+        setIsLoading(false);
+        return;
+      }
+
+      setPost(foundPost.post);
+      setIsCreateMode(false);
+      setIsEditing(false);
       setIsLoading(false);
-      return;
+    } catch (error) {
+      toast({
+        title: "Post loading error",
+        description: (error as Error)?.message || "",
+      });
+    } finally {
+      setIsLoading(false);
     }
-
-    setPost(foundPost.post);
-    setIsCreateMode(false);
-    setIsEditing(false);
-    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -291,19 +300,7 @@ export function PostPage() {
           <>
             {post && (
               <FullPostCard
-                postId={post.id}
-                title={post.title || ""}
-                content={post.content || ""}
-                excerpt={post.excerpt}
-                images={
-                  post.cover_image
-                    ? [post.cover_image, ...post.images]
-                    : post.images && Array.isArray(post.images)
-                    ? post.images
-                    : []
-                }
-                author={post.author}
-                type={post.type}
+                post={post}
                 showActions={true}
                 isOwner={isOwner}
                 onEditClick={handleEdit}
