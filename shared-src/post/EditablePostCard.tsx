@@ -69,15 +69,15 @@ export function EditablePostCard({
   isLoading,
   editableQuizData,
 }: EditablePostCardProps) {
-  const [editedTitle, setEditedTitle] = useState(title);
-  const [editedExcerpt, setEditedExcerpt] = useState(excerpt);
-  const [editedContent, setEditedContent] = useState(content);
+  const [editedTitle, setEditedTitle] = useState(title || "");
+  const [editedExcerpt, setEditedExcerpt] = useState(excerpt || "");
+  const [editedContent, setEditedContent] = useState(content || "");
   const [editedCoverImage, setEditedCoverImage] = useState(coverImage || "");
-  const [editedImages, setEditedImages] = useState(images);
+  const [editedImages, setEditedImages] = useState(images || []);
   const [editedType, setEditedType] = useState(type);
   const [editedStatus, setEditedStatus] = useState(status);
   const [editedIsPinned, setEditedIsPinned] = useState(isPinned);
-  const [editedSlug, setEditedSlug] = useState(slug);
+  const [editedSlug, setEditedSlug] = useState(slug || "");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isUploadingCover, setIsUploadingCover] = useState(false);
   const [showUrlInput, setShowUrlInput] = useState(false);
@@ -109,7 +109,9 @@ export function EditablePostCard({
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
-    if (!editedExcerpt.trim()) {
+    const trimmedExcerpt = (editedExcerpt || "").trim();
+
+    if (!trimmedExcerpt) {
       newErrors.excerpt = "Preview is required";
     } else if (editedExcerpt.length > EXCERPT_MAX_LENGTH) {
       newErrors.excerpt = `Preview must be ${EXCERPT_MAX_LENGTH} characters or less`;
@@ -124,17 +126,23 @@ export function EditablePostCard({
       return;
     }
 
+    const trimmedTitle = (editedTitle || "").trim();
+    const trimmedExcerpt = (editedExcerpt || "").trim();
+    const trimmedContent = (editedContent || "").trim();
+    const trimmedCoverImage = (editedCoverImage || "").trim();
+    const trimmedSlug = (editedSlug || "").trim();
+
     onSave(
       {
-        title: editedTitle.trim() || undefined,
-        excerpt: editedExcerpt.trim(),
-        content: editedContent.trim() || undefined,
-        cover_image: editedCoverImage.trim() || undefined,
+        title: trimmedTitle || undefined,
+        excerpt: trimmedExcerpt,
+        content: trimmedContent || undefined,
+        cover_image: trimmedCoverImage || undefined,
         images: editedImages,
         type: editedType,
         status: editedStatus,
         is_pinned: editedIsPinned,
-        slug: editedSlug.trim() || undefined,
+        slug: trimmedSlug || undefined,
       },
       quizData
     );
@@ -504,7 +512,7 @@ export function EditablePostCard({
               <Button
                 onClick={handleSave}
                 disabled={
-                  !editedExcerpt.trim() ||
+                  !(editedExcerpt || "").trim() ||
                   editedExcerpt.length > EXCERPT_MAX_LENGTH ||
                   (editedType === PostType.QUIZ && !isQuizFormValid) ||
                   isLoading

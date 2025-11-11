@@ -272,15 +272,15 @@ export function PostPage() {
       <div className="container mx-auto px-6 py-6 max-w-4xl">
         {isEditing ? (
           <EditablePostCard
-            title={post.title}
-            excerpt={post.excerpt}
-            content={post.content}
-            coverImage={post.cover_image}
-            images={post.images}
+            title={post.title || ""}
+            excerpt={post.excerpt || ""}
+            content={post.content || ""}
+            coverImage={post.cover_image || ""}
+            images={post.images || []}
             type={post.type}
             status={post.status}
             isPinned={post.is_pinned}
-            slug={post.slug}
+            slug={post.slug || ""}
             author={post.author}
             onSave={handleSave}
             onCancel={handleCancel}
