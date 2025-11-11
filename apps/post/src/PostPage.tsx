@@ -149,62 +149,72 @@ export function PostPage() {
         updated_at: new Date().toISOString(),
       };
 
+      let postId: number | null = null;
+      let postUrl: string | null = null;
+
       if (isCreateMode) {
         const createPostRes = await FPApi.axios.post<{
           url: string;
           id: number;
         }>("/post/create", updatedPost);
 
-        if (quizData) {
-          const createQuizReq = {
-            postId: createPostRes.data.id,
-            title: quizData.title,
-            description: quizData.description,
-            anonymous: quizData.settings.anonymous,
-            allowPause: quizData.settings.allowPause,
-            oneAttemptPerUser: quizData.settings.oneAttemptPerUser,
-            showCorrectAnswers: quizData.settings.showCorrectAnswers,
-            hasTimer: quizData.settings.hasTimer,
-            timerMinutes: quizData.settings.timerMinutes,
-            visibility: quizData.settings.visibility,
-            questions: quizData.questions,
-          };
-
-          await FPApi.axios.post("/quiz/create", createQuizReq);
+        if (createPostRes.data.id && createPostRes.data.url) {
+          postUrl = createPostRes.data.url;
+          postId = createPostRes.data.id;
         }
-
-        navigate(`/post/${createPostRes.data.url}`);
-
-        toast({
-          title: "Post created!",
-        });
       } else {
-        await FPApi.axios.patch("/post/update", updatedPost);
+        postId = updatedPost.id;
+        postUrl = updatedPost.url;
 
-        if (quizData) {
-          const updateQuizReq = {
-            id: quizData.id,
-            postId: post.id,
-            title: quizData.title,
-            description: quizData.description,
-            anonymous: quizData.settings.anonymous,
-            allowPause: quizData.settings.allowPause,
-            oneAttemptPerUser: quizData.settings.oneAttemptPerUser,
-            showCorrectAnswers: quizData.settings.showCorrectAnswers,
-            hasTimer: quizData.settings.hasTimer,
-            timerMinutes: quizData.settings.timerMinutes,
-            visibility: quizData.settings.visibility,
-            questions: quizData.questions,
-          };
-
-          await FPApi.axios.patch("/quiz/update", updateQuizReq);
+        if (!postId) {
+          toast({
+            title: "Post not found",
+            description: "Post id not provided",
+          });
+          return;
         }
 
-        await loadPost(post.url);
+        await FPApi.axios.patch("/post/update", updatedPost);
+      }
 
-        toast({
-          title: "Post updated!",
-        });
+      if (quizData) {
+        const quizReq = {
+          id: quizData.id,
+          postId: postId,
+          title: quizData.title,
+          description: quizData.description,
+          anonymous: quizData.settings.anonymous,
+          allowPause: quizData.settings.allowPause,
+          oneAttemptPerUser: quizData.settings.oneAttemptPerUser,
+          showCorrectAnswers: quizData.settings.showCorrectAnswers,
+          hasTimer: quizData.settings.hasTimer,
+          timerMinutes: quizData.settings.timerMinutes,
+          visibility: quizData.settings.visibility,
+          questions: quizData.questions,
+        };
+
+        if (quizData.id) {
+          quizReq["id"] = quizData.id;
+          await FPApi.axios.patch("/quiz/update", quizReq);
+        } else {
+          await FPApi.axios.post("/quiz/create", quizReq);
+        }
+      }
+
+      if (postId) {
+        if (isCreateMode) {
+          navigate(`/post/${postUrl}`);
+
+          toast({
+            title: "Post created!",
+          });
+        } else {
+          await loadPost(post.url);
+
+          toast({
+            title: "Post updated!",
+          });
+        }
       }
     } catch (error) {
       toast({
