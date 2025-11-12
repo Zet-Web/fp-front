@@ -114,25 +114,65 @@ export function Profile2Tab() {
       </div>
 
       <div className="space-y-4">
-        {sortedPosts.map((post) => (
-          <div key={post.id} className="relative">
-            {post.isPinned && (
-              <div className="absolute -top-2 left-4 z-10 flex items-center gap-1 bg-blue-500 text-white text-xs px-2 py-1 rounded-full shadow-sm">
-                <Pin className="h-3 w-3" />
-                <span>Pinned</span>
+        {sortedPosts.map((post) => {
+          const renderPinIndicator = () => {
+            if (!post.isPinned) return null;
+
+            switch (post.pinVariant) {
+              case 'top-badge':
+                return (
+                  <div className="absolute -top-2 left-4 z-10 flex items-center gap-1 bg-blue-500 text-white text-xs font-medium px-3 py-1 rounded-full shadow-md">
+                    <Pin className="h-3 w-3" />
+                    <span>Pinned</span>
+                  </div>
+                );
+
+              case 'corner-icon':
+                return (
+                  <div className="absolute top-3 right-3 z-10 bg-blue-500/10 backdrop-blur-sm p-2 rounded-lg border border-blue-500/20">
+                    <Pin className="h-4 w-4 text-blue-500" />
+                  </div>
+                );
+
+              case 'left-border':
+                return (
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 to-blue-600 rounded-l-lg" />
+                );
+
+              case 'inline-header':
+              default:
+                return null;
+            }
+          };
+
+          return (
+            <div
+              key={post.id}
+              className={`relative ${post.isPinned && post.pinVariant === 'left-border' ? 'pl-1' : ''}`}
+            >
+              {renderPinIndicator()}
+
+              <div className={post.isPinned && post.pinVariant === 'left-border' ? '-ml-1' : ''}>
+                {post.isPinned && post.pinVariant === 'inline-header' && (
+                  <div className="mb-2 flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 font-medium">
+                    <Pin className="h-4 w-4 fill-current" />
+                    <span>Pinned Post</span>
+                  </div>
+                )}
+
+                <PostCard
+                  postId={post.id}
+                  title={post.title}
+                  content={post.content}
+                  images={post.images}
+                  author={mockAuthor}
+                  showActions={false}
+                  isOwner={true}
+                />
               </div>
-            )}
-            <PostCard
-              postId={post.id}
-              title={post.title}
-              content={post.content}
-              images={post.images}
-              author={mockAuthor}
-              showActions={false}
-              isOwner={true}
-            />
-          </div>
-        ))}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

@@ -1,5 +1,7 @@
 // Mock posts data for Profile 2 tab with status and pin functionality
 
+export type PinVariant = 'top-badge' | 'inline-header' | 'corner-icon' | 'left-border' | null;
+
 export interface MockPost {
   id: number;
   title: string;
@@ -7,6 +9,7 @@ export interface MockPost {
   images: string[];
   status: 'published' | 'draft' | 'archived';
   isPinned: boolean;
+  pinVariant: PinVariant;
   createdAt: string;
 }
 
@@ -18,6 +21,7 @@ export const mockProfile2Posts: MockPost[] = [
     images: ["https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=800"],
     status: 'published',
     isPinned: true,
+    pinVariant: 'inline-header',
     createdAt: "2025-11-10T10:00:00Z"
   },
   {
@@ -27,7 +31,28 @@ export const mockProfile2Posts: MockPost[] = [
     images: ["https://images.pexels.com/photos/3184339/pexels-photo-3184339.jpeg?auto=compress&cs=tinysrgb&w=800"],
     status: 'published',
     isPinned: true,
+    pinVariant: 'left-border',
     createdAt: "2025-11-08T14:30:00Z"
+  },
+  {
+    id: 9,
+    title: "Important: Platform Maintenance Schedule",
+    content: "<p>We'll be performing scheduled maintenance next week to improve system performance and security. The platform will be briefly unavailable during this time.</p><p>We appreciate your patience and understanding.</p>",
+    images: [],
+    status: 'published',
+    isPinned: true,
+    pinVariant: 'corner-icon',
+    createdAt: "2025-11-09T08:00:00Z"
+  },
+  {
+    id: 10,
+    title: "Welcome to Our Community!",
+    content: "<p>New to the platform? Start here! This guide will help you navigate our features, connect with other members, and make the most of your experience.</p><p>We're thrilled to have you join us!</p>",
+    images: ["https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=800"],
+    status: 'published',
+    isPinned: true,
+    pinVariant: 'top-badge',
+    createdAt: "2025-11-11T12:00:00Z"
   },
   {
     id: 3,
@@ -36,6 +61,7 @@ export const mockProfile2Posts: MockPost[] = [
     images: [],
     status: 'published',
     isPinned: false,
+    pinVariant: null,
     createdAt: "2025-11-07T09:15:00Z"
   },
   {
@@ -45,6 +71,7 @@ export const mockProfile2Posts: MockPost[] = [
     images: ["https://images.pexels.com/photos/3184357/pexels-photo-3184357.jpeg?auto=compress&cs=tinysrgb&w=800"],
     status: 'published',
     isPinned: false,
+    pinVariant: null,
     createdAt: "2025-11-05T16:45:00Z"
   },
   {
@@ -54,6 +81,7 @@ export const mockProfile2Posts: MockPost[] = [
     images: [],
     status: 'draft',
     isPinned: false,
+    pinVariant: null,
     createdAt: "2025-11-04T11:20:00Z"
   },
   {
@@ -63,6 +91,7 @@ export const mockProfile2Posts: MockPost[] = [
     images: ["https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=800"],
     status: 'published',
     isPinned: false,
+    pinVariant: null,
     createdAt: "2025-11-02T13:00:00Z"
   },
   {
@@ -72,6 +101,7 @@ export const mockProfile2Posts: MockPost[] = [
     images: [],
     status: 'draft',
     isPinned: false,
+    pinVariant: null,
     createdAt: "2025-11-01T10:30:00Z"
   },
   {
@@ -81,6 +111,7 @@ export const mockProfile2Posts: MockPost[] = [
     images: ["https://images.pexels.com/photos/3184325/pexels-photo-3184325.jpeg?auto=compress&cs=tinysrgb&w=800"],
     status: 'archived',
     isPinned: false,
+    pinVariant: null,
     createdAt: "2025-08-15T15:00:00Z"
   }
 ];
