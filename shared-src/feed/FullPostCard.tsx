@@ -28,20 +28,14 @@ import {
   Loader2,
 } from "lucide-react";
 import { useState } from "react";
-import { PostAuthor, PostType } from "../post/post";
+import { PostType, PostWithAuthor } from "../post/post";
 import { PostContentViewer } from "./PostContentViewer";
 import QuizTake from "../../apps/quiz/src/QuizTake";
 import { useToast } from "@/hooks/use-toast";
 import { FPApi } from "@/lib/api";
 
 interface PostCardProps {
-  postId: number;
-  title: string;
-  excerpt: string;
-  content: string;
-  images: string[];
-  author: PostAuthor;
-  type: PostType;
+  post: PostWithAuthor;
   showActions?: boolean;
   onMoreClick?: () => void;
   onShareClick?: () => void;
@@ -52,12 +46,7 @@ interface PostCardProps {
 }
 
 export function FullPostCard({
-  postId,
-  title,
-  content,
-  images,
-  author,
-  type,
+  post,
   showActions = true,
   onMoreClick,
   onShareClick,
@@ -65,8 +54,15 @@ export function FullPostCard({
   onDeleteClick,
   isSaved = false,
   isOwner = false,
-  excerpt,
 }: PostCardProps) {
+  const { id: postId, title, excerpt, content, author, type } = post;
+
+  const images = post.cover_image
+    ? [post.cover_image, ...post.images]
+    : post.images && Array.isArray(post.images)
+    ? post.images
+    : [];
+
   const { toast } = useToast();
 
   const [isPostSaved, setIsPostSaved] = useState(isSaved);
@@ -199,7 +195,7 @@ export function FullPostCard({
 
             <p className="leading-7 [&:not(:first-child)]:mt-6">{excerpt}</p>
 
-            <PostContentViewer html={content} />
+            <PostContentViewer html={content || ""} />
 
             {type === PostType.QUIZ && <QuizTake postId={postId} />}
 

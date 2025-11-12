@@ -126,15 +126,15 @@ export function EditablePostCard({
 
     onSave(
       {
-        title: editedTitle.trim() || undefined,
-        excerpt: editedExcerpt.trim(),
-        content: editedContent.trim() || undefined,
-        cover_image: editedCoverImage.trim() || undefined,
+        title: editedTitle?.trim() || undefined,
+        excerpt: editedExcerpt?.trim(),
+        content: editedContent?.trim() || undefined,
+        cover_image: editedCoverImage?.trim() || undefined,
         images: editedImages,
         type: editedType,
         status: editedStatus,
         is_pinned: editedIsPinned,
-        slug: editedSlug.trim() || undefined,
+        slug: editedSlug?.trim() || undefined,
       },
       quizData
     );
