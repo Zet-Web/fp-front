@@ -1,12 +1,43 @@
-// Profile 2 tab component with simplified structure
+// Profile 2 tab component with posts feed and filtering
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
-import { MessageCircle, UserPlus, MapPinned, Users, CalendarDays } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { MessageCircle, UserPlus, MapPinned, Users, CalendarDays, Pin } from 'lucide-react';
+import { PostCard } from '../../../shared-src/post/PostCard';
+import { mockProfile2Posts, type MockPost } from './mock-profile2-posts';
 
 export function Profile2Tab() {
+  const [statusFilter, setStatusFilter] = useState<'all' | 'published' | 'draft' | 'archived'>('all');
+
+  const filteredPosts = mockProfile2Posts.filter((post) => {
+    if (statusFilter === 'all') return true;
+    return post.status === statusFilter;
+  });
+
+  const sortedPosts = [...filteredPosts].sort((a, b) => {
+    if (a.isPinned && !b.isPinned) return -1;
+    if (!a.isPinned && b.isPinned) return 1;
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+  });
+
+  const mockAuthor = {
+    id: 1,
+    name: 'TechCommunity',
+    username: 'techcommunity',
+    avatar_url: 'https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=200',
+    badge: 'verified',
+  };
+
   return (
     <div className="space-y-6">
       <Card className="shadow-md">
@@ -67,16 +98,42 @@ export function Profile2Tab() {
         </CardContent>
       </Card>
 
-      <Card className="shadow-md">
-        <CardHeader>
-          <CardTitle>Profile 2 Content</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">
-            This is Profile 2 tab - an alternative profile layout with posts, information, and app tabs.
-          </p>
-        </CardContent>
-      </Card>
+      <div className="flex items-center justify-between">
+        <h3 className="text-xl font-semibold">Posts</h3>
+        <Select value={statusFilter} onValueChange={(value: any) => setStatusFilter(value)}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Filter by status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Posts</SelectItem>
+            <SelectItem value="published">Published</SelectItem>
+            <SelectItem value="draft">Draft</SelectItem>
+            <SelectItem value="archived">Archived</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="space-y-4">
+        {sortedPosts.map((post) => (
+          <div key={post.id} className="relative">
+            {post.isPinned && (
+              <div className="absolute -top-2 left-4 z-10 flex items-center gap-1 bg-blue-500 text-white text-xs px-2 py-1 rounded-full shadow-sm">
+                <Pin className="h-3 w-3" />
+                <span>Pinned</span>
+              </div>
+            )}
+            <PostCard
+              postId={post.id}
+              title={post.title}
+              content={post.content}
+              images={post.images}
+              author={mockAuthor}
+              showActions={false}
+              isOwner={true}
+            />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
