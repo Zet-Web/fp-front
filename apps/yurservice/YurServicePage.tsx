@@ -175,7 +175,7 @@ export function YurServicePage() {
                     variant="outline"
                     onClick={() => setSavedPage((prev) => prev + 1)}
                   >
-                    Load More
+                    Загрузить еще
                   </Button>
                 </div>
               )}
@@ -184,7 +184,7 @@ export function YurServicePage() {
 
           {courtResources.length > 0 && (
             <section>
-              <h2 className="text-xl font-semibold mb-4">Courts</h2>
+              <h2 className="text-xl font-semibold mb-4">Суды</h2>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {paginatedCourtResources.map((resource) => {
@@ -212,7 +212,7 @@ export function YurServicePage() {
                     variant="outline"
                     onClick={() => setCourtPage((prev) => prev + 1)}
                   >
-                    Load More
+                    Загрузить еще
                   </Button>
                 </div>
               )}
@@ -221,7 +221,7 @@ export function YurServicePage() {
 
           {govResources.length > 0 && (
             <section>
-              <h2 className="text-xl font-semibold mb-4">Government</h2>
+              <h2 className="text-xl font-semibold mb-4">Ведомства</h2>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {paginatedGovResources.map((resource) => {
@@ -249,7 +249,7 @@ export function YurServicePage() {
                     variant="outline"
                     onClick={() => setGovPage((prev) => prev + 1)}
                   >
-                    Load More
+                    Загрузить еще
                   </Button>
                 </div>
               )}
@@ -258,7 +258,7 @@ export function YurServicePage() {
 
           {toolResources.length > 0 && (
             <section>
-              <h2 className="text-xl font-semibold mb-4">Tools</h2>
+              <h2 className="text-xl font-semibold mb-4">Инструменты</h2>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {paginatedToolResources.map((resource) => {
                   const uiResource = mapDatabaseResourceToUI(resource)
@@ -285,7 +285,7 @@ export function YurServicePage() {
                     variant="outline"
                     onClick={() => setToolPage((prev) => prev + 1)}
                   >
-                    Load More
+                    Загрузить еще
                   </Button>
                 </div>
               )}
