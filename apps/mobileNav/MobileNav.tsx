@@ -10,24 +10,25 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import { desktopNavigationItems, mobileBottomNavigationItems } from "@shared/navigation/navigation-config"
+import { desktopNavigationItems, mobileBottomNavigationItems, createButtonConfig } from "@shared/navigation/navigation-config"
 
 export function MobileNav() {
   const location = useLocation()
   const [isOpen, setIsOpen] = useState(false)
   const { isAuthenticated, profile } = useAuthContext()
 
-  const handleChatsToggle = () => {
-    // This will be handled by the parent component
-    // For now, we'll just show a placeholder action
-    console.log("Toggle Chats")
+  const getCreatePath = () => {
+    if (isAuthenticated) {
+      return createButtonConfig.path
+    }
+    return '/auth'
   }
 
   return (
     <>
       {/* Bottom Fixed Navigation Bar - Only visible on mobile */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border">
-        <div className="flex items-center justify-around px-2 py-2">
+        <div className="flex items-center justify-around px-2 py-2 relative">
           {/* Navigation Menu Button */}
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
@@ -73,12 +74,49 @@ export function MobileNav() {
             </SheetContent>
           </Sheet>
 
-          {/* Bottom Navigation Items */}
-          {mobileBottomNavigationItems.map((item) => {
-            const itemPath = typeof item.path === 'function' 
-              ? item.path(profile, isAuthenticated) 
+          {/* Bottom Navigation Items - First Half */}
+          {mobileBottomNavigationItems.slice(0, 1).map((item) => {
+            const itemPath = typeof item.path === 'function'
+              ? item.path(profile, isAuthenticated)
               : item.path
-            
+
+            return (
+              <Button
+                key={item.label}
+                variant="ghost"
+                size="sm"
+                className={`flex flex-col items-center justify-center h-12 w-12 p-1 ${
+                  location.pathname === itemPath ? "text-blue-500" : ""
+                }`}
+                asChild
+                onClick={() => setIsOpen(false)}
+              >
+                <Link to={itemPath}>
+                  <item.icon className="h-5 w-5" />
+                  <span className="text-xs mt-1">{item.label}</span>
+                </Link>
+              </Button>
+            )
+          })}
+
+          {/* Elevated Create Post Button - Center */}
+          <Button
+            variant="default"
+            size="icon"
+            className="h-14 w-14 rounded-full bg-blue-500 hover:bg-blue-600 text-white shadow-lg hover:shadow-xl transition-all duration-200 -mt-6 relative"
+            asChild
+          >
+            <Link to={getCreatePath()}>
+              <createButtonConfig.icon className="h-6 w-6" />
+            </Link>
+          </Button>
+
+          {/* Bottom Navigation Items - Second Half */}
+          {mobileBottomNavigationItems.slice(1).map((item) => {
+            const itemPath = typeof item.path === 'function'
+              ? item.path(profile, isAuthenticated)
+              : item.path
+
             return (
               <Button
                 key={item.label}
