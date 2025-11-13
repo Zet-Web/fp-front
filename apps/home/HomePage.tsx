@@ -17,10 +17,10 @@ export function HomePage() {
 
   const countries = useMemo(() => getUniqueCountries(MOCK_POSTS), []);
   const cities = useMemo(() => {
-    return filters.location.country
+    return filters.location?.country
       ? getCitiesByCountry(MOCK_POSTS, filters.location.country)
       : [];
-  }, [filters.location.country]);
+  }, [filters.location?.country]);
 
   const emptyMessage = getEmptyStateMessage(filters);
 
@@ -30,8 +30,8 @@ export function HomePage() {
         <div className="container mx-auto px-4 max-w-4xl">
           <FeedFilters
             view={filters.view}
-            postType={filters.postType}
-            location={filters.location}
+            postType={filters.postType || null}
+            location={filters.location || { city: null, country: null }}
             countries={countries}
             cities={cities}
             onViewChange={(view) => setFilters({ ...filters, view })}

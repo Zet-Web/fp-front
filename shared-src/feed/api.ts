@@ -14,9 +14,11 @@ export async function fetchPosts(filters: FeedFilters | null, page: number, item
   } : {});
 
   if (filters?.postType) params.set("postType", filters.postType);
+  if (filters?.status) params.set("status", filters.status);
   if (filterByUsername) params.set("username", filterByUsername);
-  if (filters?.location.country) params.set("country", filters.location.country);
-  if (filters?.location.city) params.set("city", filters.location.city);
+
+  if (filters?.location?.country) params.set("country", filters.location.country);
+  if (filters?.location?.city) params.set("city", filters.location.city);
 
   const res = await FPApi.axios.get<FetchPostResponse>(`/post/search?${params.toString()}`);
   return res.data

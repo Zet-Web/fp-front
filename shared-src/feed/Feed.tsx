@@ -247,6 +247,7 @@ export function Feed({
               }
               author={post.author}
               isSaved={!!post.is_saved}
+              isPined={!!(filterByUsername && !!post.is_pinned)}
               showActions={true}
               isOwner={isOwner}
               onShareClick={() => handleShareClick(post)}
