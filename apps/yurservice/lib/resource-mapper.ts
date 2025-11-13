@@ -65,7 +65,7 @@ export function mapDatabaseResourceToUI(dbResource: YurServiceResource): Resourc
     name: dbResource.title,
     description: dbResource.about || '',
     mainUrl,
-    mainButtonLabel: blockTop?.title || 'Visit Website',
+    mainButtonLabel: blockTop?.title || 'Открыть',
     imageUrl: dbResource.image_url || undefined,
     websiteUrl: dbResource.website_url || undefined,
     servicesUrl: dbResource.services_url || undefined,
