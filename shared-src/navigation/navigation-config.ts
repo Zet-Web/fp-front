@@ -13,7 +13,7 @@ export interface NavItem {
 
 // Desktop navigation items (full list)
 export const desktopNavigationItems: NavItem[] = [
-  { icon: Home, label: "Home", path: "/" },
+  { icon: Home, label: "Главная", path: "/" },
   { icon: Search, label: "Explore", path: "/explore" },
   { icon: Network, label: "Network", path: "/network" },
   { icon: Library, label: "Yurservice", path: "/yurservice" },
