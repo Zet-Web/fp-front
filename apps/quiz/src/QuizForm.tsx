@@ -73,7 +73,11 @@ export default function QuizForm({
   } = form;
 
   useEffect(() => {
-    if (defaultQuizFormValues) reset(defaultQuizFormValues);
+    if (defaultQuizFormValues) {
+      reset(defaultQuizFormValues);
+      form.trigger();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultQuizFormValues, reset]);
 
   const questionsField = useFieldArray({ control, name: "questions" });

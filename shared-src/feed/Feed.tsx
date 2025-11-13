@@ -180,7 +180,7 @@ export function Feed({
   };
 
   const handleEditClick = (url: string) => {
-    navigate(`/post/${url}`);
+    navigate(`/post/${url}?editMode=true`);
   };
 
   const handleDeletePost = async (postId: number) => {

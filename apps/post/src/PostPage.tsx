@@ -1,6 +1,6 @@
 // Individual post page component displaying a single post by URL code or creating a new post
 
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,9 @@ export function PostPage() {
   const { urlCode } = useParams<{ urlCode: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
+
+  const switchToEditMode = searchParams.get("editMode");
 
   const [post, setPost] = useState<PostWithAuthor | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -116,7 +119,7 @@ export function PostPage() {
 
       setPost(foundPost.post);
       setIsCreateMode(false);
-      setIsEditing(false);
+      setIsEditing(!!switchToEditMode);
       setIsLoading(false);
     } catch (error) {
       toast({
