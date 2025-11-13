@@ -116,7 +116,7 @@ export function ResourceCard({ resource, isExpanded, onToggle, isSaved = false, 
 
             {sortedLinks.length > 0 && (
               <div>
-                <h4 className="text-sm font-medium mb-2">Quick Links</h4>
+                {/*<h4 className="text-sm font-medium mb-2">Quick Links</h4>*/}
                 <div className="space-y-1">
                   {sortedLinks.map((link, index) => (
                     <Button
