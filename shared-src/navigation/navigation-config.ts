@@ -14,12 +14,12 @@ export interface NavItem {
 // Desktop navigation items (full list)
 export const desktopNavigationItems: NavItem[] = [
   { icon: Home, label: "Главная", path: "/" },
-  { icon: Search, label: "Explore", path: "/explore" },
-  { icon: Network, label: "Network", path: "/network" },
-  { icon: Library, label: "Yurservice", path: "/yurservice" },
+  { icon: Search, label: "Поиск", path: "/explore" },
+  { icon: Network, label: "Нетворк", path: "/network" },
+  { icon: Library, label: "ЮрСервисы", path: "/yurservice" },
   {
     icon: User,
-    label: "Profile",
+    label: "Профиль",
     path: (profile, isAuthenticated) => {
       if (isAuthenticated && profile?.username) {
         return `/${profile.username}`
@@ -27,15 +27,15 @@ export const desktopNavigationItems: NavItem[] = [
       return '/auth'
     }
   },
-  { icon: Settings, label: "Settings", path: "/settings" },
+  { icon: Settings, label: "Настройки", path: "/settings" },
 ]
 
 // Mobile bottom navigation items (limited set for bottom bar)
 export const mobileBottomNavigationItems: NavItem[] = [
-  { icon: Home, label: "Home", path: "/" },
+  { icon: Home, label: "Главная", path: "/" },
   { 
     icon: User, 
-    label: "Profile", 
+    label: "Профиль", 
     path: (profile, isAuthenticated) => {
       if (isAuthenticated && profile?.username) {
         return `/${profile.username}`
@@ -43,12 +43,12 @@ export const mobileBottomNavigationItems: NavItem[] = [
       return '/auth'
     }
   },
-  { icon: MessageCircle, label: "Messages", path: "/chats" },
+  { icon: MessageCircle, label: "Чаты", path: "/chats" },
 ]
 
 // Create button configuration
 export const createButtonConfig = {
   icon: Plus,
-  label: "Create",
+  label: "Создать пост",
   path: "/post"
 }
