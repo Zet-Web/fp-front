@@ -51,7 +51,7 @@ export function RegionSelect({
         >
           <Filter className="h-4 w-4 mr-2" />
           <span className="truncate">
-            {selectedRegion ? selectedRegion.name : "All Regions"}
+            {selectedRegion ? selectedRegion.name : "Все регионаы"}
           </span>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
