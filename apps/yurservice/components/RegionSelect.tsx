@@ -75,7 +75,7 @@ export function RegionSelect({
                     selectedRegionId === "all" ? "opacity-100" : "opacity-0"
                   )}
                 />
-                All Regions
+                Все регионы
               </CommandItem>
               {regions.map((region) => (
                 <CommandItem
