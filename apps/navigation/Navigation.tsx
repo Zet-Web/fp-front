@@ -67,7 +67,7 @@ export function Navigation() {
                   </Link>
                 </TooltipTrigger>
                 <TooltipContent side="right">
-                  <p>Social Network</p>
+                  <p>Фонд Права</p>
                 </TooltipContent>
               </Tooltip>
 
@@ -169,7 +169,7 @@ export function Navigation() {
                     </Link>
                   </TooltipTrigger>
                   <TooltipContent side="right">
-                    <p>Sign in</p>
+                    <p>Войти</p>
                   </TooltipContent>
                 </Tooltip>
               )}
@@ -188,7 +188,7 @@ export function Navigation() {
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side="right">
-                  <p>Expand sidebar</p>
+                  <p>Раскрыть</p>
                 </TooltipContent>
               </Tooltip>
 
@@ -206,8 +206,8 @@ export function Navigation() {
                 <TooltipContent side="right">
                   <p>
                     {leftCollapsed && rightCollapsed
-                      ? "Expand All"
-                      : "Focus Mode"}
+                      ? "Раскрыть"
+                      : "Фокус"}
                   </p>
                 </TooltipContent>
               </Tooltip>
@@ -262,7 +262,7 @@ export function Navigation() {
                 <div className="h-4 w-4 rounded bg-white"></div>
               </div>
               <CardTitle className="text-lg text-foreground">
-                Social Network
+                Фонд Права
               </CardTitle>
             </Link>
 
@@ -355,11 +355,11 @@ export function Navigation() {
                 <div className="h-10 w-10 rounded-full bg-muted"></div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-muted-foreground">
-                    Not signed in
+                    Не авторизован
                   </p>
                   <p className="text-xs text-muted-foreground">
                     <Link to="/auth" className="text-blue-500 hover:underline">
-                      Sign in
+                      Войти
                     </Link>
                   </p>
                 </div>
@@ -382,7 +382,7 @@ export function Navigation() {
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Collapse this sidebar</p>
+                    <p>Скрыть</p>
                   </TooltipContent>
                 </Tooltip>
 
