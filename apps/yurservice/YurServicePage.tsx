@@ -92,9 +92,9 @@ export function YurServicePage() {
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <div>
-        <h1 className="text-3xl font-bold mb-2">Resource Catalog</h1>
+        <h1 className="text-3xl font-bold mb-2">Юр сервисы</h1>
         <p className="text-muted-foreground">
-          Quick access to frequently used services, links, and contact information
+          Каталог сервисов для юристов
         </p>
       </div>
 
