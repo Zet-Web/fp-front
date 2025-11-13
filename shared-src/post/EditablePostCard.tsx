@@ -233,7 +233,7 @@ export function EditablePostCard({
                     htmlFor="edit-type"
                     className="text-sm font-medium mb-2 block"
                   >
-                    Post Type
+                    Тип поста
                   </Label>
                   <Select
                     value={editedType}
@@ -243,10 +243,10 @@ export function EditablePostCard({
                       <SelectValue placeholder="Select type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value={PostType.ARTICLE}>Article</SelectItem>
-                      <SelectItem value={PostType.EVENT}>Event</SelectItem>
-                      <SelectItem value={PostType.QUIZ}>Quiz</SelectItem>
-                      <SelectItem value={PostType.VACANCY}>Vacancy</SelectItem>
+                      <SelectItem value={PostType.ARTICLE}>Статья</SelectItem>
+                      <SelectItem value={PostType.EVENT}>Мероприятие</SelectItem>
+                      <SelectItem value={PostType.QUIZ}>Конкурс</SelectItem>
+                      <SelectItem value={PostType.VACANCY}>Вакансия</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -256,7 +256,7 @@ export function EditablePostCard({
                     htmlFor="edit-status"
                     className="text-sm font-medium mb-2 block"
                   >
-                    Status
+                    Статус
                   </Label>
                   <Select
                     value={editedStatus}
@@ -298,7 +298,7 @@ export function EditablePostCard({
 
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <Label className="text-sm font-medium">Cover Image</Label>
+                  <Label className="text-sm font-medium">Обложка</Label>
                   <Button
                     type="button"
                     variant="ghost"
@@ -392,7 +392,7 @@ export function EditablePostCard({
                   htmlFor="edit-title"
                   className="text-sm font-medium mb-2 block"
                 >
-                  Title
+                  Заголовок
                 </Label>
                 <Input
                   id="edit-title"
@@ -405,7 +405,7 @@ export function EditablePostCard({
               <div>
                 <div className="flex justify-between items-center mb-2">
                   <Label htmlFor="edit-excerpt" className="text-sm font-medium">
-                    Preview <span className="text-destructive">*</span>
+                    Превью <span className="text-destructive">*</span>
                   </Label>
                   <span
                     className={`text-xs ${
@@ -440,7 +440,7 @@ export function EditablePostCard({
                   htmlFor="edit-content"
                   className="text-sm font-medium mb-2 block"
                 >
-                  Content
+                  Основной текст
                 </Label>
                 <TiptapEditor
                   value={editedContent}
@@ -453,7 +453,7 @@ export function EditablePostCard({
                   htmlFor="edit-slug"
                   className="text-sm font-medium mb-2 block"
                 >
-                  Slug
+                  Ссылка
                 </Label>
                 <Input
                   id="edit-slug"
@@ -510,11 +510,11 @@ export function EditablePostCard({
                   isLoading
                 }
               >
-                {isLoading ? "Saving..." : "Save"}
+                {isLoading ? "Сохраняется..." : "Сохранить"}
               </Button>
 
               <Button variant="outline" onClick={onCancel} disabled={isLoading}>
-                Cancel
+                Отмена
               </Button>
             </div>
           </div>
