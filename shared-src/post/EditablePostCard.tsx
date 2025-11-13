@@ -268,12 +268,12 @@ export function EditablePostCard({
                       <SelectValue placeholder="Select status" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value={PostStatus.DRAFT}>Draft</SelectItem>
                       <SelectItem value={PostStatus.PUBLISHED}>
-                        Published
+                        Опубликовать
                       </SelectItem>
+                      <SelectItem value={PostStatus.DRAFT}>Черновик</SelectItem>
                       <SelectItem value={PostStatus.ARCHIVED}>
-                        Archived
+                        Архивировать
                       </SelectItem>
                     </SelectContent>
                   </Select>
