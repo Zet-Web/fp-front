@@ -145,7 +145,11 @@ export default function QuizTake({ postId }: Props) {
     quiz.alreadyAttempted
   ) {
     return (
-      <AlreadyAttemptedView quizId={quiz.id} visibility={quiz.visibility} />
+      <AlreadyAttemptedView
+        quizId={quiz.id}
+        visibility={quiz.visibility}
+        quizAuthorId={quiz.author_id}
+      />
     );
   }
 

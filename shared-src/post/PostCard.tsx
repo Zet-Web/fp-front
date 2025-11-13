@@ -26,6 +26,7 @@ import {
   Pencil,
   Trash2,
   Loader2,
+  Pin,
 } from "lucide-react";
 import { useState } from "react";
 import type { PostAuthor } from "./post";
@@ -46,6 +47,7 @@ interface PostCardProps {
   onDeleteClick?: () => void;
   isSaved?: boolean;
   isOwner?: boolean;
+  isPined?: boolean;
 }
 
 export function PostCard({
@@ -61,6 +63,7 @@ export function PostCard({
   onDeleteClick,
   isSaved = false,
   isOwner = false,
+  isPined = false,
 }: PostCardProps) {
   const { toast } = useToast();
 
@@ -99,6 +102,8 @@ export function PostCard({
     }
   };
 
+  const showOwnerActions = showActions && isOwner;
+
   return (
     <Card className="hover:shadow-md transition-shadow duration-300">
       <CardContent className="p-4">
@@ -114,7 +119,7 @@ export function PostCard({
           </div>
 
           <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between mb-2">
+            <div className="flex items-start justify-between mb-2 relative">
               <div className="flex items-center gap-1">
                 <h3 className="font-semibold text-sm">{displayName}</h3>
                 {author?.badge?.includes("verified") && (
@@ -136,7 +141,18 @@ export function PostCard({
                   @{displayUsername}
                 </span>
               </div>
-              {showActions && isOwner && (
+              {isPined && (
+                <div
+                  className={
+                    showOwnerActions
+                      ? "absolute top-2 right-8 z-10 bg-blue-500/10 backdrop-blur-sm p-2 rounded-lg border border-blue-500/20"
+                      : "absolute top-2 right-2 z-10 bg-blue-500/10 backdrop-blur-sm p-2 rounded-lg border border-blue-500/20"
+                  }
+                >
+                  <Pin className="h-4 w-4 text-blue-500" />
+                </div>
+              )}
+              {showOwnerActions && (
                 <div className="flex items-center gap-1 flex-shrink-0">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>

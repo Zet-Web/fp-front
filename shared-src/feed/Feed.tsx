@@ -180,7 +180,7 @@ export function Feed({
   };
 
   const handleEditClick = (url: string) => {
-    navigate(`/post/${url}`);
+    navigate(`/post/${url}?editMode=true`);
   };
 
   const handleDeletePost = async (postId: number) => {
@@ -247,6 +247,7 @@ export function Feed({
               }
               author={post.author}
               isSaved={!!post.is_saved}
+              isPined={!!(filterByUsername && !!post.is_pinned)}
               showActions={true}
               isOwner={isOwner}
               onShareClick={() => handleShareClick(post)}

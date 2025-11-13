@@ -103,12 +103,13 @@ export interface QuizCorrectAnswer {
 
 export type QuizResultsTablesResult = QuizResultsTableRow[]
 
-export interface QuizResultsTableRow {
-  id: number
-  score: number
-  created_at: string
-  profile: QuizResultsTableProfile
-}
+export type QuizResultsTableRow = {
+  id: number;
+  score: number;
+  created_at: string;
+  profile?: { name?: string | null; avatar_url?: string | null } | null;
+  rank: number;
+};
 
 export interface QuizResultsTableProfile {
   name: string
