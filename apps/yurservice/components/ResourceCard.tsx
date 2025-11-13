@@ -144,7 +144,7 @@ export function ResourceCard({ resource, isExpanded, onToggle, isSaved = false, 
                     onClick={() => handleLinkClick(resource.websiteUrl!)}
                   >
                     <Globe className="h-3 w-3 mr-2" />
-                    Website
+                    Сайт
                   </Button>
                 )}
                 {resource.servicesUrl && (
@@ -155,7 +155,7 @@ export function ResourceCard({ resource, isExpanded, onToggle, isSaved = false, 
                     onClick={() => handleLinkClick(resource.servicesUrl!)}
                   >
                     <List className="h-3 w-3 mr-2" />
-                    Services
+                    Сервисы
                   </Button>
                 )}
               </div>
@@ -163,7 +163,7 @@ export function ResourceCard({ resource, isExpanded, onToggle, isSaved = false, 
 
             {resource.contacts && (
               <div>
-                <h4 className="text-sm font-medium mb-2">Contact Information</h4>
+                {/*<h4 className="text-sm font-medium mb-2">Contact Information</h4>*/}
                 <div className="space-y-2 text-sm text-muted-foreground">
                   {resource.contacts.phone && (
                     <div className="flex items-start gap-2">
