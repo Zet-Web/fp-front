@@ -101,7 +101,7 @@ export function ResourceCard({ resource, isExpanded, onToggle, isSaved = false, 
           className="w-full bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800 dark:from-slate-700 dark:to-slate-800 dark:hover:from-slate-800 dark:hover:to-slate-900 text-white shadow-sm"
           onClick={() => handleLinkClick(resource.mainUrl)}
         >
-          {resource.mainButtonLabel || 'Open'}
+          {resource.mainButtonLabel || 'Открыть'}
         </Button>
 
         {isExpanded && (
