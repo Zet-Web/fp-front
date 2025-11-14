@@ -1,6 +1,6 @@
 import { Header } from "/apps/header/Header";
 import { Navigation } from "/apps/navigation/Navigation";
-import { Chats } from "/apps/chats/Chats";
+// import { Chats } from "/apps/chats/Chats";
 import { MobileNav } from "/apps/mobileNav/MobileNav";
 import { ProfilePage } from "/apps/profile/src/ProfilePage";
 import { AuthPage } from "/apps/auth/src/AuthPage";
@@ -33,7 +33,7 @@ function AppContent() {
   if (loading) {
     return (
       <div className="w-full h-screen flex items-center justify-center text-muted-foreground">
-        Инициализация...
+        Загрузка...
       </div>
     );
   }
@@ -57,23 +57,23 @@ function AppContent() {
                 <Route path="/auth" element={<AuthPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/test" element={<TestPage />} />
-                <Route
+                {/* <Route
                   path="/chats"
                   element={
                     <div className="lg:hidden h-full">
                       <Chats />
                     </div>
                   }
-                />
+                /> */}
                 <Route path="/404" element={<NotFoundPage />} />
                 <Route path="*" element={<NotFoundPage />} />
               </Routes>
             </div>
           </main>
         </div>
-        <div className="hidden lg:block p-4">
+        {/* <div className="hidden lg:block p-4">
           <Chats />
-        </div>
+        </div> */}
       </div>
       <MobileNav />
     </div>

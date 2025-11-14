@@ -88,7 +88,7 @@ export function SettingsPage() {
       <div className="w-full h-full flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading settings...</p>
+          <p className="text-muted-foreground">Загрузка...</p>
         </div>
       </div>
     );
@@ -123,7 +123,7 @@ export function SettingsPage() {
 
   const handleReset = async () => {
     try {
-      await resetChanges();
+      await resetChanges(session);
     } catch (error) {
       console.error("Failed to reset settings:", error);
     }
@@ -131,12 +131,12 @@ export function SettingsPage() {
 
   return (
     <div className="container mx-auto px-6 py-6 max-w-4xl">
-      <div className="mb-6">
+      {/*<div className="mb-6">
         <h1 className="text-3xl font-bold mb-2">Settings</h1>
         <p className="text-muted-foreground">
           Manage your account preferences and application settings.
         </p>
-      </div>
+      </div> */}
 
       <MainSettings
         settings={settings}
@@ -147,9 +147,9 @@ export function SettingsPage() {
 
       {hasUnsavedChanges && (
         <div className="mt-6 flex gap-4">
-          <Button onClick={handleSave}>Save Changes</Button>
+          <Button onClick={handleSave}>Сохранить</Button>
           <Button variant="outline" onClick={handleReset}>
-            Reset Changes
+            Отмена
           </Button>
         </div>
       )}
@@ -211,12 +211,12 @@ export function MainSettings({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Clock className="w-5 h-5" />
-            Timezone
+            Часовой пояс
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
-            <Label htmlFor="timezone">Select your timezone</Label>
+            <Label htmlFor="timezone">Выберите свой часовой пояс</Label>
             <Popover open={timezoneOpen} onOpenChange={setTimezoneOpen}>
               <PopoverTrigger asChild>
                 <Button
@@ -232,12 +232,12 @@ export function MainSettings({
               <PopoverContent className="w-full p-0" align="start">
                 <Command>
                   <CommandInput
-                    placeholder="Search timezone..."
+                    placeholder="Поиск..."
                     value={searchTerm}
                     onValueChange={setSearchTerm}
                   />
                   <CommandList>
-                    <CommandEmpty>No timezone found.</CommandEmpty>
+                    <CommandEmpty>Не найдено.</CommandEmpty>
                     <CommandGroup className="max-h-64 overflow-auto">
                       {filteredTimezones.map((timezone) => (
                         <CommandItem
@@ -262,7 +262,7 @@ export function MainSettings({
               </PopoverContent>
             </Popover>
             <p className="text-xs text-muted-foreground">
-              This will be used to display times in your local timezone
+              Часовой пояс используется для корректного отображения даты и времени в различных функциях
             </p>
           </div>
         </CardContent>
@@ -273,12 +273,12 @@ export function MainSettings({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Palette className="w-5 h-5" />
-            Appearance
+            Вид интерфейса
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
-            <Label htmlFor="theme">Theme preference</Label>
+            <Label htmlFor="theme">Темы интерфейса</Label>
             <Select
               value={settings.theme_mode}
               onValueChange={handleThemeChange}
@@ -287,12 +287,12 @@ export function MainSettings({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="light">Light</SelectItem>
-                <SelectItem value="dark">Dark</SelectItem>
+                <SelectItem value="light">Светлый</SelectItem>
+                <SelectItem value="dark">Темный</SelectItem>
               </SelectContent>
             </Select>
             <p className="text-xs text-muted-foreground">
-              Choose your preferred theme
+              Выберите режим
             </p>
           </div>
         </CardContent>
@@ -303,25 +303,25 @@ export function MainSettings({
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-destructive">
             <LogOut className="w-5 h-5" />
-            Exit
+            Выход
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <div>
               <p className="text-sm text-muted-foreground mb-4">
-                Exit the settings and return to the main application.
+                Завершение сеанса профиля
               </p>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button variant="destructive">
                     <LogOut className="w-4 h-4 mr-2" />
-                    Exit Settings
+                    Выйти из аккаунта
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Exit Settings?</AlertDialogTitle>
+                    <AlertDialogTitle>Вы уверены, что хотите выйти из аккаунта?</AlertDialogTitle>
                     <AlertDialogDescription>
                       {hasUnsavedChanges
                         ? "You have unsaved changes. Are you sure you want to exit without saving?"
@@ -329,12 +329,12 @@ export function MainSettings({
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel>Отмена</AlertDialogCancel>
                     <AlertDialogAction
                       onClick={handleExit}
                       className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                     >
-                      Exit
+                      Выйти
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
@@ -347,7 +347,7 @@ export function MainSettings({
       {hasUnsavedChanges && (
         <div className="bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
           <p className="text-sm text-amber-800 dark:text-amber-200">
-            You have unsaved changes. Don't forget to save your settings.
+            Сохраните новые настройки
           </p>
         </div>
       )}
