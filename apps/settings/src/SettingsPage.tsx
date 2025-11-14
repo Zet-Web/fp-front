@@ -131,12 +131,12 @@ export function SettingsPage() {
 
   return (
     <div className="container mx-auto px-6 py-6 max-w-4xl">
-      <div className="mb-6">
+      {/*<div className="mb-6">
         <h1 className="text-3xl font-bold mb-2">Settings</h1>
         <p className="text-muted-foreground">
           Manage your account preferences and application settings.
         </p>
-      </div>
+      </div> */}
 
       <MainSettings
         settings={settings}
@@ -147,9 +147,9 @@ export function SettingsPage() {
 
       {hasUnsavedChanges && (
         <div className="mt-6 flex gap-4">
-          <Button onClick={handleSave}>Save Changes</Button>
+          <Button onClick={handleSave}>Сохранить</Button>
           <Button variant="outline" onClick={handleReset}>
-            Reset Changes
+            Отмена
           </Button>
         </div>
       )}
