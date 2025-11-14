@@ -14,5 +14,5 @@ apps/network
 apps/quiz
 
 
-# src/components
+src/components
 shared-src
