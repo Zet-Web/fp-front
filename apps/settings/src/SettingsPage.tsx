@@ -123,7 +123,7 @@ export function SettingsPage() {
 
   const handleReset = async () => {
     try {
-      await resetChanges();
+      await resetChanges(session);
     } catch (error) {
       console.error("Failed to reset settings:", error);
     }

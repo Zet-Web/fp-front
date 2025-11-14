@@ -161,34 +161,20 @@ export function useSettingsData(session: Session | null) {
         return
       }
 
-      console.log('🔍 [Settings] User authenticated, calling Edge Function...')
-      
-      // Call edge function to fetch settings
-      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/settings`
-      console.log('🔍 [Settings] API URL:', apiUrl)
-      console.log('🔍 [Settings] Access token (first 20 chars):', session.access_token?.substring(0, 20) + '...')
-      
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${session.access_token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ action: 'get' })
-      })
+      console.log('🔍 [Settings] User authenticated, calling SQL function...')
 
-      console.log('🔍 [Settings] API response status:', response.status)
-      console.log('🔍 [Settings] API response ok:', response.ok)
-      
-      const result = await response.json()
-      console.log('🔍 [Settings] API response data:', result)
+      // Call SQL function to fetch settings
+      const { data, error } = await supabase
+        .rpc('get_user_settings')
 
-      if (!result.success) {
-        console.error('❌ [Settings] API returned error:', result.error)
-        throw new Error(result.error || 'Failed to fetch settings')
+      console.log('🔍 [Settings] RPC response:', { data, error })
+
+      if (error) {
+        console.error('❌ [Settings] RPC returned error:', error)
+        throw new Error(error.message || 'Failed to fetch settings')
       }
 
-      if (!result.data) {
+      if (!data || data.length === 0) {
         console.error('❌ [Settings] No settings data received')
         setSettingsState(prev => ({
           ...prev,
@@ -198,16 +184,16 @@ export function useSettingsData(session: Session | null) {
         return
       }
 
-      console.log('✅ [Settings] Successfully fetched settings:', result.data)
-      
+      console.log('✅ [Settings] Successfully fetched settings:', data[0])
+
       // Update settings state with fetched data
       const userSettings: UserSettings = {
-        timezone: result.data.timezone || 'UTC',
-        theme_mode: (result.data.theme_mode as 'light' | 'dark' | 'system') || 'system'
+        timezone: data[0].timezone || 'UTC',
+        theme_mode: (data[0].theme_mode as 'light' | 'dark' | 'system') || 'system'
       }
 
       console.log('✅ [Settings] Processed user settings:', userSettings)
-      
+
       setSettingsState(prev => ({
         ...prev,
         settings: userSettings,
@@ -248,34 +234,24 @@ export function useSettingsData(session: Session | null) {
         throw new Error('Authentication required to save settings')
       }
 
-      // Call edge function to update settings
-      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/settings`
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${session.access_token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          action: 'update',
-          timezone: settingsState.settings.timezone,
-          theme_mode: settingsState.settings.theme_mode
+      // Call SQL function to update settings
+      const { data, error } = await supabase
+        .rpc('update_user_settings', {
+          p_timezone: settingsState.settings.timezone,
+          p_theme_mode: settingsState.settings.theme_mode
         })
-      })
 
-      const result = await response.json()
-
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to save settings')
+      if (error) {
+        throw new Error(error.message || 'Failed to save settings')
       }
 
-      console.log('Settings saved successfully')
+      console.log('Settings saved successfully:', data)
     } catch (error) {
       console.error('Failed to save settings:', error)
       throw error
     } finally {
       // Re-fetch settings from database to reset to last saved state
-      await fetchUserSettings()
+      await fetchUserSettings(session)
       setSettingsState(prev => ({
         ...prev,
         hasUnsavedChanges: false
@@ -283,9 +259,9 @@ export function useSettingsData(session: Session | null) {
     }
   }
 
-  const resetChanges = async () => {
+  const resetChanges = async (session: Session | null) => {
     // Re-fetch settings from database to reset to last saved state
-    await fetchUserSettings()
+    await fetchUserSettings(session)
     setSettingsState(prev => ({
       ...prev,
       hasUnsavedChanges: false
