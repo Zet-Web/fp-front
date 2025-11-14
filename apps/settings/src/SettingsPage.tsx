@@ -273,12 +273,12 @@ export function MainSettings({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Palette className="w-5 h-5" />
-            Appearance
+            Режим
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
-            <Label htmlFor="theme">Theme preference</Label>
+            <Label htmlFor="theme">Темы интерфейса</Label>
             <Select
               value={settings.theme_mode}
               onValueChange={handleThemeChange}
@@ -292,7 +292,7 @@ export function MainSettings({
               </SelectContent>
             </Select>
             <p className="text-xs text-muted-foreground">
-              Choose your preferred theme
+              Выберите режим
             </p>
           </div>
         </CardContent>
@@ -303,25 +303,25 @@ export function MainSettings({
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-destructive">
             <LogOut className="w-5 h-5" />
-            Exit
+            Выход
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <div>
               <p className="text-sm text-muted-foreground mb-4">
-                Exit the settings and return to the main application.
+                Завершение сеанса профиля
               </p>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button variant="destructive">
                     <LogOut className="w-4 h-4 mr-2" />
-                    Exit Settings
+                    Выйти из аккаунта
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Exit Settings?</AlertDialogTitle>
+                    <AlertDialogTitle>Вы уверены, что хотите выйти из аккаунта?</AlertDialogTitle>
                     <AlertDialogDescription>
                       {hasUnsavedChanges
                         ? "You have unsaved changes. Are you sure you want to exit without saving?"
@@ -329,12 +329,12 @@ export function MainSettings({
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel>Отмена</AlertDialogCancel>
                     <AlertDialogAction
                       onClick={handleExit}
                       className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                     >
-                      Exit
+                      Выйти
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
@@ -347,7 +347,7 @@ export function MainSettings({
       {hasUnsavedChanges && (
         <div className="bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
           <p className="text-sm text-amber-800 dark:text-amber-200">
-            You have unsaved changes. Don't forget to save your settings.
+            Сохраните новые настройки
           </p>
         </div>
       )}
