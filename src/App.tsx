@@ -1,6 +1,6 @@
 import { Header } from "/apps/header/Header";
 import { Navigation } from "/apps/navigation/Navigation";
-import { Chats } from "/apps/chats/Chats";
+// import { Chats } from "/apps/chats/Chats";
 import { MobileNav } from "/apps/mobileNav/MobileNav";
 import { ProfilePage } from "/apps/profile/src/ProfilePage";
 import { AuthPage } from "/apps/auth/src/AuthPage";
