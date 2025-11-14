@@ -6,12 +6,14 @@ import { ScrollingTab } from '../scrolling/ScrollingTab';
 import { Profile2Tab } from '../profile2/Profile2Tab';
 import { TypographyTab } from '../typography/TypographyTab';
 import { Quiz3Tab } from '../quiz3/Quiz3Tab';
+import { DbFunctionTab } from '../dbfunction/DbFunctionTab';
 
 const tabMap: Record<string, string> = {
   '1': 'scrolling',
   '2': 'profile2',
   '3': 'typography',
-  '4': 'quiz3'
+  '4': 'quiz3',
+  '5': 'dbfunction'
 };
 
 export function TestPage() {
@@ -46,11 +48,12 @@ export function TestPage() {
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-1 md:grid-cols-4 h-auto">
+        <TabsList className="grid w-full grid-cols-1 md:grid-cols-5 h-auto">
           <TabsTrigger value="scrolling">Scrolling Tabs</TabsTrigger>
           <TabsTrigger value="profile2">Profile 2</TabsTrigger>
           <TabsTrigger value="typography">Typography</TabsTrigger>
           <TabsTrigger value="quiz3">Quiz Variants</TabsTrigger>
+          <TabsTrigger value="dbfunction">Test DB Function</TabsTrigger>
         </TabsList>
 
         <TabsContent value="scrolling">
@@ -67,6 +70,10 @@ export function TestPage() {
 
         <TabsContent value="quiz3">
           <Quiz3Tab />
+        </TabsContent>
+
+        <TabsContent value="dbfunction">
+          <DbFunctionTab />
         </TabsContent>
       </Tabs>
     </div>
