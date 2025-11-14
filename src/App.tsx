@@ -57,14 +57,14 @@ function AppContent() {
                 <Route path="/auth" element={<AuthPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/test" element={<TestPage />} />
-                <Route
+                {/* <Route
                   path="/chats"
                   element={
                     <div className="lg:hidden h-full">
                       <Chats />
                     </div>
                   }
-                />
+                /> */}
                 <Route path="/404" element={<NotFoundPage />} />
                 <Route path="*" element={<NotFoundPage />} />
               </Routes>
