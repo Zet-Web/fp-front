@@ -211,12 +211,12 @@ export function MainSettings({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Clock className="w-5 h-5" />
-            Timezone
+            Часовой пояс
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
-            <Label htmlFor="timezone">Select your timezone</Label>
+            <Label htmlFor="timezone">Выберите свой часовой пояс</Label>
             <Popover open={timezoneOpen} onOpenChange={setTimezoneOpen}>
               <PopoverTrigger asChild>
                 <Button
@@ -232,12 +232,12 @@ export function MainSettings({
               <PopoverContent className="w-full p-0" align="start">
                 <Command>
                   <CommandInput
-                    placeholder="Search timezone..."
+                    placeholder="Поиск..."
                     value={searchTerm}
                     onValueChange={setSearchTerm}
                   />
                   <CommandList>
-                    <CommandEmpty>No timezone found.</CommandEmpty>
+                    <CommandEmpty>Не найдено.</CommandEmpty>
                     <CommandGroup className="max-h-64 overflow-auto">
                       {filteredTimezones.map((timezone) => (
                         <CommandItem
@@ -262,7 +262,7 @@ export function MainSettings({
               </PopoverContent>
             </Popover>
             <p className="text-xs text-muted-foreground">
-              This will be used to display times in your local timezone
+              Часовой пояс используется для корректного отображения даты и времени в различных функциях
             </p>
           </div>
         </CardContent>
