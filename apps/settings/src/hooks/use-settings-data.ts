@@ -165,7 +165,7 @@ export function useSettingsData(session: Session | null) {
 
       // Call SQL function to fetch settings
       const { data, error } = await supabase
-        .rpc('get_user_settings')
+        .rpc('settings_get_data')
 
       console.log('🔍 [Settings] RPC response:', { data, error })
 
