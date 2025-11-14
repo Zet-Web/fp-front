@@ -33,7 +33,7 @@ function AppContent() {
   if (loading) {
     return (
       <div className="w-full h-screen flex items-center justify-center text-muted-foreground">
-        Инициализация...
+        Загрузка...
       </div>
     );
   }
