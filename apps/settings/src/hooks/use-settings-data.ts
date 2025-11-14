@@ -236,7 +236,7 @@ export function useSettingsData(session: Session | null) {
 
       // Call SQL function to update settings
       const { data, error } = await supabase
-        .rpc('update_user_settings', {
+        .rpc('settings_update_data', {
           p_timezone: settingsState.settings.timezone,
           p_theme_mode: settingsState.settings.theme_mode
         })
