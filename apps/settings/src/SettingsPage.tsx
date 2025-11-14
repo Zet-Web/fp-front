@@ -273,7 +273,7 @@ export function MainSettings({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Palette className="w-5 h-5" />
-            Режим
+            Вид интерфейса
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -287,8 +287,8 @@ export function MainSettings({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="light">Light</SelectItem>
-                <SelectItem value="dark">Dark</SelectItem>
+                <SelectItem value="light">Светлый</SelectItem>
+                <SelectItem value="dark">Темный</SelectItem>
               </SelectContent>
             </Select>
             <p className="text-xs text-muted-foreground">
