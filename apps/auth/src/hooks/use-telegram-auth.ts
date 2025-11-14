@@ -10,8 +10,15 @@ interface UseTelegramAuthReturn {
   handleTelegramAuth: () => void;
 }
 
-const initiatingHostOrigin = "/";
-const devHostOrigin = "http://localhost:5173";
+const getOriginUrl = (): string => {
+  if (import.meta.env.VITE_SITE_URL) {
+    return import.meta.env.VITE_SITE_URL;
+  }
+  if (typeof window !== 'undefined' && window.location?.origin) {
+    return window.location.origin;
+  }
+  return '/';
+};
 
 export function useTelegramAuth(): UseTelegramAuthReturn {
   const [isLoading, setIsLoading] = useState(true);
@@ -79,6 +86,9 @@ export function useTelegramAuth(): UseTelegramAuthReturn {
       setIsLoading(true);
       setError(null);
 
+      const originUrl = getOriginUrl();
+      console.log('[Auth] Using origin URL for redirect:', originUrl);
+
       const response = await fetch(
         `${import.meta.env.VITE_BACKEND_URL}/auth/generate-auth-state`,
         {
@@ -86,7 +96,7 @@ export function useTelegramAuth(): UseTelegramAuthReturn {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ initiatingHostOrigin }),
+          body: JSON.stringify({ initiatingHostOrigin: originUrl }),
         }
       );
 
@@ -149,14 +159,15 @@ export function useTelegramAuth(): UseTelegramAuthReturn {
           hasAuthCompletedRef.current = true;
           cleanup();
 
-          if (import.meta.env.DEV) {
-            const rawMagicLink = data.magic_link;
-            const redirectQueryParam = 'redirect_to=';
-            const magicLinkWithoutReqirect = rawMagicLink.split('redirect_to=')[0];
-            window.location.href = `${magicLinkWithoutReqirect}${redirectQueryParam}${devHostOrigin}`
-          } else {
-            window.location.href = data.magic_link;
-          }
+          const rawMagicLink = data.magic_link;
+          const originUrl = getOriginUrl();
+
+          console.log('[Auth] Magic link received:', rawMagicLink);
+          console.log('[Auth] Redirecting to origin:', originUrl);
+
+          const redirectQueryParam = 'redirect_to=';
+          const magicLinkWithoutRedirect = rawMagicLink.split('redirect_to=')[0];
+          window.location.href = `${magicLinkWithoutRedirect}${redirectQueryParam}${encodeURIComponent(originUrl)}`;
         }
       } catch (err) {
         if (!hasAuthCompletedRef.current) {
