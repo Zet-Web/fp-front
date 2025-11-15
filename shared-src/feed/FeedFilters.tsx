@@ -63,19 +63,19 @@ export function FeedFilters({
             }
           >
             <TabsTrigger value="featured" className="text-sm">
-              Featured
+              Рекомендовано
             </TabsTrigger>
             <TabsTrigger value="all" className="text-sm">
-              All
+              Все посты
             </TabsTrigger>
 
             {isAuthenticated && (
               <>
                 <TabsTrigger value="following" className="text-sm">
-                  Following
+                  Посты контактов
                 </TabsTrigger>
                 <TabsTrigger value="saved" className="text-sm">
-                  Saved
+                  Сохранено
                 </TabsTrigger>
               </>
             )}
@@ -94,7 +94,7 @@ export function FeedFilters({
                 <SelectValue placeholder="Type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="all">Все</SelectItem>
                 <SelectItem value={PostType.ARTICLE}>
                   {POST_TYPE_LABELS[PostType.ARTICLE]}
                 </SelectItem>
