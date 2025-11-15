@@ -37,7 +37,7 @@ export function SectionCard({
               onClick={onAddClick}
             >
               <Plus className="w-4 h-4 mr-1" />
-              Add
+              Добавить
             </Button>
           )}
         </CardTitle>
