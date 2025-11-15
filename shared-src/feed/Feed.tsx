@@ -285,6 +285,7 @@ export function Feed({
                   : []
               }
               author={post.author}
+              createdAt={post.created_at}
               isSaved={!!post.is_saved}
               isPined={!!(filterByUsername && !!post.is_pinned)}
               showActions={true}

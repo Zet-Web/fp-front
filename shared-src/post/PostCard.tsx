@@ -29,10 +29,12 @@ import {
   Pin,
 } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import type { PostAuthor } from "./post";
 import { PostContentViewer } from "../feed/PostContentViewer";
 import { FPApi } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
+import { formatPostDate } from "@/lib/date-utils";
 
 interface PostCardProps {
   postId: number;
@@ -40,6 +42,7 @@ interface PostCardProps {
   content: string;
   images: string[];
   author: PostAuthor;
+  createdAt?: string;
   showActions?: boolean;
   onMoreClick?: () => void;
   onShareClick?: () => void;
@@ -56,6 +59,7 @@ export function PostCard({
   content,
   images,
   author,
+  createdAt,
   showActions = true,
   onMoreClick,
   onShareClick,
@@ -66,6 +70,7 @@ export function PostCard({
   isPined = false,
 }: PostCardProps) {
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const [isPostSaved, setIsPostSaved] = useState(isSaved);
   const [isSaving, setIsSaving] = useState(false);
@@ -104,12 +109,21 @@ export function PostCard({
 
   const showOwnerActions = showActions && isOwner;
 
+  const handleProfileClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigate(`/profile/${displayUsername}`);
+  };
+
   return (
     <Card className="hover:shadow-md transition-shadow duration-300">
       <CardContent className="p-4">
         <div className="flex gap-3">
           <div className="flex-shrink-0">
-            <Avatar className="w-12 h-12">
+            <Avatar
+              className="w-12 h-12 cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={handleProfileClick}
+            >
               <AvatarImage
                 src={author?.avatar_url || undefined}
                 alt={displayName}
@@ -119,9 +133,14 @@ export function PostCard({
           </div>
 
           <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between mb-2 relative">
-              <div className="flex items-center gap-1">
-                <h3 className="font-semibold text-sm">{displayName}</h3>
+            <div className="flex items-start justify-between mb-1 relative">
+              <div className="flex items-center gap-1 flex-wrap">
+                <h3
+                  className="font-semibold text-sm cursor-pointer hover:underline"
+                  onClick={handleProfileClick}
+                >
+                  {displayName}
+                </h3>
                 {author?.badge?.includes("verified") && (
                   <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
                     <svg
@@ -137,9 +156,20 @@ export function PostCard({
                     </svg>
                   </div>
                 )}
-                <span className="text-sm text-muted-foreground">
+                <span
+                  className="text-sm text-muted-foreground cursor-pointer hover:underline"
+                  onClick={handleProfileClick}
+                >
                   @{displayUsername}
                 </span>
+                {createdAt && (
+                  <>
+                    <span className="text-sm text-muted-foreground">·</span>
+                    <span className="text-sm text-muted-foreground">
+                      {formatPostDate(createdAt)}
+                    </span>
+                  </>
+                )}
               </div>
               {isPined && (
                 <div
@@ -194,7 +224,7 @@ export function PostCard({
               )}
             </div>
 
-            <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-3">
+            <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-1.5">
               {title}
             </h3>
 
