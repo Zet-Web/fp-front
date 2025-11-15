@@ -329,7 +329,7 @@ export function BirthdaySection({
           <div className="border rounded-lg p-4 space-y-3">
             <div className="flex items-start justify-between gap-2">
               <div className="flex-1 space-y-4">
-                <Label>Birthday</Label>
+                <Label>День рождения</Label>
 
                 <div className="grid grid-cols-3 gap-2">
                   <div>
@@ -337,14 +337,14 @@ export function BirthdaySection({
                       htmlFor="day"
                       className="text-xs text-muted-foreground"
                     >
-                      Day (Optional)
+                      День (по желанию)
                     </Label>
                     <Select value={selectedDay} onValueChange={handleDayChange}>
                       <SelectTrigger id="day">
                         <SelectValue placeholder="Day" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="not-set">Not set</SelectItem>
+                        <SelectItem value="not-set">Не установлен</SelectItem>
                         {Array.from(
                           {
                             length: getDaysInMonth(
