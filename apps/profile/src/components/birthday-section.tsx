@@ -46,18 +46,18 @@ export function BirthdaySection({
   const [showAge, setShowAge] = useState<boolean>(true);
 
   const months = [
-    { value: "01", label: "January" },
-    { value: "02", label: "February" },
-    { value: "03", label: "March" },
-    { value: "04", label: "April" },
-    { value: "05", label: "May" },
-    { value: "06", label: "June" },
-    { value: "07", label: "July" },
-    { value: "08", label: "August" },
-    { value: "09", label: "September" },
-    { value: "10", label: "October" },
-    { value: "11", label: "November" },
-    { value: "12", label: "December" },
+    { value: "01", label: "Январь" },
+    { value: "02", label: "Февраль" },
+    { value: "03", label: "Март" },
+    { value: "04", label: "Апрель" },
+    { value: "05", label: "Май" },
+    { value: "06", label: "Июнь" },
+    { value: "07", label: "Июль" },
+    { value: "08", label: "Август" },
+    { value: "09", label: "Сентбярь" },
+    { value: "10", label: "Октябрь" },
+    { value: "11", label: "Ноябрь" },
+    { value: "12", label: "Декабрь" },
   ];
 
   const getDaysInMonth = (month: string, year: string) => {
@@ -301,7 +301,7 @@ export function BirthdaySection({
     if (!displayValue) {
       return (
         <p className="text-muted-foreground italic text-sm">
-          No birthday added
+          День рождения не добавлен
         </p>
       );
     }
@@ -329,7 +329,7 @@ export function BirthdaySection({
           <div className="border rounded-lg p-4 space-y-3">
             <div className="flex items-start justify-between gap-2">
               <div className="flex-1 space-y-4">
-                <Label>Birthday</Label>
+                <Label>День рождения</Label>
 
                 <div className="grid grid-cols-3 gap-2">
                   <div>
@@ -337,14 +337,14 @@ export function BirthdaySection({
                       htmlFor="day"
                       className="text-xs text-muted-foreground"
                     >
-                      Day (Optional)
+                      День (по желанию)
                     </Label>
                     <Select value={selectedDay} onValueChange={handleDayChange}>
                       <SelectTrigger id="day">
                         <SelectValue placeholder="Day" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="not-set">Not set</SelectItem>
+                        <SelectItem value="not-set">Не установлен</SelectItem>
                         {Array.from(
                           {
                             length: getDaysInMonth(
@@ -372,7 +372,7 @@ export function BirthdaySection({
                       htmlFor="month"
                       className="text-xs text-muted-foreground"
                     >
-                      Month (Optional)
+                      Месяц (по желанию)
                     </Label>
                     <Select
                       value={selectedMonth}
@@ -382,7 +382,7 @@ export function BirthdaySection({
                         <SelectValue placeholder="Month" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="not-set">Not set</SelectItem>
+                        <SelectItem value="not-set">Не установлен</SelectItem>
                         {months.map((month) => (
                           <SelectItem key={month.value} value={month.value}>
                             {month.label}
@@ -397,7 +397,7 @@ export function BirthdaySection({
                       htmlFor="year"
                       className="text-xs text-muted-foreground"
                     >
-                      Year (Optional)
+                      Год (по желанию)
                     </Label>
                     <Select
                       value={selectedYear}
@@ -407,7 +407,7 @@ export function BirthdaySection({
                         <SelectValue placeholder="Year" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="not-set">Not set</SelectItem>
+                        <SelectItem value="not-set">Не установлен</SelectItem>
                         {generateYears().map((year) => (
                           <SelectItem key={year} value={year}>
                             {year}
@@ -431,16 +431,15 @@ export function BirthdaySection({
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Delete Birthday</AlertDialogTitle>
+                    <AlertDialogTitle>Удалить</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Are you sure you want to delete your birthday? This action
-                      cannot be undone.
+                      Вы уверены, что хотите удалить?
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel>Отмена</AlertDialogCancel>
                     <AlertDialogAction onClick={handleRemoveBirthday}>
-                      Delete
+                      Удалить
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
@@ -448,16 +447,16 @@ export function BirthdaySection({
             </div>
 
             <div>
-              <Label htmlFor="visibility">Display As</Label>
+              <Label htmlFor="visibility">Вид отображения</Label>
               <Select value={visibility} onValueChange={handleVisibilityChange}>
                 <SelectTrigger id="visibility" className="mt-2">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="full">Full</SelectItem>
-                  <SelectItem value="day_month">Day and Month</SelectItem>
-                  <SelectItem value="year">Year</SelectItem>
-                  <SelectItem value="not_show">Not show</SelectItem>
+                  <SelectItem value="full">Полностью</SelectItem>
+                  <SelectItem value="day_month">День и месяц</SelectItem>
+                  <SelectItem value="year">Год</SelectItem>
+                  <SelectItem value="not_show">Не показывать</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -472,7 +471,7 @@ export function BirthdaySection({
                 htmlFor="show-age"
                 className="text-sm font-normal cursor-pointer"
               >
-                Show Age
+                Показать возраст
               </Label>
             </div>
 
@@ -492,24 +491,24 @@ export function BirthdaySection({
 
     return (
       <div className="border-2 border-dashed border-primary/20 rounded-lg p-4 space-y-4">
-        <h4 className="font-medium">Add</h4>
+        <h4 className="font-medium">Добавить</h4>
 
         <div>
-          <Label>Select Date (at least one field)</Label>
+          <Label>Выберите дату</Label>
           <div className="grid grid-cols-3 gap-2 mt-2">
             <div>
               <Label
                 htmlFor="new-day"
                 className="text-xs text-muted-foreground"
               >
-                Day (Optional)
+                День (по желанию)
               </Label>
               <Select value={selectedDay} onValueChange={setSelectedDay}>
                 <SelectTrigger id="new-day">
                   <SelectValue placeholder="Day" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="not-set">Not set</SelectItem>
+                  <SelectItem value="not-set">Не установлен</SelectItem>
                   {Array.from(
                     {
                       length: getDaysInMonth(
@@ -535,7 +534,7 @@ export function BirthdaySection({
                 htmlFor="new-month"
                 className="text-xs text-muted-foreground"
               >
-                Month (Optional)
+                Месяц (по желанию)
               </Label>
               <Select
                 value={selectedMonth}
@@ -558,7 +557,7 @@ export function BirthdaySection({
                   <SelectValue placeholder="Month" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="not-set">Not set</SelectItem>
+                  <SelectItem value="not-set">Не установлен</SelectItem>
                   {months.map((month) => (
                     <SelectItem key={month.value} value={month.value}>
                       {month.label}
@@ -573,7 +572,7 @@ export function BirthdaySection({
                 htmlFor="new-year"
                 className="text-xs text-muted-foreground"
               >
-                Year (Optional)
+                Год (по желанию)
               </Label>
               <Select
                 value={selectedYear}
@@ -596,7 +595,7 @@ export function BirthdaySection({
                   <SelectValue placeholder="Year" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="not-set">Not set</SelectItem>
+                  <SelectItem value="not-set">Не установлен</SelectItem>
                   {generateYears().map((year) => (
                     <SelectItem key={year} value={year}>
                       {year}
@@ -609,7 +608,7 @@ export function BirthdaySection({
         </div>
 
         <div>
-          <Label htmlFor="new-visibility">Display As</Label>
+          <Label htmlFor="new-visibility">Вид отображения</Label>
           <Select
             value={visibility}
             onValueChange={(value) =>
@@ -620,10 +619,10 @@ export function BirthdaySection({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="full">Full</SelectItem>
-              <SelectItem value="day_month">Day and Month</SelectItem>
-              <SelectItem value="year">Year</SelectItem>
-              <SelectItem value="not_show">Not show</SelectItem>
+              <SelectItem value="full">Полностью</SelectItem>
+              <SelectItem value="day_month">День и месяц</SelectItem>
+              <SelectItem value="year">Год</SelectItem>
+              <SelectItem value="not_show">Не показывать</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -638,7 +637,7 @@ export function BirthdaySection({
             htmlFor="new-show-age"
             className="text-sm font-normal cursor-pointer"
           >
-            Show Age
+            Показать возраст
           </Label>
         </div>
 
@@ -666,10 +665,10 @@ export function BirthdaySection({
               selectedYear === "not-set"
             }
           >
-            Add
+            Добавить
           </Button>
           <Button variant="outline" onClick={() => setShowAddForm(false)}>
-            Cancel
+            Отмена
           </Button>
         </div>
       </div>
@@ -682,7 +681,7 @@ export function BirthdaySection({
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Cake className="w-5 h-5" />
-            Birthday
+            День рождения
           </div>
           {isEditing && !user.birthday && !showAddForm && (
             <Button
@@ -691,7 +690,7 @@ export function BirthdaySection({
               onClick={() => setShowAddForm(true)}
             >
               <Plus className="w-4 h-4 mr-1" />
-              Add
+              Добавить
             </Button>
           )}
         </CardTitle>

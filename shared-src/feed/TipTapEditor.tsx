@@ -20,7 +20,7 @@ type Props = {
 export function TiptapEditor({
   value = "",
   onChange,
-  placeholder = "Напиши что-нибудь...",
+  placeholder = "Напишите что-нибудь...",
   showCharacterCount = true,
   maxCharacters,
 }: Props) {

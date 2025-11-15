@@ -269,7 +269,7 @@ export function PostPage() {
         <Card className="w-96">
           <CardContent className="p-6 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading post...</p>
+            <p className="text-muted-foreground">Загрузка...</p>
           </CardContent>
         </Card>
       </div>
@@ -282,7 +282,7 @@ export function PostPage() {
         <Card className="w-96">
           <CardContent className="p-6 text-center">
             <p className="text-destructive mb-4">{error || "Post not found"}</p>
-            <Button onClick={() => navigate("/")}>Go to Home</Button>
+            <Button onClick={() => navigate("/")}>На главную</Button>
           </CardContent>
         </Card>
       </div>

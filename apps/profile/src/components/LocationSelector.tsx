@@ -128,7 +128,7 @@ export function LocationSelector({
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <MapPin className="w-4 h-4 text-muted-foreground" />
-        <span className="text-sm font-medium">Location</span>
+        <span className="text-sm font-medium">Локация</span>
         {allLocations.length > 0 && (
           <span className="text-xs text-muted-foreground">
             ({allLocations.length}/{maxLocations})
@@ -195,18 +195,18 @@ export function LocationSelector({
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="city" className="text-xs">
                   <Building2 className="w-3 h-3 mr-1" />
-                  City
+                  Город
                 </TabsTrigger>
                 <TabsTrigger value="country" className="text-xs">
                   <Globe className="w-3 h-3 mr-1" />
-                  Country
+                  Страна
                 </TabsTrigger>
               </TabsList>
 
               <TabsContent value="city" className="mt-0">
                 <Command shouldFilter={false}>
                   <CommandInput
-                    placeholder="Search cities..."
+                    placeholder="Поиск..."
                     value={searchQuery}
                     onValueChange={setSearchQuery}
                   />
@@ -218,7 +218,7 @@ export function LocationSelector({
                     )}
                     {!isSearching && searchQuery.length < 2 && (
                       <CommandEmpty>
-                        Type at least 2 characters to search
+                        Введите 2 символа...
                       </CommandEmpty>
                     )}
                     {!isSearching &&
@@ -261,7 +261,7 @@ export function LocationSelector({
                     )}
                     {!isSearching && searchQuery.length < 2 && (
                       <CommandEmpty>
-                        Type at least 2 characters to search
+                        Введите 2 символа
                       </CommandEmpty>
                     )}
                     {!isSearching &&
@@ -302,19 +302,19 @@ export function LocationSelector({
 
         {allLocations.length > 0 && (
           <Button variant="ghost" size="sm" onClick={onClearAll}>
-            Clear all
+            Очистить
           </Button>
         )}
       </div>
 
       {allLocations.length === 0 && (
         <p className="text-xs text-muted-foreground">
-          Add up to {maxLocations} cities or countries
+          Добавить еще локаций: {maxLocations}
         </p>
       )}
       {isMaxReached && (
         <p className="text-xs text-muted-foreground">
-          Maximum {maxLocations} locations reached
+          Всего локаций: {maxLocations}
         </p>
       )}
     </div>

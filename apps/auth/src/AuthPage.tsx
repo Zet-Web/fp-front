@@ -42,7 +42,7 @@ export function AuthPage() {
         {/* Main heading */}
         <div>
           <h1 className="text-2xl font-semibold text-foreground mb-2">
-            Sign in with 1 click via Telegram
+            Войти в 1 клик с Telegram
           </h1>
         </div>
 
@@ -62,7 +62,7 @@ export function AuthPage() {
         {/* Accent text */}
         <div className="py-4">
           <p className="text-muted-foreground text-lg font-medium">
-            No email and passwords required
+            Без почты и паролей
           </p>
         </div>
 
@@ -70,10 +70,10 @@ export function AuthPage() {
         <div className="hidden md:block space-y-6">
           <div>
             <h2 className="text-lg font-medium text-foreground mb-2">
-              If on computer or laptop,
+              Если на компьютере или ноутбуке,
             </h2>
             <p className="text-lg font-medium text-foreground">
-              scan QR code on smartphone
+              то сканируйте QR на смартфоне.
             </p>
           </div>
 

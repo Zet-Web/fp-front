@@ -38,7 +38,6 @@ export function FeedFilters({
   onPostTypeChange,
   onLocationChange,
 }: FeedFiltersProps) {
-  const { isAuthenticated } = useAuthContext();
   const handleCountryChange = (country: string) => {
     onLocationChange({ country, city: null });
   };
@@ -55,30 +54,19 @@ export function FeedFilters({
     <Card className="shadow-sm border-b">
       <CardContent className="p-3 space-y-3">
         <Tabs value={view} onValueChange={(v) => onViewChange(v as FeedView)}>
-          <TabsList
-            className={
-              isAuthenticated
-                ? "grid w-full grid-cols-4 h-9"
-                : "grid w-full grid-cols-2 h-9"
-            }
-          >
+          <TabsList className="grid w-full grid-cols-4 h-9">
             <TabsTrigger value="featured" className="text-sm">
-              Featured
+              Рекомендовано
             </TabsTrigger>
             <TabsTrigger value="all" className="text-sm">
-              All
+              Все посты
             </TabsTrigger>
-
-            {isAuthenticated && (
-              <>
-                <TabsTrigger value="following" className="text-sm">
-                  Following
-                </TabsTrigger>
-                <TabsTrigger value="saved" className="text-sm">
-                  Saved
-                </TabsTrigger>
-              </>
-            )}
+            <TabsTrigger value="following" className="text-sm">
+              Посты контактов
+            </TabsTrigger>
+            <TabsTrigger value="saved" className="text-sm">
+              Сохранено
+            </TabsTrigger>
           </TabsList>
         </Tabs>
 
@@ -94,7 +82,7 @@ export function FeedFilters({
                 <SelectValue placeholder="Type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="all">Все</SelectItem>
                 <SelectItem value={PostType.ARTICLE}>
                   {POST_TYPE_LABELS[PostType.ARTICLE]}
                 </SelectItem>

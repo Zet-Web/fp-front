@@ -86,7 +86,7 @@ export function NetworkListView({ data, onNodeClick, emptyMessage }: NetworkList
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg">
-              Соединения ({sortedNodes.length})
+              Контакты ({sortedNodes.length})
             </CardTitle>
 
             <div className="flex items-center gap-2">

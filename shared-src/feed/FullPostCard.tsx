@@ -28,11 +28,13 @@ import {
   Loader2,
 } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { PostType, PostWithAuthor } from "../post/post";
 import { PostContentViewer } from "./PostContentViewer";
 import QuizTake from "../../apps/quiz/src/QuizTake";
 import { useToast } from "@/hooks/use-toast";
 import { FPApi } from "@/lib/api";
+import { formatPostDate } from "@/lib/date-utils";
 
 interface PostCardProps {
   post: PostWithAuthor;
@@ -55,7 +57,8 @@ export function FullPostCard({
   isSaved = false,
   isOwner = false,
 }: PostCardProps) {
-  const { id: postId, title, excerpt, content, author, type } = post;
+  const { id: postId, title, excerpt, content, author, type, created_at } = post;
+  const navigate = useNavigate();
 
   const images = post.cover_image
     ? [post.cover_image, ...post.images]
@@ -100,12 +103,21 @@ export function FullPostCard({
     }
   };
 
+  const handleProfileClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigate(`/profile/${displayUsername}`);
+  };
+
   return (
     <Card className="hover:shadow-md transition-shadow duration-300">
       <CardContent className="p-4">
         <div className="flex gap-3">
           <div className="flex-shrink-0">
-            <Avatar className="w-12 h-12">
+            <Avatar
+              className="w-12 h-12 cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={handleProfileClick}
+            >
               <AvatarImage
                 src={author?.avatar_url || undefined}
                 alt={displayName}
@@ -115,9 +127,14 @@ export function FullPostCard({
           </div>
 
           <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between mb-2">
-              <div className="flex items-center gap-1">
-                <h3 className="font-semibold text-sm">{displayName}</h3>
+            <div className="flex items-start justify-between mb-1">
+              <div className="flex items-center gap-1 flex-wrap">
+                <h3
+                  className="font-semibold text-sm cursor-pointer hover:underline"
+                  onClick={handleProfileClick}
+                >
+                  {displayName}
+                </h3>
                 {author?.badge?.includes("verified") && (
                   <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
                     <svg
@@ -133,9 +150,20 @@ export function FullPostCard({
                     </svg>
                   </div>
                 )}
-                <span className="text-sm text-muted-foreground">
+                <span
+                  className="text-sm text-muted-foreground cursor-pointer hover:underline"
+                  onClick={handleProfileClick}
+                >
                   @{displayUsername}
                 </span>
+                {created_at && (
+                  <>
+                    <span className="text-sm text-muted-foreground">·</span>
+                    <span className="text-sm text-muted-foreground">
+                      {formatPostDate(created_at)}
+                    </span>
+                  </>
+                )}
               </div>
               {showActions && isOwner && (
                 <div className="flex items-center gap-1 flex-shrink-0">
@@ -161,7 +189,7 @@ export function FullPostCard({
                         }}
                       >
                         <Pencil className="w-4 h-4 mr-2" />
-                        Edit
+                        Изменить
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={(e) => {
@@ -171,7 +199,7 @@ export function FullPostCard({
                         className="text-destructive focus:text-destructive"
                       >
                         <Trash2 className="w-4 h-4 mr-2" />
-                        Delete
+                        Удалить
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -241,14 +269,13 @@ export function FullPostCard({
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Post</AlertDialogTitle>
+            <AlertDialogTitle>Удалить</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this post? This action cannot be
-              undone.
+              Вы уверены, что хотите удалить?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Отмена</AlertDialogCancel>
             <AlertDialogAction
               onClick={(e) => {
                 e.preventDefault();
@@ -257,7 +284,7 @@ export function FullPostCard({
               }}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Delete
+              Удалить
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

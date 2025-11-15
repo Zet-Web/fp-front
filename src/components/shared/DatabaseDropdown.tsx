@@ -44,8 +44,8 @@ export function DatabaseDropdown({
   labelColumn,
   value,
   onChange,
-  placeholder = "Select...",
-  searchPlaceholder = "Search...",
+  placeholder = "Выбрать...",
+  searchPlaceholder = "Поиск...",
   label,
   labelClassName = "",
   disabled = false,
@@ -139,7 +139,7 @@ export function DatabaseDropdown({
                 </div>
               )}
               {!isLoading && getFilteredData(searchInput).length === 0 && (
-                <CommandEmpty>No items found.</CommandEmpty>
+                <CommandEmpty>Не найдено</CommandEmpty>
               )}
               {!isLoading && getFilteredData(searchInput).length > 0 && (
                 <CommandGroup>

@@ -37,9 +37,9 @@ export function DeleteConfirmationDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel>Отмена</AlertDialogCancel>
           <AlertDialogAction onClick={onConfirm}>
-            Delete
+            Удалить
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

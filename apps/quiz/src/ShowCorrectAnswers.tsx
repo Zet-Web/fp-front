@@ -30,7 +30,7 @@ export function ShowCorrectAnswers({ quizId, userAnswers }: Props) {
       <Card className="shadow-md">
         <CardContent className="py-8 text-center">
           <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="text-muted-foreground mt-4">Загрузка правильных ответов...</p>
+          <p className="text-muted-foreground mt-4">Загрузка...</p>
         </CardContent>
       </Card>
     );

@@ -16,10 +16,10 @@ export function NotFoundPage() {
                 <span className="text-3xl font-bold text-red-600 dark:text-red-400">404</span>
               </div>
               <CardTitle className="text-2xl font-bold text-foreground">
-                Page Not Found
+                Страница не найдена
               </CardTitle>
               <p className="text-muted-foreground mt-2">
-                Sorry, we couldn't find the page you're looking for. It might have been moved, deleted, or doesn't exist.
+                Извините, мы не смогли найти эту страницу. Возможно, она была изменена или удалена.
               </p>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -30,7 +30,7 @@ export function NotFoundPage() {
                 >
                   <Link to="/">
                     <Home className="h-4 w-4 mr-2" />
-                    Go Home
+                    На главную
                   </Link>
                 </Button>
                 <Button 
@@ -39,17 +39,17 @@ export function NotFoundPage() {
                   onClick={() => navigate(-1)}
                 >
                   <ArrowLeft className="h-4 w-4 mr-2" />
-                  Go Back
+                  Вернуться
                 </Button>
               </div>
               <div className="text-center pt-4 border-t border-border">
                 <p className="text-sm text-muted-foreground mb-3">
-                  Looking for something specific?
+                  Ищете что-то конкретное?
                 </p>
                 <Button variant="ghost" className="text-blue-500 hover:text-blue-600" asChild>
                   <Link to="/explore">
                     <Search className="h-4 w-4 mr-2" />
-                    Explore Content
+                    Исследовать
                   </Link>
                 </Button>
               </div>

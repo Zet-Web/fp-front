@@ -1,16 +1,16 @@
 export const MONTHS = [
-  { value: '01', label: 'January' },
-  { value: '02', label: 'February' },
-  { value: '03', label: 'March' },
-  { value: '04', label: 'April' },
-  { value: '05', label: 'May' },
-  { value: '06', label: 'June' },
-  { value: '07', label: 'July' },
-  { value: '08', label: 'August' },
-  { value: '09', label: 'September' },
-  { value: '10', label: 'October' },
-  { value: '11', label: 'November' },
-  { value: '12', label: 'December' }
+  { value: '01', label: 'Январь' },
+  { value: '02', label: 'Февраль' },
+  { value: '03', label: 'Март' },
+  { value: '04', label: 'Апрель' },
+  { value: '05', label: 'Май' },
+  { value: '06', label: 'Июнь' },
+  { value: '07', label: 'Июль' },
+  { value: '08', label: 'Август' },
+  { value: '09', label: 'Сентябрь' },
+  { value: '10', label: 'Октябрь' },
+  { value: '11', label: 'Ноябрь' },
+  { value: '12', label: 'Декабрь' }
 ] as const
 
 export function generateYears(startYear: number = 1930): string[] {
@@ -105,4 +105,19 @@ export function adjustDayForMonth(day: string, month: string, year: string): str
   }
 
   return day
+}
+
+export function formatPostDate(dateString: string): string {
+  try {
+    const date = new Date(dateString)
+    if (isNaN(date.getTime())) return ''
+
+    const day = date.getDate().toString().padStart(2, '0')
+    const month = (date.getMonth() + 1).toString().padStart(2, '0')
+    const year = date.getFullYear()
+
+    return `${day}.${month}.${year}`
+  } catch {
+    return ''
+  }
 }

@@ -147,7 +147,7 @@ export function ProfilePage() {
         <Card className="w-96">
           <CardContent className="p-6 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading profile...</p>
+            <p className="text-muted-foreground">Загрузка...</p>
           </CardContent>
         </Card>
       </div>
@@ -216,10 +216,10 @@ export function ProfilePage() {
         >
           <TabsList className="grid w-full grid-cols-2 mb-6">
             <TabsTrigger value="posts" className="text-sm font-medium">
-              Posts
+              Публикации
             </TabsTrigger>
             <TabsTrigger value="information" className="text-sm font-medium">
-              Information
+              Информация
             </TabsTrigger>
           </TabsList>
 

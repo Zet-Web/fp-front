@@ -442,11 +442,11 @@ export function Navigation() {
         </Card>
 
         {/* Version Display */}
-        <div className="px-4 pb-4">
+        {/* <div className="px-4 pb-4">
           <p className="text-xs text-muted-foreground text-center">
             v{(window as any).APP_VERSION || "1.0.0"}
           </p>
-        </div>
+        </div> */}
       </div>
     </aside>
   );

@@ -153,10 +153,10 @@ export default function QuizForm({
                         htmlFor="oneAttempt"
                         className="font-medium cursor-pointer"
                       >
-                        Одна попытка на пользователя
+                        Одна попытка
                       </Label>
                       <p className="text-xs text-muted-foreground">
-                        Каждый может пройти тест только один раз
+                        Каждый человек может пройти тест только один раз
                       </p>
                     </div>
                     <Switch
@@ -182,7 +182,7 @@ export default function QuizForm({
                         Показывать правильные ответы
                       </Label>
                       <p className="text-xs text-muted-foreground">
-                        После завершения будут показаны верные ответы
+                        После завершения будут показаны верные ответы на все вопросы
                       </p>
                     </div>
                     <Switch
@@ -409,10 +409,9 @@ export default function QuizForm({
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>Удалить вопрос</AlertDialogTitle>
+                            <AlertDialogTitle>Удалить</AlertDialogTitle>
                             <AlertDialogDescription>
-                              Вы уверены, что хотите удалить этот вопрос? Это
-                              действие нельзя отменить.
+                              Вы уверены, что хотите удалить?
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
@@ -451,7 +450,7 @@ export default function QuizForm({
                     <div className="flex items-center gap-1.5">
                       <HelpCircle className="h-3.5 w-3.5 text-muted-foreground" />
                       <Label className="text-xs font-medium">
-                        Пояснение (необязательно)
+                        Пояснение к ответу (по желанию)
                       </Label>
                     </div>
                     <Controller

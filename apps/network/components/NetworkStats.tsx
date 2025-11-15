@@ -17,7 +17,7 @@ export function NetworkStats({ stats }: NetworkStatsProps) {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-muted-foreground mb-1">
-                Всего соединений
+                Всего контактов
               </p>
               <p className="text-2xl font-bold text-foreground">
                 {stats.totalConnections}
@@ -35,7 +35,7 @@ export function NetworkStats({ stats }: NetworkStatsProps) {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-muted-foreground mb-1">
-                Прямые связи
+                Прямые контакты
               </p>
               <p className="text-2xl font-bold text-foreground">
                 {stats.directConnections}
@@ -53,7 +53,7 @@ export function NetworkStats({ stats }: NetworkStatsProps) {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-muted-foreground mb-1">
-                Взаимные связи
+                Взаимные контакты
               </p>
               <p className="text-2xl font-bold text-foreground">
                 {stats.mutualConnections}
@@ -122,7 +122,7 @@ export function NetworkStats({ stats }: NetworkStatsProps) {
 
       <Card className="shadow-sm hover:shadow-md transition-shadow md:col-span-2">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">Распределение по типам</CardTitle>
+          <CardTitle className="text-base">Типы</CardTitle>
         </CardHeader>
         <CardContent className="pb-4">
           <div className="grid grid-cols-2 gap-3">

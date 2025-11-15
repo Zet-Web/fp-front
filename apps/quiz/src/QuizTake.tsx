@@ -91,7 +91,7 @@ export default function QuizTake({ postId }: Props) {
       <div className="flex items-center justify-center min-h-[200px]">
         <div className="text-center space-y-3">
           <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="text-sm text-muted-foreground">Загрузка квиза...</p>
+          <p className="text-sm text-muted-foreground">Загрузка...</p>
         </div>
       </div>
     );
@@ -102,9 +102,9 @@ export default function QuizTake({ postId }: Props) {
       <Card className="shadow-sm">
         <CardContent className="p-6 text-center space-y-3">
           <XCircle className="w-12 h-12 text-red-500 mx-auto" />
-          <h3 className="text-lg font-semibold">Квиз не найден</h3>
+          <h3 className="text-lg font-semibold">Тест не найден</h3>
           <p className="text-sm text-muted-foreground">
-            Запрашиваемый квиз не существует
+            Запрашиваемый тест не существует
           </p>
         </CardContent>
       </Card>
@@ -116,9 +116,9 @@ export default function QuizTake({ postId }: Props) {
       <Card className="shadow-sm">
         <CardContent className="p-6 text-center space-y-3">
           <Clock className="w-12 h-12 text-orange-500 mx-auto" />
-          <h3 className="text-lg font-semibold">Квиз на паузе</h3>
+          <h3 className="text-lg font-semibold">Тест на паузе</h3>
           <p className="text-sm text-muted-foreground">
-            Квиз временно недоступен
+            Тест временно недоступен
           </p>
         </CardContent>
       </Card>
@@ -132,7 +132,7 @@ export default function QuizTake({ postId }: Props) {
           <XCircle className="w-12 h-12 text-red-500 mx-auto" />
           <h3 className="text-lg font-semibold">Требуется авторизация</h3>
           <p className="text-sm text-muted-foreground">
-            Только авторизованные пользователи могут пройти этот квиз
+            Только авторизованные пользователи могут пройти этот тест
           </p>
         </CardContent>
       </Card>
@@ -243,7 +243,7 @@ export default function QuizTake({ postId }: Props) {
               <CheckCircle2 className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
               <p className="text-sm text-muted-foreground">
                 {quiz.anonymous
-                  ? "Анонимное прохождение"
+                  ? "Анонимно"
                   : "Требуется авторизация"}
               </p>
             </div>
@@ -251,7 +251,7 @@ export default function QuizTake({ postId }: Props) {
               <div className="flex items-start gap-2">
                 <CheckCircle2 className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
                 <p className="text-sm text-muted-foreground">
-                  Одна попытка на пользователя
+                  Одна попытка
                 </p>
               </div>
             )}
@@ -297,7 +297,7 @@ export default function QuizTake({ postId }: Props) {
         <Card className="shadow-sm hover:shadow-md transition-shadow overflow-hidden">
           <div className="bg-gradient-to-r from-blue-500/10 via-blue-500/5 to-transparent dark:from-blue-500/20 dark:via-blue-500/10 p-6 text-center border-b">
             <Trophy className="w-12 h-12 mx-auto mb-3 text-blue-500" />
-            <h2 className="text-2xl font-bold mb-1">Квиз завершен!</h2>
+            <h2 className="text-2xl font-bold mb-1">Тест завершен!</h2>
             <p className="text-sm text-muted-foreground">Отличная работа</p>
           </div>
 
@@ -329,13 +329,13 @@ export default function QuizTake({ postId }: Props) {
                   <div className="text-xl font-bold text-green-600">
                     {result?.score}
                   </div>
-                  <div className="text-xs text-muted-foreground">Верных</div>
+                  <div className="text-xs text-muted-foreground">Верно</div>
                 </div>
                 <div className="p-3 rounded-lg bg-accent/50">
                   <div className="text-xl font-bold text-red-600">
                     {result ? result.total - result.score : 0}
                   </div>
-                  <div className="text-xs text-muted-foreground">Неверных</div>
+                  <div className="text-xs text-muted-foreground">Неверно</div>
                 </div>
               </div>
             </div>
@@ -351,10 +351,10 @@ export default function QuizTake({ postId }: Props) {
             <CardHeader className="p-4">
               <div className="flex items-center gap-2">
                 <Award className="w-5 h-5 text-blue-500" />
-                <h3 className="text-lg font-bold">Таблица результатов</h3>
+                <h3 className="text-lg font-bold">Результаты</h3>
               </div>
               <p className="text-xs text-muted-foreground">
-                Лучшие результаты по этому квизу
+                Лучшие результаты
               </p>
             </CardHeader>
             <CardContent className="p-4 pt-0">

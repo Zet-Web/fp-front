@@ -63,10 +63,10 @@ export function NetworkPage() {
       <div className="container mx-auto px-4 py-6 max-w-7xl">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-foreground mb-2">
-            Моя сеть
+            Контакты (Демо режим)
           </h1>
           <p className="text-muted-foreground">
-            Визуализация и управление вашими бизнес-связями
+            Профессиональные связи
           </p>
         </div>
 
@@ -86,7 +86,7 @@ export function NetworkPage() {
               <TabsList className="grid w-full md:w-[400px] grid-cols-2">
                 <TabsTrigger value="graph" className="flex items-center gap-2">
                   <Network className="h-4 w-4" />
-                  <span className="hidden md:inline">Граф</span>
+                  <span className="hidden md:inline">Карта</span>
                 </TabsTrigger>
                 <TabsTrigger value="list" className="flex items-center gap-2">
                   <List className="h-4 w-4" />
