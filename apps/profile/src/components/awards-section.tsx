@@ -340,7 +340,7 @@ export function AwardsSection({
               <h3 className="font-semibold text-lg">Добавить</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="award-title">Award Title</Label>
+                  <Label htmlFor="award-title">Название</Label>
                   <Input
                     id="award-title"
                     value={newAward.title}
@@ -368,7 +368,7 @@ export function AwardsSection({
                   />
                 </div>
                 <div>
-                  <Label htmlFor="award-date">Date</Label>
+                  <Label htmlFor="award-date">Дата</Label>
                   <Input
                     id="award-date"
                     value={newAward.date}
