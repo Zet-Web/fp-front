@@ -46,7 +46,7 @@ function PostSkeleton() {
 export function Feed({
   filters,
   filterByUsername,
-  emptyMessage = "No posts to display",
+  emptyMessage = "Нет публикаций",
   emptyAction,
   itemsPerPage = 10,
 }: FeedProps) {
@@ -170,7 +170,7 @@ export function Feed({
     try {
       await navigator.clipboard.writeText(url);
       toast({
-        title: "Link copied",
+        title: "Ссылка скопирована",
       });
     } catch {
       toast({
@@ -189,7 +189,7 @@ export function Feed({
     try {
       await FPApi.axios.delete(`/post/delete/${postId}`);
       toast({
-        title: "Post deleted!",
+        title: "Публикация удалена",
       });
       setPosts((prev) => prev.filter((p) => p.id !== postId));
     } catch (error) {
