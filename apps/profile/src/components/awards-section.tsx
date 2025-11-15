@@ -129,7 +129,7 @@ export function AwardsSection({
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Award className="w-5 h-5" />
-            Awards and Achievements
+            Награды и достижения
           </div>
           {isEditing && (
             <Button
@@ -138,7 +138,7 @@ export function AwardsSection({
               onClick={() => setShowAddAwardForm(true)}
             >
               <Plus className="w-4 h-4 mr-1" />
-              Add
+              Добавить
             </Button>
           )}
         </CardTitle>
@@ -147,7 +147,7 @@ export function AwardsSection({
         <div className="space-y-6">
           {awards.length === 0 && !isEditing && (
             <p className="text-muted-foreground italic">
-              No awards or achievements added yet.
+              Нет данных.
             </p>
           )}
 
@@ -197,7 +197,7 @@ export function AwardsSection({
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="edit-award-title">Award Title</Label>
+                      <Label htmlFor="edit-award-title">Название</Label>
                       <Input
                         id="edit-award-title"
                         value={editForm.title}
@@ -207,12 +207,12 @@ export function AwardsSection({
                             title: e.target.value,
                           }))
                         }
-                        placeholder="Best Developer Award"
+                        placeholder="Название награды или достижения..."
                       />
                     </div>
                     <div>
                       <Label htmlFor="edit-award-issuer">
-                        Issuer/Organization
+                        Кем выдано
                       </Label>
                       <Input
                         id="edit-award-issuer"
@@ -223,11 +223,11 @@ export function AwardsSection({
                             issuer: e.target.value,
                           }))
                         }
-                        placeholder="Tech Company Inc."
+                        placeholder="Название организации"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="edit-award-date">Date</Label>
+                      <Label htmlFor="edit-award-date">Дата</Label>
                       <Input
                         id="edit-award-date"
                         value={editForm.date}
@@ -237,12 +237,12 @@ export function AwardsSection({
                             date: e.target.value,
                           }))
                         }
-                        placeholder="2024"
+                        placeholder="2025"
                       />
                     </div>
                   </div>
                   <div>
-                    <Label htmlFor="edit-award-description">Description</Label>
+                    <Label htmlFor="edit-award-description">Описание</Label>
                     <Textarea
                       id="edit-award-description"
                       value={editForm.description}
@@ -252,7 +252,7 @@ export function AwardsSection({
                           description: e.target.value,
                         }))
                       }
-                      placeholder="Describe the achievement..."
+                      placeholder="Описание заслуг или достижений..."
                       rows={2}
                     />
                   </div>
@@ -306,19 +306,18 @@ export function AwardsSection({
                             <AlertDialogContent>
                               <AlertDialogHeader>
                                 <AlertDialogTitle>
-                                  Delete Award
+                                  Удалить
                                 </AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  Are you sure you want to delete this award?
-                                  This action cannot be undone.
+                                  Вы уверены, что хотите удалить?
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogCancel>Отмена</AlertDialogCancel>
                                 <AlertDialogAction
                                   onClick={() => removeAward(award.id)}
                                 >
-                                  Delete
+                                  Удалить
                                 </AlertDialogAction>
                               </AlertDialogFooter>
                             </AlertDialogContent>
@@ -338,7 +337,7 @@ export function AwardsSection({
 
           {isEditing && showAddAwardForm && (
             <div className="border-l-2 border-dashed border-primary/20 pl-4 space-y-4">
-              <h3 className="font-semibold text-lg">Add</h3>
+              <h3 className="font-semibold text-lg">Добавить</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="award-title">Award Title</Label>
