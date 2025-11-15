@@ -141,9 +141,9 @@ export function AlreadyAttemptedView({
         <CardContent className="pt-6 text-center space-y-6">
           <CheckCircle2 className="w-20 h-20 text-blue-500 mx-auto" />
           <div>
-            <h2 className="text-2xl font-bold mb-2">Квиз уже пройден</h2>
+            <h2 className="text-2xl font-bold mb-2">Конкурс уже пройден</h2>
             <p className="text-muted-foreground text-lg">
-              Вы уже проходили этот квиз ранее
+              Вы уже проходили этот конкурс ранее
             </p>
           </div>
         </CardContent>
@@ -154,16 +154,16 @@ export function AlreadyAttemptedView({
           <CardHeader>
             <div className="flex items-center gap-2">
               <Award className="w-6 h-6 text-blue-500" />
-              <h2 className="text-2xl font-bold">Таблица результатов</h2>
+              <h2 className="text-2xl font-bold">Результаты</h2>
             </div>
             <p className="text-sm text-muted-foreground">
-              Лучшие результаты по этому квизу
+              Лучшие результаты
             </p>
           </CardHeader>
           <CardContent>
             <div className="mb-4 flex items-center justify-between gap-4">
               <Input
-                placeholder="Поиск по имени..."
+                placeholder="Поиск..."
                 value={searchInput}
                 onChange={(e) => onSearchChange(e.target.value)}
                 className="max-w-md"
@@ -179,7 +179,7 @@ export function AlreadyAttemptedView({
               <div className="py-8 text-center">
                 <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
                 <p className="text-muted-foreground mt-4">
-                  Загрузка результатов...
+                  Загрузка...
                 </p>
               </div>
             ) : resultsTable.length > 0 ? (
