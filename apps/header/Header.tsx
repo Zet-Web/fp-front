@@ -57,7 +57,7 @@ export function Header() {
             onClick={handleBack}
           >
             <ChevronLeft className="h-5 w-5" />
-            <span className="sr-only">Go back</span>
+            <span className="sr-only">Вернуться</span>
           </Button>
         )}
         <h1 className="text-lg font-semibold text-foreground truncate flex-1">
