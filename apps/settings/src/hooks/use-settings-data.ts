@@ -211,17 +211,34 @@ export function useSettingsData(session: Session | null) {
     }
   }
 
-  const updateSettings = (updatedData: Partial<UserSettings>) => {
-    if (settingsState.settings) {
+  const updateSettings = async (updatedData: Partial<UserSettings>) => {
+    if (settingsState.settings && session?.user) {
       const newSettings = { ...settingsState.settings, ...updatedData }
-      
-      // Update local state
-      setSettingsState(prev => ({
-        ...prev,
-        settings: newSettings,
-        hasUnsavedChanges: true
-      }))
+
+      try {
+        const { error } = await supabase
+          .rpc('settings_update_data', {
+            p_timezone: newSettings.timezone,
+            p_theme_mode: newSettings.theme_mode
+          })
+
+        if (error) {
+          throw new Error(error.message || 'Failed to save settings')
+        }
+
+        setSettingsState(prev => ({
+          ...prev,
+          settings: newSettings,
+          hasUnsavedChanges: false
+        }))
+
+        return { success: true }
+      } catch (error) {
+        console.error('Failed to save settings:', error)
+        return { success: false, error }
+      }
     }
+    return { success: false, error: new Error('No settings or session') }
   }
 
   const saveChanges = async (session: Session | null) => {

@@ -39,6 +39,7 @@ import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useAuthContext } from "@/components/auth-provider";
+import { toast } from "sonner";
 
 interface UserSettings {
   timezone: string;
@@ -48,8 +49,7 @@ interface UserSettings {
 interface MainSettingsProps {
   settings: UserSettings;
   allTimezones: TimezoneOption[];
-  onUpdate: (data: Partial<UserSettings>) => void;
-  hasUnsavedChanges: boolean;
+  onUpdate: (data: Partial<UserSettings>) => Promise<{ success: boolean; error?: any }>;
 }
 
 interface TimezoneOption {
@@ -113,21 +113,6 @@ export function SettingsPage() {
     );
   }
 
-  const handleSave = async () => {
-    try {
-      await saveChanges(session);
-    } catch (error) {
-      console.error("Failed to save settings:", error);
-    }
-  };
-
-  const handleReset = async () => {
-    try {
-      await resetChanges(session);
-    } catch (error) {
-      console.error("Failed to reset settings:", error);
-    }
-  };
 
   return (
     <div className="container mx-auto px-6 py-6 max-w-4xl">
@@ -142,17 +127,7 @@ export function SettingsPage() {
         settings={settings}
         allTimezones={allTimezones}
         onUpdate={updateSettings}
-        hasUnsavedChanges={hasUnsavedChanges}
       />
-
-      {hasUnsavedChanges && (
-        <div className="mt-6 flex gap-4">
-          <Button onClick={handleSave}>Сохранить</Button>
-          <Button variant="outline" onClick={handleReset}>
-            Отмена
-          </Button>
-        </div>
-      )}
     </div>
   );
 }
@@ -161,7 +136,6 @@ export function MainSettings({
   settings,
   allTimezones,
   onUpdate,
-  hasUnsavedChanges,
 }: MainSettingsProps) {
   const { setTheme } = useTheme();
   const navigate = useNavigate();
@@ -183,14 +157,26 @@ export function MainSettings({
     );
   }, [allTimezones, searchTerm]);
 
-  const handleTimezoneChange = (timezone: string) => {
-    onUpdate({ timezone });
+  const handleTimezoneChange = async (timezone: string) => {
+    const result = await onUpdate({ timezone });
     setTimezoneOpen(false);
+
+    if (result.success) {
+      toast.success('Часовой пояс сохранен');
+    } else {
+      toast.error('Не удалось сохранить часовой пояс');
+    }
   };
 
-  const handleThemeChange = (theme: "light" | "dark" | "system") => {
-    onUpdate({ theme_mode: theme });
+  const handleThemeChange = async (theme: "light" | "dark" | "system") => {
+    const result = await onUpdate({ theme_mode: theme });
     setTheme(theme);
+
+    if (result.success) {
+      toast.success('Тема сохранена');
+    } else {
+      toast.error('Не удалось сохранить тему');
+    }
   };
 
   const handleExit = async () => {
@@ -323,9 +309,7 @@ export function MainSettings({
                   <AlertDialogHeader>
                     <AlertDialogTitle>Вы уверены, что хотите выйти из аккаунта?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      {hasUnsavedChanges
-                        ? "You have unsaved changes. Are you sure you want to exit without saving?"
-                        : "Are you sure you want to exit the settings?"}
+                      Вы действительно хотите выйти из аккаунта?
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
@@ -344,13 +328,6 @@ export function MainSettings({
         </CardContent>
       </Card>
 
-      {hasUnsavedChanges && (
-        <div className="bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
-          <p className="text-sm text-amber-800 dark:text-amber-200">
-            Сохраните новые настройки
-          </p>
-        </div>
-      )}
     </div>
   );
 }
