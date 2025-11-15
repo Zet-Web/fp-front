@@ -141,9 +141,9 @@ export function AlreadyAttemptedView({
         <CardContent className="pt-6 text-center space-y-6">
           <CheckCircle2 className="w-20 h-20 text-blue-500 mx-auto" />
           <div>
-            <h2 className="text-2xl font-bold mb-2">Конкурс уже пройден</h2>
+            <h2 className="text-2xl font-bold mb-2">Тест уже пройден</h2>
             <p className="text-muted-foreground text-lg">
-              Вы уже проходили этот конкурс ранее
+              Вы уже проходили этот тест ранее
             </p>
           </div>
         </CardContent>
