@@ -52,7 +52,7 @@ export function PeriodSelector({
             htmlFor="start-month"
             className="text-xs text-muted-foreground"
           >
-            Start Month
+            Месяц начала
           </Label>
           <Select
             value={value.start_month}
@@ -62,7 +62,7 @@ export function PeriodSelector({
               <SelectValue placeholder="Month" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="not-set">Not set</SelectItem>
+              <SelectItem value="not-set">Не установлен</SelectItem>
               {MONTHS.map((month) => (
                 <SelectItem key={month.value} value={month.value}>
                   {month.label}
@@ -74,7 +74,7 @@ export function PeriodSelector({
 
         <div>
           <Label htmlFor="start-year" className="text-xs text-muted-foreground">
-            Start Year
+            Год начала
           </Label>
           <Select
             value={value.start_year}
@@ -84,7 +84,7 @@ export function PeriodSelector({
               <SelectValue placeholder="Year" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="not-set">Not set</SelectItem>
+              <SelectItem value="not-set">Не установлен</SelectItem>
               {years.map((year) => (
                 <SelectItem key={year} value={year}>
                   {year}
@@ -96,7 +96,7 @@ export function PeriodSelector({
 
         <div>
           <Label htmlFor="end-month" className="text-xs text-muted-foreground">
-            End Month
+            Месяц завершения
           </Label>
           <Select
             value={value.end_month}
@@ -107,7 +107,7 @@ export function PeriodSelector({
               <SelectValue placeholder="Month" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="not-set">Not set</SelectItem>
+              <SelectItem value="not-set">Не установлен</SelectItem>
               {MONTHS.map((month) => (
                 <SelectItem key={month.value} value={month.value}>
                   {month.label}
@@ -119,7 +119,7 @@ export function PeriodSelector({
 
         <div>
           <Label htmlFor="end-year" className="text-xs text-muted-foreground">
-            End Year
+            Год завершения
           </Label>
           <Select
             value={value.end_year}
@@ -130,7 +130,7 @@ export function PeriodSelector({
               <SelectValue placeholder="Year" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="not-set">Not set</SelectItem>
+              <SelectItem value="not-set">Не установлен</SelectItem>
               {years.map((year) => (
                 <SelectItem key={year} value={year}>
                   {year}
