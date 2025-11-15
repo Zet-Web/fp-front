@@ -94,20 +94,20 @@ export function getCitiesByCountry(
 }
 
 export const POST_TYPE_LABELS: Record<PostType, string> = {
-  [PostType.ARTICLE]: "Articles",
-  [PostType.EVENT]: "Events",
-  [PostType.VACANCY]: "Vacancies",
-  [PostType.QUIZ]: "Quiz",
+  [PostType.ARTICLE]: "Статьи",
+  [PostType.EVENT]: "Мероприятия",
+  [PostType.VACANCY]: "Вакансии",
+  [PostType.QUIZ]: "Тесты",
 };
 
 export function getEmptyStateMessage(filters: FeedFilters): string {
   const messages: Record<FeedView, string> = {
     featured:
-      "No featured posts available. Check back later for curated content!",
-    all: "No posts to display yet.",
+      "Нет рекомендованных публикаций. Попробуйте позже",
+    all: "Нет публикаций",
     following:
-      "No posts from people you follow. Start following users to see their posts here!",
-    saved: "No saved posts yet. Bookmark posts you want to read later!",
+      "Нет публикаций у людей, на которых вы подписаны",
+    saved: "Нет сохраненных публикаций. Используйте иконку для сохранения публикации",
   };
 
   let message = messages[filters.view];
