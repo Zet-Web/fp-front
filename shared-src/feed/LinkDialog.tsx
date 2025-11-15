@@ -61,7 +61,7 @@ export function LinkDialog({
         <DialogHeader>
           <DialogTitle>{initialUrl ? "Edit Link" : "Insert Link"}</DialogTitle>
           <DialogDescription>
-            Enter the URL you want to link to
+            Вставьте ссылку
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
@@ -81,16 +81,16 @@ export function LinkDialog({
           <div>
             {initialUrl && onRemove && (
               <Button variant="destructive" onClick={handleRemove}>
-                Remove Link
+                Удалить
               </Button>
             )}
           </div>
           <div className="flex gap-2">
             <Button variant="outline" onClick={onClose}>
-              Cancel
+              Отмена
             </Button>
             <Button onClick={handleSave} disabled={!url.trim()}>
-              {initialUrl ? "Update" : "Insert"}
+              {initialUrl ? "Обновить" : "Вставить"}
             </Button>
           </div>
         </DialogFooter>
