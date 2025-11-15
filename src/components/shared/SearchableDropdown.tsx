@@ -149,7 +149,7 @@ export function SearchableDropdown({
               )}
               {!isLoading && searchQuery.length < minSearchLength && (
                 <CommandEmpty>
-                  Type at least {minSearchLength} characters to search
+                  Введите {minSearchLength} символов
                 </CommandEmpty>
               )}
               {!isLoading &&
