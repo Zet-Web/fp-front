@@ -324,7 +324,7 @@ export function HeroSection({
                       {isSaving && (
                         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                       )}
-                      {isSaving ? "Saving..." : "Save Changes"}
+                      {isSaving ? "Сохраняется..." : "Сохранить"}
                     </Button>
                   </>
                 ) : (
@@ -333,7 +333,7 @@ export function HeroSection({
                     className="px-6 py-2 rounded-full font-medium transition-colors"
                     onClick={onEditToggle}
                   >
-                    Edit Profile
+                    Ред.
                   </Button>
                 )}
               </>
@@ -347,7 +347,7 @@ export function HeroSection({
                   }}
                 >
                   <MessageCircle className="w-4 h-4 mr-2" />
-                  Message
+                  Чат
                 </Button>
                 <Button
                   onClick={() => setIsFollowing(!isFollowing)}
