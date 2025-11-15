@@ -23,7 +23,7 @@ export function AdditionalInfoSection({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <FileText className="w-5 h-5" />
-          Additional Information
+          Дополнительно
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -39,7 +39,7 @@ export function AdditionalInfoSection({
           <p className="text-foreground whitespace-pre-wrap">
             {user.additional_info || (
               <span className="text-muted-foreground italic text-sm">
-                No additional information available
+                Дополнительной информации нет
               </span>
             )}
           </p>
