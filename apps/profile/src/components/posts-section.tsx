@@ -39,12 +39,12 @@ export function PostsSection({ user, isOwnProfile }: PostsSectionProps) {
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={PostStatusFilter.all}>All</SelectItem>
+            <SelectItem value={PostStatusFilter.all}>Все</SelectItem>
             <SelectItem value={PostStatusFilter.published}>
-              Published
+              Опубликовано
             </SelectItem>
-            <SelectItem value={PostStatusFilter.draft}>Drafts</SelectItem>
-            <SelectItem value={PostStatusFilter.archived}>Archived</SelectItem>
+            <SelectItem value={PostStatusFilter.draft}>Черновики</SelectItem>
+            <SelectItem value={PostStatusFilter.archived}>Архивировано</SelectItem>
           </SelectContent>
         </Select>
       )}
@@ -54,13 +54,13 @@ export function PostsSection({ user, isOwnProfile }: PostsSectionProps) {
         filterByUsername={user.username}
         emptyMessage={
           isOwnProfile
-            ? "You haven't posted anything yet."
-            : "No posts to show."
+            ? "Публикаций нет"
+            : "Публикаций нет"
         }
         emptyAction={
           isOwnProfile
             ? {
-                label: "Create your first post",
+                label: "Создайте публикацию",
                 onClick: () => console.log("Create post clicked"),
               }
             : undefined
