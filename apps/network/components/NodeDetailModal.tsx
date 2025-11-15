@@ -26,7 +26,7 @@ export function NodeDetailModal({ node, open, onOpenChange }: NodeDetailModalPro
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle className="sr-only">Информация о соединении</DialogTitle>
+          <DialogTitle className="sr-only">Информация</DialogTitle>
         </DialogHeader>
 
         <div className="flex flex-col items-center text-center py-4">
@@ -107,7 +107,7 @@ export function NodeDetailModal({ node, open, onOpenChange }: NodeDetailModalPro
             {node.level > 1 && (
               <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
                 <Users className="h-4 w-4" />
-                <span>Соединение {node.level} уровня</span>
+                <span>Контакт {node.level} уровня</span>
               </div>
             )}
           </div>
