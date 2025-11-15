@@ -139,7 +139,7 @@ export function EducationSection({
 
   return (
     <SectionCard
-      title="Education & Certifications"
+      title="Образование и сертификации"
       icon={GraduationCap}
       isEditing={isEditing}
       onAddClick={() => setShowAddEducationForm(true)}
@@ -176,9 +176,9 @@ export function EducationSection({
                         degree_id: Number(value),
                       }))
                     }
-                    label="Degree"
-                    placeholder="Select degree..."
-                    searchPlaceholder="Search degrees..."
+                    label="Степень"
+                    placeholder="Выбрать..."
+                    searchPlaceholder="Поиск..."
                     orderBy="name"
                   />
 
@@ -196,9 +196,9 @@ export function EducationSection({
                         university_id: Number(value),
                       }))
                     }
-                    label="School/Institution"
-                    placeholder="Select university..."
-                    searchPlaceholder="Type at least 3 characters..."
+                    label="ВУЗы"
+                    placeholder="Выбрать..."
+                    searchPlaceholder="Введите 3 символа..."
                   />
                 </div>
 
@@ -211,11 +211,11 @@ export function EducationSection({
                     is_current: Boolean(editForm.is_current),
                   }}
                   onChange={(period) => handlePeriodChange(period, false)}
-                  currentLabel="I currently study here"
+                  currentLabel="По настоящее время"
                 />
 
                 <div>
-                  <Label htmlFor="edit-edu-description">Description</Label>
+                  <Label htmlFor="edit-edu-description">Описание</Label>
                   <Textarea
                     id="edit-edu-description"
                     value={editForm.description}
@@ -225,7 +225,7 @@ export function EducationSection({
                         description: e.target.value,
                       }))
                     }
-                    placeholder="Additional details about your education..."
+                    placeholder="Дополнительная информация..."
                     rows={2}
                   />
                 </div>
@@ -255,8 +255,8 @@ export function EducationSection({
                           <Edit className="w-4 h-4" />
                         </Button>
                         <DeleteConfirmationDialog
-                          title="Delete Education"
-                          description="Are you sure you want to delete this education entry? This action cannot be undone."
+                          title="Удалить"
+                          description="Вы уверены, что хотите удалить?"
                           onConfirm={() => removeEducation(edu.id)}
                           triggerButton={
                             <Button
@@ -283,7 +283,7 @@ export function EducationSection({
 
         {isEditing && showAddEducationForm && (
           <div className="border-l-2 border-dashed border-primary/20 pl-4 space-y-4">
-            <h3 className="font-semibold text-lg">Add</h3>
+            <h3 className="font-semibold text-lg">Добавить</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <DatabaseDropdown
                 table="list_study_field"
@@ -297,9 +297,9 @@ export function EducationSection({
                     degree_id: Number(value),
                   }))
                 }
-                label="Faculty"
-                placeholder="Select degree..."
-                searchPlaceholder="Search degrees..."
+                label="Факультет (направление)"
+                placeholder="Выбрать..."
+                searchPlaceholder="Поиск..."
                 orderBy="name"
               />
 
@@ -317,9 +317,9 @@ export function EducationSection({
                     university_id: Number(value),
                   }))
                 }
-                label="University"
-                placeholder="Select university..."
-                searchPlaceholder="Type at least 3 characters..."
+                label="ВУЗы"
+                placeholder="Выбрать..."
+                searchPlaceholder="Введите 3 символа..."
               />
             </div>
 
@@ -332,11 +332,11 @@ export function EducationSection({
                 is_current: Boolean(editForm.is_current),
               }}
               onChange={(period) => handlePeriodChange(period, true)}
-              currentLabel="I currently study here"
+              currentLabel="По настоящее время"
             />
 
             <div>
-              <Label htmlFor="edu-description">Description</Label>
+              <Label htmlFor="edu-description">Описание</Label>
               <Textarea
                 id="edu-description"
                 value={newEducation.description}
@@ -346,17 +346,17 @@ export function EducationSection({
                     description: e.target.value,
                   }))
                 }
-                placeholder="Additional details about your education..."
+                placeholder="Дополнительная информация..."
                 rows={2}
               />
             </div>
             <div className="flex gap-2">
-              <Button onClick={addEducation}>Add</Button>
+              <Button onClick={addEducation}>Добавить</Button>
               <Button
                 variant="outline"
                 onClick={() => setShowAddEducationForm(false)}
               >
-                Cancel
+                Отмена
               </Button>
             </div>
           </div>
