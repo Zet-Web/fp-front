@@ -103,7 +103,7 @@ export function YurServicePage() {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search resources..."
+              placeholder="Поиск..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-9"
@@ -123,10 +123,10 @@ export function YurServicePage() {
 
         <div className="mt-3 text-sm text-muted-foreground">
           {isLoading ? (
-            "Loading resources..."
+            "Поиск..."
           ) : (
             <>
-              Showing {searchFilteredResources.length} of {resources.length} resources
+              Показано {searchFilteredResources.length} из {resources.length} сервисов
               {selectedRegionId !== "all" && " (region filter applies to Courts only)"}
             </>
           )}
@@ -135,19 +135,19 @@ export function YurServicePage() {
 
       {isLoading ? (
         <Card className="p-12 text-center">
-          <p className="text-muted-foreground">Loading resources...</p>
+          <p className="text-muted-foreground">Загрузка...</p>
         </Card>
       ) : searchFilteredResources.length === 0 ? (
         <Card className="p-12 text-center">
           <p className="text-muted-foreground">
-            No resources found matching your criteria
+            Не найдено
           </p>
         </Card>
       ) : (
         <div className="space-y-8">
           {savedResources.length > 0 && user && (
             <section>
-              <h2 className="text-xl font-semibold mb-4">Saved</h2>
+              <h2 className="text-xl font-semibold mb-4">Сохранено</h2>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {paginatedSavedResources.map((resource) => {
