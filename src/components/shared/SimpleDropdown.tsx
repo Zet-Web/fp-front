@@ -22,7 +22,7 @@ export function SimpleDropdown({
   value,
   onChange,
   options,
-  placeholder = "Select...",
+  placeholder = "Выберите...",
   label,
   labelClassName = "",
   disabled = false,
