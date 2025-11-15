@@ -65,11 +65,11 @@ export function FeedLocationDropdown({
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="text-xs h-8">
-                  Add City
+                  Добавить город
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuLabel>Cities in {country}</DropdownMenuLabel>
+                <DropdownMenuLabel>Города в {country}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuRadioGroup value={city || ''} onValueChange={handleCitySelect}>
                   {cities.map((cityName) => (
@@ -87,11 +87,11 @@ export function FeedLocationDropdown({
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="sm" className="text-xs h-8 w-full md:w-auto">
               <MapPin className="w-3 h-3 mr-1" />
-              Location
+              Локация
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuLabel>Select Country</DropdownMenuLabel>
+            <DropdownMenuLabel>Выбрать страну</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuRadioGroup value={country || ''} onValueChange={handleCountrySelect}>
               {countries.map((countryName) => (
