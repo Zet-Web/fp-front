@@ -5,7 +5,7 @@ export function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <div className="flex items-center space-x-2 text-sm text-muted-foreground">
             <div className="h-4 w-4 rounded bg-blue-500"></div>
-            <span>ФОнд Права</span>
+            <span>Фонд Права</span>
             <span>•</span>
             <span>Деловая сеть для юридического сообщества</span>
           </div>
