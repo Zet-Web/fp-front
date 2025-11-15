@@ -11,6 +11,7 @@ import { useAuthContext } from "@/components/auth-provider";
 import { FeedFilters } from "./feed-filters";
 import { FPApi } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
+import { LogIn } from "lucide-react";
 
 interface FeedProps {
   filters: FeedFilters | null;
@@ -52,7 +53,7 @@ export function Feed({
 }: FeedProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { profile } = useAuthContext();
+  const { profile, isAuthenticated } = useAuthContext();
 
   const [posts, setPosts] = useState<PostWithAuthor[]>([]);
   const [page, setPage] = useState(1);
@@ -65,6 +66,9 @@ export function Feed({
 
   const currentUserId = profile?.id || "";
 
+  const requiresAuth = filters?.view === "following" || filters?.view === "saved";
+  const shouldShowAuthPrompt = requiresAuth && !isAuthenticated;
+
   useEffect(() => {
     setPosts([]);
     setPage(1);
@@ -74,6 +78,10 @@ export function Feed({
 
   useEffect(() => {
     if (!hasMore) return;
+    if (shouldShowAuthPrompt) {
+      setIsInitialLoading(false);
+      return;
+    }
 
     const controller = new AbortController();
 
@@ -133,7 +141,7 @@ export function Feed({
       controller.abort();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, filters, itemsPerPage, hasMore]);
+  }, [page, filters, itemsPerPage, hasMore, shouldShowAuthPrompt]);
 
   const attachObserver = useCallback(
     (node: HTMLDivElement | null) => {
@@ -199,6 +207,37 @@ export function Feed({
       });
     }
   };
+
+  if (shouldShowAuthPrompt) {
+    return (
+      <Card className="shadow-md">
+        <CardContent className="p-12 text-center space-y-4">
+          <div className="flex justify-center">
+            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+              <LogIn className="w-8 h-8 text-primary" />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-lg font-semibold">
+              {filters?.view === "following"
+                ? "Посты контактов доступны после авторизации"
+                : "Сохраненные посты доступны после авторизации"}
+            </h3>
+            <p className="text-muted-foreground text-sm">
+              Войдите в систему, чтобы просматривать{" "}
+              {filters?.view === "following"
+                ? "посты ваших контактов"
+                : "сохраненные публикации"}
+            </p>
+          </div>
+          <Button onClick={() => navigate("/auth")} className="mt-4">
+            <LogIn className="w-4 h-4 mr-2" />
+            Войти
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
 
   if (isInitialLoading && posts.length === 0) {
     return (
