@@ -46,18 +46,18 @@ export function BirthdaySection({
   const [showAge, setShowAge] = useState<boolean>(true);
 
   const months = [
-    { value: "01", label: "January" },
-    { value: "02", label: "February" },
-    { value: "03", label: "March" },
-    { value: "04", label: "April" },
-    { value: "05", label: "May" },
-    { value: "06", label: "June" },
-    { value: "07", label: "July" },
-    { value: "08", label: "August" },
-    { value: "09", label: "September" },
-    { value: "10", label: "October" },
-    { value: "11", label: "November" },
-    { value: "12", label: "December" },
+    { value: "01", label: "Январь" },
+    { value: "02", label: "Февраль" },
+    { value: "03", label: "Март" },
+    { value: "04", label: "Апрель" },
+    { value: "05", label: "Май" },
+    { value: "06", label: "Июнь" },
+    { value: "07", label: "Июль" },
+    { value: "08", label: "Август" },
+    { value: "09", label: "Сентбярь" },
+    { value: "10", label: "Октябрь" },
+    { value: "11", label: "Ноябрь" },
+    { value: "12", label: "Декабрь" },
   ];
 
   const getDaysInMonth = (month: string, year: string) => {
@@ -301,7 +301,7 @@ export function BirthdaySection({
     if (!displayValue) {
       return (
         <p className="text-muted-foreground italic text-sm">
-          No birthday added
+          День рождения не добавлен
         </p>
       );
     }
