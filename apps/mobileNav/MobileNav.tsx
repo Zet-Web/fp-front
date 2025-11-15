@@ -38,13 +38,13 @@ export function MobileNav() {
                 className="flex flex-col items-center justify-center h-12 w-12 p-1"
               >
                 <Menu className="h-5 w-5" />
-                <span className="text-xs mt-1">Menu</span>
+                <span className="text-xs mt-1">Меню</span>
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-80">
-              <SheetHeader>
+              {/* <SheetHeader>
                 <SheetTitle>Navigation</SheetTitle>
-              </SheetHeader>
+              </SheetHeader> */}
               <div className="mt-6 space-y-2">
                 {desktopNavigationItems.map((item) => {
                   const itemPath = typeof item.path === 'function' 
