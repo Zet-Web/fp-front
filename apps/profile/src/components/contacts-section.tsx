@@ -205,7 +205,7 @@ export function ContactsSection({
     if (contactEntries.length === 0) {
       return (
         <p className="text-muted-foreground italic text-sm">
-          No contact information available
+          Нет данных
         </p>
       );
     }
@@ -331,16 +331,15 @@ export function ContactsSection({
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Delete Contact</AlertDialogTitle>
+                      <AlertDialogTitle>Удалить</AlertDialogTitle>
                       <AlertDialogDescription>
-                        Are you sure you want to delete this contact entry? This
-                        action cannot be undone.
+                        Вы уверены, что хотите удалить?
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogCancel>Отмена</AlertDialogCancel>
                       <AlertDialogAction onClick={() => removeEntry(index)}>
-                        Delete
+                        Удалить
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
@@ -349,7 +348,7 @@ export function ContactsSection({
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor={`type-${entry.id}`}>Type</Label>
+                  <Label htmlFor={`type-${entry.id}`}>Тип</Label>
                   <Select
                     value={entry.type}
                     onValueChange={(value) =>
@@ -391,7 +390,7 @@ export function ContactsSection({
               </div>
 
               <div>
-                <Label htmlFor={`label-${entry.id}`}>Label (Optional)</Label>
+                <Label htmlFor={`label-${entry.id}`}>Название (по желанию)</Label>
                 <Input
                   id={`label-${entry.id}`}
                   value={entry.label || ""}
@@ -399,7 +398,7 @@ export function ContactsSection({
                     handleEntryChange(index, "label", e.target.value)
                   }
                   onBlur={() => handleBlurEntry(index)}
-                  placeholder="Custom label"
+                  placeholder="Название контакта"
                 />
               </div>
             </div>
@@ -408,11 +407,11 @@ export function ContactsSection({
 
         {showAddForm && (
           <div className="border-2 border-dashed border-primary/20 rounded-lg p-4 space-y-4">
-            <h4 className="font-medium">Add</h4>
+            <h4 className="font-medium">Добавить</h4>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="new-type">Type</Label>
+                <Label htmlFor="new-type">Тип</Label>
                 <Select
                   value={newEntry.type}
                   onValueChange={(value) => handleNewEntryChange("type", value)}
@@ -454,21 +453,21 @@ export function ContactsSection({
             </div>
 
             <div>
-              <Label htmlFor="new-label">Label (Optional)</Label>
+              <Label htmlFor="new-label">Название (по желанию)</Label>
               <Input
                 id="new-label"
                 value={newEntry.label || ""}
                 onChange={(e) => handleNewEntryChange("label", e.target.value)}
-                placeholder="Custom label"
+                placeholder="Название контакта"
               />
             </div>
 
             <div className="flex gap-2">
               <Button onClick={addEntry} disabled={!newEntry.value?.trim()}>
-                Add
+                Добавить
               </Button>
               <Button variant="outline" onClick={() => setShowAddForm(false)}>
-                Cancel
+                Отмена
               </Button>
             </div>
           </div>
@@ -481,7 +480,7 @@ export function ContactsSection({
     <Card className="hover:shadow-lg transition-shadow duration-300">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
-          <div className="flex items-center gap-2">Contacts</div>
+          <div className="flex items-center gap-2">Контакты</div>
           {isEditing && !showAddForm && (
             <Button
               size="sm"
@@ -489,7 +488,7 @@ export function ContactsSection({
               onClick={() => setShowAddForm(true)}
             >
               <Plus className="w-4 h-4 mr-1" />
-              Add
+              Добавить
             </Button>
           )}
         </CardTitle>
