@@ -3,10 +3,10 @@ apps/404
 apps/auth
 apps/chats
 apps/header
-# apps/home
+apps/home
 apps/mobileNav
 apps/navigation
-apps/profile
+# apps/profile
 apps/post
 apps/settings
 apps/yurservice
