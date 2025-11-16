@@ -372,8 +372,8 @@ export function EditablePostCard({
                               <Upload className="w-4 h-4" />
                             )}
                             {isUploadingCover
-                              ? "Uploading..."
-                              : "Upload Cover Image"}
+                              ? "Загрузка..."
+                              : "Загрузить изображение"}
                           </span>
                         </Button>
                       </label>
