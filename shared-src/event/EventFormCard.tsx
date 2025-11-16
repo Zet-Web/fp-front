@@ -90,15 +90,15 @@ export function EventFormCard({ eventData, onChange, errors }: EventFormCardProp
   return (
     <Card className="shadow-md">
       <CardHeader>
-        <CardTitle>Event Details</CardTitle>
-        <CardDescription>Configure your event settings</CardDescription>
+        <CardTitle>Мероприятие</CardTitle>
+        <CardDescription>Настройки и детали</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
     <div className="space-y-2">
       <Label className="flex items-center gap-2">
         <Calendar className="w-4 h-4" />
-        Category *
+        Категория *
       </Label>
       <Select value={eventData.category} onValueChange={handleCategoryChange}>
         <SelectTrigger className={displayErrors.category ? 'border-destructive' : ''}>
@@ -160,7 +160,7 @@ export function EventFormCard({ eventData, onChange, errors }: EventFormCardProp
             <div className="space-y-2">
               <Label htmlFor="city" className="flex items-center gap-2">
                 <MapPin className="w-4 h-4" />
-                City *
+                Город *
               </Label>
               <EventCitySelector
                 value={eventData.location?.city || ''}
@@ -170,7 +170,7 @@ export function EventFormCard({ eventData, onChange, errors }: EventFormCardProp
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="address">Address</Label>
+              <Label htmlFor="address">Адрес</Label>
               <Input
                 id="address"
                 placeholder="Enter event address"
@@ -189,7 +189,7 @@ export function EventFormCard({ eventData, onChange, errors }: EventFormCardProp
           <div className="space-y-2">
             <Label htmlFor="startDate" className="flex items-center gap-2">
               <Calendar className="w-4 h-4" />
-              Start Date *
+              Дата начала *
             </Label>
             <Input
               id="startDate"
@@ -206,7 +206,7 @@ export function EventFormCard({ eventData, onChange, errors }: EventFormCardProp
           <div className="space-y-2">
             <Label htmlFor="startTime" className="flex items-center gap-2">
               <Clock className="w-4 h-4" />
-              Start Time *
+              Время начала *
             </Label>
             <Input
               id="startTime"
@@ -223,7 +223,7 @@ export function EventFormCard({ eventData, onChange, errors }: EventFormCardProp
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="endDate">End Date</Label>
+            <Label htmlFor="endDate">Дата завершения</Label>
             <Input
               id="endDate"
               type="date"
@@ -237,7 +237,7 @@ export function EventFormCard({ eventData, onChange, errors }: EventFormCardProp
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="endTime">End Time</Label>
+            <Label htmlFor="endTime">Время завершения</Label>
             <Input
               id="endTime"
               type="time"
@@ -255,7 +255,7 @@ export function EventFormCard({ eventData, onChange, errors }: EventFormCardProp
           <div className="space-y-2">
             <Label htmlFor="website" className="flex items-center gap-2">
               <LinkIcon className="w-4 h-4" />
-              Website
+              Сайт
             </Label>
             <Input
               id="website"
@@ -273,7 +273,7 @@ export function EventFormCard({ eventData, onChange, errors }: EventFormCardProp
           <div className="space-y-2">
             <Label htmlFor="memberLimit" className="flex items-center gap-2">
               <Users className="w-4 h-4" />
-              Member Limit
+              Лимит участников
             </Label>
             <Input
               id="memberLimit"
