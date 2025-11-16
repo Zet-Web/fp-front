@@ -102,7 +102,7 @@ export function EventCitySelector({
         <PopoverContent className="w-full p-0" align="start">
           <Command shouldFilter={false}>
             <CommandInput
-              placeholder="Search city..."
+              placeholder="Поиск..."
               value={searchQuery}
               onValueChange={setSearchQuery}
             />
@@ -113,7 +113,7 @@ export function EventCitySelector({
                 </div>
               )}
               {!isSearching && searchQuery.length < 2 && (
-                <CommandEmpty>Type at least 2 characters</CommandEmpty>
+                <CommandEmpty>Введите 2 символа</CommandEmpty>
               )}
               {!isSearching &&
                 searchQuery.length >= 2 &&
