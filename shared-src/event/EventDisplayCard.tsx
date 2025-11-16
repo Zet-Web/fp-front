@@ -65,7 +65,7 @@ export function EventDisplayCard({ eventData, compact = false }: EventDisplayCar
           {eventData.memberLimit && (
             <div className="flex items-center gap-2">
               <Users className="w-4 h-4 text-blue-500 flex-shrink-0" />
-              <span>Max {eventData.memberLimit} members</span>
+              <span>До {eventData.memberLimit} участников</span>
             </div>
           )}
         </div>
@@ -91,7 +91,7 @@ export function EventDisplayCard({ eventData, compact = false }: EventDisplayCar
           <div className="flex items-center gap-3 text-sm">
             <Calendar className="w-4 h-4 text-blue-500" />
             <div>
-              <div className="font-medium">Start Date</div>
+              <div className="font-medium">Дата начала</div>
               <div className="text-muted-foreground">{formatDate(eventData.startDate)}</div>
             </div>
           </div>
@@ -99,7 +99,7 @@ export function EventDisplayCard({ eventData, compact = false }: EventDisplayCar
           <div className="flex items-center gap-3 text-sm">
             <Clock className="w-4 h-4 text-blue-500" />
             <div>
-              <div className="font-medium">Time</div>
+              <div className="font-medium">Время</div>
               <div className="text-muted-foreground">
                 {eventData.startTime}
                 {eventData.endTime && ` - ${eventData.endTime}`}
@@ -111,7 +111,7 @@ export function EventDisplayCard({ eventData, compact = false }: EventDisplayCar
             <div className="flex items-center gap-3 text-sm">
               <Calendar className="w-4 h-4 text-blue-500" />
               <div>
-                <div className="font-medium">End Date</div>
+                <div className="font-medium">Дата завершения</div>
                 <div className="text-muted-foreground">{formatDate(eventData.endDate)}</div>
               </div>
             </div>
@@ -121,7 +121,7 @@ export function EventDisplayCard({ eventData, compact = false }: EventDisplayCar
             <div className="flex items-center gap-3 text-sm">
               <MapPin className="w-4 h-4 text-blue-500" />
               <div>
-                <div className="font-medium">Location</div>
+                <div className="font-medium">Локация</div>
                 <div className="text-muted-foreground">
                   {eventData.location.city}
                   {eventData.location.address && `, ${eventData.location.address}`}
@@ -134,7 +134,7 @@ export function EventDisplayCard({ eventData, compact = false }: EventDisplayCar
             <div className="flex items-center gap-3 text-sm md:col-span-2">
               <LinkIcon className="w-4 h-4 text-blue-500" />
               <div>
-                <div className="font-medium">Website</div>
+                <div className="font-medium">Сайт</div>
                 <a
                   href={eventData.website}
                   target="_blank"
@@ -151,8 +151,8 @@ export function EventDisplayCard({ eventData, compact = false }: EventDisplayCar
             <div className="flex items-center gap-3 text-sm">
               <Users className="w-4 h-4 text-blue-500" />
               <div>
-                <div className="font-medium">Capacity</div>
-                <div className="text-muted-foreground">Max {eventData.memberLimit} members</div>
+                <div className="font-medium">Всего</div>
+                <div className="text-muted-foreground">До {eventData.memberLimit} участников</div>
               </div>
             </div>
           )}
