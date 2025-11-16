@@ -194,7 +194,7 @@ export function EducationSection({
                     }
                     label="ВУЗы"
                     placeholder="Выбрать..."
-                    searchPlaceholder="Введите название университета..."
+                    searchPlaceholder="Введите название..."
                     minSearchLength={3}
                   />
                 </div>
