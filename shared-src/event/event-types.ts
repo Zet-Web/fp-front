@@ -46,19 +46,22 @@ export interface EventFormErrors {
 }
 
 export const EVENT_CATEGORIES: { value: EventCategory; label: string }[] = [
-  { value: 'conference', label: 'Conference' },
-  { value: 'forum', label: 'Forum' },
-  { value: 'webinar', label: 'Webinar' },
-  { value: 'workshop', label: 'Workshop' },
-  { value: 'master_class', label: 'Master Class' },
-  { value: 'meetup', label: 'Meetup' },
-  { value: 'training', label: 'Training' },
-  { value: 'seminar', label: 'Seminar' },
-  { value: 'course', label: 'Course' },
+  { value: 'conference', label: 'Конференция' },
+  { value: 'forum', label: 'Форум' },
+  { value: 'seminar', label: 'Семинар' },
+  { value: 'webinar', label: 'Вебинар' },
+  { value: 'roundtable', label: 'Круглый стол' },
+  { value: 'breakfast', label: 'Бизнес завтрак' },
+  { value: 'workshop', label: 'Воркшоп' },
+  { value: 'master_class', label: 'Мастер-класс' },
+  { value: 'meet', label: 'Встреча' },
+  { value: 'meeting', label: 'Собрание' },
+  { value: 'training', label: 'Трейнинг' },
+  { value: 'course', label: 'Курс' },
   { value: 'other', label: 'Other' },
 ];
 
 export const EVENT_TYPE_LABELS: Record<EventType, string> = {
-  online: 'Online',
-  offline: 'Offline',
+  online: 'Онлайн',
+  offline: 'Офлайн',
 };
