@@ -115,7 +115,7 @@ export function EventCitySelector({
                 </div>
               )}
               {!isSearching && searchQuery.length < 2 && (
-                <CommandEmpty>Введите 2 символа</CommandEmpty>
+                <CommandEmpty> </CommandEmpty>
               )}
               {!isSearching &&
                 searchQuery.length >= 2 &&
