@@ -200,7 +200,7 @@ export function UniversalReferenceSelector({
               )}
               {!isSearching && searchQuery.length < minSearchLength && (
                 <CommandEmpty>
-                  Введите минимум {minSearchLength} символа
+                  {/* Введите минимум {minSearchLength} символа */}
                 </CommandEmpty>
               )}
               {!isSearching &&
