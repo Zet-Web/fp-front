@@ -227,7 +227,7 @@ export function LocationSelector({
                     )}
                     {!isSearching && searchQuery.length < 2 && (
                       <CommandEmpty>
-                        Введите 2 символа...
+                        
                       </CommandEmpty>
                     )}
                     {!isSearching &&
@@ -270,7 +270,7 @@ export function LocationSelector({
                     )}
                     {!isSearching && searchQuery.length < 2 && (
                       <CommandEmpty>
-                        Введите 2 символа
+                        
                       </CommandEmpty>
                     )}
                     {!isSearching &&
