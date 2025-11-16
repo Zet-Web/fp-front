@@ -213,7 +213,7 @@ export function ExperienceSection({
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Briefcase className="w-5 h-5" />
-            Professional Experience
+            Опыт работы
           </div>
           {isEditing && (
             <Button
@@ -222,7 +222,7 @@ export function ExperienceSection({
               onClick={() => setShowAddExperienceForm(true)}
             >
               <Plus className="w-4 h-4 mr-1" />
-              Add
+              Добавить
             </Button>
           )}
         </CardTitle>
@@ -275,7 +275,7 @@ export function ExperienceSection({
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="edit-exp-title">Job Title</Label>
+                      <Label htmlFor="edit-exp-title">Должность</Label>
                       <Input
                         id="edit-exp-title"
                         value={editForm.title}
@@ -289,7 +289,7 @@ export function ExperienceSection({
                       />
                     </div>
                     <div>
-                      <Label htmlFor="edit-exp-company">Company</Label>
+                      <Label htmlFor="edit-exp-company">Организация</Label>
                       <Input
                         id="edit-exp-company"
                         value={editForm.company}
@@ -304,14 +304,14 @@ export function ExperienceSection({
                     </div>
                   </div>
                   <div className="space-y-3">
-                    <Label>Period (Optional)</Label>
+                    <Label>Период (по желанию)</Label>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                       <div>
                         <Label
                           htmlFor="edit-start-month"
                           className="text-xs text-muted-foreground"
                         >
-                          Start Month
+                          Месяц начала
                         </Label>
                         <Select
                           value={editForm.start_month}
@@ -326,7 +326,7 @@ export function ExperienceSection({
                             <SelectValue placeholder="Month" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="not-set">Not set</SelectItem>
+                            <SelectItem value="not-set">-</SelectItem>
                             {months.map((month) => (
                               <SelectItem key={month.value} value={month.value}>
                                 {month.label}
@@ -340,7 +340,7 @@ export function ExperienceSection({
                           htmlFor="edit-start-year"
                           className="text-xs text-muted-foreground"
                         >
-                          Start Year
+                          Год начала
                         </Label>
                         <Select
                           value={editForm.start_year}
@@ -355,7 +355,7 @@ export function ExperienceSection({
                             <SelectValue placeholder="Year" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="not-set">Not set</SelectItem>
+                            <SelectItem value="not-set">-</SelectItem>
                             {generateYears().map((year) => (
                               <SelectItem key={year} value={year}>
                                 {year}
@@ -369,7 +369,7 @@ export function ExperienceSection({
                           htmlFor="edit-end-month"
                           className="text-xs text-muted-foreground"
                         >
-                          End Month
+                          Месяц завершения
                         </Label>
                         <Select
                           value={editForm.end_month}
@@ -385,7 +385,7 @@ export function ExperienceSection({
                             <SelectValue placeholder="Month" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="not-set">Not set</SelectItem>
+                            <SelectItem value="not-set">-</SelectItem>
                             {months.map((month) => (
                               <SelectItem key={month.value} value={month.value}>
                                 {month.label}
@@ -399,7 +399,7 @@ export function ExperienceSection({
                           htmlFor="edit-end-year"
                           className="text-xs text-muted-foreground"
                         >
-                          End Year
+                          Год завершения
                         </Label>
                         <Select
                           value={editForm.end_year}
@@ -415,7 +415,7 @@ export function ExperienceSection({
                             <SelectValue placeholder="Year" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="not-set">Not set</SelectItem>
+                            <SelectItem value="not-set">-</SelectItem>
                             {generateYears().map((year) => (
                               <SelectItem key={year} value={year}>
                                 {year}
@@ -440,12 +440,12 @@ export function ExperienceSection({
                         htmlFor="edit-is-current"
                         className="text-sm font-normal cursor-pointer"
                       >
-                        I currently work here
+                        По настоящее время
                       </Label>
                     </div>
                   </div>
                   <div>
-                    <Label htmlFor="edit-exp-description">Description</Label>
+                    <Label htmlFor="edit-exp-description">Описание</Label>
                     <Textarea
                       id="edit-exp-description"
                       value={editForm.description}
@@ -509,19 +509,18 @@ export function ExperienceSection({
                             <AlertDialogContent>
                               <AlertDialogHeader>
                                 <AlertDialogTitle>
-                                  Delete Experience
+                                  Удалить
                                 </AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  Are you sure you want to delete this work
-                                  experience? This action cannot be undone.
+                                  Вы уверены, что хотите удалить?
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogCancel>Отмена</AlertDialogCancel>
                                 <AlertDialogAction
                                   onClick={() => removeExperience(exp.id)}
                                 >
-                                  Delete
+                                  Удалить
                                 </AlertDialogAction>
                               </AlertDialogFooter>
                             </AlertDialogContent>
@@ -548,10 +547,10 @@ export function ExperienceSection({
 
           {isEditing && showAddExperienceForm && (
             <div className="border-l-2 border-dashed border-primary/20 pl-4 space-y-4">
-              <h3 className="font-semibold text-lg">Add</h3>
+              <h3 className="font-semibold text-lg">Добавить</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="exp-title">Job Title</Label>
+                  <Label htmlFor="exp-title">Должность</Label>
                   <Input
                     id="exp-title"
                     value={newExperience.title}
@@ -565,7 +564,7 @@ export function ExperienceSection({
                   />
                 </div>
                 <div>
-                  <Label htmlFor="exp-company">Company</Label>
+                  <Label htmlFor="exp-company">Организация</Label>
                   <Input
                     id="exp-company"
                     value={newExperience.company}
@@ -580,14 +579,14 @@ export function ExperienceSection({
                 </div>
               </div>
               <div className="space-y-3">
-                <Label>Period (Optional)</Label>
+                <Label>Период (по желанию)</Label>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                   <div>
                     <Label
                       htmlFor="new-start-month"
                       className="text-xs text-muted-foreground"
                     >
-                      Start Month
+                      Месяц начала
                     </Label>
                     <Select
                       value={newExperience.start_month}
@@ -602,7 +601,7 @@ export function ExperienceSection({
                         <SelectValue placeholder="Month" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="not-set">Not set</SelectItem>
+                        <SelectItem value="not-set">-</SelectItem>
                         {months.map((month) => (
                           <SelectItem key={month.value} value={month.value}>
                             {month.label}
@@ -616,7 +615,7 @@ export function ExperienceSection({
                       htmlFor="new-start-year"
                       className="text-xs text-muted-foreground"
                     >
-                      Start Year
+                      Год начала
                     </Label>
                     <Select
                       value={newExperience.start_year}
@@ -631,7 +630,7 @@ export function ExperienceSection({
                         <SelectValue placeholder="Year" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="not-set">Not set</SelectItem>
+                        <SelectItem value="not-set">-</SelectItem>
                         {generateYears().map((year) => (
                           <SelectItem key={year} value={year}>
                             {year}
@@ -645,7 +644,7 @@ export function ExperienceSection({
                       htmlFor="new-end-month"
                       className="text-xs text-muted-foreground"
                     >
-                      End Month
+                      Месяц завершения
                     </Label>
                     <Select
                       value={newExperience.end_month}
@@ -661,7 +660,7 @@ export function ExperienceSection({
                         <SelectValue placeholder="Month" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="not-set">Not set</SelectItem>
+                        <SelectItem value="not-set">-</SelectItem>
                         {months.map((month) => (
                           <SelectItem key={month.value} value={month.value}>
                             {month.label}
@@ -675,7 +674,7 @@ export function ExperienceSection({
                       htmlFor="new-end-year"
                       className="text-xs text-muted-foreground"
                     >
-                      End Year
+                      Год завершения
                     </Label>
                     <Select
                       value={newExperience.end_year}
@@ -691,7 +690,7 @@ export function ExperienceSection({
                         <SelectValue placeholder="Year" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="not-set">Not set</SelectItem>
+                        <SelectItem value="not-set">-</SelectItem>
                         {generateYears().map((year) => (
                           <SelectItem key={year} value={year}>
                             {year}
@@ -716,12 +715,12 @@ export function ExperienceSection({
                     htmlFor="new-is-current"
                     className="text-sm font-normal cursor-pointer"
                   >
-                    I currently work here
+                    По настоящее время
                   </Label>
                 </div>
               </div>
               <div>
-                <Label htmlFor="exp-description">Description</Label>
+                <Label htmlFor="exp-description">Описание</Label>
                 <Textarea
                   id="exp-description"
                   value={newExperience.description}
@@ -736,12 +735,12 @@ export function ExperienceSection({
                 />
               </div>
               <div className="flex gap-2">
-                <Button onClick={addExperience}>Add</Button>
+                <Button onClick={addExperience}>Добавить</Button>
                 <Button
                   variant="outline"
                   onClick={() => setShowAddExperienceForm(false)}
                 >
-                  Cancel
+                  Отмена
                 </Button>
               </div>
             </div>
