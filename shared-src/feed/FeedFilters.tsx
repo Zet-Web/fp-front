@@ -54,17 +54,17 @@ export function FeedFilters({
     <Card className="shadow-sm border-b">
       <CardContent className="p-3 space-y-3">
         <Tabs value={view} onValueChange={(v) => onViewChange(v as FeedView)}>
-          <TabsList className="grid w-full grid-cols-4 h-9">
-            <TabsTrigger value="featured" className="text-sm">
+          <TabsList className="w-full h-9 overflow-x-auto overflow-y-hidden flex justify-start scrollbar-hide">
+            <TabsTrigger value="featured" className="text-sm flex-shrink-0">
               Рекомендовано
             </TabsTrigger>
-            <TabsTrigger value="all" className="text-sm">
+            <TabsTrigger value="all" className="text-sm flex-shrink-0">
               Все посты
             </TabsTrigger>
-            <TabsTrigger value="following" className="text-sm">
+            <TabsTrigger value="following" className="text-sm flex-shrink-0">
               Посты контактов
             </TabsTrigger>
-            <TabsTrigger value="saved" className="text-sm">
+            <TabsTrigger value="saved" className="text-sm flex-shrink-0">
               Сохранено
             </TabsTrigger>
           </TabsList>
