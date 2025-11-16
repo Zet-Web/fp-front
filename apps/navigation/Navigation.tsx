@@ -259,9 +259,9 @@ export function Navigation() {
               to="/"
               className="flex flex-row items-center space-x-3 w-full justify-start h-auto px-4 py-2 hover:bg-accent/50 transition-colors rounded-md mb-2"
             >
-              <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center">
+              {/* <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center">
                 <div className="h-4 w-4 rounded bg-white"></div>
-              </div>
+              </div> */}
               <CardTitle className="text-lg text-foreground">
                 Фонд Права
               </CardTitle>
