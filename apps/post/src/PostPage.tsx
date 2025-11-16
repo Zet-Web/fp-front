@@ -249,7 +249,7 @@ export function PostPage() {
     try {
       await FPApi.axios.delete(`/post/delete/${post.id}`);
       toast({
-        title: "Post deleted!",
+        title: "Публикация удалена",
       });
 
       navigate("/");
