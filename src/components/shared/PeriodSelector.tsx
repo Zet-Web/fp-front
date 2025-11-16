@@ -62,7 +62,7 @@ export function PeriodSelector({
               <SelectValue placeholder="Month" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="not-set">Не установлен</SelectItem>
+              <SelectItem value="not-set">-</SelectItem>
               {MONTHS.map((month) => (
                 <SelectItem key={month.value} value={month.value}>
                   {month.label}
