@@ -4,8 +4,8 @@ apps/auth
 apps/chats
 apps/header
 # apps/home
-# apps/mobileNav
-# apps/navigation
+apps/mobileNav
+apps/navigation
 # apps/profile
 # apps/post
 # apps/settings
