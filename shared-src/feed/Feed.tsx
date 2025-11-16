@@ -22,6 +22,7 @@ interface FeedProps {
     onClick: () => void;
   };
   itemsPerPage?: number;
+  showStatusBadges?: boolean;
 }
 
 function PostSkeleton() {
@@ -50,6 +51,7 @@ export function Feed({
   emptyMessage = "Нет публикаций",
   emptyAction,
   itemsPerPage = 10,
+  showStatusBadges = false,
 }: FeedProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -290,6 +292,8 @@ export function Feed({
               isPined={!!(filterByUsername && !!post.is_pinned)}
               showActions={true}
               isOwner={isOwner}
+              status={post.status}
+              showStatusBadge={showStatusBadges && isOwner}
               onShareClick={() => handleShareClick(post)}
               onEditClick={() => handleEditClick(post.url)}
               onDeleteClick={() => handleDeletePost(post.id)}

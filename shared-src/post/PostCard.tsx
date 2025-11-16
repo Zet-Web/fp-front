@@ -30,11 +30,12 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import type { PostAuthor } from "./post";
+import type { PostAuthor, PostStatus } from "./post";
 import { PostContentViewer } from "../feed/PostContentViewer";
 import { FPApi } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { formatPostDate } from "@/lib/date-utils";
+import { PostStatusBadge } from "./PostStatusBadge";
 
 interface PostCardProps {
   postId: number;
@@ -51,6 +52,8 @@ interface PostCardProps {
   isSaved?: boolean;
   isOwner?: boolean;
   isPined?: boolean;
+  status?: PostStatus;
+  showStatusBadge?: boolean;
 }
 
 export function PostCard({
@@ -68,6 +71,8 @@ export function PostCard({
   isSaved = false,
   isOwner = false,
   isPined = false,
+  status,
+  showStatusBadge = false,
 }: PostCardProps) {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -169,6 +174,9 @@ export function PostCard({
                       {formatPostDate(createdAt)}
                     </span>
                   </>
+                )}
+                {showStatusBadge && status && (
+                  <PostStatusBadge status={status} />
                 )}
               </div>
               {isPined && (
