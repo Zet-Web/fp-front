@@ -1,4 +1,4 @@
-apps/test
+# apps/test
 apps/404
 apps/auth
 apps/chats
@@ -6,8 +6,8 @@ apps/header
 apps/home
 apps/mobileNav
 apps/navigation
-# apps/profile
-# apps/post
+apps/profile
+apps/post
 apps/settings
 apps/yurservice
 apps/network
