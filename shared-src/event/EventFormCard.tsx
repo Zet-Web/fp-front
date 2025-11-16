@@ -94,65 +94,66 @@ export function EventFormCard({ eventData, onChange, errors }: EventFormCardProp
         <CardDescription>Configure your event settings</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-3">
-            <Label className="flex items-center gap-2">
-              <Globe className="w-4 h-4" />
-              Event Type *
-            </Label>
-            <div className="flex flex-wrap gap-3">
-              {(['online', 'offline'] as EventType[]).map((type) => (
-                <div key={type} className="flex items-center">
-                  <Checkbox
-                    id={`event-type-${type}`}
-                    checked={eventData.eventTypes.includes(type)}
-                    onCheckedChange={() => handleEventTypeToggle(type)}
-                  />
-                  <label
-                    htmlFor={`event-type-${type}`}
-                    className="ml-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                  >
-                    {EVENT_TYPE_LABELS[type]}
-                  </label>
-                </div>
-              ))}
-            </div>
-            {eventData.eventTypes.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {eventData.eventTypes.map((type) => (
-                  <Badge key={type} variant="secondary">
-                    {EVENT_TYPE_LABELS[type]}
-                  </Badge>
-                ))}
-              </div>
-            )}
-            {displayErrors.eventTypes && (
-              <p className="text-xs text-destructive">{displayErrors.eventTypes}</p>
-            )}
-          </div>
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="space-y-2">
+      <Label className="flex items-center gap-2">
+        <Calendar className="w-4 h-4" />
+        Category *
+      </Label>
+      <Select value={eventData.category} onValueChange={handleCategoryChange}>
+        <SelectTrigger className={displayErrors.category ? 'border-destructive' : ''}>
+          <SelectValue placeholder="Select category" />
+        </SelectTrigger>
+        <SelectContent>
+          {EVENT_CATEGORIES.map((cat) => (
+            <SelectItem key={cat.value} value={cat.value}>
+              {cat.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      {displayErrors.category && (
+        <p className="text-xs text-destructive">{displayErrors.category}</p>
+      )}
+    </div>
 
-          <div className="space-y-2">
-            <Label className="flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
-              Category *
-            </Label>
-            <Select value={eventData.category} onValueChange={handleCategoryChange}>
-              <SelectTrigger className={displayErrors.category ? 'border-destructive' : ''}>
-                <SelectValue placeholder="Select category" />
-              </SelectTrigger>
-              <SelectContent>
-                {EVENT_CATEGORIES.map((cat) => (
-                  <SelectItem key={cat.value} value={cat.value}>
-                    {cat.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {displayErrors.category && (
-              <p className="text-xs text-destructive">{displayErrors.category}</p>
-            )}
+    <div className="space-y-3">
+      <Label className="flex items-center gap-2">
+        <Globe className="w-4 h-4" />
+        Event Type *
+      </Label>
+      <div className="flex flex-wrap gap-3">
+        {(['online', 'offline'] as EventType[]).map((type) => (
+          <div key={type} className="flex items-center">
+            <Checkbox
+              id={`event-type-${type}`}
+              checked={eventData.eventTypes.includes(type)}
+              onCheckedChange={() => handleEventTypeToggle(type)}
+            />
+            <label
+              htmlFor={`event-type-${type}`}
+              className="ml-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+            >
+              {EVENT_TYPE_LABELS[type]}
+            </label>
           </div>
+        ))}
+      </div>
+      {eventData.eventTypes.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {eventData.eventTypes.map((type) => (
+            <Badge key={type} variant="secondary">
+              {EVENT_TYPE_LABELS[type]}
+            </Badge>
+          ))}
         </div>
+      )}
+      {displayErrors.eventTypes && (
+        <p className="text-xs text-destructive">{displayErrors.eventTypes}</p>
+      )}
+    </div>
+  </div>
+
 
         {showLocationFields && (
           <div className="space-y-4 p-4 bg-muted/50 rounded-lg">
