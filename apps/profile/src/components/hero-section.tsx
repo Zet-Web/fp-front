@@ -188,7 +188,7 @@ export function HeroSection({
                   ) : (
                     <Upload className="w-4 h-4" />
                   )}
-                  {isUploadingCover ? "Uploading..." : "Change Cover"}
+                  {isUploadingCover ? "Загрузка..." : "Изменить обложку"}
                 </span>
               </Button>
             </label>
