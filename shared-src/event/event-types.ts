@@ -1,0 +1,67 @@
+// Type definitions for event functionality in posts
+
+export type EventType = 'online' | 'offline';
+
+export type EventCategory =
+  | 'conference'
+  | 'forum'
+  | 'webinar'
+  | 'workshop'
+  | 'master_class'
+  | 'meetup'
+  | 'training'
+  | 'seminar'
+  | 'course'
+  | 'other';
+
+export interface EventLocation {
+  city: string;
+  address: string;
+}
+
+export interface EventData {
+  eventTypes: EventType[];
+  location?: EventLocation;
+  startDate: string;
+  startTime: string;
+  endDate?: string;
+  endTime?: string;
+  website?: string;
+  category: EventCategory;
+  memberLimit?: number;
+}
+
+export interface EventFormErrors {
+  eventTypes?: string;
+  location?: string;
+  city?: string;
+  address?: string;
+  startDate?: string;
+  startTime?: string;
+  endDate?: string;
+  endTime?: string;
+  website?: string;
+  category?: string;
+  memberLimit?: string;
+}
+
+export const EVENT_CATEGORIES: { value: EventCategory; label: string }[] = [
+  { value: 'conference', label: 'Конференция' },
+  { value: 'forum', label: 'Форум' },
+  { value: 'seminar', label: 'Семинар' },
+  { value: 'webinar', label: 'Вебинар' },
+  { value: 'roundtable', label: 'Круглый стол' },
+  { value: 'breakfast', label: 'Бизнес завтрак' },
+  { value: 'workshop', label: 'Воркшоп' },
+  { value: 'master_class', label: 'Мастер-класс' },
+  { value: 'meet', label: 'Встреча' },
+  { value: 'meeting', label: 'Собрание' },
+  { value: 'training', label: 'Тренинг' },
+  { value: 'course', label: 'Курс' },
+  { value: 'other', label: 'Другое' },
+];
+
+export const EVENT_TYPE_LABELS: Record<EventType, string> = {
+  online: 'Онлайн',
+  offline: 'Офлайн',
+};

@@ -294,6 +294,8 @@ export function Feed({
               isOwner={isOwner}
               status={post.status}
               showStatusBadge={showStatusBadges && isOwner}
+              postType={post.type}
+              eventData={post.event_data}
               onShareClick={() => handleShareClick(post)}
               onEditClick={() => handleEditClick(post.url)}
               onDeleteClick={() => handleDeletePost(post.id)}

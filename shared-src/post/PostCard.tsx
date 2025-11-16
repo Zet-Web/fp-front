@@ -37,6 +37,8 @@ import { useToast } from "@/hooks/use-toast";
 import { formatPostDate } from "@/lib/date-utils";
 import { useAuthContext } from "@/components/auth-provider";
 import { PostStatusBadge } from "./PostStatusBadge";
+import { EventDisplayCard } from "../event/EventDisplayCard";
+import { PostType } from "./post";
 
 interface PostCardProps {
   postId: number;
@@ -55,6 +57,8 @@ interface PostCardProps {
   isPined?: boolean;
   status?: PostStatus;
   showStatusBadge?: boolean;
+  postType?: PostType;
+  eventData?: any;
 }
 
 export function PostCard({
@@ -74,6 +78,8 @@ export function PostCard({
   isPined = false,
   status,
   showStatusBadge = false,
+  postType,
+  eventData,
 }: PostCardProps) {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -254,6 +260,12 @@ export function PostCard({
                   alt="Post content"
                   className="w-full rounded-lg object-cover max-h-64"
                 />
+              </div>
+            )}
+
+            {postType === 'event' && eventData && (
+              <div className="mt-4">
+                <EventDisplayCard eventData={eventData} compact />
               </div>
             )}
 

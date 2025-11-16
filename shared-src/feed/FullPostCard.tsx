@@ -32,6 +32,7 @@ import { useNavigate } from "react-router-dom";
 import { PostType, PostWithAuthor } from "../post/post";
 import { PostContentViewer } from "./PostContentViewer";
 import QuizTake from "../../apps/quiz/src/QuizTake";
+import { EventDisplayCard } from "../event/EventDisplayCard";
 import { useToast } from "@/hooks/use-toast";
 import { FPApi } from "@/lib/api";
 import { formatPostDate } from "@/lib/date-utils";
@@ -239,6 +240,12 @@ export function FullPostCard({
             <p className="leading-7 [&:not(:first-child)]:mt-6">{excerpt}</p>
 
             <PostContentViewer html={content || ""} />
+
+            {type === PostType.EVENT && post.event_data && (
+              <div className="mt-6">
+                <EventDisplayCard eventData={post.event_data} />
+              </div>
+            )}
 
             {type === PostType.QUIZ && <QuizTake postId={postId} />}
 

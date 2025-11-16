@@ -22,6 +22,8 @@ import { QuizFormData } from "@/apps/quiz/types/quiz";
 import { FPApi } from "@/lib/api";
 import { TiptapEditor } from "../feed/TipTapEditor";
 import QuizForm from "../../apps/quiz/src/QuizForm";
+import { EventData } from "../event/event-types";
+import { EventFormCard } from "../event/EventFormCard";
 
 interface EditablePostCardProps {
   title?: string;
@@ -46,11 +48,13 @@ interface EditablePostCardProps {
       is_pinned: boolean;
       slug?: string;
     },
-    quizData?: QuizFormData | null
+    quizData?: QuizFormData | null,
+    eventData?: EventData | null
   ) => void;
   onCancel: () => void;
   isLoading?: boolean;
   editableQuizData?: QuizFormData | null;
+  editableEventData?: EventData | null;
 }
 
 export function EditablePostCard({
@@ -68,6 +72,7 @@ export function EditablePostCard({
   onCancel,
   isLoading,
   editableQuizData,
+  editableEventData,
 }: EditablePostCardProps) {
   const [editedTitle, setEditedTitle] = useState(title);
   const [editedExcerpt, setEditedExcerpt] = useState(excerpt);
@@ -85,6 +90,16 @@ export function EditablePostCard({
   // Quiz
   const [isQuizFormValid, setIsQuizFormValid] = useState(true);
   const [quizData, setQuizData] = useState<QuizFormData | null>(null);
+
+  // Event
+  const [eventData, setEventData] = useState<EventData | null>(
+    editableEventData || {
+      eventTypes: [],
+      startDate: '',
+      startTime: '',
+      category: 'conference' as const,
+    }
+  );
 
   const handleUpdateQuizFormData = useCallback((data: QuizFormData) => {
     setQuizData(data);
@@ -136,7 +151,8 @@ export function EditablePostCard({
         is_pinned: editedIsPinned,
         slug: editedSlug?.trim() || undefined,
       },
-      quizData
+      editedType === PostType.QUIZ ? quizData : null,
+      editedType === PostType.EVENT ? eventData : null
     );
   };
 
@@ -496,6 +512,14 @@ export function EditablePostCard({
                   onFormValuesChange={handleUpdateQuizFormData}
                   onFormValidChange={handleQuizValidChange}
                   defaultQuizFormValues={editableQuizData}
+                />
+              </div>
+            )}
+            {editedType === PostType.EVENT && eventData && (
+              <div className="mt-6">
+                <EventFormCard
+                  eventData={eventData}
+                  onChange={setEventData}
                 />
               </div>
             )}
