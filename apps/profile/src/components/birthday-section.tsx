@@ -508,7 +508,7 @@ export function BirthdaySection({
                   <SelectValue placeholder="Day" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="not-set">Не установлен</SelectItem>
+                  <SelectItem value="not-set">-</SelectItem>
                   {Array.from(
                     {
                       length: getDaysInMonth(
