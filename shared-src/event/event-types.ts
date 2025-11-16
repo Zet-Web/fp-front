@@ -1,6 +1,6 @@
 // Type definitions for event functionality in posts
 
-export type EventType = 'online' | 'offline' | 'hybrid';
+export type EventType = 'online' | 'offline';
 
 export type EventCategory =
   | 'conference'
@@ -61,5 +61,4 @@ export const EVENT_CATEGORIES: { value: EventCategory; label: string }[] = [
 export const EVENT_TYPE_LABELS: Record<EventType, string> = {
   online: 'Online',
   offline: 'Offline',
-  hybrid: 'Hybrid',
 };

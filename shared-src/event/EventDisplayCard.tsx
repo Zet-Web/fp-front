@@ -23,8 +23,7 @@ export function EventDisplayCard({ eventData, compact = false }: EventDisplayCar
     return category.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
   };
 
-  const showLocationFields =
-    eventData.eventTypes.includes('offline') || eventData.eventTypes.includes('hybrid');
+  const showLocationFields = eventData.eventTypes.includes('offline');
 
   if (compact) {
     return (

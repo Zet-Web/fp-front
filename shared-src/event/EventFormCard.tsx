@@ -85,8 +85,7 @@ export function EventFormCard({ eventData, onChange, errors }: EventFormCardProp
     setLocalErrors({ ...localErrors, category: undefined });
   };
 
-  const showLocationFields = eventData.eventTypes.includes('offline') ||
-                             eventData.eventTypes.includes('hybrid');
+  const showLocationFields = eventData.eventTypes.includes('offline');
 
   return (
     <Card className="shadow-md">
@@ -95,40 +94,64 @@ export function EventFormCard({ eventData, onChange, errors }: EventFormCardProp
         <CardDescription>Configure your event settings</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="space-y-3">
-          <Label className="flex items-center gap-2">
-            <Globe className="w-4 h-4" />
-            Event Type *
-          </Label>
-          <div className="flex flex-wrap gap-3">
-            {(['online', 'offline', 'hybrid'] as EventType[]).map((type) => (
-              <div key={type} className="flex items-center">
-                <Checkbox
-                  id={`event-type-${type}`}
-                  checked={eventData.eventTypes.includes(type)}
-                  onCheckedChange={() => handleEventTypeToggle(type)}
-                />
-                <label
-                  htmlFor={`event-type-${type}`}
-                  className="ml-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                >
-                  {EVENT_TYPE_LABELS[type]}
-                </label>
-              </div>
-            ))}
-          </div>
-          {eventData.eventTypes.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {eventData.eventTypes.map((type) => (
-                <Badge key={type} variant="secondary">
-                  {EVENT_TYPE_LABELS[type]}
-                </Badge>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-3">
+            <Label className="flex items-center gap-2">
+              <Globe className="w-4 h-4" />
+              Event Type *
+            </Label>
+            <div className="flex flex-wrap gap-3">
+              {(['online', 'offline'] as EventType[]).map((type) => (
+                <div key={type} className="flex items-center">
+                  <Checkbox
+                    id={`event-type-${type}`}
+                    checked={eventData.eventTypes.includes(type)}
+                    onCheckedChange={() => handleEventTypeToggle(type)}
+                  />
+                  <label
+                    htmlFor={`event-type-${type}`}
+                    className="ml-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                  >
+                    {EVENT_TYPE_LABELS[type]}
+                  </label>
+                </div>
               ))}
             </div>
-          )}
-          {displayErrors.eventTypes && (
-            <p className="text-xs text-destructive">{displayErrors.eventTypes}</p>
-          )}
+            {eventData.eventTypes.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {eventData.eventTypes.map((type) => (
+                  <Badge key={type} variant="secondary">
+                    {EVENT_TYPE_LABELS[type]}
+                  </Badge>
+                ))}
+              </div>
+            )}
+            {displayErrors.eventTypes && (
+              <p className="text-xs text-destructive">{displayErrors.eventTypes}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <Calendar className="w-4 h-4" />
+              Category *
+            </Label>
+            <Select value={eventData.category} onValueChange={handleCategoryChange}>
+              <SelectTrigger className={displayErrors.category ? 'border-destructive' : ''}>
+                <SelectValue placeholder="Select category" />
+              </SelectTrigger>
+              <SelectContent>
+                {EVENT_CATEGORIES.map((cat) => (
+                  <SelectItem key={cat.value} value={cat.value}>
+                    {cat.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {displayErrors.category && (
+              <p className="text-xs text-destructive">{displayErrors.category}</p>
+            )}
+          </div>
         </div>
 
         {showLocationFields && (
@@ -160,27 +183,6 @@ export function EventFormCard({ eventData, onChange, errors }: EventFormCardProp
           </div>
         )}
 
-        <div className="space-y-2">
-          <Label className="flex items-center gap-2">
-            <Calendar className="w-4 h-4" />
-            Category *
-          </Label>
-          <Select value={eventData.category} onValueChange={handleCategoryChange}>
-            <SelectTrigger className={displayErrors.category ? 'border-destructive' : ''}>
-              <SelectValue placeholder="Select category" />
-            </SelectTrigger>
-            <SelectContent>
-              {EVENT_CATEGORIES.map((cat) => (
-                <SelectItem key={cat.value} value={cat.value}>
-                  {cat.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {displayErrors.category && (
-            <p className="text-xs text-destructive">{displayErrors.category}</p>
-          )}
-        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
@@ -248,46 +250,48 @@ export function EventFormCard({ eventData, onChange, errors }: EventFormCardProp
           </div>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="website" className="flex items-center gap-2">
-            <LinkIcon className="w-4 h-4" />
-            Website
-          </Label>
-          <Input
-            id="website"
-            type="url"
-            placeholder="https://example.com"
-            value={eventData.website || ''}
-            onChange={(e) => onChange({ ...eventData, website: e.target.value })}
-            className={displayErrors.website ? 'border-destructive' : ''}
-          />
-          {displayErrors.website && (
-            <p className="text-xs text-destructive">{displayErrors.website}</p>
-          )}
-        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="website" className="flex items-center gap-2">
+              <LinkIcon className="w-4 h-4" />
+              Website
+            </Label>
+            <Input
+              id="website"
+              type="url"
+              placeholder="https://example.com"
+              value={eventData.website || ''}
+              onChange={(e) => onChange({ ...eventData, website: e.target.value })}
+              className={displayErrors.website ? 'border-destructive' : ''}
+            />
+            {displayErrors.website && (
+              <p className="text-xs text-destructive">{displayErrors.website}</p>
+            )}
+          </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="memberLimit" className="flex items-center gap-2">
-            <Users className="w-4 h-4" />
-            Member Limit
-          </Label>
-          <Input
-            id="memberLimit"
-            type="number"
-            min="1"
-            placeholder="No limit"
-            value={eventData.memberLimit || ''}
-            onChange={(e) =>
-              onChange({
-                ...eventData,
-                memberLimit: e.target.value ? parseInt(e.target.value) : undefined,
-              })
-            }
-            className={displayErrors.memberLimit ? 'border-destructive' : ''}
-          />
-          {displayErrors.memberLimit && (
-            <p className="text-xs text-destructive">{displayErrors.memberLimit}</p>
-          )}
+          <div className="space-y-2">
+            <Label htmlFor="memberLimit" className="flex items-center gap-2">
+              <Users className="w-4 h-4" />
+              Member Limit
+            </Label>
+            <Input
+              id="memberLimit"
+              type="number"
+              min="1"
+              placeholder="No limit"
+              value={eventData.memberLimit || ''}
+              onChange={(e) =>
+                onChange({
+                  ...eventData,
+                  memberLimit: e.target.value ? parseInt(e.target.value) : undefined,
+                })
+              }
+              className={displayErrors.memberLimit ? 'border-destructive' : ''}
+            />
+            {displayErrors.memberLimit && (
+              <p className="text-xs text-destructive">{displayErrors.memberLimit}</p>
+            )}
+          </div>
         </div>
       </CardContent>
     </Card>
