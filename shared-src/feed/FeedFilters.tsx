@@ -99,7 +99,8 @@ export function FeedFilters({
             </Select>
           </div>
 
-          <div className="flex-1">
+          {/* TEMPORARILY HIDDEN: Location selector */}
+          {/* <div className="flex-1">
             <FeedLocationDropdown
               country={location.country}
               city={location.city}
@@ -109,7 +110,7 @@ export function FeedFilters({
               onCityChange={handleCityChange}
               onClear={clearLocation}
             />
-          </div>
+          </div> */}
         </div>
       </CardContent>
     </Card>
