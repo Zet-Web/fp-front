@@ -30,11 +30,12 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import type { PostAuthor } from "./post";
+import type { PostAuthor, PostStatus } from "./post";
 import { PostContentViewer } from "../feed/PostContentViewer";
 import { FPApi } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { formatPostDate } from "@/lib/date-utils";
+import { PostStatusBadge } from "./PostStatusBadge";
 
 interface PostCardProps {
   postId: number;
@@ -51,6 +52,8 @@ interface PostCardProps {
   isSaved?: boolean;
   isOwner?: boolean;
   isPined?: boolean;
+  status?: PostStatus;
+  showStatusBadge?: boolean;
 }
 
 export function PostCard({
@@ -68,6 +71,8 @@ export function PostCard({
   isSaved = false,
   isOwner = false,
   isPined = false,
+  status,
+  showStatusBadge = false,
 }: PostCardProps) {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -112,7 +117,7 @@ export function PostCard({
   const handleProfileClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    navigate(`/profile/${displayUsername}`);
+    navigate(`/${displayUsername}`);
   };
 
   return (
@@ -169,6 +174,9 @@ export function PostCard({
                       {formatPostDate(createdAt)}
                     </span>
                   </>
+                )}
+                {showStatusBadge && status && (
+                  <PostStatusBadge status={status} />
                 )}
               </div>
               {isPined && (
@@ -284,14 +292,13 @@ export function PostCard({
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Post</AlertDialogTitle>
+            <AlertDialogTitle>Удалить</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this post? This action cannot be
-              undone.
+              Вы уверены, что хотите удалить?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Отмена</AlertDialogCancel>
             <AlertDialogAction
               onClick={(e) => {
                 e.preventDefault();
@@ -300,7 +307,7 @@ export function PostCard({
               }}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Delete
+              Удалить
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

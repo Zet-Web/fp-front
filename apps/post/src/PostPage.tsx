@@ -55,7 +55,7 @@ export function PostPage() {
           cover_image: undefined,
           images: [],
           type: PostType.ARTICLE,
-          status: PostStatus.DRAFT,
+          status: PostStatus.PUBLISHED,
           is_pinned: false,
           url: "",
           slug: undefined,
@@ -249,7 +249,7 @@ export function PostPage() {
     try {
       await FPApi.axios.delete(`/post/delete/${post.id}`);
       toast({
-        title: "Post deleted!",
+        title: "Публикация удалена",
       });
 
       navigate("/");

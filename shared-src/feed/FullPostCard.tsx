@@ -106,7 +106,7 @@ export function FullPostCard({
   const handleProfileClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    navigate(`/profile/${displayUsername}`);
+    navigate(`/${displayUsername}`);
   };
 
   return (
