@@ -56,7 +56,7 @@ export const EVENT_CATEGORIES: { value: EventCategory; label: string }[] = [
   { value: 'master_class', label: 'Мастер-класс' },
   { value: 'meet', label: 'Встреча' },
   { value: 'meeting', label: 'Собрание' },
-  { value: 'training', label: 'Трейнинг' },
+  { value: 'training', label: 'Тренинг' },
   { value: 'course', label: 'Курс' },
   { value: 'other', label: 'Other' },
 ];
