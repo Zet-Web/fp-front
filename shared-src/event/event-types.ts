@@ -58,7 +58,7 @@ export const EVENT_CATEGORIES: { value: EventCategory; label: string }[] = [
   { value: 'meeting', label: 'Собрание' },
   { value: 'training', label: 'Тренинг' },
   { value: 'course', label: 'Курс' },
-  { value: 'other', label: 'Other' },
+  { value: 'other', label: 'Другое' },
 ];
 
 export const EVENT_TYPE_LABELS: Record<EventType, string> = {
