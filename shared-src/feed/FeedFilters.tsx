@@ -53,22 +53,24 @@ export function FeedFilters({
   return (
     <Card className="shadow-sm border-b">
       <CardContent className="p-3 space-y-3">
-        <Tabs value={view} onValueChange={(v) => onViewChange(v as FeedView)}>
-          <TabsList className="w-full h-9 overflow-x-auto overflow-y-hidden flex justify-start scrollbar-hide">
-            <TabsTrigger value="featured" className="text-sm flex-shrink-0">
-              Рекомендовано
-            </TabsTrigger>
-            <TabsTrigger value="all" className="text-sm flex-shrink-0">
-              Все посты
-            </TabsTrigger>
-            <TabsTrigger value="following" className="text-sm flex-shrink-0">
-              Посты контактов
-            </TabsTrigger>
-            <TabsTrigger value="saved" className="text-sm flex-shrink-0">
-              Сохранено
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <div className="overflow-x-auto scrollbar-hide -mx-3 px-3">
+          <Tabs value={view} onValueChange={(v) => onViewChange(v as FeedView)}>
+            <TabsList className="grid w-full grid-cols-4 h-9 min-w-max md:min-w-0">
+              <TabsTrigger value="featured" className="text-sm">
+                Рекомендовано
+              </TabsTrigger>
+              <TabsTrigger value="all" className="text-sm">
+                Все посты
+              </TabsTrigger>
+              <TabsTrigger value="following" className="text-sm">
+                Посты контактов
+              </TabsTrigger>
+              <TabsTrigger value="saved" className="text-sm">
+                Сохранено
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
 
         <div className="flex gap-2 md:gap-3">
           <div className="flex-1 md:flex-none md:w-auto">
