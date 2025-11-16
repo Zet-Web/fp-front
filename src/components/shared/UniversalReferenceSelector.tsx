@@ -55,10 +55,10 @@ const DEFAULT_PLACEHOLDERS = {
 };
 
 const DEFAULT_SEARCH_PLACEHOLDERS = {
-  city: 'Введите название города...',
-  country: 'Введите название страны...',
-  region: 'Введите название региона...',
-  university: 'Введите название университета...',
+  city: 'Введите название...',
+  country: 'Введите название...',
+  region: 'Введите название...',
+  university: 'Введите название...',
 };
 
 export function UniversalReferenceSelector({
