@@ -35,6 +35,7 @@ import { PostContentViewer } from "../feed/PostContentViewer";
 import { FPApi } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { formatPostDate } from "@/lib/date-utils";
+import { useAuthContext } from "@/components/auth-provider";
 import { PostStatusBadge } from "./PostStatusBadge";
 
 interface PostCardProps {
@@ -76,6 +77,7 @@ export function PostCard({
 }: PostCardProps) {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuthContext();
 
   const [isPostSaved, setIsPostSaved] = useState(isSaved);
   const [isSaving, setIsSaving] = useState(false);
@@ -93,6 +95,11 @@ export function PostCard({
 
   const onBookmarkClick = async () => {
     if (!postId) return;
+
+    if (!isAuthenticated) {
+      navigate("/auth");
+      return;
+    }
 
     setIsSaving(true);
     try {

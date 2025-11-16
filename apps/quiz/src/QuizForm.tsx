@@ -69,7 +69,7 @@ export default function QuizForm({
     control,
     watch,
     reset,
-    formState: { errors },
+    formState: { errors, isValid },
   } = form;
 
   useEffect(() => {
@@ -97,10 +97,13 @@ export default function QuizForm({
   useEffect(() => {
     const subscription = form.watch((values) => {
       onFormValuesChange(values as QuizFormData);
-      onFormValidChange(form.formState.isValid);
     });
     return () => subscription.unsubscribe();
-  }, [form, onFormValuesChange, onFormValidChange]);
+  }, [form, onFormValuesChange, onFormValidChange, isValid]);
+
+  useEffect(() => {
+    onFormValidChange(isValid);
+  }, [isValid, onFormValidChange]);
 
   return (
     <div className="space-y-4">
@@ -182,7 +185,8 @@ export default function QuizForm({
                         Показывать правильные ответы
                       </Label>
                       <p className="text-xs text-muted-foreground">
-                        После завершения будут показаны верные ответы на все вопросы
+                        После завершения будут показаны верные ответы на все
+                        вопросы
                       </p>
                     </div>
                     <Switch
@@ -219,8 +223,12 @@ export default function QuizForm({
                         checked={field.value}
                         onCheckedChange={(checked) => {
                           field.onChange(checked);
+
                           if (!checked) {
-                            form.setValue("settings.timerMinutes", null);
+                            form.setValue("settings.timerMinutes", null, {
+                              shouldValidate: true,
+                            });
+                            form.clearErrors("settings.timerMinutes");
                           }
                         }}
                       />
