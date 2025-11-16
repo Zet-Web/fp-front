@@ -9,7 +9,7 @@ import { InlineEditActions } from "@/components/shared/InlineEditActions";
 import { DeleteConfirmationDialog } from "@/components/shared/DeleteConfirmationDialog";
 import { PeriodSelector, PeriodData } from "@/components/shared/PeriodSelector";
 import { DatabaseDropdown } from "@/components/shared/DatabaseDropdown";
-import { SearchableDropdown } from "@/components/shared/SearchableDropdown";
+import { UniversalReferenceSelector } from "@/components/shared/UniversalReferenceSelector";
 import { formatPeriod } from "@/lib/date-utils";
 import { defaultEducationValue } from "../utils/education-utils";
 import { ProfileEducation } from "../types/education";
@@ -182,13 +182,9 @@ export function EducationSection({
                     orderBy="name"
                   />
 
-                  <SearchableDropdown
-                    table="list_university"
-                    searchColumns={["name", "name"]}
-                    valueColumn="id"
-                    labelColumn="name"
+                  <UniversalReferenceSelector
+                    type="university"
                     value={editForm.university_id}
-                    labelValue={editForm?.university?.name}
                     onChange={(value, label) =>
                       setEditForm((prev) => ({
                         ...prev,
@@ -198,7 +194,8 @@ export function EducationSection({
                     }
                     label="ВУЗы"
                     placeholder="Выбрать..."
-                    searchPlaceholder="Введите 3 символа..."
+                    searchPlaceholder="Введите название университета..."
+                    minSearchLength={3}
                   />
                 </div>
 
@@ -303,13 +300,9 @@ export function EducationSection({
                 orderBy="name"
               />
 
-              <SearchableDropdown
-                table="list_university"
-                searchColumns={["name", "name"]}
-                valueColumn="id"
-                labelColumn="name"
+              <UniversalReferenceSelector
+                type="university"
                 value={newEducation.university_id}
-                labelValue={newEducation?.university?.name}
                 onChange={(value, label) =>
                   setNewEducation((prev) => ({
                     ...prev,
@@ -319,7 +312,8 @@ export function EducationSection({
                 }
                 label="ВУЗы"
                 placeholder="Выбрать..."
-                searchPlaceholder="Введите 3 символа..."
+                searchPlaceholder="Введите название университета..."
+                minSearchLength={3}
               />
             </div>
 

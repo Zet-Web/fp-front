@@ -21,7 +21,7 @@ import {
   EVENT_TYPE_LABELS,
   EventFormErrors,
 } from './event-types';
-import { EventCitySelector } from './EventCitySelector';
+import { UniversalReferenceSelector } from '@/components/shared/UniversalReferenceSelector';
 
 interface EventFormCardProps {
   eventData: EventData;
@@ -45,11 +45,11 @@ export function EventFormCard({ eventData, onChange, errors }: EventFormCardProp
     }
   };
 
-  const handleCityChange = (city: string) => {
+  const handleCityChange = (cityId: number, cityName: string) => {
     onChange({
       ...eventData,
       location: {
-        city,
+        city: cityName,
         address: eventData.location?.address || '',
       },
     });
@@ -158,13 +158,11 @@ export function EventFormCard({ eventData, onChange, errors }: EventFormCardProp
         {showLocationFields && (
           <div className="space-y-4 p-4 bg-muted/50 rounded-lg">
             <div className="space-y-2">
-              <Label htmlFor="city" className="flex items-center gap-2">
-                <MapPin className="w-4 h-4" />
-                Город *
-              </Label>
-              <EventCitySelector
+              <UniversalReferenceSelector
+                type="city"
                 value={eventData.location?.city || ''}
                 onChange={handleCityChange}
+                label="Город *"
                 error={displayErrors.city}
               />
             </div>

@@ -1,3 +1,4 @@
+// DEPRECATED: Use UniversalReferenceSelector from @/components/shared/UniversalReferenceSelector instead
 // City selector component for event location selection
 import { useState, useCallback, useEffect } from 'react';
 import {

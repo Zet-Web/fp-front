@@ -21,7 +21,7 @@ import {
   ReferenceListItem,
 } from "../types/location";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FPApi } from "@/lib/api";
+import { supabase } from "@/lib/supabase";
 
 interface LocationSelectorProps {
   cities: LocationItem[];
@@ -64,16 +64,25 @@ export function LocationSelector({
       setIsSearching(true);
 
       try {
-        const response = await FPApi.axios.get(`/location/search`, {
-          params: { locationType, searchQuery },
+        const { data, error } = await supabase.rpc('search_reference', {
+          p_type: locationType,
+          p_search_query: searchQuery,
+          p_limit: 20,
         });
-        const data = response.data;
 
-        if (data.items) {
+        if (error) {
+          console.error("Error fetching reference lists:", error);
+        } else if (data) {
+          const mappedData = data.map((item: any) => ({
+            id: item.id,
+            name: item.name,
+            code: item.code,
+          }));
+
           if (locationType === "city") {
-            setCityResults(data.items);
+            setCityResults(mappedData);
           } else {
-            setCountryResults(data.items);
+            setCountryResults(mappedData);
           }
         }
       } catch (error) {
