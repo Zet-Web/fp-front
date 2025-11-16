@@ -3,15 +3,15 @@ apps/404
 apps/auth
 apps/chats
 apps/header
-apps/home
-apps/mobileNav
-apps/navigation
-apps/profile
+# apps/home
+# apps/mobileNav
+# apps/navigation
+# apps/profile
 # apps/post
-apps/settings
-apps/yurservice
+# apps/settings
+# apps/yurservice
 apps/network
-apps/quiz
+# apps/quiz
 
 
 # src/components
