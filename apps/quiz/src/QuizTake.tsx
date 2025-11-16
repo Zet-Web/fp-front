@@ -369,7 +369,7 @@ export default function QuizTake({ postId }: Props) {
                         Пользователь
                       </th>
                       <th className="text-right py-2 px-3 text-sm font-semibold">
-                        Счёт
+                        Баллы
                       </th>
                     </tr>
                   </thead>
