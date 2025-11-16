@@ -120,7 +120,7 @@ export function EventFormCard({ eventData, onChange, errors }: EventFormCardProp
     <div className="space-y-3">
       <Label className="flex items-center gap-2">
         <Globe className="w-4 h-4" />
-        Event Type *
+        Формат *
       </Label>
       <div className="flex flex-wrap gap-3">
         {(['online', 'offline'] as EventType[]).map((type) => (
