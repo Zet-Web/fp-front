@@ -344,7 +344,7 @@ export function BirthdaySection({
                         <SelectValue placeholder="Day" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="not-set">Не установлен</SelectItem>
+                        <SelectItem value="not-set">-</SelectItem>
                         {Array.from(
                           {
                             length: getDaysInMonth(
@@ -382,7 +382,7 @@ export function BirthdaySection({
                         <SelectValue placeholder="Month" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="not-set">Не установлен</SelectItem>
+                        <SelectItem value="not-set">-</SelectItem>
                         {months.map((month) => (
                           <SelectItem key={month.value} value={month.value}>
                             {month.label}
@@ -407,7 +407,7 @@ export function BirthdaySection({
                         <SelectValue placeholder="Year" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="not-set">Не установлен</SelectItem>
+                        <SelectItem value="not-set">-</SelectItem>
                         {generateYears().map((year) => (
                           <SelectItem key={year} value={year}>
                             {year}
@@ -508,7 +508,7 @@ export function BirthdaySection({
                   <SelectValue placeholder="Day" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="not-set">Не установлен</SelectItem>
+                  <SelectItem value="not-set">-</SelectItem>
                   {Array.from(
                     {
                       length: getDaysInMonth(
@@ -557,7 +557,7 @@ export function BirthdaySection({
                   <SelectValue placeholder="Month" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="not-set">Не установлен</SelectItem>
+                  <SelectItem value="not-set">-</SelectItem>
                   {months.map((month) => (
                     <SelectItem key={month.value} value={month.value}>
                       {month.label}
@@ -595,7 +595,7 @@ export function BirthdaySection({
                   <SelectValue placeholder="Year" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="not-set">Не установлен</SelectItem>
+                  <SelectItem value="not-set">-</SelectItem>
                   {generateYears().map((year) => (
                     <SelectItem key={year} value={year}>
                       {year}

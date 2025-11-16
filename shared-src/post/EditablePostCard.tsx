@@ -308,7 +308,7 @@ export function EditablePostCard({
                   htmlFor="edit-pinned"
                   className="text-sm font-medium cursor-pointer"
                 >
-                  Pin this post
+                  Закрепить пост
                 </Label>
               </div>
 
@@ -372,8 +372,8 @@ export function EditablePostCard({
                               <Upload className="w-4 h-4" />
                             )}
                             {isUploadingCover
-                              ? "Uploading..."
-                              : "Upload Cover Image"}
+                              ? "Загрузка..."
+                              : "Загрузить изображение"}
                           </span>
                         </Button>
                       </label>

@@ -53,22 +53,24 @@ export function FeedFilters({
   return (
     <Card className="shadow-sm border-b">
       <CardContent className="p-3 space-y-3">
-        <Tabs value={view} onValueChange={(v) => onViewChange(v as FeedView)}>
-          <TabsList className="grid w-full grid-cols-4 h-9">
-            <TabsTrigger value="featured" className="text-sm">
-              Рекомендовано
-            </TabsTrigger>
-            <TabsTrigger value="all" className="text-sm">
-              Все посты
-            </TabsTrigger>
-            <TabsTrigger value="following" className="text-sm">
-              Посты контактов
-            </TabsTrigger>
-            <TabsTrigger value="saved" className="text-sm">
-              Сохранено
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <div className="overflow-x-auto scrollbar-hide -mx-3 px-3">
+          <Tabs value={view} onValueChange={(v) => onViewChange(v as FeedView)}>
+            <TabsList className="grid w-full grid-cols-4 h-9 min-w-max md:min-w-0">
+              <TabsTrigger value="featured" className="text-sm">
+                Рекомендовано
+              </TabsTrigger>
+              <TabsTrigger value="all" className="text-sm">
+                Все посты
+              </TabsTrigger>
+              <TabsTrigger value="following" className="text-sm">
+                Посты контактов
+              </TabsTrigger>
+              <TabsTrigger value="saved" className="text-sm">
+                Сохранено
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
 
         <div className="flex gap-2 md:gap-3">
           <div className="flex-1 md:flex-none md:w-auto">
@@ -99,7 +101,8 @@ export function FeedFilters({
             </Select>
           </div>
 
-          <div className="flex-1">
+          {/* TEMPORARILY HIDDEN: Location selector */}
+          {/* <div className="flex-1">
             <FeedLocationDropdown
               country={location.country}
               city={location.city}
@@ -109,7 +112,7 @@ export function FeedFilters({
               onCityChange={handleCityChange}
               onClear={clearLocation}
             />
-          </div>
+          </div> */}
         </div>
       </CardContent>
     </Card>

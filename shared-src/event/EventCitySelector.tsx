@@ -1,3 +1,4 @@
+// DEPRECATED: Use UniversalReferenceSelector from @/components/shared/UniversalReferenceSelector instead
 // City selector component for event location selection
 import { useState, useCallback, useEffect } from 'react';
 import {
@@ -20,6 +21,7 @@ import { FPApi } from '@/lib/api';
 interface ReferenceListItem {
   id: number;
   name: string;
+  name_ru: string;
   code?: string;
 }
 
@@ -113,7 +115,7 @@ export function EventCitySelector({
                 </div>
               )}
               {!isSearching && searchQuery.length < 2 && (
-                <CommandEmpty>Введите 2 символа</CommandEmpty>
+                <CommandEmpty> </CommandEmpty>
               )}
               {!isSearching &&
                 searchQuery.length >= 2 &&
