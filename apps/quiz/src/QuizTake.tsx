@@ -10,7 +10,6 @@ import { useAuthContext } from "@/components/auth-provider";
 import { FPApi } from "@/lib/api";
 import {
   Clock,
-  Award,
   XCircle,
   ChevronRight,
   ChevronLeft,
@@ -18,13 +17,10 @@ import {
   CheckCircle2,
   Play,
 } from "lucide-react";
-import {
-  QuizResponse,
-  QuizResultsTableRow,
-  QuizSubmitResult,
-} from "../types/quiz";
+import { QuizResponse, QuizSubmitResult } from "../types/quiz";
 import { ShowCorrectAnswers } from "./ShowCorrectAnswers";
-import { AlreadyAttemptedView } from "./AlreadyAttempedView";
+import { AlreadyAttemptedQuizView } from "./AlreadyAttempedView";
+import { QuizResults } from "./QuizResults";
 
 type Props = {
   postId: number;
@@ -41,7 +37,6 @@ export default function QuizTake({ postId }: Props) {
   const [finished, setFinished] = useState(false);
   const [result, setResult] = useState<QuizSubmitResult | null>(null);
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
-  const [resultsTable, setResultsTable] = useState<QuizResultsTableRow[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [quizStarted, setQuizStarted] = useState(false);
 
@@ -145,7 +140,7 @@ export default function QuizTake({ postId }: Props) {
     quiz.alreadyAttempted
   ) {
     return (
-      <AlreadyAttemptedView
+      <AlreadyAttemptedQuizView
         quizId={quiz.id}
         visibility={quiz.visibility}
         quizAuthorId={quiz.author_id}
@@ -188,11 +183,6 @@ export default function QuizTake({ postId }: Props) {
 
     const r = res.data;
     setResult(r);
-
-    if (quiz.visibility === "public") {
-      const t = await FPApi.axios.get(`/quiz/${quiz.id}/results`);
-      setResultsTable(t.data);
-    }
   }
 
   const currentQuestion = quiz.questions[currentQuestionIndex];
@@ -242,17 +232,13 @@ export default function QuizTake({ postId }: Props) {
             <div className="flex items-start gap-2">
               <CheckCircle2 className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
               <p className="text-sm text-muted-foreground">
-                {quiz.anonymous
-                  ? "Анонимно"
-                  : "Требуется авторизация"}
+                {quiz.anonymous ? "Анонимно" : "Требуется авторизация"}
               </p>
             </div>
             {quiz.one_attempt_per_user && (
               <div className="flex items-start gap-2">
                 <CheckCircle2 className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
-                <p className="text-sm text-muted-foreground">
-                  Одна попытка
-                </p>
+                <p className="text-sm text-muted-foreground">Одна попытка</p>
               </div>
             )}
             {quiz.show_correct_answers && (
@@ -346,69 +332,11 @@ export default function QuizTake({ postId }: Props) {
           <ShowCorrectAnswers quizId={quiz.id} userAnswers={answers} />
         )}
 
-        {quiz.visibility === "public" && resultsTable.length > 0 && (
-          <Card className="shadow-sm hover:shadow-md transition-shadow">
-            <CardHeader className="p-4">
-              <div className="flex items-center gap-2">
-                <Award className="w-5 h-5 text-blue-500" />
-                <h3 className="text-lg font-bold">Результаты</h3>
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Лучшие результаты
-              </p>
-            </CardHeader>
-            <CardContent className="p-4 pt-0">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b">
-                      <th className="text-left py-2 px-3 text-sm font-semibold">
-                        #
-                      </th>
-                      <th className="text-left py-2 px-3 text-sm font-semibold">
-                        Пользователь
-                      </th>
-                      <th className="text-right py-2 px-3 text-sm font-semibold">
-                        Баллы
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {resultsTable.map((row, idx: number) => (
-                      <tr
-                        key={row.id}
-                        className="border-b hover:bg-accent/50 transition-colors"
-                      >
-                        <td className="py-2 px-3">
-                          <div className="flex items-center justify-center">
-                            {idx === 0 ? (
-                              <Award className="h-4 w-4 text-yellow-500" />
-                            ) : (
-                              <span className="text-sm text-muted-foreground">
-                                {idx + 1}
-                              </span>
-                            )}
-                          </div>
-                        </td>
-                        <td className="py-2 px-3 text-sm">
-                          {row.profile?.name ?? "Аноним"}
-                        </td>
-                        <td className="py-2 px-3 text-right">
-                          <Badge
-                            variant="secondary"
-                            className="text-xs font-semibold"
-                          >
-                            {row.score}/{result?.total}
-                          </Badge>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+        <QuizResults
+          quizId={quiz.id}
+          visibility={quiz.visibility}
+          quizAuthorId={quiz.author_id}
+        />
       </div>
     );
   }

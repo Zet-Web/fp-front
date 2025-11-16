@@ -36,6 +36,7 @@ import { EventDisplayCard } from "../event/EventDisplayCard";
 import { useToast } from "@/hooks/use-toast";
 import { FPApi } from "@/lib/api";
 import { formatPostDate } from "@/lib/date-utils";
+import { useAuthContext } from "@/components/auth-provider";
 
 interface PostCardProps {
   post: PostWithAuthor;
@@ -58,8 +59,17 @@ export function FullPostCard({
   isSaved = false,
   isOwner = false,
 }: PostCardProps) {
-  const { id: postId, title, excerpt, content, author, type, created_at } = post;
+  const {
+    id: postId,
+    title,
+    excerpt,
+    content,
+    author,
+    type,
+    created_at,
+  } = post;
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuthContext();
 
   const images = post.cover_image
     ? [post.cover_image, ...post.images]
@@ -85,6 +95,11 @@ export function FullPostCard({
 
   const onBookmarkClick = async () => {
     if (!postId) return;
+
+    if (!isAuthenticated) {
+      navigate("/auth");
+      return;
+    }
 
     setIsSaving(true);
     try {

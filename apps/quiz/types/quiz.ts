@@ -31,21 +31,17 @@ export const quizSchema = z
       )
       .min(1, "Добавьте хотя бы один вопрос"),
   })
-  .refine(
-    (data) => {
-      if (data.settings.hasTimer) {
-        return (
-          data.settings.timerMinutes !== null &&
-          data.settings.timerMinutes > 0
-        );
-      }
-      return true;
-    },
-    {
-      message: "Укажите количество минут для таймера",
-      path: ["settings", "timerMinutes"],
+  .superRefine((data, ctx) => {
+  if (data.settings.hasTimer) {
+    if (!data.settings.timerMinutes || data.settings.timerMinutes <= 0) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Укажите количество минут",
+        path: ["settings", "timerMinutes"],
+      });
     }
-  );
+  }
+})
 
 export type QuizFormData = z.infer<typeof quizSchema>;
 

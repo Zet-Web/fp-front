@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useNavigate } from "react-router-dom";
 
 interface PostsSectionProps {
   user: UserProfile;
@@ -19,6 +20,8 @@ interface PostsSectionProps {
 }
 
 export function PostsSection({ user, isOwnProfile }: PostsSectionProps) {
+  const navigate = useNavigate();
+
   const [filters, setFilters] = useState<FeedFilters>({
     view: "all",
     status: PostStatusFilter.all,
@@ -44,7 +47,9 @@ export function PostsSection({ user, isOwnProfile }: PostsSectionProps) {
               Опубликовано
             </SelectItem>
             <SelectItem value={PostStatusFilter.draft}>Черновики</SelectItem>
-            <SelectItem value={PostStatusFilter.archived}>Архивировано</SelectItem>
+            <SelectItem value={PostStatusFilter.archived}>
+              Архивировано
+            </SelectItem>
           </SelectContent>
         </Select>
       )}
@@ -52,16 +57,12 @@ export function PostsSection({ user, isOwnProfile }: PostsSectionProps) {
       <Feed
         filters={filters}
         filterByUsername={user.username}
-        emptyMessage={
-          isOwnProfile
-            ? "Публикаций нет"
-            : "Публикаций нет"
-        }
+        emptyMessage={isOwnProfile ? "Публикаций нет" : "Публикаций нет"}
         emptyAction={
           isOwnProfile
             ? {
                 label: "Создайте публикацию",
-                onClick: () => console.log("Create post clicked"),
+                onClick: () => navigate("/post"),
               }
             : undefined
         }
