@@ -308,7 +308,7 @@ export function EditablePostCard({
                   htmlFor="edit-pinned"
                   className="text-sm font-medium cursor-pointer"
                 >
-                  Pin this post
+                  Закрепить пост
                 </Label>
               </div>
 
