@@ -20,6 +20,7 @@ import { FPApi } from '@/lib/api';
 interface ReferenceListItem {
   id: number;
   name: string;
+  name_ru: string;
   code?: string;
 }
 
