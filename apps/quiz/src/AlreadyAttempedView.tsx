@@ -224,7 +224,7 @@ export function AlreadyAttemptedView({
                         onClick={() => handleSortClick("score")}
                       >
                         <div className="flex items-center justify-end gap-2">
-                          Счёт
+                          Баллы
                           {sortBy === "score" &&
                             (order === "asc" ? (
                               <ChevronUp className="w-4 h-4" />
