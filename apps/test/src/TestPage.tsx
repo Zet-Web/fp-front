@@ -6,14 +6,14 @@ import { ScrollingTab } from '../scrolling/ScrollingTab';
 import { Profile2Tab } from '../profile2/Profile2Tab';
 import { TypographyTab } from '../typography/TypographyTab';
 import { Quiz3Tab } from '../quiz3/Quiz3Tab';
-import { DbFunctionTab } from '../dbfunction/DbFunctionTab';
+import { EventsTab } from '../events/EventsTab';
 
 const tabMap: Record<string, string> = {
   '1': 'scrolling',
   '2': 'profile2',
   '3': 'typography',
   '4': 'quiz3',
-  '5': 'dbfunction'
+  '5': 'events'
 };
 
 export function TestPage() {
@@ -53,7 +53,7 @@ export function TestPage() {
           <TabsTrigger value="profile2">Profile 2</TabsTrigger>
           <TabsTrigger value="typography">Typography</TabsTrigger>
           <TabsTrigger value="quiz3">Quiz Variants</TabsTrigger>
-          <TabsTrigger value="dbfunction">Test DB Function</TabsTrigger>
+          <TabsTrigger value="events">Events</TabsTrigger>
         </TabsList>
 
         <TabsContent value="scrolling">
@@ -72,8 +72,8 @@ export function TestPage() {
           <Quiz3Tab />
         </TabsContent>
 
-        <TabsContent value="dbfunction">
-          <DbFunctionTab />
+        <TabsContent value="events">
+          <EventsTab />
         </TabsContent>
       </Tabs>
     </div>
