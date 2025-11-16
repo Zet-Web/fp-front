@@ -23,8 +23,6 @@ type ReferenceType = 'city' | 'country' | 'region' | 'university';
 interface ReferenceItem {
   id: number;
   name: string;
-  name_en: string;
-  code?: string;
 }
 
 interface UniversalReferenceSelectorProps {
@@ -138,7 +136,7 @@ export function UniversalReferenceSelector({
           const tableName = `list_${type}`;
           const { data, error } = await supabase
             .from(tableName)
-            .select('id, name, name_ru, code')
+            .select('id, name, name_ru')
             .eq('id', value)
             .maybeSingle();
 
@@ -220,11 +218,6 @@ export function UniversalReferenceSelector({
                     >
                       {showIcon && <Icon className="w-4 h-4 mr-2" />}
                       <span>{item.name}</span>
-                      {item.code && (
-                        <span className="ml-auto text-xs text-muted-foreground">
-                          {item.code}
-                        </span>
-                      )}
                     </CommandItem>
                   ))}
                 </CommandGroup>

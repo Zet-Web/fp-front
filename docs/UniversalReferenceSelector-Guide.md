@@ -26,9 +26,7 @@ CREATE OR REPLACE FUNCTION search_reference(
 )
 RETURNS TABLE (
   id INTEGER,
-  name TEXT,
-  name_en TEXT,
-  code TEXT
+  name TEXT
 )
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -48,24 +46,22 @@ BEGIN
   RETURN QUERY EXECUTE format(
     'SELECT
       id::INTEGER,
-      COALESCE(name_ru, name) as name,
-      name as name_en,
-      COALESCE(code, '''') as code
+      COALESCE(name_ru, name) as name
     FROM %I
     WHERE
       name ILIKE $1 OR
       name_ru ILIKE $1
     ORDER BY
       CASE
-        WHEN name_ru ILIKE $1 || ''%%'' THEN 1
-        WHEN name ILIKE $1 || ''%%'' THEN 2
+        WHEN name_ru ILIKE $2 THEN 1
+        WHEN name ILIKE $2 THEN 2
         ELSE 3
       END,
       COALESCE(name_ru, name)
-    LIMIT $2',
+    LIMIT $3',
     v_table_name
   )
-  USING '%' || p_search_query || '%', p_limit;
+  USING '%' || p_search_query || '%', p_search_query || '%', p_limit;
 END;
 $$;
 
@@ -85,7 +81,6 @@ Each table must have columns:
 - `id` (INTEGER) - Primary key
 - `name` (TEXT) - English name
 - `name_ru` (TEXT) - Russian name
-- `code` (TEXT, optional) - Country/region code
 
 ## Component Usage
 
