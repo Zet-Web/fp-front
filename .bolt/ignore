@@ -12,8 +12,8 @@ apps/settings
 apps/yurservice
 apps/network
 apps/quiz
-# apps/contragent
+apps/contragent
 
 
-src/components
-shared-src
+# src/components
+# shared-src
