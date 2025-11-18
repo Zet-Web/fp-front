@@ -247,7 +247,11 @@ export function FullPostCard({
               </div>
             )}
 
-            {type === PostType.QUIZ && <QuizTake postId={postId} />}
+            {type === PostType.QUIZ && (
+              <div className="mt-6">
+                <QuizTake postId={postId} />
+              </div>
+            )}
 
             {showActions && (
               <div className="flex justify-end gap-1 mt-2">
