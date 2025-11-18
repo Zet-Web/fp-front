@@ -350,7 +350,7 @@ export function HeroSection({
                 >
                   <MessageCircle className="w-4 h-4 mr-2" />
                   Чат
-                </Button>
+                </Button> */}
                 <Button
                   onClick={() => setIsFollowing(!isFollowing)}
                   variant="outline"
@@ -358,7 +358,7 @@ export function HeroSection({
                 >
                   {!isFollowing && <UserPlus className="w-4 h-4 mr-2" />}
                   {isFollowing ? "Unfollow" : "Follow"}
-                </Button> */}
+                </Button>
               </>
             )}
           </div>
