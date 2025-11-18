@@ -68,7 +68,7 @@ export default function ContragentPage() {
           <Alert className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
             <AlertCircle className="h-4 w-4 text-blue-600 dark:text-blue-400" />
             <AlertDescription className="text-blue-800 dark:text-blue-200">
-              <strong>Демо-режим:</strong> Используются тестовые данные. Для проверки доступны 3 примера компаний.
+              <strong>Демо-режим:</strong> Используются тестовые данные. Для проверки доступны 5 примеров компаний.
             </AlertDescription>
           </Alert>
 

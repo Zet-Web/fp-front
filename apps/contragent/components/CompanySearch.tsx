@@ -16,7 +16,9 @@ interface CompanySearchProps {
 const demoExamples = [
   { inn: '7707083893', name: 'ПАО "Сбербанк"' },
   { inn: '7728168971', name: 'ООО "Яндекс"' },
-  { inn: '5007017140', name: 'Проблемная компания' }
+  { inn: '7743001840', name: 'ПАО "МТС"' },
+  { inn: '7707049388', name: 'ООО "Рога и Копыта Групп"' },
+  { inn: '5007017140', name: 'ООО "ТехСтрой"' }
 ];
 
 export function CompanySearch({ onSearch, isLoading, searchHistory }: CompanySearchProps) {

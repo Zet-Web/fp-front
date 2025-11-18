@@ -44,11 +44,6 @@ export function MethodSelector({ methods, selectedMethod, onSelectMethod }: Meth
                 <div>
                   <h4 className="font-medium text-sm">{method.name}</h4>
                   <p className="text-xs text-muted-foreground">{method.processingTime}</p>
-                  {method.feePercentage > 0 && (
-                    <p className="text-xs text-orange-600 dark:text-orange-400">
-                      +{method.feePercentage}% комиссия
-                    </p>
-                  )}
                 </div>
               </div>
             </Card>

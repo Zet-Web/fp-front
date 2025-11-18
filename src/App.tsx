@@ -20,7 +20,7 @@ import { NotFoundPage } from "/apps/404/404Page";
 import { SidebarProvider } from "@/contexts/sidebar-context";
 import { useMemo } from "react";
 
-const fullWidthRoutes = ["/yurservice", "/network", "/contragent", "/split"];
+const fullWidthRoutes = ["/yurservice", "/network"];
 
 function AppContent() {
   const location = useLocation();

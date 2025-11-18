@@ -116,7 +116,7 @@ export const mockCompanies: Record<string, Company> = {
   },
   '5007017140': {
     basicInfo: {
-      name: 'ООО "Проблемная Компания"',
+      name: 'ООО "ТехСтрой"',
       inn: '5007017140',
       ogrn: '1125007001234',
       address: 'Московская обл., г. Химки, ул. Промышленная, д. 5',
@@ -169,6 +169,119 @@ export const mockCompanies: Record<string, Company> = {
         'Рекомендуется предоплата или банковская гарантия',
         'Не рекомендуется долгосрочное сотрудничество',
         'Требуется дополнительная проверка финансовой устойчивости'
+      ]
+    }
+  },
+  '7743001840': {
+    basicInfo: {
+      name: 'ПАО "МТС"',
+      inn: '7743001840',
+      ogrn: '1027700149124',
+      address: 'г. Москва, ул. Марксистская, д. 4',
+      status: 'active',
+      registrationDate: '1993-09-16',
+      employees: 28500,
+      capital: 13925000000
+    },
+    leadership: {
+      ceo: 'Корня Вячеслав Константинович',
+      founders: [
+        { name: 'АФК "Система"', share: 50.9 },
+        { name: 'Прочие акционеры', share: 49.1 }
+      ],
+      beneficiaries: [
+        { name: 'АФК "Система"', share: 50.9 }
+      ]
+    },
+    financials: {
+      yearlyData: [
+        { year: 2023, revenue: 548000000, profit: 68000000, assets: 824000000, liabilities: 456000000 },
+        { year: 2022, revenue: 512000000, profit: 62000000, assets: 786000000, liabilities: 432000000 },
+        { year: 2021, revenue: 488000000, profit: 58000000, assets: 752000000, liabilities: 410000000 }
+      ],
+      taxDebt: 0,
+      creditRating: 'AA'
+    },
+    legal: {
+      courtCases: {
+        asPlaintiff: { total: 456, won: 389 },
+        asDefendant: { total: 312, lost: 78 }
+      },
+      enforcementCases: 0,
+      bankruptcyStatus: 'none',
+      licenses: [
+        { type: 'Лицензия на телематические услуги', number: '177782', validUntil: '2026-06-30' },
+        { type: 'Лицензия на услуги связи', number: '177783', validUntil: '2026-06-30' }
+      ]
+    },
+    riskAssessment: {
+      level: 'low',
+      score: 90,
+      factors: [
+        'Крупный оператор связи с устойчивой позицией на рынке',
+        'Стабильная динамика финансовых показателей',
+        'Диверсифицированный портфель услуг'
+      ],
+      recommendations: [
+        'Надежный партнер с хорошей деловой репутацией',
+        'Рекомендуется к сотрудничеству'
+      ]
+    }
+  },
+  '7707049388': {
+    basicInfo: {
+      name: 'ООО "Рога и Копыта Групп"',
+      inn: '7707049388',
+      ogrn: '1157746530912',
+      address: 'г. Москва, Проспект Мира, д. 101',
+      status: 'active',
+      registrationDate: '2015-05-20',
+      employees: 156,
+      capital: 50000000
+    },
+    leadership: {
+      ceo: 'Корейко Александр Иванович',
+      founders: [
+        { name: 'Корейко Александр Иванович', share: 70.0 },
+        { name: 'Балаганов Паниковский и Ко', share: 30.0 }
+      ],
+      beneficiaries: [
+        { name: 'Корейко Александр Иванович', share: 70.0 },
+        { name: 'Балаганов Паниковский и Ко', share: 30.0 }
+      ]
+    },
+    financials: {
+      yearlyData: [
+        { year: 2023, revenue: 285000000, profit: 28000000, assets: 198000000, liabilities: 124000000 },
+        { year: 2022, revenue: 242000000, profit: 22000000, assets: 176000000, liabilities: 118000000 },
+        { year: 2021, revenue: 198000000, profit: 18000000, assets: 154000000, liabilities: 98000000 }
+      ],
+      taxDebt: 0,
+      creditRating: 'BBB'
+    },
+    legal: {
+      courtCases: {
+        asPlaintiff: { total: 67, won: 54 },
+        asDefendant: { total: 43, lost: 12 }
+      },
+      enforcementCases: 0,
+      bankruptcyStatus: 'none',
+      licenses: [
+        { type: 'Лицензия на оптовую торговлю', number: '77-45-009821', validUntil: '2027-08-15' }
+      ]
+    },
+    riskAssessment: {
+      level: 'medium',
+      score: 72,
+      factors: [
+        'Положительная динамика роста',
+        'Умеренный уровень долговой нагрузки',
+        'Относительно короткая история деятельности'
+      ],
+      recommendations: [
+        'Компания демонстрирует стабильный рост',
+        'Рекомендуется сотрудничество с умеренным контролем',
+        'Желательна предоплата для крупных сделок'
       ]
     }
   }

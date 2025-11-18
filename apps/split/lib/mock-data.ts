@@ -8,36 +8,36 @@ export const paymentPlans: PaymentPlan[] = [
     name: 'Полная оплата',
     duration: 0,
     setupFee: 0,
-    discount: 10,
-    description: 'Скидка 10% при полной оплате'
+    discount: 0,
+    description: 'Оплата полной суммы сразу'
   },
   {
     id: '3months',
     name: '3 месяца',
     duration: 3,
-    setupFee: 500,
-    description: 'Комиссия за оформление 500 ₽'
+    setupFee: 0,
+    description: 'Рассрочка на 3 месяца без переплат'
   },
   {
     id: '6months',
     name: '6 месяцев',
     duration: 6,
-    setupFee: 800,
-    description: 'Комиссия за оформление 800 ₽'
+    setupFee: 0,
+    description: 'Рассрочка на 6 месяцев без переплат'
   },
   {
     id: '12months',
     name: '12 месяцев',
     duration: 12,
-    setupFee: 1200,
-    description: 'Комиссия за оформление 1 200 ₽'
+    setupFee: 0,
+    description: 'Рассрочка на 12 месяцев без переплат'
   },
   {
     id: '24months',
     name: '24 месяца',
     duration: 24,
-    setupFee: 2000,
-    description: 'Комиссия за оформление 2 000 ₽'
+    setupFee: 0,
+    description: 'Рассрочка на 24 месяца без переплат'
   }
 ];
 
@@ -46,7 +46,7 @@ export const paymentMethods: PaymentMethod[] = [
     id: 'card',
     name: 'Банковская карта',
     icon: 'CreditCard',
-    feePercentage: 2.5,
+    feePercentage: 0,
     processingTime: 'Мгновенно'
   },
   {
@@ -67,7 +67,7 @@ export const paymentMethods: PaymentMethod[] = [
     id: 'ewallet',
     name: 'Электронный кошелек',
     icon: 'Wallet',
-    feePercentage: 3,
+    feePercentage: 0,
     processingTime: 'Мгновенно'
   }
 ];
