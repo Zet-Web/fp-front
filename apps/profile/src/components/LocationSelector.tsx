@@ -192,7 +192,7 @@ export function LocationSelector({
               className="gap-2"
             >
               <Plus className="w-4 h-4" />
-              {allLocations.length === 0 ? "Add location" : "Add another"}
+              {allLocations.length === 0 ? "Добавить локацию" : "Добавить еще"}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-[300px] p-0" align="start">
