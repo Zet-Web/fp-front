@@ -337,7 +337,7 @@ export function HeroSection({
                   </Button>
                 )}
               </>
-            ) : (
+            ) : ( 
               <>
                 <Button
                   variant="outline"
@@ -349,14 +349,14 @@ export function HeroSection({
                   {/* <MessageCircle className="w-4 h-4 mr-2" />
                   Чат
                 </Button> */}
-                  {/* <Button
+                <Button
                   onClick={() => setIsFollowing(!isFollowing)}
                   variant="outline"
                   className="px-6 py-2 rounded-full font-medium transition-colors"
                 >
                   {!isFollowing && <UserPlus className="w-4 h-4 mr-2" />}
                   {isFollowing ? "Unfollow" : "Follow"}
-                </Button> */}
+                </Button>
               </>
             )}
           </div>
