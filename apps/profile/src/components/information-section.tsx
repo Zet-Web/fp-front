@@ -30,9 +30,7 @@ export function InformationSection({
         <Card className="w-96">
           <CardContent className="p-6 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">
-              Загрузка...
-            </p>
+            <p className="text-muted-foreground">Загрузка...</p>
           </CardContent>
         </Card>
       </div>
@@ -41,28 +39,33 @@ export function InformationSection({
 
   return (
     <div className="space-y-6">
-      {((additionalInfo?.contact_info && additionalInfo.contact_info.length > 0) || isEditing) && (
+      {((additionalInfo?.contact_info &&
+        additionalInfo.contact_info.length > 0) ||
+        isEditing) && (
         <ContactsSection
           additionalInfo={additionalInfo}
           onUpdateAdditionalInfo={onUpdateAdditionalInfo}
           isEditing={isEditing}
         />
       )}
-      {((additionalInfo?.experience && additionalInfo.experience.length > 0) || isEditing) && (
+      {((additionalInfo?.experience && additionalInfo.experience.length > 0) ||
+        isEditing) && (
         <ExperienceSection
           additionalInfo={additionalInfo}
           onUpdateAdditionalInfo={onUpdateAdditionalInfo}
           isEditing={isEditing}
         />
       )}
-      {((additionalInfo?.education && additionalInfo.education.length > 0) || isEditing) && (
+      {((additionalInfo?.education && additionalInfo.education.length > 0) ||
+        isEditing) && (
         <EducationSection
           additionalInfo={additionalInfo}
           onUpdateAdditionalInfo={onUpdateAdditionalInfo}
           isEditing={isEditing}
         />
       )}
-      {((additionalInfo?.awards && additionalInfo.awards.length > 0) || isEditing) && (
+      {((additionalInfo?.awards && additionalInfo.awards.length > 0) ||
+        isEditing) && (
         <AwardsSection
           additionalInfo={additionalInfo}
           onUpdateAdditionalInfo={onUpdateAdditionalInfo}
