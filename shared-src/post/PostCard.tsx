@@ -254,14 +254,15 @@ export function PostCard({
             </div>
 
             {images.length > 0 && (
-              <div className="mb-4">
-                <img
-                  src={images[0]}
-                  alt="Post content"
-                  className="w-full rounded-lg object-cover aspect-square"
-                />
-              </div>
-            )}
+  <div className="mt-3 mb-3">
+    <img
+      src={images[0]}
+      alt="Post content"
+      className="w-full rounded-2xl object-cover max-h-[512px] border border-border"
+    />
+  </div>
+)}
+
 
             {postType === 'event' && eventData && (
               <div className="mt-4">
