@@ -15,7 +15,7 @@ export const formatCurrency = (amount: number): string => {
 
 export const generatePaymentLink = (amount: number): string => {
   const id = Math.random().toString(36).substring(2, 12).toUpperCase();
-  return `https://pay.example.ru/${id}`;
+  return `https://fondprava.com/${id}`;
 };
 
 export const calculatePayment = (
