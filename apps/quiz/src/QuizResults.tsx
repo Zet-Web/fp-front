@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Award, ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { QuizResponse, QuizResultsTableRow } from "../types/quiz";
 import { useEffect, useMemo, useState } from "react";
 import debounce from "lodash.debounce";
@@ -140,10 +140,7 @@ export const QuizResults: React.FC<Props> = ({
   return (
     <Card className="shadow-md hover:shadow-lg transition-shadow">
       <CardHeader>
-        <div className="flex items-center gap-2">
-          <Award className="w-6 h-6 text-blue-500" />
-          <h2 className="text-2xl font-bold">Результаты</h2>
-        </div>
+        <h2 className="text-2xl font-bold">Результаты</h2>
         <p className="text-sm text-muted-foreground">Лучшие результаты</p>
       </CardHeader>
       <CardContent>
@@ -218,32 +215,57 @@ export const QuizResults: React.FC<Props> = ({
                 </tr>
               </thead>
               <tbody>
-                {resultsTable.map((row) => (
-                  <tr
-                    key={row.id}
-                    className="border-b hover:bg-accent/50 transition-colors"
-                  >
-                    <td className="py-3 px-4">
-                      <div className="flex items-center justify-start">
-                        {row.rank === 1 ? (
-                          <Award className="h-5 w-5 text-yellow-500" />
-                        ) : (
-                          <span className="text-muted-foreground">
-                            {row.rank}
-                          </span>
-                        )}
-                      </div>
-                    </td>
-                    <td className="py-3 px-4">
-                      {row.profile?.name ?? "Аноним"}
-                    </td>
-                    <td className="py-3 px-4 text-right">
-                      <Badge variant="secondary" className="font-semibold">
-                        {row.score}
-                      </Badge>
-                    </td>
-                  </tr>
-                ))}
+                {resultsTable.map((row) => {
+                  const getRankDisplay = (rank: number) => {
+                    if (rank === 1) {
+                      return (
+                        <div className="flex items-center justify-center w-7 h-7 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 text-white font-bold text-sm shadow-sm">
+                          1
+                        </div>
+                      );
+                    }
+                    if (rank === 2) {
+                      return (
+                        <div className="flex items-center justify-center w-7 h-7 rounded-full bg-gradient-to-br from-gray-300 to-gray-500 text-white font-bold text-sm shadow-sm">
+                          2
+                        </div>
+                      );
+                    }
+                    if (rank === 3) {
+                      return (
+                        <div className="flex items-center justify-center w-7 h-7 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 text-white font-bold text-sm shadow-sm">
+                          3
+                        </div>
+                      );
+                    }
+                    return (
+                      <span className="text-muted-foreground font-medium">
+                        {rank}
+                      </span>
+                    );
+                  };
+
+                  return (
+                    <tr
+                      key={row.id}
+                      className="border-b hover:bg-accent/50 transition-colors"
+                    >
+                      <td className="py-3 px-4">
+                        <div className="flex items-center justify-start">
+                          {getRankDisplay(row.rank)}
+                        </div>
+                      </td>
+                      <td className="py-3 px-4">
+                        {row.profile?.name ?? "Аноним"}
+                      </td>
+                      <td className="py-3 px-4 text-right">
+                        <Badge variant="secondary" className="font-semibold">
+                          {row.score}
+                        </Badge>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
 
