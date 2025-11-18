@@ -394,7 +394,7 @@ export function EditablePostCard({
                     <img
                       src={editedCoverImage}
                       alt="Cover preview"
-                      className="w-full rounded-lg object-cover max-h-48"
+                      className="w-full rounded-lg object-cover aspect-square"
                       onError={(e) => {
                         e.currentTarget.style.display = "none";
                       }}
