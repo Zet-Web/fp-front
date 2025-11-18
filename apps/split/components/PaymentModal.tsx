@@ -94,10 +94,6 @@ export function PaymentModal({ isOpen, onClose, amount }: PaymentModalProps) {
               {step === 'processing' && 'Обработка платежа'}
               {step === 'success' && 'Платеж успешен'}
             </span>
-            <Button variant="ghost" size="icon" onClick={handleClose}>
-              <X className="h-4 w-4" />
-            </Button>
-          </DialogTitle>
         </DialogHeader>
 
         {step === 'form' && (
