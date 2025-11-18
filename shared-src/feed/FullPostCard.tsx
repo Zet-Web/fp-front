@@ -232,7 +232,7 @@ export function FullPostCard({
                 <img
                   src={images[0]}
                   alt="Post content"
-                  className="w-full rounded-lg object-cover max-h-64"
+                  className="w-full rounded-lg object-cover aspect-square"
                 />
               </div>
             )}
