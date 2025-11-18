@@ -69,16 +69,20 @@ export function InformationSection({
           isEditing={isEditing}
         />
       )}
-      <AdditionalInfoSection
-        user={user}
-        isEditing={isEditing}
-        onUpdateProfile={onUpdateProfile}
-      />
-      <BirthdaySection
-        user={user}
-        isEditing={isEditing}
-        onUpdateProfile={onUpdateProfile}
-      />
+      {((user.birthday && user.birthday.trim()) || isEditing) && (
+        <BirthdaySection
+          user={user}
+          isEditing={isEditing}
+          onUpdateProfile={onUpdateProfile}
+        />
+      )}
+      {((user.additional_info && user.additional_info.trim()) || isEditing) && (
+        <AdditionalInfoSection
+          user={user}
+          isEditing={isEditing}
+          onUpdateProfile={onUpdateProfile}
+        />
+      )}
     </div>
   );
 }

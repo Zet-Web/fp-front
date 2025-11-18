@@ -301,7 +301,7 @@ export function BirthdaySection({
     if (!displayValue) {
       return (
         <p className="text-muted-foreground italic text-sm">
-          День рождения не добавлен
+          Нет данных
         </p>
       );
     }
