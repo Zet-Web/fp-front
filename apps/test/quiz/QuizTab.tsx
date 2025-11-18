@@ -73,7 +73,7 @@ export function QuizTab() {
     return (
       <div className="space-y-6">
         <Button variant="outline" onClick={resetView}>
-          Back to Overview
+          Вернуться
         </Button>
         <QuizResults
           quiz={currentQuiz}
