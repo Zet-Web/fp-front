@@ -232,7 +232,7 @@ export function FullPostCard({
                 <img
                   src={images[0]}
                   alt="Post content"
-                  className="w-full rounded-lg object-cover max-h-64"
+                  className="w-full rounded-lg object-contain h-auto"
                 />
               </div>
             )}
@@ -247,7 +247,11 @@ export function FullPostCard({
               </div>
             )}
 
-            {type === PostType.QUIZ && <QuizTake postId={postId} />}
+            {type === PostType.QUIZ && (
+              <div className="mt-6">
+                <QuizTake postId={postId} />
+              </div>
+            )}
 
             {showActions && (
               <div className="flex justify-end gap-1 mt-2">

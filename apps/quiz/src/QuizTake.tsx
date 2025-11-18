@@ -16,6 +16,8 @@ import {
   Trophy,
   CheckCircle2,
   Play,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { QuizResponse, QuizSubmitResult } from "../types/quiz";
 import { ShowCorrectAnswers } from "./ShowCorrectAnswers";
@@ -39,6 +41,7 @@ export default function QuizTake({ postId }: Props) {
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [quizStarted, setQuizStarted] = useState(false);
+  const [showResults, setShowResults] = useState(false);
 
   const load = async () => {
     const res = await FPApi.axios.get<QuizResponse>(`/quiz/by-post/${postId}`);
@@ -332,11 +335,33 @@ export default function QuizTake({ postId }: Props) {
           <ShowCorrectAnswers quizId={quiz.id} userAnswers={answers} />
         )}
 
-        <QuizResults
-          quizId={quiz.id}
-          visibility={quiz.visibility}
-          quizAuthorId={quiz.author_id}
-        />
+        <div className="space-y-4">
+          <Button
+            onClick={() => setShowResults(!showResults)}
+            variant="outline"
+            className="w-full gap-2"
+          >
+            {showResults ? (
+              <>
+                <EyeOff className="h-4 w-4" />
+                Скрыть результаты
+              </>
+            ) : (
+              <>
+                <Eye className="h-4 w-4" />
+                Показать результаты
+              </>
+            )}
+          </Button>
+
+          {showResults && (
+            <QuizResults
+              quizId={quiz.id}
+              visibility={quiz.visibility}
+              quizAuthorId={quiz.author_id}
+            />
+          )}
+        </div>
       </div>
     );
   }

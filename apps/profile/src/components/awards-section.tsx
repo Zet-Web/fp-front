@@ -395,12 +395,12 @@ export function AwardsSection({
                 />
               </div>
               <div className="flex gap-2">
-                <Button onClick={addAward}>Add</Button>
+                <Button onClick={addAward}>Добавить</Button>
                 <Button
                   variant="outline"
                   onClick={() => setShowAddAwardForm(false)}
                 >
-                  Cancel
+                  Отмена
                 </Button>
               </div>
             </div>

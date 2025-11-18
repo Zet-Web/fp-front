@@ -314,7 +314,7 @@ export function HeroSection({
                       onClick={onEditToggle}
                       disabled={isSaving}
                     >
-                      Cancel
+                      Отмена
                     </Button>
                     <Button
                       className="px-6 py-2 rounded-full font-medium transition-colors"
@@ -338,17 +338,19 @@ export function HeroSection({
                 )}
               </>
             ) : (
-              <>
-                <Button
+              <> 
+
+                {/* TODO: Uncomment when chat functionality is ready */}
+                {/* <Button
                   variant="outline"
                   className="px-4 py-2 rounded-full font-medium transition-colors"
                   onClick={() => {
-                    /* TODO: Implement messages navigation */
+     
                   }}
                 >
                   <MessageCircle className="w-4 h-4 mr-2" />
                   Чат
-                </Button>
+                </Button> */}
                 <Button
                   onClick={() => setIsFollowing(!isFollowing)}
                   variant="outline"

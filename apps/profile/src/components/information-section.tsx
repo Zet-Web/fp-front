@@ -41,36 +41,48 @@ export function InformationSection({
 
   return (
     <div className="space-y-6">
-      <ContactsSection
-        additionalInfo={additionalInfo}
-        onUpdateAdditionalInfo={onUpdateAdditionalInfo}
-        isEditing={isEditing}
-      />
-      <ExperienceSection
-        additionalInfo={additionalInfo}
-        onUpdateAdditionalInfo={onUpdateAdditionalInfo}
-        isEditing={isEditing}
-      />
-      <EducationSection
-        additionalInfo={additionalInfo}
-        onUpdateAdditionalInfo={onUpdateAdditionalInfo}
-        isEditing={isEditing}
-      />
-      <AwardsSection
-        additionalInfo={additionalInfo}
-        onUpdateAdditionalInfo={onUpdateAdditionalInfo}
-        isEditing={isEditing}
-      />
-      <AdditionalInfoSection
-        user={user}
-        isEditing={isEditing}
-        onUpdateProfile={onUpdateProfile}
-      />
-      <BirthdaySection
-        user={user}
-        isEditing={isEditing}
-        onUpdateProfile={onUpdateProfile}
-      />
+      {((additionalInfo?.contact_info && additionalInfo.contact_info.length > 0) || isEditing) && (
+        <ContactsSection
+          additionalInfo={additionalInfo}
+          onUpdateAdditionalInfo={onUpdateAdditionalInfo}
+          isEditing={isEditing}
+        />
+      )}
+      {((additionalInfo?.experience && additionalInfo.experience.length > 0) || isEditing) && (
+        <ExperienceSection
+          additionalInfo={additionalInfo}
+          onUpdateAdditionalInfo={onUpdateAdditionalInfo}
+          isEditing={isEditing}
+        />
+      )}
+      {((additionalInfo?.education && additionalInfo.education.length > 0) || isEditing) && (
+        <EducationSection
+          additionalInfo={additionalInfo}
+          onUpdateAdditionalInfo={onUpdateAdditionalInfo}
+          isEditing={isEditing}
+        />
+      )}
+      {((additionalInfo?.awards && additionalInfo.awards.length > 0) || isEditing) && (
+        <AwardsSection
+          additionalInfo={additionalInfo}
+          onUpdateAdditionalInfo={onUpdateAdditionalInfo}
+          isEditing={isEditing}
+        />
+      )}
+      {((user.birthday && user.birthday.trim()) || isEditing) && (
+        <BirthdaySection
+          user={user}
+          isEditing={isEditing}
+          onUpdateProfile={onUpdateProfile}
+        />
+      )}
+      {((user.additional_info && user.additional_info.trim()) || isEditing) && (
+        <AdditionalInfoSection
+          user={user}
+          isEditing={isEditing}
+          onUpdateProfile={onUpdateProfile}
+        />
+      )}
     </div>
   );
 }

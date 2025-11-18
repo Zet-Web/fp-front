@@ -44,13 +44,13 @@ export function QuizTab() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold">Create New Quiz</h2>
+            <h2 className="text-2xl font-bold">Создать тест</h2>
             <p className="text-muted-foreground">
-              Design your quiz with questions and settings
+              Спроектируйте тформат и детали тестирования
             </p>
           </div>
           <Button variant="outline" onClick={() => setView('overview')}>
-            Cancel
+            Отмена
           </Button>
         </div>
         <QuizCreate onSubmit={handleCreateQuiz} />
@@ -62,7 +62,7 @@ export function QuizTab() {
     return (
       <div className="space-y-6">
         <Button variant="outline" onClick={resetView}>
-          Exit Quiz
+          Выйти из теста
         </Button>
         <QuizTake quiz={currentQuiz} onComplete={handleQuizComplete} />
       </div>
@@ -73,7 +73,7 @@ export function QuizTab() {
     return (
       <div className="space-y-6">
         <Button variant="outline" onClick={resetView}>
-          Back to Overview
+          Вернуться
         </Button>
         <QuizResults
           quiz={currentQuiz}

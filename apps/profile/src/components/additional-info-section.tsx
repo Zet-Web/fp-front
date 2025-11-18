@@ -39,7 +39,7 @@ export function AdditionalInfoSection({
           <p className="text-foreground whitespace-pre-wrap">
             {user.additional_info || (
               <span className="text-muted-foreground italic text-sm">
-                Дополнительной информации нет
+                Нет данных
               </span>
             )}
           </p>
