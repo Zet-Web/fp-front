@@ -230,7 +230,7 @@ export const mockCompanies: Record<string, Company> = {
   },
   '7707049388': {
     basicInfo: {
-      name: 'ООО "Рога и Копыта Групп"',
+      name: 'ООО "Девелопер Групп"',
       inn: '7707049388',
       ogrn: '1157746530912',
       address: 'г. Москва, Проспект Мира, д. 101',
