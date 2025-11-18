@@ -7,12 +7,13 @@ apps/home
 apps/mobileNav
 apps/navigation
 apps/profile
-# apps/post
+apps/post
 apps/settings
 apps/yurservice
 apps/network
 apps/quiz
+# apps/contragent
 
 
-# src/components
-# shared-src
+src/components
+shared-src
