@@ -10,6 +10,7 @@ import { PostPage } from "/apps/post/src/PostPage";
 import { TestPage } from "/apps/test/src/TestPage";
 import { YurServicePage } from "/apps/yurservice/YurServicePage";
 import { NetworkPage } from "/apps/network/NetworkPage";
+import ContragentPage from "/apps/contragent/ContragentPage";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { Routes, Route, useLocation } from "react-router-dom";
@@ -18,7 +19,7 @@ import { NotFoundPage } from "/apps/404/404Page";
 import { SidebarProvider } from "@/contexts/sidebar-context";
 import { useMemo } from "react";
 
-const fullWidthRoutes = ["/yurservice", "/network"];
+const fullWidthRoutes = ["/yurservice", "/network", "/contragent"];
 
 function AppContent() {
   const location = useLocation();
@@ -53,6 +54,7 @@ function AppContent() {
                 <Route path="/post/:urlCode" element={<PostPage />} />
                 <Route path="/yurservice" element={<YurServicePage />} />
                 <Route path="/network" element={<NetworkPage />} />
+                <Route path="/contragent" element={<ContragentPage />} />
                 <Route path="/:username" element={<ProfilePage />} />
                 <Route path="/auth" element={<AuthPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
