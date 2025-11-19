@@ -148,5 +148,77 @@ export const mockProfile2Posts: MockPost[] = [
     imageVariant: 'spaced-layout',
     variantLabel: 'Spaced Layout (Twitter style + extra padding)',
     createdAt: "2025-11-15T09:00:00Z"
+  },
+  {
+    id: 12,
+    title: "Panoramic View: Stunning City Skyline",
+    content: "<p>Check out this breathtaking panoramic view of the city skyline at sunset. This ultra-wide image (21:9 ratio) shows how the layout handles very wide images.</p><p>Notice how the natural aspect ratio is preserved while staying within the maximum height constraint.</p>",
+    images: ["https://images.pexels.com/photos/466685/pexels-photo-466685.jpeg?auto=compress&cs=tinysrgb&w=1600&h=600"],
+    status: 'published',
+    isPinned: false,
+    pinVariant: null,
+    imageVariant: 'twitter-style',
+    variantLabel: 'Very Wide Image (21:9 panoramic) - Twitter Style',
+    createdAt: "2025-11-16T14:00:00Z"
+  },
+  {
+    id: 13,
+    title: "Vertical Architecture: Skyscraper Photography",
+    content: "<p>This vertical portrait orientation photo (9:16 ratio) demonstrates how the system handles tall images. The max-height constraint prevents it from dominating the entire feed.</p><p>The image is cropped at 512px height while maintaining full width.</p>",
+    images: ["https://images.pexels.com/photos/1486222/pexels-photo-1486222.jpeg?auto=compress&cs=tinysrgb&w=600&h=1200"],
+    status: 'published',
+    isPinned: false,
+    pinVariant: null,
+    imageVariant: 'twitter-style',
+    variantLabel: 'Very Tall Image (9:16 vertical) - Twitter Style',
+    createdAt: "2025-11-16T15:30:00Z"
+  },
+  {
+    id: 14,
+    title: "Ultra-Wide Landscape: Mountain Range",
+    content: "<p>An ultra-wide landscape image showcasing a mountain range. This demonstrates the Conservative Height variant with a 400px maximum.</p><p>Compare this to the 512px variant to see the difference in vertical space consumption.</p>",
+    images: ["https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?auto=compress&cs=tinysrgb&w=1600&h=500"],
+    status: 'published',
+    isPinned: false,
+    pinVariant: null,
+    imageVariant: 'conservative-height',
+    variantLabel: 'Wide Image (3:1 ratio) - Conservative 400px max',
+    createdAt: "2025-11-16T16:00:00Z"
+  },
+  {
+    id: 15,
+    title: "Portrait Photo: Professional Headshot",
+    content: "<p>A tall vertical portrait image. With the Conservative Height variant (400px max), this image gets cropped earlier than the 512px variant.</p><p>This creates a more compact feed layout ideal for quick scanning.</p>",
+    images: ["https://images.pexels.com/photos/1181690/pexels-photo-1181690.jpeg?auto=compress&cs=tinysrgb&w=600&h=900"],
+    status: 'published',
+    isPinned: false,
+    pinVariant: null,
+    imageVariant: 'conservative-height',
+    variantLabel: 'Tall Portrait (2:3 ratio) - Conservative 400px max',
+    createdAt: "2025-11-16T17:00:00Z"
+  },
+  {
+    id: 16,
+    title: "Standard Square Photo: Product Shot",
+    content: "<p>A perfect square image (1:1 ratio) shown with Twitter style. Square images work beautifully with any variant since they don't stretch horizontally or vertically.</p><p>This is the most versatile aspect ratio for social media.</p>",
+    images: ["https://images.pexels.com/photos/1337380/pexels-photo-1337380.jpeg?auto=compress&cs=tinysrgb&w=800&h=800"],
+    status: 'published',
+    isPinned: false,
+    pinVariant: null,
+    imageVariant: 'twitter-style',
+    variantLabel: 'Perfect Square (1:1 ratio) - Twitter Style',
+    createdAt: "2025-11-16T18:00:00Z"
+  },
+  {
+    id: 17,
+    title: "Extreme Vertical: Waterfall Photography",
+    content: "<p>An extremely tall vertical image (9:21 ratio) simulating a full-height mobile screenshot or vertical photography.</p><p>The responsive height variant uses 350px on mobile and 500px on desktop, adapting to the viewport.</p>",
+    images: ["https://images.pexels.com/photos/2259917/pexels-photo-2259917.jpeg?auto=compress&cs=tinysrgb&w=400&h=1400"],
+    status: 'published',
+    isPinned: false,
+    pinVariant: null,
+    imageVariant: 'responsive-height',
+    variantLabel: 'Extremely Tall (9:21) - Responsive 350px/500px',
+    createdAt: "2025-11-16T19:00:00Z"
   }
 ];
