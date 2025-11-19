@@ -254,7 +254,7 @@ export function PostCard({
             </div>
 
             {images.length > 0 && (
-  <div className="mt-3 mb-3">
+  <div className="mt-4 mb-3">
     <img
       src={images[0]}
       alt="Post content"
