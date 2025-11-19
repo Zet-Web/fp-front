@@ -2,6 +2,15 @@
 
 export type PinVariant = 'top-badge' | 'inline-header' | 'corner-icon' | 'left-border' | null;
 
+export type ImageVariant =
+  | 'twitter-style'           // Variant D: Full width, natural ratio, max-h-512px
+  | 'conservative-height'     // Variant A: Full width, max-h-400px
+  | 'responsive-height'       // Variant C: Responsive heights
+  | 'compact-square'          // Square format: 320x320
+  | 'small-square'            // Smaller square: 240x240
+  | 'thumbnail'               // Small thumbnail: 128x128
+  | 'spaced-layout';          // Twitter style with extra spacing around
+
 export interface MockPost {
   id: number;
   title: string;
@@ -11,6 +20,8 @@ export interface MockPost {
   isPinned: boolean;
   pinVariant: PinVariant;
   createdAt: string;
+  imageVariant?: ImageVariant;
+  variantLabel?: string;
 }
 
 export const mockProfile2Posts: MockPost[] = [
@@ -22,6 +33,8 @@ export const mockProfile2Posts: MockPost[] = [
     status: 'published',
     isPinned: true,
     pinVariant: 'inline-header',
+    imageVariant: 'twitter-style',
+    variantLabel: 'Variant D: Twitter Style (512px max, natural ratio)',
     createdAt: "2025-11-10T10:00:00Z"
   },
   {
@@ -32,6 +45,8 @@ export const mockProfile2Posts: MockPost[] = [
     status: 'published',
     isPinned: true,
     pinVariant: 'left-border',
+    imageVariant: 'conservative-height',
+    variantLabel: 'Variant A: Conservative Height (400px max)',
     createdAt: "2025-11-08T14:30:00Z"
   },
   {
@@ -52,6 +67,8 @@ export const mockProfile2Posts: MockPost[] = [
     status: 'published',
     isPinned: true,
     pinVariant: 'top-badge',
+    imageVariant: 'responsive-height',
+    variantLabel: 'Variant C: Responsive Heights (350px/500px)',
     createdAt: "2025-11-11T12:00:00Z"
   },
   {
@@ -72,6 +89,8 @@ export const mockProfile2Posts: MockPost[] = [
     status: 'published',
     isPinned: false,
     pinVariant: null,
+    imageVariant: 'compact-square',
+    variantLabel: 'Compact Square (320x320px)',
     createdAt: "2025-11-05T16:45:00Z"
   },
   {
@@ -92,6 +111,8 @@ export const mockProfile2Posts: MockPost[] = [
     status: 'published',
     isPinned: false,
     pinVariant: null,
+    imageVariant: 'small-square',
+    variantLabel: 'Small Square (240-288px responsive)',
     createdAt: "2025-11-02T13:00:00Z"
   },
   {
@@ -112,6 +133,20 @@ export const mockProfile2Posts: MockPost[] = [
     status: 'archived',
     isPinned: false,
     pinVariant: null,
+    imageVariant: 'thumbnail',
+    variantLabel: 'Thumbnail Style (128-160px)',
     createdAt: "2025-08-15T15:00:00Z"
+  },
+  {
+    id: 11,
+    title: "Tech Conference 2025: Our Biggest Event Yet",
+    content: "<p>We're thrilled to announce our annual tech conference is back! Join thousands of developers, designers, and innovators for three days of inspiring talks, workshops, and networking.</p><p>Early bird tickets are now available. Don't miss this opportunity to connect with the community!</p>",
+    images: ["https://images.pexels.com/photos/2774556/pexels-photo-2774556.jpeg?auto=compress&cs=tinysrgb&w=800"],
+    status: 'published',
+    isPinned: false,
+    pinVariant: null,
+    imageVariant: 'spaced-layout',
+    variantLabel: 'Spaced Layout (Twitter style + extra padding)',
+    createdAt: "2025-11-15T09:00:00Z"
   }
 ];
