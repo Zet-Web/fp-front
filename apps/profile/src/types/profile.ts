@@ -28,6 +28,7 @@ export interface UserProfile {
   birthday: string | null;
   birthday_visibility: BirthdayVisibility | null;
   birthday_show_age: boolean | null;
+  is_following?: boolean
 }
 
 export interface UserAdditionalInfo {

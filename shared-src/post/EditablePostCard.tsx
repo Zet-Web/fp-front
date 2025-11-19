@@ -24,6 +24,7 @@ import { TiptapEditor } from "../feed/TipTapEditor";
 import QuizForm from "../../apps/quiz/src/QuizForm";
 import { EventData } from "../event/event-types";
 import { EventFormCard } from "../event/EventFormCard";
+import { getStorageUrl } from "@/utils/getStorageUrl";
 
 interface EditablePostCardProps {
   title?: string;
@@ -95,9 +96,9 @@ export function EditablePostCard({
   const [eventData, setEventData] = useState<EventData | null>(
     editableEventData || {
       eventTypes: [],
-      startDate: '',
-      startTime: '',
-      category: 'conference' as const,
+      startDate: "",
+      startTime: "",
+      category: "conference" as const,
     }
   );
 
@@ -180,7 +181,7 @@ export function EditablePostCard({
       const formData = new FormData();
       formData.append("file", file);
 
-      const res = await FPApi.axios.post<{ publicUrl: string }>(
+      const res = await FPApi.axios.post<{ filePath: string }>(
         "post/upload-cover",
         formData,
         {
@@ -190,13 +191,12 @@ export function EditablePostCard({
         }
       );
 
-      if (!res.data?.publicUrl) return;
+      if (!res.data?.filePath) return;
 
       const uniqueVersion = new Date().getTime();
-      const newUrl = `${res.data.publicUrl}?v=${uniqueVersion}`;
+      const newUrl = `${res.data.filePath}?v=${uniqueVersion}`;
 
       setEditedCoverImage(newUrl);
-      console.log("Cover uploaded (simulated):", file.name);
     } catch (error) {
       console.error("Cover upload failed:", error);
     } finally {
@@ -212,7 +212,11 @@ export function EditablePostCard({
           <div className="flex-shrink-0">
             <Avatar className="w-12 h-12">
               <AvatarImage
-                src={author.avatar_url || undefined}
+                src={
+                  author?.avatar_url
+                    ? getStorageUrl(author.avatar_url)
+                    : undefined
+                }
                 alt={displayName}
               />
               <AvatarFallback>{avatarFallback}</AvatarFallback>
@@ -260,7 +264,9 @@ export function EditablePostCard({
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value={PostType.ARTICLE}>Статья</SelectItem>
-                      <SelectItem value={PostType.EVENT}>Мероприятие</SelectItem>
+                      <SelectItem value={PostType.EVENT}>
+                        Мероприятие
+                      </SelectItem>
                       <SelectItem value={PostType.QUIZ}>Конкурс</SelectItem>
                       <SelectItem value={PostType.VACANCY}>Вакансия</SelectItem>
                     </SelectContent>
@@ -392,7 +398,7 @@ export function EditablePostCard({
                   )}
                   {editedCoverImage && (
                     <img
-                      src={editedCoverImage}
+                      src={getStorageUrl(editedCoverImage)}
                       alt="Cover preview"
                       className="w-full rounded-lg object-cover aspect-square"
                       onError={(e) => {
@@ -517,10 +523,7 @@ export function EditablePostCard({
             )}
             {editedType === PostType.EVENT && eventData && (
               <div className="mt-6">
-                <EventFormCard
-                  eventData={eventData}
-                  onChange={setEventData}
-                />
+                <EventFormCard eventData={eventData} onChange={setEventData} />
               </div>
             )}
 

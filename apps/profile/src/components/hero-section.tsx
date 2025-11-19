@@ -16,6 +16,8 @@ import { LocationItem } from "../types/location";
 import { UserProfile } from "../types/profile";
 import { FPApi } from "@/lib/api";
 import { useAuthContext } from "@/components/auth-provider";
+import { useToast } from "@/hooks/use-toast";
+import { getStorageUrl } from "@/utils/getStorageUrl";
 
 interface HeroSectionProps {
   user: UserProfile;
@@ -49,7 +51,10 @@ export function HeroSection({
   onClearAllLocations,
 }: HeroSectionProps) {
   const { updateProfilePartial } = useAuthContext();
-  const [isFollowing, setIsFollowing] = useState(false);
+  const { toast } = useToast();
+
+  const [isFollowing, setIsFollowing] = useState(Boolean(user.is_following));
+  const [isFollowingLoading, setFollowingLoading] = useState(false);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const [isUploadingCover, setIsUploadingCover] = useState(false);
 
@@ -82,7 +87,7 @@ export function HeroSection({
       const formData = new FormData();
       formData.append("file", file);
 
-      const res = await FPApi.axios.post<{ publicUrl: string }>(
+      const res = await FPApi.axios.post<{ filePath: string }>(
         "profile/upload-avatar",
         formData,
         {
@@ -92,10 +97,10 @@ export function HeroSection({
         }
       );
 
-      if (!res.data?.publicUrl) return;
+      if (!res.data?.filePath) return;
 
       const uniqueVersion = new Date().getTime();
-      const newUrl = `${res.data.publicUrl}?v=${uniqueVersion}`;
+      const newUrl = `${res.data.filePath}?v=${uniqueVersion}`;
       await FPApi.axios.patch("/profile/update", {
         avatar_url: newUrl,
       });
@@ -123,7 +128,7 @@ export function HeroSection({
       const formData = new FormData();
       formData.append("file", file);
 
-      const res = await FPApi.axios.post<{ publicUrl: string }>(
+      const res = await FPApi.axios.post<{ filePath: string }>(
         "profile/upload-cover",
         formData,
         {
@@ -133,10 +138,10 @@ export function HeroSection({
         }
       );
 
-      if (!res.data?.publicUrl) return;
+      if (!res.data?.filePath) return;
 
       const uniqueVersion = new Date().getTime();
-      const newUrl = `${res.data.publicUrl}?v=${uniqueVersion}`;
+      const newUrl = `${res.data.filePath}?v=${uniqueVersion}`;
       await FPApi.axios.patch("/profile/update", {
         cover_url: newUrl,
       });
@@ -150,12 +155,32 @@ export function HeroSection({
       event.target.value = "";
     }
   };
+
+  const handleToggleFollow = async () => {
+    setFollowingLoading(true);
+
+    try {
+      const res = await FPApi.axios.post<{ isNowFollowing: boolean }>(
+        `/profile/toggle-follow/${user.username}`
+      );
+      setIsFollowing(res.data.isNowFollowing);
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Following error",
+        description: (error as Error)?.message || "",
+      });
+    } finally {
+      setFollowingLoading(false);
+    }
+  };
+
   return (
     <div className="relative w-full mb-8">
       <div className="relative h-64 w-full overflow-hidden rounded-lg">
         {user.cover_url ? (
           <img
-            src={user.cover_url}
+            src={getStorageUrl(user.cover_url)}
             alt="Cover"
             className="absolute inset-0 w-full h-full object-cover"
           />
@@ -199,7 +224,10 @@ export function HeroSection({
       <div className="relative px-6 pb-4">
         <div className="relative inline-block -mt-20 z-10">
           <Avatar className="w-40 h-40 border-4 border-background shadow-xl">
-            <AvatarImage src={user.avatar_url || undefined} alt="Profile" />
+            <AvatarImage
+              src={user.avatar_url ? getStorageUrl(user.avatar_url) : undefined}
+              alt="Profile"
+            />
             <AvatarFallback className="text-2xl text-gray-700">
               {avatarFallback}
             </AvatarFallback>
@@ -338,8 +366,7 @@ export function HeroSection({
                 )}
               </>
             ) : (
-              <> 
-
+              <>
                 {/* TODO: Uncomment when chat functionality is ready */}
                 {/* <Button
                   variant="outline"
@@ -352,12 +379,19 @@ export function HeroSection({
                   Чат
                 </Button> */}
                 <Button
-                  onClick={() => setIsFollowing(!isFollowing)}
+                  onClick={handleToggleFollow}
+                  disabled={isFollowingLoading}
                   variant="outline"
                   className="px-6 py-2 rounded-full font-medium transition-colors"
                 >
-                  {!isFollowing && <UserPlus className="w-4 h-4 mr-2" />}
-                  {isFollowing ? "Unfollow" : "Follow"}
+                  {isFollowingLoading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <>
+                      {!isFollowing && <UserPlus className="w-4 h-4 mr-2" />}
+                      {isFollowing ? "Отписаться" : "Подписаться"}
+                    </>
+                  )}
                 </Button>
               </>
             )}

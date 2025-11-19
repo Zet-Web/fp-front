@@ -23,6 +23,7 @@ import {
 } from "@shared/navigation/navigation-config";
 import { useSidebar } from "@/contexts/sidebar-context";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getStorageUrl } from "@/utils/getStorageUrl";
 
 export function Navigation() {
   const location = useLocation();
@@ -139,7 +140,11 @@ export function Navigation() {
                     >
                       <Avatar className="w-10 h-10">
                         <AvatarImage
-                          src={profile?.avatar_url || undefined}
+                          src={
+                            profile?.avatar_url
+                              ? getStorageUrl(profile.avatar_url)
+                              : undefined
+                          }
                           alt="Profile"
                         />
                         <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-sm text-white">
@@ -206,9 +211,7 @@ export function Navigation() {
                 </TooltipTrigger>
                 <TooltipContent side="right">
                   <p>
-                    {leftCollapsed && rightCollapsed
-                      ? "Раскрыть"
-                      : "Фокус"}
+                    {leftCollapsed && rightCollapsed ? "Раскрыть" : "Фокус"}
                   </p>
                 </TooltipContent>
               </Tooltip>
@@ -323,16 +326,16 @@ export function Navigation() {
               </div>
             ) : isAuthenticated && user ? (
               <Link
-                to={
-                  typeof profileNavItem?.path === "function"
-                    ? profileNavItem?.path(profile, isAuthenticated)
-                    : profileNavItem?.path
-                }
+                to={`/${profile?.username}`}
                 className="flex items-center space-x-3 px-4 py-2 hover:bg-accent/50 transition-colors rounded-md mt-2 cursor-pointer"
               >
                 <Avatar className="w-10 h-10">
                   <AvatarImage
-                    src={profile?.avatar_url || undefined}
+                    src={
+                      profile?.avatar_url
+                        ? getStorageUrl(profile.avatar_url)
+                        : undefined
+                    }
                     alt="Profile"
                   />
                   <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-sm text-white">
