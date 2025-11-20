@@ -421,7 +421,7 @@ export function EditablePostCard({
               <div>
                 <div className="flex justify-between items-center mb-2">
                   <Label htmlFor="edit-excerpt" className="text-sm font-medium">
-                    Превью <span className="text-destructive">*</span>
+                    Краткое содержание <span className="text-destructive">*</span>
                   </Label>
                   <span
                     className={`text-xs ${
