@@ -22,7 +22,7 @@ import { QuizFormData } from "@/apps/quiz/types/quiz";
 import { FPApi } from "@/lib/api";
 import { TiptapEditor } from "../feed/TipTapEditor";
 import QuizForm from "../../apps/quiz/src/QuizForm";
-import { EventData } from "../event/event-types";
+import { EventResponse, EventFormData } from "../event/event-types";
 import { EventFormCard } from "../event/EventFormCard";
 import { getStorageUrl } from "@/utils/getStorageUrl";
 
@@ -50,12 +50,12 @@ interface EditablePostCardProps {
       slug?: string;
     },
     quizData?: QuizFormData | null,
-    eventData?: EventData | null
+    eventData?: EventFormData | null
   ) => void;
   onCancel: () => void;
   isLoading?: boolean;
   editableQuizData?: QuizFormData | null;
-  editableEventData?: EventData | null;
+  editableEventData?: EventFormData | null;
 }
 
 export function EditablePostCard({
@@ -92,22 +92,26 @@ export function EditablePostCard({
   const [isQuizFormValid, setIsQuizFormValid] = useState(true);
   const [quizData, setQuizData] = useState<QuizFormData | null>(null);
 
-  // Event
-  const [eventData, setEventData] = useState<EventData | null>(
-    editableEventData || {
-      eventTypes: [],
-      startDate: "",
-      startTime: "",
-      category: "conference" as const,
-    }
-  );
-
   const handleUpdateQuizFormData = useCallback((data: QuizFormData) => {
     setQuizData(data);
   }, []);
 
   const handleQuizValidChange = useCallback((valid: boolean) => {
     setIsQuizFormValid(valid);
+  }, []);
+
+  // Event
+  const [isEventFormValid, setIsEventFormValid] = useState(true);
+  const [eventData, setEventData] = useState<EventResponse | null>(null);
+
+  console.log("eventData", eventData);
+
+  const handleUpdateEventData = useCallback((data: EventResponse) => {
+    setEventData(data);
+  }, []);
+
+  const handleEventValidChange = useCallback((valid: boolean) => {
+    setIsEventFormValid(valid);
   }, []);
 
   const displayName = author.name || author.username || "User";
@@ -521,9 +525,13 @@ export function EditablePostCard({
                 />
               </div>
             )}
-            {editedType === PostType.EVENT && eventData && (
+            {editedType === PostType.EVENT && (
               <div className="mt-6">
-                <EventFormCard eventData={eventData} onChange={setEventData} />
+                <EventFormCard
+                  defaultEventFormValues={editableEventData}
+                  onFormValuesChange={handleUpdateEventData}
+                  onFormValidChange={handleEventValidChange}
+                />
               </div>
             )}
 
@@ -534,6 +542,7 @@ export function EditablePostCard({
                   !editedExcerpt.trim() ||
                   editedExcerpt.length > EXCERPT_MAX_LENGTH ||
                   (editedType === PostType.QUIZ && !isQuizFormValid) ||
+                  (editedType === PostType.EVENT && !isEventFormValid) ||
                   isLoading
                 }
               >

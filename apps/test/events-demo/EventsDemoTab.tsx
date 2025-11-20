@@ -1,40 +1,43 @@
 // Demo tab showcasing event creation and display UI components
-import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { EventFormCard } from '../../../shared-src/event/EventFormCard';
-import { EventDisplayCard } from '../../../shared-src/event/EventDisplayCard';
-import { EventData, EventType } from '../../../shared-src/event/event-types';
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { EventFormCard } from "../../../shared-src/event/EventFormCard";
+import { EventDisplayCard } from "../../../shared-src/event/EventDisplayCard";
+import {
+  EventResponse,
+  EventType,
+} from "../../../shared-src/event/event-types";
 
-const mockEventData: EventData = {
-  eventTypes: ['online', 'offline'] as EventType[],
+const mockEventData: EventResponse = {
+  eventTypes: ["online", "offline"] as EventType[],
   location: {
-    city: 'San Francisco',
-    address: '123 Tech Street',
+    city: "San Francisco",
+    address: "123 Tech Street",
   },
-  startDate: '2025-12-15',
-  startTime: '14:00',
-  endDate: '2025-12-15',
-  endTime: '18:00',
-  website: 'https://example.com/event',
-  category: 'conference',
+  startDate: "2025-12-15",
+  startTime: "14:00",
+  endDate: "2025-12-15",
+  endTime: "18:00",
+  website: "https://example.com/event",
+  category: "conference",
   memberLimit: 100,
 };
 
 export function EventsDemoTab() {
-  const [eventData, setEventData] = useState<EventData>({
+  const [eventData, setEventData] = useState<EventResponse>({
     eventTypes: [],
-    startDate: '',
-    startTime: '',
-    category: 'conference',
+    startDate: "",
+    startTime: "",
+    category: "conference",
   });
 
   const [showForm, setShowForm] = useState(true);
 
   const handleSave = () => {
-    console.log('Event data to save:', eventData);
-    alert('Event data logged to console');
+    console.log("Event data to save:", eventData);
+    alert("Event data logged to console");
   };
 
   return (
@@ -52,7 +55,10 @@ export function EventsDemoTab() {
             </TabsList>
 
             <TabsContent value="form" className="space-y-6 mt-6">
-              <EventFormCard eventData={eventData} onChange={setEventData} />
+              <EventFormCard
+                defaultEventFormValues={eventData}
+                onFormValuesChange={setEventData}
+              />
               <div className="flex gap-2">
                 <Button onClick={handleSave}>Save Event (Console Log)</Button>
                 <Button
@@ -60,9 +66,9 @@ export function EventsDemoTab() {
                   onClick={() => {
                     setEventData({
                       eventTypes: [],
-                      startDate: '',
-                      startTime: '',
-                      category: 'conference',
+                      startDate: "",
+                      startTime: "",
+                      category: "conference",
                     });
                   }}
                 >
@@ -112,7 +118,8 @@ export function EventsDemoTab() {
               On save, event data is passed along with post data to the backend
             </li>
             <li>
-              In feed, PostCard displays event info using EventDisplayCard (compact mode)
+              In feed, PostCard displays event info using EventDisplayCard
+              (compact mode)
             </li>
             <li>
               In full post view, FullPostCard displays complete event details

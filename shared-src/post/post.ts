@@ -1,6 +1,6 @@
 // Type definitions for post data structures
 
-import { EventData } from '../event/event-types';
+import { EventResponse } from '../event/event-types';
 
 export enum PostType {
   ARTICLE = 'article',
@@ -32,7 +32,7 @@ export interface Post {
   is_pinned: boolean
   is_featured: boolean
   is_saved?: boolean
-  event_data?: EventData | null
+  event_data?: EventResponse | null
 }
 
 export interface PostAuthor {
