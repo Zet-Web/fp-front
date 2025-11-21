@@ -245,11 +245,11 @@ export function PostCard({
               )}
             </div>
 
-            <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-1.5">
+            <h3 className="scroll-m-20 text-xl md:text-2xl font-semibold tracking-tight mb-1.5 break-words">
               {title}
             </h3>
 
-            <div className="leading-7">
+            <div className="text-sm md:text-base leading-relaxed">
               <PostContentViewer html={content} />
             </div>
 

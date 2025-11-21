@@ -5,14 +5,14 @@ import { Users, CheckCircle2, GraduationCap, Network, TrendingUp, User } from "l
 
 export function AboutPage() {
   return (
-    <div className="space-y-8 pb-12">
+    <div className="space-y-6 md:space-y-8 pb-8 md:pb-12">
       <Card className="shadow-md bg-gradient-to-br from-blue-500/10 to-blue-600/5 border-blue-500/20">
-        <CardContent className="p-8 md:p-12">
-          <div className="text-center space-y-4">
-            <h1 className="scroll-m-20 text-4xl font-bold tracking-tight">
+        <CardContent className="p-6 md:p-8 lg:p-12">
+          <div className="text-center space-y-3 md:space-y-4">
+            <h1 className="scroll-m-20 text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight">
               Фонд Права — деловая сеть для юридического сообщества
             </h1>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+            <p className="text-sm md:text-base lg:text-lg text-muted-foreground max-w-3xl mx-auto">
               Социальная миссия платформы состоит в объединении юристов, повышении их профессиональной
               активности и эффективности
             </p>
@@ -20,21 +20,21 @@ export function AboutPage() {
         </CardContent>
       </Card>
 
-      <section className="space-y-4">
-        <div className="flex items-center gap-3">
-          <Users className="h-6 w-6 text-blue-500" />
-          <h2 className="scroll-m-20 text-3xl font-semibold tracking-tight">
+      <section className="space-y-3 md:space-y-4">
+        <div className="flex items-center gap-2 md:gap-3">
+          <Users className="h-5 w-5 md:h-6 md:w-6 text-blue-500" />
+          <h2 className="scroll-m-20 text-xl md:text-2xl lg:text-3xl font-semibold tracking-tight">
             Участники
           </h2>
         </div>
 
         <Card className="shadow-md">
-          <CardContent className="p-6 space-y-4">
-            <p className="leading-7">
+          <CardContent className="p-4 md:p-6 space-y-3 md:space-y-4">
+            <p className="text-sm md:text-base leading-relaxed">
               Фонд Права ориентирован на юристов, юридические фирмы, выпускников юридических факультетов, а
               также сообщества и объединения. Мы понимаем вызовы и потребности юридического сообщества.
             </p>
-            <p className="leading-7">
+            <p className="text-sm md:text-base leading-relaxed">
               Также приглашаются специалисты смежных отраслей, эксперты, оценщики, медиаторы для создания
               обширного профессионального сообщества.
             </p>
@@ -42,15 +42,15 @@ export function AboutPage() {
         </Card>
       </section>
 
-      <section className="space-y-4">
-        <div className="flex items-center gap-3">
-          <CheckCircle2 className="h-6 w-6 text-blue-500" />
-          <h2 className="scroll-m-20 text-3xl font-semibold tracking-tight">
+      <section className="space-y-3 md:space-y-4">
+        <div className="flex items-center gap-2 md:gap-3">
+          <CheckCircle2 className="h-5 w-5 md:h-6 md:w-6 text-blue-500" />
+          <h2 className="scroll-m-20 text-xl md:text-2xl lg:text-3xl font-semibold tracking-tight">
             Что предлагает платформа
           </h2>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-3 md:space-y-4">
           <Card className="shadow-md hover:shadow-lg transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-start gap-4">
