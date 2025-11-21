@@ -292,6 +292,7 @@ export function FullPostCard({
             )}
           </div>
         </div>
+        </div>
       </CardContent>
 
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
