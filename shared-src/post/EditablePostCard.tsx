@@ -265,7 +265,7 @@ export function EditablePostCard({
                       <SelectItem value={PostType.ARTICLE}>Статья</SelectItem>
                       <SelectItem value={PostType.EVENT}>Мероприятие</SelectItem>
                       <SelectItem value={PostType.QUIZ}>Тест</SelectItem>
-                      <SelectItem value={PostType.VACANCY}>Вакансия</SelectItem>
+                      {/*<SelectItem value={PostType.VACANCY}>Вакансия</SelectItem>*/}
                     </SelectContent>
                   </Select>
                 </div>
