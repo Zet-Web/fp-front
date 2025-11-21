@@ -272,7 +272,9 @@ export function EducationSection({
                 <p className="text-primary font-medium mb-2">
                   {edu.university?.name}
                 </p>
-                <p className="text-muted-foreground">{edu.description}</p>
+                <p className="text-muted-foreground break-words">
+                  {edu.description}
+                </p>
               </>
             )}
           </div>

@@ -44,12 +44,14 @@ interface ContactsSectionProps {
   additionalInfo: UserAdditionalInfo | null;
   isEditing: boolean;
   onUpdateAdditionalInfo: (updates: Partial<UserAdditionalInfo>) => void;
+  onValidationChange?: (section: string, isValid: boolean) => void;
 }
 
 export function ContactsSection({
   additionalInfo,
   isEditing,
   onUpdateAdditionalInfo,
+  onValidationChange,
 }: ContactsSectionProps) {
   const [contactEntries, setContactEntries] = useState<ContactInfoEntry[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -71,6 +73,15 @@ export function ContactsSection({
     setContactEntries(updatedEntries);
     onUpdateAdditionalInfo({ contact_info: updatedEntries });
   };
+
+  useEffect(() => {
+    if (onValidationChange) {
+      const hasErrors = contactEntries.some(
+        (entry) => validateContactEntry(entry) !== null
+      );
+      onValidationChange("contacts", !hasErrors);
+    }
+  }, [contactEntries, onValidationChange]);
 
   const moveUp = (index: number) => {
     if (index === 0) return;
@@ -109,8 +120,17 @@ export function ContactsSection({
     field: keyof ContactInfoEntry,
     value: any
   ) => {
+    let newValue = value;
+    if (field === "value" && contactEntries[index].type === ContactType.phone) {
+      newValue = value.replace(/[^0-9+\-\s()]/g, "");
+    }
+
+    if (field === "label" && value.length > 64) {
+      return;
+    }
+
     const updatedEntries = [...contactEntries];
-    updatedEntries[index] = { ...updatedEntries[index], [field]: value };
+    updatedEntries[index] = { ...updatedEntries[index], [field]: newValue };
     setContactEntries(updatedEntries);
   };
 
@@ -138,7 +158,16 @@ export function ContactsSection({
   };
 
   const handleNewEntryChange = (field: keyof ContactInfoEntry, value: any) => {
-    setNewEntry((prev) => ({ ...prev, [field]: value }));
+    let newValue = value;
+    if (field === "value" && newEntry.type === ContactType.phone) {
+      newValue = value.replace(/[^0-9+\-\s()]/g, "");
+    }
+
+    if (field === "label" && value.length > 64) {
+      return;
+    }
+
+    setNewEntry((prev) => ({ ...prev, [field]: newValue }));
   };
 
   const addEntry = () => {
@@ -203,11 +232,7 @@ export function ContactsSection({
 
   const renderViewMode = () => {
     if (contactEntries.length === 0) {
-      return (
-        <p className="text-muted-foreground italic text-sm">
-          Нет данных
-        </p>
-      );
+      return <p className="text-muted-foreground italic text-sm">Нет данных</p>;
     }
 
     return (
@@ -292,6 +317,7 @@ export function ContactsSection({
       <div className="space-y-4">
         {contactEntries.map((entry, index) => {
           const config = getContactTypeConfig(entry.type);
+          const error = validateContactEntry(entry);
 
           return (
             <div key={entry.id} className="border rounded-lg p-4 space-y-3">
@@ -385,12 +411,18 @@ export function ContactsSection({
                     }
                     onBlur={() => handleBlurEntry(index)}
                     placeholder={config?.placeholder || "Enter value"}
+                    className={error ? "border-destructive" : ""}
                   />
+                  {error && (
+                    <p className="text-xs text-destructive mt-1">{error}</p>
+                  )}
                 </div>
               </div>
 
               <div>
-                <Label htmlFor={`label-${entry.id}`}>Название (по желанию)</Label>
+                <Label htmlFor={`label-${entry.id}`}>
+                  Название (по желанию)
+                </Label>
                 <Input
                   id={`label-${entry.id}`}
                   value={entry.label || ""}

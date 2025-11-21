@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useProfileData } from "./hooks/use-profile-data";
 import { useLocationData } from "./hooks/use-location-data";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { LocationItem } from "./types/location";
 import { UserAdditionalInfo, UserProfile } from "./types/profile";
@@ -111,7 +111,30 @@ export function ProfilePage() {
     await FPApi.axios.patch("/profile/update-additional-info", dataToUpdate);
   };
 
+  const [validationErrors, setValidationErrors] = useState<
+    Record<string, boolean>
+  >({});
+
+  const handleValidationChange = useCallback(
+    (section: string, isValid: boolean) => {
+      setValidationErrors((prev) => ({ ...prev, [section]: !isValid }));
+    },
+    []
+  );
+
   const handleSaveChanges = async () => {
+    const hasErrors = Object.values(validationErrors).some(
+      (hasError) => hasError
+    );
+    if (hasErrors) {
+      toast({
+        title: "Ошибка валидации",
+        description: "Исправьте все ошибки перед сохранением.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSaving(true);
 
     try {
@@ -235,6 +258,7 @@ export function ProfilePage() {
               onUpdateProfile={handleUpdateProfileData}
               onUpdateAdditionalInfo={handleUpdateAdditionalInfo}
               isAdditionalInfoLoading={isAdditionalInfoLoading}
+              onValidationChange={handleValidationChange}
             />
           </TabsContent>
         </Tabs>

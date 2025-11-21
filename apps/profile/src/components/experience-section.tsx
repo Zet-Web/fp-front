@@ -279,12 +279,14 @@ export function ExperienceSection({
                       <Input
                         id="edit-exp-title"
                         value={editForm.title}
-                        onChange={(e) =>
-                          setEditForm((prev) => ({
-                            ...prev,
-                            title: e.target.value,
-                          }))
-                        }
+                        onChange={(e) => {
+                          if (e.target.value.length <= 64) {
+                            setEditForm((prev) => ({
+                              ...prev,
+                              title: e.target.value,
+                            }));
+                          }
+                        }}
                         placeholder="Senior Developer"
                       />
                     </div>
@@ -293,12 +295,14 @@ export function ExperienceSection({
                       <Input
                         id="edit-exp-company"
                         value={editForm.company}
-                        onChange={(e) =>
-                          setEditForm((prev) => ({
-                            ...prev,
-                            company: e.target.value,
-                          }))
-                        }
+                        onChange={(e) => {
+                          if (e.target.value.length <= 64) {
+                            setEditForm((prev) => ({
+                              ...prev,
+                              company: e.target.value,
+                            }));
+                          }
+                        }}
                         placeholder="Company Name"
                       />
                     </div>
@@ -508,9 +512,7 @@ export function ExperienceSection({
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>
-                                  Удалить
-                                </AlertDialogTitle>
+                                <AlertDialogTitle>Удалить</AlertDialogTitle>
                                 <AlertDialogDescription>
                                   Вы уверены, что хотите удалить?
                                 </AlertDialogDescription>
@@ -530,7 +532,7 @@ export function ExperienceSection({
                     </div>
                   </div>
                   <p className="text-primary font-medium mb-2">{exp.company}</p>
-                  <p className="text-muted-foreground mb-3">
+                  <p className="text-muted-foreground mb-3 break-words">
                     {exp.description}
                   </p>
                   {exp.achievements.length > 0 && (
@@ -554,12 +556,14 @@ export function ExperienceSection({
                   <Input
                     id="exp-title"
                     value={newExperience.title}
-                    onChange={(e) =>
-                      setNewExperience((prev) => ({
-                        ...prev,
-                        title: e.target.value,
-                      }))
-                    }
+                    onChange={(e) => {
+                      if (e.target.value.length <= 64) {
+                        setNewExperience((prev) => ({
+                          ...prev,
+                          title: e.target.value,
+                        }));
+                      }
+                    }}
                     placeholder="Senior Developer"
                   />
                 </div>
@@ -568,12 +572,14 @@ export function ExperienceSection({
                   <Input
                     id="exp-company"
                     value={newExperience.company}
-                    onChange={(e) =>
-                      setNewExperience((prev) => ({
-                        ...prev,
-                        company: e.target.value,
-                      }))
-                    }
+                    onChange={(e) => {
+                      if (e.target.value.length <= 64) {
+                        setNewExperience((prev) => ({
+                          ...prev,
+                          company: e.target.value,
+                        }));
+                      }
+                    }}
                     placeholder="Company Name"
                   />
                 </div>

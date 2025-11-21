@@ -36,7 +36,7 @@ export function AdditionalInfoSection({
             rows={4}
           />
         ) : (
-          <p className="text-foreground whitespace-pre-wrap">
+          <p className="text-foreground whitespace-pre-wrap break-words">
             {user.additional_info || (
               <span className="text-muted-foreground italic text-sm">
                 Нет данных

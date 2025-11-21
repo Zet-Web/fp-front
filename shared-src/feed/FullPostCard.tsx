@@ -246,9 +246,9 @@ export function FullPostCard({
 
             <PostContentViewer html={content || ""} />
 
-            {type === PostType.EVENT && post.event_data && (
+            {type === PostType.EVENT && post.event && (
               <div className="mt-6">
-                <EventDisplayCard eventData={post.event_data} />
+                <EventDisplayCard eventData={post.event} />
               </div>
             )}
 

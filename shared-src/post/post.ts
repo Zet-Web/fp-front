@@ -32,7 +32,7 @@ export interface Post {
   is_pinned: boolean
   is_featured: boolean
   is_saved?: boolean
-  event_data?: EventResponse | null
+  event?: EventResponse | null
 }
 
 export interface PostAuthor {

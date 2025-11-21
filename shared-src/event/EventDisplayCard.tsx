@@ -68,7 +68,7 @@ export function EventDisplayCard({
           {showLocationFields && eventData.location?.city && (
             <div className="flex items-center gap-2">
               <MapPin className="w-4 h-4 text-blue-500 flex-shrink-0" />
-              <span className="truncate">{eventData.location.city}</span>
+              <span className="truncate">{eventData.location.city.name}</span>
             </div>
           )}
 
@@ -139,7 +139,7 @@ export function EventDisplayCard({
               <div>
                 <div className="font-medium">Локация</div>
                 <div className="text-muted-foreground">
-                  {eventData.location.city}
+                  {eventData.location.city.name}
                   {eventData.location.address &&
                     `, ${eventData.location.address}`}
                 </div>

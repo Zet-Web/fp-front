@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  MessageCircle,
   UserPlus,
   Loader as Loader2,
   MapPin,
@@ -265,7 +264,7 @@ export function HeroSection({
         </div>
 
         <div className="mt-4 flex justify-between items-start">
-          <div className="flex-1">
+          <div className="flex-1 max-w-[70%]">
             <div className="flex items-center gap-2 mb-2">
               {isEditing ? (
                 <Input
@@ -275,7 +274,9 @@ export function HeroSection({
                   placeholder="Enter your name"
                 />
               ) : (
-                <h1 className="text-3xl font-bold">{displayName}</h1>
+                <h1 className="text-3xl font-bold truncate overflow-hidden">
+                  {displayName}
+                </h1>
               )}
               {user.badge?.includes("verified") && (
                 <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">

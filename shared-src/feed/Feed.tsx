@@ -68,7 +68,8 @@ export function Feed({
 
   const currentUserId = profile?.id || "";
 
-  const requiresAuth = filters?.view === "following" || filters?.view === "saved";
+  const requiresAuth =
+    filters?.view === "following" || filters?.view === "saved";
   const shouldShowAuthPrompt = requiresAuth && !isAuthenticated;
 
   useEffect(() => {
@@ -295,7 +296,7 @@ export function Feed({
               status={post.status}
               showStatusBadge={showStatusBadges && isOwner}
               postType={post.type}
-              eventData={post.event_data}
+              eventData={post.event}
               onShareClick={() => handleShareClick(post)}
               onEditClick={() => handleEditClick(post.url)}
               onDeleteClick={() => handleDeletePost(post.id)}

@@ -40,6 +40,7 @@ import { PostStatusBadge } from "./PostStatusBadge";
 import { EventDisplayCard } from "../event/EventDisplayCard";
 import { PostType } from "./post";
 import { getStorageUrl } from "@/utils/getStorageUrl";
+import { EventResponse } from "../event/event-types";
 
 interface PostCardProps {
   postId: number;
@@ -59,7 +60,7 @@ interface PostCardProps {
   status?: PostStatus;
   showStatusBadge?: boolean;
   postType?: PostType;
-  eventData?: any;
+  eventData?: EventResponse | null;
 }
 
 export function PostCard({
