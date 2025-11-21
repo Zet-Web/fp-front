@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { MapPin, UserPlus, Users } from 'lucide-react';
-import { MembersTab } from './MembersTab';
+import { Members } from './Members';
 
 // Mock user data
 const mockUser = {
