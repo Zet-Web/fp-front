@@ -40,6 +40,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { UserAdditionalInfo } from "../types/profile";
 import { ContactInfoEntry, ContactType } from "../types/contacts";
+import { CharacterCounter } from "@/components/shared/CharacterCounter";
 interface ContactsSectionProps {
   additionalInfo: UserAdditionalInfo | null;
   isEditing: boolean;
@@ -53,6 +54,8 @@ export function ContactsSection({
 }: ContactsSectionProps) {
   const [contactEntries, setContactEntries] = useState<ContactInfoEntry[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
+  const CONTACT_VALUE_MAX_LENGTH = 50;
+  const CONTACT_LABEL_MAX_LENGTH = 50;
   const [newEntry, setNewEntry] = useState<Partial<ContactInfoEntry>>({
     type: ContactType.phone,
     value: "",
@@ -239,7 +242,7 @@ export function ContactsSection({
                 <IconComponent className="w-4 h-4 text-primary" />
               </a>
               <div className="flex items-center gap-2 flex-1 min-w-0">
-                <span className="text-blue-500 hover:underline truncate">
+                <span className="text-blue-500 hover:underline truncate break-all">
                   {displayValue}
                 </span>
                 {labelText && (
@@ -377,29 +380,47 @@ export function ContactsSection({
                     )}
                     {!config?.urlPrefix && "Value"}
                   </Label>
-                  <Input
-                    id={`value-${entry.id}`}
-                    value={entry.value}
-                    onChange={(e) =>
-                      handleEntryChange(index, "value", e.target.value)
-                    }
-                    onBlur={() => handleBlurEntry(index)}
-                    placeholder={config?.placeholder || "Enter value"}
-                  />
+                  <div>
+                    <Input
+                      id={`value-${entry.id}`}
+                      value={entry.value}
+                      onChange={(e) =>
+                        handleEntryChange(index, "value", e.target.value)
+                      }
+                      onBlur={() => handleBlurEntry(index)}
+                      placeholder={config?.placeholder || "Enter value"}
+                      maxLength={CONTACT_VALUE_MAX_LENGTH}
+                    />
+                    <div className="flex justify-end mt-1">
+                      <CharacterCounter
+                        current={entry.value.length}
+                        max={CONTACT_VALUE_MAX_LENGTH}
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
 
               <div>
                 <Label htmlFor={`label-${entry.id}`}>Название (по желанию)</Label>
-                <Input
-                  id={`label-${entry.id}`}
-                  value={entry.label || ""}
-                  onChange={(e) =>
-                    handleEntryChange(index, "label", e.target.value)
-                  }
-                  onBlur={() => handleBlurEntry(index)}
-                  placeholder="Название контакта"
-                />
+                <div>
+                  <Input
+                    id={`label-${entry.id}`}
+                    value={entry.label || ""}
+                    onChange={(e) =>
+                      handleEntryChange(index, "label", e.target.value)
+                    }
+                    onBlur={() => handleBlurEntry(index)}
+                    placeholder="Название контакта"
+                    maxLength={CONTACT_LABEL_MAX_LENGTH}
+                  />
+                  <div className="flex justify-end mt-1">
+                    <CharacterCounter
+                      current={entry.label?.length || 0}
+                      max={CONTACT_LABEL_MAX_LENGTH}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           );
@@ -438,28 +459,46 @@ export function ContactsSection({
                   )}
                   {!getContactTypeConfig(newEntry.type!)?.urlPrefix && "Value"}
                 </Label>
-                <Input
-                  id="new-value"
-                  value={newEntry.value || ""}
-                  onChange={(e) =>
-                    handleNewEntryChange("value", e.target.value)
-                  }
-                  placeholder={
-                    getContactTypeConfig(newEntry.type!)?.placeholder ||
-                    "Enter value"
-                  }
-                />
+                <div>
+                  <Input
+                    id="new-value"
+                    value={newEntry.value || ""}
+                    onChange={(e) =>
+                      handleNewEntryChange("value", e.target.value)
+                    }
+                    placeholder={
+                      getContactTypeConfig(newEntry.type!)?.placeholder ||
+                      "Enter value"
+                    }
+                    maxLength={CONTACT_VALUE_MAX_LENGTH}
+                  />
+                  <div className="flex justify-end mt-1">
+                    <CharacterCounter
+                      current={newEntry.value?.length || 0}
+                      max={CONTACT_VALUE_MAX_LENGTH}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
 
             <div>
               <Label htmlFor="new-label">Название (по желанию)</Label>
-              <Input
-                id="new-label"
-                value={newEntry.label || ""}
-                onChange={(e) => handleNewEntryChange("label", e.target.value)}
-                placeholder="Название контакта"
-              />
+              <div>
+                <Input
+                  id="new-label"
+                  value={newEntry.label || ""}
+                  onChange={(e) => handleNewEntryChange("label", e.target.value)}
+                  placeholder="Название контакта"
+                  maxLength={CONTACT_LABEL_MAX_LENGTH}
+                />
+                <div className="flex justify-end mt-1">
+                  <CharacterCounter
+                    current={newEntry.label?.length || 0}
+                    max={CONTACT_LABEL_MAX_LENGTH}
+                  />
+                </div>
+              </div>
             </div>
 
             <div className="flex gap-2">

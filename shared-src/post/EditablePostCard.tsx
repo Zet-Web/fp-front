@@ -24,6 +24,7 @@ import { TiptapEditor } from "../feed/TipTapEditor";
 import QuizForm from "../../apps/quiz/src/QuizForm";
 import { EventData } from "../event/event-types";
 import { EventFormCard } from "../event/EventFormCard";
+import { CharacterCounter } from "@/components/shared/CharacterCounter";
 
 interface EditablePostCardProps {
   title?: string;
@@ -118,7 +119,9 @@ export function EditablePostCard({
     .toUpperCase()
     .slice(0, 2);
 
-  const EXCERPT_MAX_LENGTH = 200;
+  const TITLE_MAX_LENGTH = 100;
+  const EXCERPT_MAX_LENGTH = 400;
+  const SLUG_MAX_LENGTH = 100;
   const excerptRemaining = EXCERPT_MAX_LENGTH - editedExcerpt.length;
 
   const validateForm = (): boolean => {
@@ -410,12 +413,21 @@ export function EditablePostCard({
                 >
                   Заголовок
                 </Label>
-                <Input
-                  id="edit-title"
-                  value={editedTitle}
-                  onChange={(e) => setEditedTitle(e.target.value)}
-                  placeholder="Post title (optional)"
-                />
+                <div>
+                  <Input
+                    id="edit-title"
+                    value={editedTitle}
+                    onChange={(e) => setEditedTitle(e.target.value)}
+                    placeholder="Post title (optional)"
+                    maxLength={TITLE_MAX_LENGTH}
+                  />
+                  <div className="flex justify-end mt-1">
+                    <CharacterCounter
+                      current={editedTitle?.length || 0}
+                      max={TITLE_MAX_LENGTH}
+                    />
+                  </div>
+                </div>
               </div>
 
               <div>
@@ -461,6 +473,8 @@ export function EditablePostCard({
                 <TiptapEditor
                   value={editedContent}
                   onChange={(e) => setEditedContent(e)}
+                  maxCharacters={5000}
+                  showCharacterCount={true}
                 />
               </div>
 
@@ -471,12 +485,21 @@ export function EditablePostCard({
                 >
                   Ссылка
                 </Label>
-                <Input
-                  id="edit-slug"
-                  value={editedSlug}
-                  onChange={(e) => setEditedSlug(e.target.value)}
-                  placeholder="url-friendly-slug (optional)"
-                />
+                <div>
+                  <Input
+                    id="edit-slug"
+                    value={editedSlug}
+                    onChange={(e) => setEditedSlug(e.target.value)}
+                    placeholder="url-friendly-slug (optional)"
+                    maxLength={SLUG_MAX_LENGTH}
+                  />
+                  <div className="flex justify-end mt-1">
+                    <CharacterCounter
+                      current={editedSlug?.length || 0}
+                      max={SLUG_MAX_LENGTH}
+                    />
+                  </div>
+                </div>
               </div>
 
               {editedImages.length > 0 && (

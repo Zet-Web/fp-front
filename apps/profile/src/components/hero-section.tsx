@@ -16,6 +16,7 @@ import { LocationItem } from "../types/location";
 import { UserProfile } from "../types/profile";
 import { FPApi } from "@/lib/api";
 import { useAuthContext } from "@/components/auth-provider";
+import { CharacterCounter } from "@/components/shared/CharacterCounter";
 
 interface HeroSectionProps {
   user: UserProfile;
@@ -61,6 +62,9 @@ export function HeroSection({
     .join("")
     .toUpperCase()
     .slice(0, 2);
+
+  const NAME_MAX_LENGTH = 50;
+  const ABOUT_MAX_LENGTH = 400;
 
   const handleNameChange = (value: string) => {
     onUpdateProfile({ name: value });
@@ -240,12 +244,21 @@ export function HeroSection({
           <div className="flex-1 w-full md:w-auto">
             <div className="flex items-center gap-2 mb-2 flex-wrap">
               {isEditing ? (
-                <Input
-                  value={user.name || ""}
-                  onChange={(e) => handleNameChange(e.target.value)}
-                  className="text-2xl md:text-3xl font-bold border border-input rounded-md px-3 py-2 h-auto bg-background focus-visible:ring-1 focus-visible:ring-ring"
-                  placeholder="Enter your name"
-                />
+                <div className="flex-1">
+                  <Input
+                    value={user.name || ""}
+                    onChange={(e) => handleNameChange(e.target.value)}
+                    className="text-2xl md:text-3xl font-bold border border-input rounded-md px-3 py-2 h-auto bg-background focus-visible:ring-1 focus-visible:ring-ring"
+                    placeholder="Enter your name"
+                    maxLength={NAME_MAX_LENGTH}
+                  />
+                  <div className="flex justify-end mt-1">
+                    <CharacterCounter
+                      current={user.name?.length || 0}
+                      max={NAME_MAX_LENGTH}
+                    />
+                  </div>
+                </div>
               ) : (
                 <h1 className="text-2xl md:text-3xl font-bold break-words">{displayName}</h1>
               )}
@@ -269,15 +282,24 @@ export function HeroSection({
             <p className="text-muted-foreground mb-2">@{displayUsername}</p>
 
             {isEditing ? (
-              <Textarea
-                value={user.about || ""}
-                onChange={(e) => handleAboutChange(e.target.value)}
-                className="mb-4 max-w-4xl resize-none"
-                placeholder="Tell others about yourself..."
-                rows={3}
-              />
+              <div className="mb-4 max-w-4xl">
+                <Textarea
+                  value={user.about || ""}
+                  onChange={(e) => handleAboutChange(e.target.value)}
+                  className="resize-none"
+                  placeholder="Tell others about yourself..."
+                  rows={3}
+                  maxLength={ABOUT_MAX_LENGTH}
+                />
+                <div className="flex justify-end mt-1">
+                  <CharacterCounter
+                    current={user.about?.length || 0}
+                    max={ABOUT_MAX_LENGTH}
+                  />
+                </div>
+              </div>
             ) : (
-              <p className="text-sm md:text-base text-foreground mb-4 max-w-2xl break-words leading-relaxed">
+              <p className="text-sm md:text-base text-foreground mb-4 max-w-2xl break-words leading-relaxed whitespace-pre-wrap">
                 {user.about || ""}
               </p>
             )}
