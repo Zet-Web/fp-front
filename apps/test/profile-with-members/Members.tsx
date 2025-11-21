@@ -40,7 +40,7 @@ import {
 type VisibilityMode = 'all' | 'members' | 'owner';
 type AccessMode = 'public' | 'private';
 
-export function MembersTab() {
+export function Members() {
   const [admins, setAdmins] = useState<Member[]>(mockOwnerAndAdmins);
   const [members, setMembers] = useState<Member[]>(mockMembers);
   const [joinRequests, setJoinRequests] = useState<JoinRequest[]>(mockJoinRequests);

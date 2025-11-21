@@ -61,6 +61,7 @@ export function PostPage() {
           type: PostType.ARTICLE,
           status: PostStatus.PUBLISHED,
           is_pinned: false,
+          members_enabled: false,
           url: "",
           slug: undefined,
           author: {
@@ -364,6 +365,7 @@ export function PostPage() {
             type={post.type}
             status={post.status}
             isPinned={post.is_pinned}
+            membersEnabled={post.members_enabled}
             slug={post.slug}
             author={post.author}
             onSave={handleSave}

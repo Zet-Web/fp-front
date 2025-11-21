@@ -32,6 +32,7 @@ export interface Post {
   is_pinned: boolean
   is_featured: boolean
   is_saved?: boolean
+  members_enabled?: boolean
   event?: EventResponse | null
 }
 

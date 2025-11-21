@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { MapPin, UserPlus, Users } from 'lucide-react';
-import { MembersTab } from './MembersTab';
+import { Members } from './Members';
 
 // Mock user data
 const mockUser = {
@@ -23,7 +23,7 @@ const mockUser = {
 
 type TabValue = 'posts' | 'information' | 'members';
 
-export function ProfileWithMembersTab() {
+export function ProfileWithMembers() {
   const [activeTab, setActiveTab] = useState<TabValue>('members');
   const [isFollowing, setIsFollowing] = useState(false);
 
@@ -168,7 +168,7 @@ export function ProfileWithMembersTab() {
         </TabsContent>
 
         <TabsContent value="members" className="mt-0">
-          <MembersTab />
+          <Members />
         </TabsContent>
       </Tabs>
     </div>

@@ -6,8 +6,8 @@ import { Profile2Tab } from '../profile2/Profile2Tab';
 import { Quiz3Tab } from '../quiz3/Quiz3Tab';
 import { EventsTab } from '../events/EventsTab';
 import { EventsDemoTab } from '../events-demo/EventsDemoTab';
-import { ProfileWithMembersTab } from '../profile-with-members/ProfileWithMembersTab';
-
+import { ProfileWithMembers } from '../profile-with-members/ProfileWithMembers';
+ 
 const tabMap: Record<string, string> = {
   '1': 'profile',
   '2': 'profile2',
@@ -57,7 +57,7 @@ export function TestPage() {
         </TabsList>
 
         <TabsContent value="profile">
-          <ProfileWithMembersTab />
+          <ProfileWithMembers />
         </TabsContent>
 
         <TabsContent value="profile2">
