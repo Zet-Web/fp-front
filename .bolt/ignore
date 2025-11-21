@@ -5,11 +5,11 @@ apps/chats
 apps/header
 apps/home
 apps/mobileNav
-# apps/navigation
-# apps/profile
-# apps/post
+apps/navigation
+apps/profile
+apps/post
 apps/settings
-# apps/yurservice
+apps/yurservice
 apps/network
 apps/quiz
 apps/contragent
