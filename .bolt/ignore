@@ -3,11 +3,12 @@ apps/404
 apps/auth
 apps/chats
 apps/header
-apps/home
-apps/mobileNav
-apps/navigation
+# apps/home
+# apps/mobileNav
+# apps/navigation
+# apps/about
 apps/profile
-# apps/post
+apps/post
 apps/settings
 apps/yurservice
 apps/network
