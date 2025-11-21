@@ -14,6 +14,7 @@ import { formatPeriod } from "@/lib/date-utils";
 import { defaultEducationValue } from "../utils/education-utils";
 import { ProfileEducation } from "../types/education";
 import { UserAdditionalInfo } from "../types/profile";
+import { CharacterCounter } from "@/components/shared/CharacterCounter";
 
 interface EducationSectionProps {
   isEditing: boolean;
@@ -31,6 +32,8 @@ export function EducationSection({
   const [showAddEducationForm, setShowAddEducationForm] = useState(false);
   const [newEducation, setNewEducation] = useState(defaultEducationValue);
   const [editForm, setEditForm] = useState(defaultEducationValue);
+
+  const DESCRIPTION_MAX_LENGTH = 400;
 
   useEffect(() => {
     if (additionalInfo?.education) setEducation(additionalInfo?.education);
@@ -212,7 +215,13 @@ export function EducationSection({
                 />
 
                 <div>
-                  <Label htmlFor="edit-edu-description">Описание</Label>
+                  <div className="flex justify-between items-center mb-2">
+                    <Label htmlFor="edit-edu-description">Описание</Label>
+                    <CharacterCounter
+                      current={editForm.description?.length || 0}
+                      max={DESCRIPTION_MAX_LENGTH}
+                    />
+                  </div>
                   <Textarea
                     id="edit-edu-description"
                     value={editForm.description}
@@ -224,6 +233,7 @@ export function EducationSection({
                     }
                     placeholder="Дополнительная информация..."
                     rows={2}
+                    maxLength={DESCRIPTION_MAX_LENGTH}
                   />
                 </div>
               </div>
@@ -272,7 +282,7 @@ export function EducationSection({
                 <p className="text-primary font-medium mb-2">
                   {edu.university?.name}
                 </p>
-                <p className="text-muted-foreground">{edu.description}</p>
+                <p className="text-muted-foreground break-words whitespace-pre-wrap">{edu.description}</p>
               </>
             )}
           </div>
@@ -330,7 +340,13 @@ export function EducationSection({
             />
 
             <div>
-              <Label htmlFor="edu-description">Описание</Label>
+              <div className="flex justify-between items-center mb-2">
+                <Label htmlFor="edu-description">Описание</Label>
+                <CharacterCounter
+                  current={newEducation.description?.length || 0}
+                  max={DESCRIPTION_MAX_LENGTH}
+                />
+              </div>
               <Textarea
                 id="edu-description"
                 value={newEducation.description}
@@ -342,6 +358,7 @@ export function EducationSection({
                 }
                 placeholder="Дополнительная информация..."
                 rows={2}
+                maxLength={DESCRIPTION_MAX_LENGTH}
               />
             </div>
             <div className="flex gap-2">

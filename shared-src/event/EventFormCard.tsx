@@ -22,6 +22,7 @@ import {
   EventFormErrors,
 } from './event-types';
 import { UniversalReferenceSelector } from '@/components/shared/UniversalReferenceSelector';
+import { CharacterCounter } from '@/components/shared/CharacterCounter';
 
 interface EventFormCardProps {
   eventData: EventData;
@@ -32,6 +33,9 @@ interface EventFormCardProps {
 export function EventFormCard({ eventData, onChange, errors }: EventFormCardProps) {
   const [localErrors, setLocalErrors] = useState<EventFormErrors>({});
   const displayErrors = errors || localErrors;
+
+  const ADDRESS_MAX_LENGTH = 200;
+  const WEBSITE_MAX_LENGTH = 200;
 
   const handleEventTypeToggle = (type: EventType) => {
     const newTypes = eventData.eventTypes.includes(type)
@@ -168,12 +172,19 @@ export function EventFormCard({ eventData, onChange, errors }: EventFormCardProp
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="address">Адрес</Label>
+              <div className="flex justify-between items-center">
+                <Label htmlFor="address">Адрес</Label>
+                <CharacterCounter
+                  current={eventData.location?.address?.length || 0}
+                  max={ADDRESS_MAX_LENGTH}
+                />
+              </div>
               <Input
                 id="address"
                 placeholder="Enter event address"
                 value={eventData.location?.address || ''}
                 onChange={(e) => handleAddressChange(e.target.value)}
+                maxLength={ADDRESS_MAX_LENGTH}
               />
               {displayErrors.address && (
                 <p className="text-xs text-destructive">{displayErrors.address}</p>
@@ -251,10 +262,16 @@ export function EventFormCard({ eventData, onChange, errors }: EventFormCardProp
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="website" className="flex items-center gap-2">
-              <LinkIcon className="w-4 h-4" />
-              Сайт
-            </Label>
+            <div className="flex justify-between items-center">
+              <Label htmlFor="website" className="flex items-center gap-2">
+                <LinkIcon className="w-4 h-4" />
+                Сайт
+              </Label>
+              <CharacterCounter
+                current={eventData.website?.length || 0}
+                max={WEBSITE_MAX_LENGTH}
+              />
+            </div>
             <Input
               id="website"
               type="url"
@@ -262,6 +279,7 @@ export function EventFormCard({ eventData, onChange, errors }: EventFormCardProp
               value={eventData.website || ''}
               onChange={(e) => onChange({ ...eventData, website: e.target.value })}
               className={displayErrors.website ? 'border-destructive' : ''}
+              maxLength={WEBSITE_MAX_LENGTH}
             />
             {displayErrors.website && (
               <p className="text-xs text-destructive">{displayErrors.website}</p>

@@ -28,6 +28,7 @@ import { useEffect, useState } from "react";
 import { ProfileAward } from "../types/awards";
 import { defaultAwardValue } from "../utils/award-utils";
 import { UserAdditionalInfo } from "../types/profile";
+import { CharacterCounter } from "@/components/shared/CharacterCounter";
 
 interface AwardsSectionProps {
   additionalInfo: UserAdditionalInfo | null;
@@ -45,6 +46,10 @@ export function AwardsSection({
   const [editingAward, setEditingAward] = useState<number | null>(null);
   const [newAward, setNewAward] = useState(defaultAwardValue);
   const [editForm, setEditForm] = useState(defaultAwardValue);
+
+  const TITLE_MAX_LENGTH = 50;
+  const ISSUER_MAX_LENGTH = 50;
+  const DESCRIPTION_MAX_LENGTH = 400;
 
   useEffect(() => {
     if (additionalInfo?.awards) setAwards(additionalInfo?.awards);
@@ -197,7 +202,13 @@ export function AwardsSection({
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="edit-award-title">Название</Label>
+                      <div className="flex justify-between items-center mb-2">
+                        <Label htmlFor="edit-award-title">Название</Label>
+                        <CharacterCounter
+                          current={editForm.title?.length || 0}
+                          max={TITLE_MAX_LENGTH}
+                        />
+                      </div>
                       <Input
                         id="edit-award-title"
                         value={editForm.title}
@@ -208,12 +219,19 @@ export function AwardsSection({
                           }))
                         }
                         placeholder="Название награды или достижения..."
+                        maxLength={TITLE_MAX_LENGTH}
                       />
                     </div>
                     <div>
-                      <Label htmlFor="edit-award-issuer">
-                        Кем выдано
-                      </Label>
+                      <div className="flex justify-between items-center mb-2">
+                        <Label htmlFor="edit-award-issuer">
+                          Кем выдано
+                        </Label>
+                        <CharacterCounter
+                          current={editForm.issuer?.length || 0}
+                          max={ISSUER_MAX_LENGTH}
+                        />
+                      </div>
                       <Input
                         id="edit-award-issuer"
                         value={editForm.issuer}
@@ -224,6 +242,7 @@ export function AwardsSection({
                           }))
                         }
                         placeholder="Название организации"
+                        maxLength={ISSUER_MAX_LENGTH}
                       />
                     </div>
                     <div>
@@ -242,7 +261,13 @@ export function AwardsSection({
                     </div>
                   </div>
                   <div>
-                    <Label htmlFor="edit-award-description">Описание</Label>
+                    <div className="flex justify-between items-center mb-2">
+                      <Label htmlFor="edit-award-description">Описание</Label>
+                      <CharacterCounter
+                        current={editForm.description?.length || 0}
+                        max={DESCRIPTION_MAX_LENGTH}
+                      />
+                    </div>
                     <Textarea
                       id="edit-award-description"
                       value={editForm.description}
@@ -254,6 +279,7 @@ export function AwardsSection({
                       }
                       placeholder="Описание заслуг или достижений..."
                       rows={2}
+                      maxLength={DESCRIPTION_MAX_LENGTH}
                     />
                   </div>
                 </div>
@@ -329,7 +355,7 @@ export function AwardsSection({
                   <p className="text-primary font-medium mb-2">
                     {award.issuer}
                   </p>
-                  <p className="text-muted-foreground">{award.description}</p>
+                  <p className="text-muted-foreground break-words whitespace-pre-wrap">{award.description}</p>
                 </>
               )}
             </div>
@@ -340,7 +366,13 @@ export function AwardsSection({
               <h3 className="font-semibold text-lg">Добавить</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="award-title">Название</Label>
+                  <div className="flex justify-between items-center mb-2">
+                    <Label htmlFor="award-title">Название</Label>
+                    <CharacterCounter
+                      current={newAward.title?.length || 0}
+                      max={TITLE_MAX_LENGTH}
+                    />
+                  </div>
                   <Input
                     id="award-title"
                     value={newAward.title}
@@ -351,10 +383,17 @@ export function AwardsSection({
                       }))
                     }
                     placeholder="Best Developer Award"
+                    maxLength={TITLE_MAX_LENGTH}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="award-issuer">Issuer/Organization</Label>
+                  <div className="flex justify-between items-center mb-2">
+                    <Label htmlFor="award-issuer">Issuer/Organization</Label>
+                    <CharacterCounter
+                      current={newAward.issuer?.length || 0}
+                      max={ISSUER_MAX_LENGTH}
+                    />
+                  </div>
                   <Input
                     id="award-issuer"
                     value={newAward.issuer}
@@ -365,6 +404,7 @@ export function AwardsSection({
                       }))
                     }
                     placeholder="Tech Company Inc."
+                    maxLength={ISSUER_MAX_LENGTH}
                   />
                 </div>
                 <div>
@@ -380,7 +420,13 @@ export function AwardsSection({
                 </div>
               </div>
               <div>
-                <Label htmlFor="award-description">Description</Label>
+                <div className="flex justify-between items-center mb-2">
+                  <Label htmlFor="award-description">Description</Label>
+                  <CharacterCounter
+                    current={newAward.description?.length || 0}
+                    max={DESCRIPTION_MAX_LENGTH}
+                  />
+                </div>
                 <Textarea
                   id="award-description"
                   value={newAward.description}
@@ -392,6 +438,7 @@ export function AwardsSection({
                   }
                   placeholder="Describe the achievement..."
                   rows={2}
+                  maxLength={DESCRIPTION_MAX_LENGTH}
                 />
               </div>
               <div className="flex gap-2">
