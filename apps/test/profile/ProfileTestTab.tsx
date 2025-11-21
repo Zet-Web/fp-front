@@ -8,14 +8,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { VerifiedBadge } from "@/components/shared/VerifiedBadge";
-import { PostCard } from "../../../shared-src/post/PostCard";
 import { MembersTab } from "../members/MembersTab";
 import { mockProfileUser, mockAdditionalInfo } from "./mock-profile-data";
 import { mockMembers, mockMembersStats } from "../members/mock-members-data";
 import { MapPin, Edit, Save, X, Camera, UserPlus } from "lucide-react";
 import { BirthdayVisibility, UserAdditionalInfo, UserProfile } from "../../profile/src/types/profile";
-import { MOCK_POSTS } from "../../../shared-src/feed/mock-posts";
-import { PostStatus } from "../../../shared-src/post/post";
 
 enum ProfileTestTabs {
   posts = "posts",
@@ -52,8 +49,6 @@ export function ProfileTestTab() {
     }
     return locations.join(" • ") || "Локация не указана";
   };
-
-  const userPosts = MOCK_POSTS.filter(post => post.status === PostStatus.PUBLISHED).slice(0, 5);
 
   return (
     <div className="bg-background">
@@ -198,19 +193,11 @@ export function ProfileTestTab() {
           </TabsList>
 
           <TabsContent value="posts" className="mt-0">
-            <div className="space-y-4">
-              {userPosts.length === 0 ? (
-                <Card>
-                  <CardContent className="p-8 text-center">
-                    <p className="text-muted-foreground">Пока нет публикаций</p>
-                  </CardContent>
-                </Card>
-              ) : (
-                userPosts.map((post) => (
-                  <PostCard key={post.id} post={post} />
-                ))
-              )}
-            </div>
+            <Card>
+              <CardContent className="p-8 text-center">
+                <p className="text-muted-foreground">Пока нет публикаций</p>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="information" className="mt-0">
