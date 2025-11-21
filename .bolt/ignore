@@ -11,7 +11,7 @@ apps/navigation
 apps/settings
 #apps/yurservice
 apps/network
-apps/quiz
+# apps/quiz
 apps/contragent
 apps/split
 
