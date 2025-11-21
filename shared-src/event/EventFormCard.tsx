@@ -29,6 +29,7 @@ import {
   eventSchema,
 } from "./event-types";
 import { LocationSelector } from "@/components/shared/LocationSelector";
+import { CharacterCounter } from "@/components/shared/CharacterCounter";
 
 interface EventFormCardProps {
   onFormValuesChange: (data: EventResponse) => void;
@@ -69,6 +70,9 @@ export function EventFormCard({
 
   const eventTypes = watch("eventTypes");
   const showLocationFields = eventTypes.includes("offline");
+
+  const ADDRESS_MAX_LENGTH = 200;
+  const WEBSITE_MAX_LENGTH = 200;
 
   const handleEventTypeToggle = (type: EventType) => {
     const currentTypes = eventTypes || [];
@@ -200,7 +204,13 @@ export function EventFormCard({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="address">Адрес</Label>
+              <div className="flex justify-between items-center">
+                <Label htmlFor="address">Адрес</Label>
+                <CharacterCounter
+                  current={eventData?.location?.address?.length || 0}
+                  max={ADDRESS_MAX_LENGTH}
+                />
+              </div>
               <Input
                 id="address"
                 placeholder="Enter event address"
@@ -287,10 +297,16 @@ export function EventFormCard({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="website" className="flex items-center gap-2">
-              <LinkIcon className="w-4 h-4" />
-              Сайт
-            </Label>
+            <div className="flex justify-between items-center">
+              <Label htmlFor="website" className="flex items-center gap-2">
+                <LinkIcon className="w-4 h-4" />
+                Сайт
+              </Label>
+              <CharacterCounter
+                current={eventData?.website?.length || 0}
+                max={WEBSITE_MAX_LENGTH}
+              />
+            </div>
             <Input
               id="website"
               type="url"

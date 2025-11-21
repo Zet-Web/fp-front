@@ -17,6 +17,7 @@ import { FPApi } from "@/lib/api";
 import { useAuthContext } from "@/components/auth-provider";
 import { useToast } from "@/hooks/use-toast";
 import { getStorageUrl } from "@/utils/getStorageUrl";
+import { CharacterCounter } from "@/components/shared/CharacterCounter";
 
 interface HeroSectionProps {
   user: UserProfile;
@@ -65,6 +66,9 @@ export function HeroSection({
     .join("")
     .toUpperCase()
     .slice(0, 2);
+
+  const NAME_MAX_LENGTH = 50;
+  const ABOUT_MAX_LENGTH = 400;
 
   const handleNameChange = (value: string) => {
     onUpdateProfile({ name: value });
@@ -175,8 +179,8 @@ export function HeroSection({
   };
 
   return (
-    <div className="relative w-full mb-8">
-      <div className="relative h-64 w-full overflow-hidden rounded-lg">
+    <div className="relative w-full mb-6 md:mb-8">
+      <div className="relative h-48 md:h-64 w-full overflow-hidden rounded-lg">
         {user.cover_url ? (
           <img
             src={getStorageUrl(user.cover_url)}
@@ -246,15 +250,15 @@ export function HeroSection({
                 <Button
                   variant="secondary"
                   size="sm"
-                  className="w-10 h-10 rounded-full p-0 cursor-pointer shadow-lg"
+                  className="w-8 h-8 md:w-10 md:h-10 rounded-full p-0 cursor-pointer shadow-lg"
                   disabled={isUploadingAvatar}
                   asChild
                 >
                   <span>
                     {isUploadingAvatar ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <Loader2 className="w-3 h-3 md:w-4 md:h-4 animate-spin" />
                     ) : (
-                      <Camera className="w-4 h-4" />
+                      <Camera className="w-3 h-3 md:w-4 md:h-4" />
                     )}
                   </span>
                 </Button>
@@ -267,12 +271,21 @@ export function HeroSection({
           <div className="flex-1 max-w-[70%]">
             <div className="flex items-center gap-2 mb-2">
               {isEditing ? (
-                <Input
-                  value={user.name || ""}
-                  onChange={(e) => handleNameChange(e.target.value)}
-                  className="text-3xl font-bold border border-input rounded-md px-3 py-2 h-auto bg-background focus-visible:ring-1 focus-visible:ring-ring"
-                  placeholder="Enter your name"
-                />
+                <div className="flex-1">
+                  <Input
+                    value={user.name || ""}
+                    onChange={(e) => handleNameChange(e.target.value)}
+                    className="text-2xl md:text-3xl font-bold border border-input rounded-md px-3 py-2 h-auto bg-background focus-visible:ring-1 focus-visible:ring-ring"
+                    placeholder="Enter your name"
+                    maxLength={NAME_MAX_LENGTH}
+                  />
+                  <div className="flex justify-end mt-1">
+                    <CharacterCounter
+                      current={user.name?.length || 0}
+                      max={NAME_MAX_LENGTH}
+                    />
+                  </div>
+                </div>
               ) : (
                 <h1 className="text-3xl font-bold truncate overflow-hidden">
                   {displayName}
@@ -298,15 +311,24 @@ export function HeroSection({
             <p className="text-muted-foreground mb-2">@{displayUsername}</p>
 
             {isEditing ? (
-              <Textarea
-                value={user.about || ""}
-                onChange={(e) => handleAboutChange(e.target.value)}
-                className="mb-4 max-w-4xl resize-none"
-                placeholder="Tell others about yourself..."
-                rows={3}
-              />
+              <div className="mb-4 max-w-4xl">
+                <Textarea
+                  value={user.about || ""}
+                  onChange={(e) => handleAboutChange(e.target.value)}
+                  className="resize-none"
+                  placeholder="Tell others about yourself..."
+                  rows={3}
+                  maxLength={ABOUT_MAX_LENGTH}
+                />
+                <div className="flex justify-end mt-1">
+                  <CharacterCounter
+                    current={user.about?.length || 0}
+                    max={ABOUT_MAX_LENGTH}
+                  />
+                </div>
+              </div>
             ) : (
-              <p className="text-foreground mb-4 max-w-2xl">
+              <p className="text-sm md:text-base text-foreground mb-4 max-w-2xl break-words leading-relaxed whitespace-pre-wrap">
                 {user.about || ""}
               </p>
             )}
@@ -332,21 +354,23 @@ export function HeroSection({
             )}
           </div>
 
-          <div className="ml-6 mt-2 flex gap-3">
+          <div className="w-full md:w-auto md:ml-6 mt-0 md:mt-2 flex gap-2 md:gap-3 justify-end md:justify-start">
             {isOwnProfile ? (
               <>
                 {isEditing ? (
                   <>
                     <Button
                       variant="outline"
-                      className="px-6 py-2 rounded-full font-medium transition-colors"
+                      size="sm"
+                      className="px-4 md:px-6 py-2 rounded-full font-medium transition-colors text-sm"
                       onClick={onEditToggle}
                       disabled={isSaving}
                     >
                       Отмена
                     </Button>
                     <Button
-                      className="px-6 py-2 rounded-full font-medium transition-colors"
+                      size="sm"
+                      className="px-4 md:px-6 py-2 rounded-full font-medium transition-colors text-sm"
                       onClick={onSaveChanges}
                       disabled={isSaving}
                     >
@@ -359,7 +383,8 @@ export function HeroSection({
                 ) : (
                   <Button
                     variant="outline"
-                    className="px-6 py-2 rounded-full font-medium transition-colors"
+                    size="sm"
+                    className="px-4 md:px-6 py-2 rounded-full font-medium transition-colors text-sm"
                     onClick={onEditToggle}
                   >
                     Ред.
@@ -383,7 +408,8 @@ export function HeroSection({
                   onClick={handleToggleFollow}
                   disabled={isFollowingLoading}
                   variant="outline"
-                  className="px-6 py-2 rounded-full font-medium transition-colors"
+                  size="sm"
+                  className="px-4 md:px-6 py-2 rounded-full font-medium transition-colors text-sm flex-1 md:flex-none"
                 >
                   {isFollowingLoading ? (
                     <Loader2 className="w-4 h-4 animate-spin" />

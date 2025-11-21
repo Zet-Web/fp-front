@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { FileText } from "lucide-react";
 import { UserProfile } from "../types/profile";
+import { CharacterCounter } from "@/components/shared/CharacterCounter";
 
 interface AdditionalInfoSectionProps {
   user: UserProfile;
@@ -14,6 +15,8 @@ export function AdditionalInfoSection({
   isEditing,
   onUpdateProfile,
 }: AdditionalInfoSectionProps) {
+  const ADDITIONAL_INFO_MAX_LENGTH = 400;
+
   const handleAdditionalInfoChange = (value: string) => {
     onUpdateProfile({ additional_info: value });
   };
@@ -28,13 +31,22 @@ export function AdditionalInfoSection({
       </CardHeader>
       <CardContent>
         {isEditing ? (
-          <Textarea
-            value={user.additional_info || ""}
-            onChange={(e) => handleAdditionalInfoChange(e.target.value)}
-            className="resize-none"
-            placeholder="Add any additional information..."
-            rows={4}
-          />
+          <div>
+            <div className="flex justify-end mb-1">
+              <CharacterCounter
+                current={user.additional_info?.length || 0}
+                max={ADDITIONAL_INFO_MAX_LENGTH}
+              />
+            </div>
+            <Textarea
+              value={user.additional_info || ""}
+              onChange={(e) => handleAdditionalInfoChange(e.target.value)}
+              className="resize-none"
+              placeholder="Add any additional information..."
+              rows={4}
+              maxLength={ADDITIONAL_INFO_MAX_LENGTH}
+            />
+          </div>
         ) : (
           <p className="text-foreground whitespace-pre-wrap break-words">
             {user.additional_info || (

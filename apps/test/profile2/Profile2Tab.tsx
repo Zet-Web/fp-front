@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { MessageCircle, UserPlus, MapPinned, Users, CalendarDays, Pin } from 'lucide-react';
-import { PostCard } from '../../../shared-src/post/PostCard';
+import { PostCardVariants } from './PostCardVariants';
 import { mockProfile2Posts, type MockPost } from './mock-profile2-posts';
 
 export function Profile2Tab() {
@@ -160,14 +160,15 @@ export function Profile2Tab() {
                   </div>
                 )}
 
-                <PostCard
+                <PostCardVariants
                   postId={post.id}
                   title={post.title}
                   content={post.content}
                   images={post.images}
                   author={mockAuthor}
                   showActions={false}
-                  isOwner={true}
+                  imageVariant={post.imageVariant}
+                  variantLabel={post.variantLabel}
                 />
               </div>
             </div>

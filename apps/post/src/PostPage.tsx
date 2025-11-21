@@ -328,7 +328,7 @@ export function PostPage() {
   if (isLoading) {
     return (
       <div className="bg-background flex items-center justify-center min-h-[400px]">
-        <Card className="w-96">
+        <Card className="w-full max-w-sm mx-4">
           <CardContent className="p-6 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
             <p className="text-muted-foreground">Загрузка...</p>
@@ -341,7 +341,7 @@ export function PostPage() {
   if (error || !post) {
     return (
       <div className="bg-background flex items-center justify-center min-h-[400px]">
-        <Card className="w-96">
+        <Card className="w-full max-w-sm mx-4">
           <CardContent className="p-6 text-center">
             <p className="text-destructive mb-4">{error || "Post not found"}</p>
             <Button onClick={() => navigate("/")}>На главную</Button>
@@ -353,7 +353,7 @@ export function PostPage() {
 
   return (
     <div className="bg-background">
-      <div className="container mx-auto px-6 py-6 max-w-4xl">
+      <div className="container mx-auto px-4 md:px-6 py-4 md:py-6 max-w-4xl">
         {isEditing ? (
           <EditablePostCard
             title={post.title}

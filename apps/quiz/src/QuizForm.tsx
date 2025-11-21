@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { QuizFormData, quizSchema } from "../types/quiz";
 import { Label } from "@/components/ui/label";
+import { CharacterCounter } from "@/components/shared/CharacterCounter";
 import {
   Plus,
   Trash2,
@@ -41,6 +42,10 @@ type Props = {
   onFormValidChange: (valid: boolean) => void;
   defaultQuizFormValues?: QuizFormData | null;
 };
+
+const QUESTION_MAX_LENGTH = 400;
+const ANSWER_MAX_LENGTH = 400;
+const EXPLANATION_MAX_LENGTH = 400;
 
 export default function QuizForm({
   onFormValuesChange,
@@ -439,11 +444,20 @@ export default function QuizForm({
                     control={control}
                     name={`questions.${index}.text`}
                     render={({ field }) => (
-                      <Input
-                        {...field}
-                        placeholder="Введите текст вопроса"
-                        className="text-sm"
-                      />
+                      <div>
+                        <Input
+                          {...field}
+                          placeholder="Введите текст вопроса"
+                          className="text-sm"
+                          maxLength={QUESTION_MAX_LENGTH}
+                        />
+                        <div className="flex justify-end mt-1">
+                          <CharacterCounter
+                            current={field.value?.length || 0}
+                            max={QUESTION_MAX_LENGTH}
+                          />
+                        </div>
+                      </div>
                     )}
                   />
 
@@ -465,12 +479,21 @@ export default function QuizForm({
                       control={control}
                       name={`questions.${index}.explanation`}
                       render={({ field }) => (
-                        <Textarea
-                          {...field}
-                          placeholder="Объясните, почему этот ответ правильный..."
-                          rows={2}
-                          className="resize-none text-sm"
-                        />
+                        <div>
+                          <Textarea
+                            {...field}
+                            placeholder="Объясните, почему этот ответ правильный..."
+                            rows={2}
+                            className="resize-none text-sm"
+                            maxLength={EXPLANATION_MAX_LENGTH}
+                          />
+                          <div className="flex justify-end mt-1">
+                            <CharacterCounter
+                              current={field.value?.length || 0}
+                              max={EXPLANATION_MAX_LENGTH}
+                            />
+                          </div>
+                        </div>
                       )}
                     />
                   </div>
@@ -510,11 +533,19 @@ function AnswersField({ control, qIndex }: { control: any; qIndex: number }) {
             control={control}
             name={`questions.${qIndex}.answers.${aIndex}.text`}
             render={({ field }) => (
-              <Input
-                {...field}
-                placeholder={`Вариант ${aIndex + 1}`}
-                className="flex-1"
-              />
+              <div className="flex-1">
+                <Input
+                  {...field}
+                  placeholder={`Вариант ${aIndex + 1}`}
+                  maxLength={ANSWER_MAX_LENGTH}
+                />
+                <div className="flex justify-end mt-1">
+                  <CharacterCounter
+                    current={field.value?.length || 0}
+                    max={ANSWER_MAX_LENGTH}
+                  />
+                </div>
+              </div>
             )}
           />
           {fields.length > 2 && (

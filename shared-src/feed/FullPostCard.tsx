@@ -228,9 +228,11 @@ export function FullPostCard({
               )}
             </div>
 
-            <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+            <h1 className="scroll-m-20 text-2xl font-extrabold tracking-tight">
               {title}
             </h1>
+
+            <p className="leading-7 [&:not(:first-child)]:mt-2">{excerpt}</p>
 
             {images.length > 0 && (
               <div className="my-4">
@@ -241,8 +243,6 @@ export function FullPostCard({
                 />
               </div>
             )}
-
-            <p className="leading-7 [&:not(:first-child)]:mt-6">{excerpt}</p>
 
             <PostContentViewer html={content || ""} />
 
@@ -275,7 +275,7 @@ export function FullPostCard({
                   ) : (
                     <Bookmark
                       className={`w-4 h-4 transition-colors ${
-                        isPostSaved ? "fill-blue-500 text-blue-500" : ""
+                        isPostSaved ? "fill-red-500 text-red-500" : ""
                       }`}
                     />
                   )}

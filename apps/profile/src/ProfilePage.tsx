@@ -167,7 +167,7 @@ export function ProfilePage() {
   if (isLoading) {
     return (
       <div className="bg-background flex items-center justify-center overflow-y-auto">
-        <Card className="w-96">
+        <Card className="w-full max-w-sm mx-4">
           <CardContent className="p-6 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
             <p className="text-muted-foreground">Загрузка...</p>
@@ -181,7 +181,7 @@ export function ProfilePage() {
   if (error) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <Card className="w-96">
+        <Card className="w-full max-w-sm mx-4">
           <CardContent className="p-6 text-center">
             <p className="text-destructive mb-2">
               {error === "Profile not found"
@@ -199,7 +199,7 @@ export function ProfilePage() {
   if (!profileData) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <Card className="w-96">
+        <Card className="w-full max-w-sm mx-4">
           <CardContent className="p-6 text-center">
             <p className="text-muted-foreground">
               {requestedUsername
@@ -214,7 +214,7 @@ export function ProfilePage() {
 
   return (
     <div className="bg-background">
-      <div className="container mx-auto px-6 py-6 max-w-4xl">
+      <div className="container mx-auto px-4 md:px-6 py-4 md:py-6 max-w-4xl">
         <HeroSection
           user={profileData}
           isOwnProfile={isOwnProfile}
