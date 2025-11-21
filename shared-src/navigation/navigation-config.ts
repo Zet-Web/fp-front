@@ -40,12 +40,12 @@ export const mobileBottomNavigationItems: NavItem[] = [
     label: "Профиль", 
     path: (profile, isAuthenticated) => {
       if (isAuthenticated && profile?.username) {
-        return `/${profile.username}`
+        return `/${profile.username}` 
       }
       return '/auth'
     }
   },
-  
+  { icon: Settings, label: "Настройки", path: "/settings" },
 ]
 
 // Create button configuration
