@@ -36,6 +36,7 @@ interface EditablePostCardProps {
   type: PostType;
   status: PostStatus;
   isPinned: boolean;
+  membersEnabled?: boolean;
   slug?: string;
   author: PostAuthor;
   onSave: (
@@ -48,6 +49,7 @@ interface EditablePostCardProps {
       type: PostType;
       status: PostStatus;
       is_pinned: boolean;
+      members_enabled?: boolean;
       slug?: string;
     },
     quizData?: QuizFormData | null,
@@ -68,6 +70,7 @@ export function EditablePostCard({
   type,
   status,
   isPinned,
+  membersEnabled = false,
   slug = "",
   author,
   onSave,
@@ -84,6 +87,7 @@ export function EditablePostCard({
   const [editedType, setEditedType] = useState(type);
   const [editedStatus, setEditedStatus] = useState(status);
   const [editedIsPinned, setEditedIsPinned] = useState(isPinned);
+  const [editedMembersEnabled, setEditedMembersEnabled] = useState(membersEnabled);
   const [editedSlug, setEditedSlug] = useState(slug);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isUploadingCover, setIsUploadingCover] = useState(false);
@@ -157,6 +161,7 @@ export function EditablePostCard({
         type: editedType,
         status: editedStatus,
         is_pinned: editedIsPinned,
+        members_enabled: editedMembersEnabled,
         slug: editedSlug?.trim() || undefined,
       },
       editedType === PostType.QUIZ ? quizData : null,
@@ -309,20 +314,38 @@ export function EditablePostCard({
                 </div>
               </div>
 
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="edit-pinned"
-                  checked={editedIsPinned}
-                  onCheckedChange={(checked) =>
-                    setEditedIsPinned(checked as boolean)
-                  }
-                />
-                <Label
-                  htmlFor="edit-pinned"
-                  className="text-xs md:text-sm font-medium cursor-pointer"
-                >
-                  Закрепить пост
-                </Label>
+              <div className="space-y-3">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="edit-pinned"
+                    checked={editedIsPinned}
+                    onCheckedChange={(checked) =>
+                      setEditedIsPinned(checked as boolean)
+                    }
+                  />
+                  <Label
+                    htmlFor="edit-pinned"
+                    className="text-xs md:text-sm font-medium cursor-pointer"
+                  >
+                    Закрепить пост
+                  </Label>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="edit-members-enabled"
+                    checked={editedMembersEnabled}
+                    onCheckedChange={(checked) =>
+                      setEditedMembersEnabled(checked as boolean)
+                    }
+                  />
+                  <Label
+                    htmlFor="edit-members-enabled"
+                    className="text-xs md:text-sm font-medium cursor-pointer"
+                  >
+                    Включить участников
+                  </Label>
+                </div>
               </div>
 
               <div>
