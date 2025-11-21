@@ -45,6 +45,7 @@ export const mobileBottomNavigationItems: NavItem[] = [
       return '/auth'
     }
   },
+  // Temproraily used Settings before realized Chats functionality. Then will change to Chats
   { icon: Settings, label: "Настройки", path: "/settings" },
 ]
 
