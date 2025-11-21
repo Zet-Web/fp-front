@@ -270,7 +270,7 @@ export function FullPostCard({
                   ) : (
                     <Bookmark
                       className={`w-4 h-4 transition-colors ${
-                        isPostSaved ? "fill-blue-500 text-blue-500" : ""
+                        isPostSaved ? "fill-red-500 text-blue-500" : ""
                       }`}
                     />
                   )}
