@@ -361,7 +361,7 @@ export function HeroSection({
                   className="px-4 md:px-6 py-2 rounded-full font-medium transition-colors text-sm flex-1 md:flex-none"
                 >
                   {!isFollowing && <UserPlus className="w-4 h-4 mr-2" />}
-                  {isFollowing ? "Unfollow" : "Follow"}
+                  {isFollowing ? "Отписаться" : "Подписаться"}
                 </Button>
               </>
             )}
