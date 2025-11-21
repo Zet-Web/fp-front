@@ -289,7 +289,6 @@ export function FullPostCard({
                   <Share className="w-4 h-4" />
                 </Button>
               </div>
-            </div>
             )}
           </div>
         </div>
