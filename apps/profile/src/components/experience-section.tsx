@@ -613,7 +613,7 @@ export function ExperienceSection({
                         company: e.target.value,
                       }))
                     }
-                    placeholder="Company Name"
+                    placeholder="Название"
                     maxLength={COMPANY_MAX_LENGTH}
                   />
                 </div>
