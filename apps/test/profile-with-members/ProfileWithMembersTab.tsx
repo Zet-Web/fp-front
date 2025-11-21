@@ -168,7 +168,7 @@ export function ProfileWithMembers() {
         </TabsContent>
 
         <TabsContent value="members" className="mt-0">
-          <MembersTab />
+          <Members />
         </TabsContent>
       </Tabs>
     </div>
