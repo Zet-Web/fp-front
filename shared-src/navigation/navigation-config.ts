@@ -45,7 +45,7 @@ export const mobileBottomNavigationItems: NavItem[] = [
       return '/auth'
     }
   },
-  { icon: MessageCircle, label: "Настройки", path: "/settings" },
+  { icon: Settings, label: "Настройки", path: "/settings" },
 ]
 
 // Create button configuration
