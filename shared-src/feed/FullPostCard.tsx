@@ -227,6 +227,8 @@ export function FullPostCard({
               {title}
             </h1>
 
+            <p className="leading-7 [&:not(:first-child)]:mt-6">{excerpt}</p>
+
             {images.length > 0 && (
               <div className="my-4">
                 <img
@@ -236,8 +238,6 @@ export function FullPostCard({
                 />
               </div>
             )}
-
-            <p className="leading-7 [&:not(:first-child)]:mt-6">{excerpt}</p>
 
             <PostContentViewer html={content || ""} />
 
