@@ -40,6 +40,7 @@ import { PostStatusBadge } from "./PostStatusBadge";
 import { EventDisplayCard } from "../event/EventDisplayCard";
 import { PostType } from "./post";
 import { getStorageUrl } from "@/utils/getStorageUrl";
+import { EventResponse } from "../event/event-types";
 
 interface PostCardProps {
   postId: number;
@@ -59,7 +60,7 @@ interface PostCardProps {
   status?: PostStatus;
   showStatusBadge?: boolean;
   postType?: PostType;
-  eventData?: any;
+  eventData?: EventResponse | null;
 }
 
 export function PostCard({
@@ -250,20 +251,20 @@ export function PostCard({
               )}
             </div>
 
-            <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-1.5">
+            <h3 className="scroll-m-20 text-xl md:text-2xl font-semibold tracking-tight mb-1.5 break-words">
               {title}
             </h3>
 
-            <div className="leading-7">
+            <div className="text-sm md:text-base leading-relaxed">
               <PostContentViewer html={content} />
             </div>
 
             {images.length > 0 && (
-              <div className="mb-4">
+              <div className="mt-4 mb-3">
                 <img
                   src={getStorageUrl(images[0])}
                   alt="Post content"
-                  className="w-full rounded-lg object-cover aspect-square"
+                  className="w-full rounded-2xl object-cover max-h-[512px] border border-border"
                 />
               </div>
             )}
@@ -291,7 +292,7 @@ export function PostCard({
                   ) : (
                     <Bookmark
                       className={`w-4 h-4 transition-colors ${
-                        isPostSaved ? "fill-blue-500 text-blue-500" : ""
+                        isPostSaved ? "fill-red-500 text-red-500" : ""
                       }`}
                     />
                   )}

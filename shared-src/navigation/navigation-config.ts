@@ -40,12 +40,13 @@ export const mobileBottomNavigationItems: NavItem[] = [
     label: "Профиль", 
     path: (profile, isAuthenticated) => {
       if (isAuthenticated && profile?.username) {
-        return `/${profile.username}`
+        return `/${profile.username}` 
       }
       return '/auth'
     }
   },
-  { icon: MessageCircle, label: "Чаты", path: "/chats" },
+  // Temproraily used Settings before realized Chats functionality. Then will change to Chats
+  { icon: Settings, label: "Настройки", path: "/settings" },
 ]
 
 // Create button configuration

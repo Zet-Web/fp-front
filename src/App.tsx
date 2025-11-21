@@ -17,6 +17,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider, useAuthContext } from "@/components/auth-provider";
 import { NotFoundPage } from "/apps/404/404Page";
+import { AboutPage } from "/apps/about/AboutPage";
 import { SidebarProvider } from "@/contexts/sidebar-context";
 import { useMemo } from "react";
 
@@ -50,6 +51,7 @@ function AppContent() {
             <div className={isFullWidth ? "w-full" : "max-w-7xl mx-auto"}>
               <Routes>
                 <Route path="/" element={<HomePage />} />
+                <Route path="/about" element={<AboutPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/post" element={<PostPage />} />
                 <Route path="/post/:urlCode" element={<PostPage />} />

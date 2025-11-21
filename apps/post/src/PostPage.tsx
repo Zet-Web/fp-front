@@ -12,6 +12,7 @@ import { FPApi } from "@/lib/api";
 import { QuizFormData, QuizResponse } from "@/apps/quiz/types/quiz";
 import { FullPostCard } from "../../../shared-src/feed/FullPostCard";
 import { useToast } from "@/hooks/use-toast";
+import { EventFormData, EventResponse } from "@/shared-src/event/event-types";
 
 export function PostPage() {
   const { urlCode } = useParams<{ urlCode: string }>();
@@ -30,6 +31,9 @@ export function PostPage() {
 
   // Quiz data
   const [quizData, setQuizData] = useState<QuizFormData | null>(null);
+
+  // Event data
+  const [eventData, setEventData] = useState<EventFormData | null>(null);
 
   const { profile, isAuthenticated, loading: authLoading } = useAuthContext();
   const currentUserId = profile?.id || "";
@@ -111,6 +115,37 @@ export function PostPage() {
         }
       }
 
+      if (
+        !!profile &&
+        profile.id === foundPost.post.author_id &&
+        foundPost.post.type === PostType.EVENT
+      ) {
+        const res = await FPApi.axios.get<EventResponse>(
+          `/event/by-post/${foundPost.post.id}`
+        );
+
+        const data = res.data;
+
+        if (data) {
+          const mappedEventData: EventFormData = {
+            id: data.id,
+            eventTypes: data.eventTypes,
+            location: data.location,
+            startDate: data.startDate,
+            startTime: data.startTime,
+            endDate: data.endDate,
+            endTime: data.endTime,
+            website: data.website,
+            category: data.category,
+            memberLimit: data.memberLimit,
+          };
+
+          setEventData(mappedEventData);
+
+          console.log("EVENT DATA LOADED", mappedEventData);
+        }
+      }
+
       if (!foundPost) {
         setError("Post not found");
         setIsLoading(false);
@@ -139,7 +174,8 @@ export function PostPage() {
 
   const handleSave = async (
     updates: Partial<PostWithAuthor>,
-    quizData?: QuizFormData | null
+    quizData?: QuizFormData | null,
+    eventData?: EventFormData | null
   ) => {
     if (!post) return;
 
@@ -204,6 +240,31 @@ export function PostPage() {
         }
       }
 
+      if (eventData) {
+        const eventReq = {
+          id: eventData.id,
+          postId: postId,
+          eventTypes: eventData.eventTypes,
+          country_id: eventData.location?.country?.id,
+          city_id: eventData.location?.city?.id,
+          address: eventData.location?.address,
+          startDate: eventData.startDate,
+          startTime: eventData.startTime,
+          endDate: eventData.endDate,
+          endTime: eventData.endTime,
+          website: eventData.website,
+          category: eventData.category,
+          memberLimit: eventData.memberLimit,
+        };
+
+        if (eventData.id) {
+          eventReq["id"] = eventData.id;
+          await FPApi.axios.patch("/event/update", eventReq);
+        } else {
+          await FPApi.axios.post("/event/create", eventReq);
+        }
+      }
+
       if (postId) {
         if (isCreateMode) {
           navigate(`/post/${postUrl}`);
@@ -219,6 +280,9 @@ export function PostPage() {
           });
         }
       }
+
+      setIsCreateMode(false);
+      setIsEditing(false);
     } catch (error) {
       toast({
         title: "Error while saving post",
@@ -226,8 +290,6 @@ export function PostPage() {
       });
     } finally {
       setIsSaving(false);
-      setIsCreateMode(false);
-      setIsEditing(false);
     }
   };
 
@@ -266,7 +328,7 @@ export function PostPage() {
   if (isLoading) {
     return (
       <div className="bg-background flex items-center justify-center min-h-[400px]">
-        <Card className="w-96">
+        <Card className="w-full max-w-sm mx-4">
           <CardContent className="p-6 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
             <p className="text-muted-foreground">Загрузка...</p>
@@ -279,7 +341,7 @@ export function PostPage() {
   if (error || !post) {
     return (
       <div className="bg-background flex items-center justify-center min-h-[400px]">
-        <Card className="w-96">
+        <Card className="w-full max-w-sm mx-4">
           <CardContent className="p-6 text-center">
             <p className="text-destructive mb-4">{error || "Post not found"}</p>
             <Button onClick={() => navigate("/")}>На главную</Button>
@@ -291,7 +353,7 @@ export function PostPage() {
 
   return (
     <div className="bg-background">
-      <div className="container mx-auto px-6 py-6 max-w-4xl">
+      <div className="container mx-auto px-4 md:px-6 py-4 md:py-6 max-w-4xl">
         {isEditing ? (
           <EditablePostCard
             title={post.title}
@@ -308,6 +370,7 @@ export function PostPage() {
             onCancel={handleCancel}
             isLoading={isSaving}
             editableQuizData={quizData}
+            editableEventData={eventData}
           />
         ) : (
           <>

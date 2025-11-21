@@ -132,7 +132,7 @@ export function BirthdaySection({
     if (!year && !month && !day) return null;
 
     const age = year && month && day ? calculateAge(date) : null;
-    const ageText = displayAge && age !== null ? ` (${age} years old)` : "";
+    const ageText = displayAge && age !== null ? ` (${age} лет (года))` : "";
 
     if (visibility === "not_show") {
       return ageText || null;
@@ -479,9 +479,9 @@ export function BirthdaySection({
               selectedMonth !== "not-set" ||
               selectedYear !== "not-set") && (
               <p className="text-sm text-muted-foreground mt-2">
-                Preview:{" "}
+                Видимость:{" "}
                 {formatBirthdayDisplay(previewDate, visibility, showAge) ||
-                  "Select at least one field"}
+                  "Выберите поля"}
               </p>
             )}
           </div>
@@ -652,7 +652,7 @@ export function BirthdaySection({
               }-${selectedDay !== "not-set" ? selectedDay : "00"}`,
               visibility,
               showAge
-            ) || "Select at least one field"}
+            ) || "Выберите поле"}
           </p>
         )}
 

@@ -13,6 +13,7 @@ import {
   Link as LinkIcon,
   type LucideIcon,
 } from "lucide-react";
+import { isValidPhoneNumber } from "libphonenumber-js";
 
 export interface ContactTypeConfig {
   value: ContactInfoEntry["type"];
@@ -27,11 +28,15 @@ export interface ContactTypeConfig {
 export const CONTACT_TYPES: ContactTypeConfig[] = [
   {
     value: ContactType.phone,
-    label: "Phone",
+    label: "Телефон",
     icon: Phone,
     placeholder: "+1234567890",
     validateValue: (value: string) => {
-      return value.trim().length > 0;
+      try {
+        return isValidPhoneNumber(value);
+      } catch {
+        return false;
+      }
     },
     formatValue: (value: string) => value.trim(),
   },
@@ -103,7 +108,7 @@ export const CONTACT_TYPES: ContactTypeConfig[] = [
   },
   {
     value: ContactType.website,
-    label: "Website",
+    label: "Веб-сайт",
     icon: Globe,
     urlPrefix: "https://",
     placeholder: "example.com",
@@ -116,7 +121,7 @@ export const CONTACT_TYPES: ContactTypeConfig[] = [
   },
   {
     value: ContactType.link,
-    label: "Link",
+    label: "Ссылка",
     icon: LinkIcon,
     urlPrefix: "https://",
     placeholder: "example.com",
@@ -180,23 +185,23 @@ export function validateContactEntry(
   entry: Partial<ContactInfoEntry>
 ): string | null {
   if (!entry.type) {
-    return "Contact type is required";
+    return "Укажите тип контакта";
   }
 
   if (!entry.value || !entry.value.trim()) {
-    return "Contact value is required";
+    return "Укажите значение";
   }
 
   const config = getContactTypeConfig(entry.type);
   if (!config) {
-    return "Invalid contact type";
+    return "Неверный формат";
   }
 
   if (!config.validateValue(entry.value)) {
     if (entry.type === "telegram") {
-      return "Telegram username must be 5-32 characters (letters, numbers, underscores)";
+      return "Имя пользователя Telegram должно содержать от 5 до 32 символов (буквы, цифры, подчеркивания)";
     }
-    return `Invalid ${config.label.toLowerCase()} format`;
+    return `Неверный формат`;
   }
 
   return null;

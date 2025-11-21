@@ -22,9 +22,10 @@ import { QuizFormData } from "@/apps/quiz/types/quiz";
 import { FPApi } from "@/lib/api";
 import { TiptapEditor } from "../feed/TipTapEditor";
 import QuizForm from "../../apps/quiz/src/QuizForm";
-import { EventData } from "../event/event-types";
+import { EventResponse, EventFormData } from "../event/event-types";
 import { EventFormCard } from "../event/EventFormCard";
 import { getStorageUrl } from "@/utils/getStorageUrl";
+import { CharacterCounter } from "@/components/shared/CharacterCounter";
 
 interface EditablePostCardProps {
   title?: string;
@@ -50,12 +51,12 @@ interface EditablePostCardProps {
       slug?: string;
     },
     quizData?: QuizFormData | null,
-    eventData?: EventData | null
+    eventData?: EventFormData | null
   ) => void;
   onCancel: () => void;
   isLoading?: boolean;
   editableQuizData?: QuizFormData | null;
-  editableEventData?: EventData | null;
+  editableEventData?: EventFormData | null;
 }
 
 export function EditablePostCard({
@@ -92,22 +93,26 @@ export function EditablePostCard({
   const [isQuizFormValid, setIsQuizFormValid] = useState(true);
   const [quizData, setQuizData] = useState<QuizFormData | null>(null);
 
-  // Event
-  const [eventData, setEventData] = useState<EventData | null>(
-    editableEventData || {
-      eventTypes: [],
-      startDate: "",
-      startTime: "",
-      category: "conference" as const,
-    }
-  );
-
   const handleUpdateQuizFormData = useCallback((data: QuizFormData) => {
     setQuizData(data);
   }, []);
 
   const handleQuizValidChange = useCallback((valid: boolean) => {
     setIsQuizFormValid(valid);
+  }, []);
+
+  // Event
+  const [isEventFormValid, setIsEventFormValid] = useState(true);
+  const [eventData, setEventData] = useState<EventResponse | null>(null);
+
+  console.log("eventData", eventData);
+
+  const handleUpdateEventData = useCallback((data: EventResponse) => {
+    setEventData(data);
+  }, []);
+
+  const handleEventValidChange = useCallback((valid: boolean) => {
+    setIsEventFormValid(valid);
   }, []);
 
   const displayName = author.name || author.username || "User";
@@ -119,7 +124,9 @@ export function EditablePostCard({
     .toUpperCase()
     .slice(0, 2);
 
-  const EXCERPT_MAX_LENGTH = 200;
+  const TITLE_MAX_LENGTH = 100;
+  const EXCERPT_MAX_LENGTH = 400;
+  const SLUG_MAX_LENGTH = 100;
   const excerptRemaining = EXCERPT_MAX_LENGTH - editedExcerpt.length;
 
   const validateForm = (): boolean => {
@@ -207,7 +214,7 @@ export function EditablePostCard({
 
   return (
     <Card className="shadow-md border-2 border-primary/20">
-      <CardContent className="p-4">
+      <CardContent className="p-3 md:p-4">
         <div className="flex gap-3">
           <div className="flex-shrink-0">
             <Avatar className="w-12 h-12">
@@ -224,7 +231,7 @@ export function EditablePostCard({
           </div>
 
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-1 mb-4">
+            <div className="flex items-center gap-1 mb-3 md:mb-4 flex-wrap">
               <h3 className="font-semibold text-sm">{displayName}</h3>
               {author.badge?.includes("verified") && (
                 <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
@@ -246,12 +253,12 @@ export function EditablePostCard({
               </span>
             </div>
 
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-3 md:space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                 <div>
                   <Label
                     htmlFor="edit-type"
-                    className="text-sm font-medium mb-2 block"
+                    className="text-xs md:text-sm font-medium mb-1.5 md:mb-2 block"
                   >
                     Тип поста
                   </Label>
@@ -268,7 +275,7 @@ export function EditablePostCard({
                         Мероприятие
                       </SelectItem>
                       <SelectItem value={PostType.QUIZ}>Конкурс</SelectItem>
-                      <SelectItem value={PostType.VACANCY}>Вакансия</SelectItem>
+                      {/* <SelectItem value={PostType.VACANCY}>Вакансия</SelectItem> */}
                     </SelectContent>
                   </Select>
                 </div>
@@ -276,7 +283,7 @@ export function EditablePostCard({
                 <div>
                   <Label
                     htmlFor="edit-status"
-                    className="text-sm font-medium mb-2 block"
+                    className="text-xs md:text-sm font-medium mb-1.5 md:mb-2 block"
                   >
                     Статус
                   </Label>
@@ -312,15 +319,17 @@ export function EditablePostCard({
                 />
                 <Label
                   htmlFor="edit-pinned"
-                  className="text-sm font-medium cursor-pointer"
+                  className="text-xs md:text-sm font-medium cursor-pointer"
                 >
                   Закрепить пост
                 </Label>
               </div>
 
               <div>
-                <div className="flex justify-between items-center mb-2">
-                  <Label className="text-sm font-medium">Обложка</Label>
+                <div className="flex justify-between items-center mb-1.5 md:mb-2">
+                  <Label className="text-xs md:text-sm font-medium">
+                    Обложка
+                  </Label>
                   <Button
                     type="button"
                     variant="ghost"
@@ -412,22 +421,35 @@ export function EditablePostCard({
               <div>
                 <Label
                   htmlFor="edit-title"
-                  className="text-sm font-medium mb-2 block"
+                  className="text-xs md:text-sm font-medium mb-1.5 md:mb-2 block"
                 >
                   Заголовок
                 </Label>
-                <Input
-                  id="edit-title"
-                  value={editedTitle}
-                  onChange={(e) => setEditedTitle(e.target.value)}
-                  placeholder="Post title (optional)"
-                />
+                <div>
+                  <Input
+                    id="edit-title"
+                    value={editedTitle}
+                    onChange={(e) => setEditedTitle(e.target.value)}
+                    placeholder="Post title (optional)"
+                    maxLength={TITLE_MAX_LENGTH}
+                  />
+                  <div className="flex justify-end mt-1">
+                    <CharacterCounter
+                      current={editedTitle?.length || 0}
+                      max={TITLE_MAX_LENGTH}
+                    />
+                  </div>
+                </div>
               </div>
 
               <div>
-                <div className="flex justify-between items-center mb-2">
-                  <Label htmlFor="edit-excerpt" className="text-sm font-medium">
-                    Превью <span className="text-destructive">*</span>
+                <div className="flex justify-between items-center mb-1.5 md:mb-2">
+                  <Label
+                    htmlFor="edit-excerpt"
+                    className="text-xs md:text-sm font-medium"
+                  >
+                    Краткое содержание{" "}
+                    <span className="text-destructive">*</span>
                   </Label>
                   <span
                     className={`text-xs ${
@@ -460,29 +482,40 @@ export function EditablePostCard({
               <div>
                 <Label
                   htmlFor="edit-content"
-                  className="text-sm font-medium mb-2 block"
+                  className="text-xs md:text-sm font-medium mb-1.5 md:mb-2 block"
                 >
                   Основной текст
                 </Label>
                 <TiptapEditor
                   value={editedContent}
                   onChange={(e) => setEditedContent(e)}
+                  maxCharacters={5000}
+                  showCharacterCount={true}
                 />
               </div>
 
               <div>
                 <Label
                   htmlFor="edit-slug"
-                  className="text-sm font-medium mb-2 block"
+                  className="text-xs md:text-sm font-medium mb-1.5 md:mb-2 block"
                 >
                   Ссылка
                 </Label>
-                <Input
-                  id="edit-slug"
-                  value={editedSlug}
-                  onChange={(e) => setEditedSlug(e.target.value)}
-                  placeholder="url-friendly-slug (optional)"
-                />
+                <div>
+                  <Input
+                    id="edit-slug"
+                    value={editedSlug}
+                    onChange={(e) => setEditedSlug(e.target.value)}
+                    placeholder="url-friendly-slug (optional)"
+                    maxLength={SLUG_MAX_LENGTH}
+                  />
+                  <div className="flex justify-end mt-1">
+                    <CharacterCounter
+                      current={editedSlug?.length || 0}
+                      max={SLUG_MAX_LENGTH}
+                    />
+                  </div>
+                </div>
               </div>
 
               {editedImages.length > 0 && (
@@ -521,19 +554,24 @@ export function EditablePostCard({
                 />
               </div>
             )}
-            {editedType === PostType.EVENT && eventData && (
+            {editedType === PostType.EVENT && (
               <div className="mt-6">
-                <EventFormCard eventData={eventData} onChange={setEventData} />
+                <EventFormCard
+                  defaultEventFormValues={editableEventData}
+                  onFormValuesChange={handleUpdateEventData}
+                  onFormValidChange={handleEventValidChange}
+                />
               </div>
             )}
 
-            <div className="flex gap-2 pt-6 border-t mt-6">
+            <div className="flex flex-col sm:flex-row gap-2 pt-4 md:pt-6 border-t mt-4 md:mt-6">
               <Button
                 onClick={handleSave}
                 disabled={
                   !editedExcerpt.trim() ||
                   editedExcerpt.length > EXCERPT_MAX_LENGTH ||
                   (editedType === PostType.QUIZ && !isQuizFormValid) ||
+                  (editedType === PostType.EVENT && !isEventFormValid) ||
                   isLoading
                 }
               >

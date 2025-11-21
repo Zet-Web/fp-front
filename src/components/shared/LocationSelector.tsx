@@ -1,4 +1,3 @@
-// Universal reference selector for cities, countries, regions, and universities with Russian language support
 import { useState, useCallback, useEffect } from "react";
 import {
   Command,
@@ -15,27 +14,27 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import {
-  MapPin,
-  Building2,
-  Globe,
-  GraduationCap,
-  Loader2,
-  ChevronsUpDown,
-} from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { Building2, Globe, Loader2, ChevronsUpDown } from "lucide-react";
+import { FPApi } from "@/lib/api";
 
-type ReferenceType = "city" | "country" | "region" | "university";
-
-interface ReferenceItem {
-  id: number;
-  name: string;
+export enum LocationTypeEnum {
+  city = "city",
+  country = "country",
 }
 
-interface UniversalReferenceSelectorProps {
-  type: ReferenceType;
-  value: string | number;
-  onChange: (value: number, name: string, item: ReferenceItem) => void;
+export interface LocationItem {
+  type: LocationTypeEnum;
+  id: number;
+  name: string;
+  population?: number;
+  code?: string;
+}
+
+interface LocationSelectorProps {
+  type: "city" | "country";
+  value: number | null;
+  initialName?: string;
+  onChange: (value: number, name: string, item: LocationItem) => void;
   label?: string;
   placeholder?: string;
   searchPlaceholder?: string;
@@ -44,33 +43,27 @@ interface UniversalReferenceSelectorProps {
   className?: string;
   minSearchLength?: number;
   showIcon?: boolean;
-  limit?: number;
 }
 
 const ICONS = {
   city: Building2,
   country: Globe,
-  region: MapPin,
-  university: GraduationCap,
 };
 
 const DEFAULT_PLACEHOLDERS = {
   city: "Выбрать город",
   country: "Выбрать страну",
-  region: "Выбрать регион",
-  university: "Выбрать университет",
 };
 
 const DEFAULT_SEARCH_PLACEHOLDERS = {
-  city: "Введите название...",
-  country: "Введите название...",
-  region: "Введите название...",
-  university: "Введите название...",
+  city: "Введите название города...",
+  country: "Введите название страны...",
 };
 
-export function UniversalReferenceSelector({
+export function LocationSelector({
   type,
   value,
+  initialName,
   onChange,
   label,
   placeholder,
@@ -80,11 +73,10 @@ export function UniversalReferenceSelector({
   className = "",
   minSearchLength = 2,
   showIcon = true,
-  limit = 20,
-}: UniversalReferenceSelectorProps) {
+}: LocationSelectorProps) {
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [results, setResults] = useState<ReferenceItem[]>([]);
+  const [results, setResults] = useState<LocationItem[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [displayValue, setDisplayValue] = useState<string>("");
 
@@ -93,7 +85,7 @@ export function UniversalReferenceSelector({
   const finalSearchPlaceholder =
     searchPlaceholder || DEFAULT_SEARCH_PLACEHOLDERS[type];
 
-  const fetchReferences = useCallback(
+  const fetchLocations = useCallback(
     async (query: string) => {
       if (query.length < minSearchLength) {
         setResults([]);
@@ -103,17 +95,23 @@ export function UniversalReferenceSelector({
       setIsSearching(true);
 
       try {
-        const { data, error } = await supabase.rpc("search_reference", {
-          p_type: type,
-          p_search_query: query,
-          p_limit: limit,
+        const response = await FPApi.axios.get<{
+          items: { id: number; name: string }[];
+        }>("/location/search", {
+          params: {
+            locationType: type,
+            searchQuery: query,
+          },
         });
 
-        if (error) {
-          console.error(`Error searching ${type}:`, error);
-          setResults([]);
+        if (response.data && response.data.items) {
+          const items = response.data.items.map((item) => ({
+            ...item,
+            type: type as LocationTypeEnum,
+          }));
+          setResults(items);
         } else {
-          setResults(data || []);
+          setResults([]);
         }
       } catch (error) {
         console.error(`Error searching ${type}:`, error);
@@ -122,51 +120,32 @@ export function UniversalReferenceSelector({
         setIsSearching(false);
       }
     },
-    [type, minSearchLength, limit]
+    [type, minSearchLength]
   );
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (searchQuery) {
-        fetchReferences(searchQuery);
+        fetchLocations(searchQuery);
       } else {
         setResults([]);
       }
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [searchQuery, fetchReferences]);
+  }, [searchQuery, fetchLocations]);
 
   useEffect(() => {
     if (value) {
-      const fetchCurrentValue = async () => {
-        try {
-          const tableName = `list_${type}`;
-          const { data, error } = await supabase
-            .from(tableName)
-            .select("id, name, name_ru")
-            .eq("id", value)
-            .maybeSingle();
-
-          if (!error && data) {
-            setDisplayValue(data.name_ru || data.name);
-          }
-        } catch (error) {
-          console.error(`Error fetching current ${type}:`, error);
-        }
-      };
-
-      if (typeof value === "number") {
-        fetchCurrentValue();
-      } else if (typeof value === "string" && value) {
-        setDisplayValue(value);
+      if (initialName) {
+        setDisplayValue(initialName);
       }
     } else {
       setDisplayValue("");
     }
-  }, [value, type]);
+  }, [value, initialName]);
 
-  const handleSelect = (item: ReferenceItem) => {
+  const handleSelect = (item: LocationItem) => {
     onChange(item.id, item.name, item);
     setDisplayValue(item.name);
     setSearchQuery("");

@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useProfileData } from "./hooks/use-profile-data";
 import { useLocationData } from "./hooks/use-location-data";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { LocationItem } from "./types/location";
 import { UserAdditionalInfo, UserProfile } from "./types/profile";
@@ -111,7 +111,30 @@ export function ProfilePage() {
     await FPApi.axios.patch("/profile/update-additional-info", dataToUpdate);
   };
 
+  const [validationErrors, setValidationErrors] = useState<
+    Record<string, boolean>
+  >({});
+
+  const handleValidationChange = useCallback(
+    (section: string, isValid: boolean) => {
+      setValidationErrors((prev) => ({ ...prev, [section]: !isValid }));
+    },
+    []
+  );
+
   const handleSaveChanges = async () => {
+    const hasErrors = Object.values(validationErrors).some(
+      (hasError) => hasError
+    );
+    if (hasErrors) {
+      toast({
+        title: "Ошибка валидации",
+        description: "Исправьте все ошибки перед сохранением.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSaving(true);
 
     try {
@@ -144,7 +167,7 @@ export function ProfilePage() {
   if (isLoading) {
     return (
       <div className="bg-background flex items-center justify-center overflow-y-auto">
-        <Card className="w-96">
+        <Card className="w-full max-w-sm mx-4">
           <CardContent className="p-6 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
             <p className="text-muted-foreground">Загрузка...</p>
@@ -158,7 +181,7 @@ export function ProfilePage() {
   if (error) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <Card className="w-96">
+        <Card className="w-full max-w-sm mx-4">
           <CardContent className="p-6 text-center">
             <p className="text-destructive mb-2">
               {error === "Profile not found"
@@ -176,7 +199,7 @@ export function ProfilePage() {
   if (!profileData) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <Card className="w-96">
+        <Card className="w-full max-w-sm mx-4">
           <CardContent className="p-6 text-center">
             <p className="text-muted-foreground">
               {requestedUsername
@@ -191,7 +214,7 @@ export function ProfilePage() {
 
   return (
     <div className="bg-background">
-      <div className="container mx-auto px-6 py-6 max-w-4xl">
+      <div className="container mx-auto px-4 md:px-6 py-4 md:py-6 max-w-4xl">
         <HeroSection
           user={profileData}
           isOwnProfile={isOwnProfile}
@@ -235,6 +258,7 @@ export function ProfilePage() {
               onUpdateProfile={handleUpdateProfileData}
               onUpdateAdditionalInfo={handleUpdateAdditionalInfo}
               isAdditionalInfoLoading={isAdditionalInfoLoading}
+              onValidationChange={handleValidationChange}
             />
           </TabsContent>
         </Tabs>

@@ -40,19 +40,24 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { UserAdditionalInfo } from "../types/profile";
 import { ContactInfoEntry, ContactType } from "../types/contacts";
+import { CharacterCounter } from "@/components/shared/CharacterCounter";
 interface ContactsSectionProps {
   additionalInfo: UserAdditionalInfo | null;
   isEditing: boolean;
   onUpdateAdditionalInfo: (updates: Partial<UserAdditionalInfo>) => void;
+  onValidationChange?: (section: string, isValid: boolean) => void;
 }
 
 export function ContactsSection({
   additionalInfo,
   isEditing,
   onUpdateAdditionalInfo,
+  onValidationChange,
 }: ContactsSectionProps) {
   const [contactEntries, setContactEntries] = useState<ContactInfoEntry[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
+  const CONTACT_VALUE_MAX_LENGTH = 50;
+  const CONTACT_LABEL_MAX_LENGTH = 50;
   const [newEntry, setNewEntry] = useState<Partial<ContactInfoEntry>>({
     type: ContactType.phone,
     value: "",
@@ -71,6 +76,15 @@ export function ContactsSection({
     setContactEntries(updatedEntries);
     onUpdateAdditionalInfo({ contact_info: updatedEntries });
   };
+
+  useEffect(() => {
+    if (onValidationChange) {
+      const hasErrors = contactEntries.some(
+        (entry) => validateContactEntry(entry) !== null
+      );
+      onValidationChange("contacts", !hasErrors);
+    }
+  }, [contactEntries, onValidationChange]);
 
   const moveUp = (index: number) => {
     if (index === 0) return;
@@ -109,8 +123,17 @@ export function ContactsSection({
     field: keyof ContactInfoEntry,
     value: any
   ) => {
+    let newValue = value;
+    if (field === "value" && contactEntries[index].type === ContactType.phone) {
+      newValue = value.replace(/[^0-9+\-\s()]/g, "");
+    }
+
+    if (field === "label" && value.length > 64) {
+      return;
+    }
+
     const updatedEntries = [...contactEntries];
-    updatedEntries[index] = { ...updatedEntries[index], [field]: value };
+    updatedEntries[index] = { ...updatedEntries[index], [field]: newValue };
     setContactEntries(updatedEntries);
   };
 
@@ -138,7 +161,16 @@ export function ContactsSection({
   };
 
   const handleNewEntryChange = (field: keyof ContactInfoEntry, value: any) => {
-    setNewEntry((prev) => ({ ...prev, [field]: value }));
+    let newValue = value;
+    if (field === "value" && newEntry.type === ContactType.phone) {
+      newValue = value.replace(/[^0-9+\-\s()]/g, "");
+    }
+
+    if (field === "label" && value.length > 64) {
+      return;
+    }
+
+    setNewEntry((prev) => ({ ...prev, [field]: newValue }));
   };
 
   const addEntry = () => {
@@ -203,11 +235,7 @@ export function ContactsSection({
 
   const renderViewMode = () => {
     if (contactEntries.length === 0) {
-      return (
-        <p className="text-muted-foreground italic text-sm">
-          Нет данных
-        </p>
-      );
+      return <p className="text-muted-foreground italic text-sm">Нет данных</p>;
     }
 
     return (
@@ -239,7 +267,7 @@ export function ContactsSection({
                 <IconComponent className="w-4 h-4 text-primary" />
               </a>
               <div className="flex items-center gap-2 flex-1 min-w-0">
-                <span className="text-blue-500 hover:underline truncate">
+                <span className="text-blue-500 hover:underline truncate break-all">
                   {displayValue}
                 </span>
                 {labelText && (
@@ -292,6 +320,7 @@ export function ContactsSection({
       <div className="space-y-4">
         {contactEntries.map((entry, index) => {
           const config = getContactTypeConfig(entry.type);
+          const error = validateContactEntry(entry);
 
           return (
             <div key={entry.id} className="border rounded-lg p-4 space-y-3">
@@ -385,12 +414,18 @@ export function ContactsSection({
                     }
                     onBlur={() => handleBlurEntry(index)}
                     placeholder={config?.placeholder || "Enter value"}
+                    className={error ? "border-destructive" : ""}
                   />
+                  {error && (
+                    <p className="text-xs text-destructive mt-1">{error}</p>
+                  )}
                 </div>
               </div>
 
               <div>
-                <Label htmlFor={`label-${entry.id}`}>Название (по желанию)</Label>
+                <Label htmlFor={`label-${entry.id}`}>
+                  Название (по желанию)
+                </Label>
                 <Input
                   id={`label-${entry.id}`}
                   value={entry.label || ""}
@@ -438,28 +473,48 @@ export function ContactsSection({
                   )}
                   {!getContactTypeConfig(newEntry.type!)?.urlPrefix && "Value"}
                 </Label>
-                <Input
-                  id="new-value"
-                  value={newEntry.value || ""}
-                  onChange={(e) =>
-                    handleNewEntryChange("value", e.target.value)
-                  }
-                  placeholder={
-                    getContactTypeConfig(newEntry.type!)?.placeholder ||
-                    "Enter value"
-                  }
-                />
+                <div>
+                  <Input
+                    id="new-value"
+                    value={newEntry.value || ""}
+                    onChange={(e) =>
+                      handleNewEntryChange("value", e.target.value)
+                    }
+                    placeholder={
+                      getContactTypeConfig(newEntry.type!)?.placeholder ||
+                      "Enter value"
+                    }
+                    maxLength={CONTACT_VALUE_MAX_LENGTH}
+                  />
+                  <div className="flex justify-end mt-1">
+                    <CharacterCounter
+                      current={newEntry.value?.length || 0}
+                      max={CONTACT_VALUE_MAX_LENGTH}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
 
             <div>
               <Label htmlFor="new-label">Название (по желанию)</Label>
-              <Input
-                id="new-label"
-                value={newEntry.label || ""}
-                onChange={(e) => handleNewEntryChange("label", e.target.value)}
-                placeholder="Название контакта"
-              />
+              <div>
+                <Input
+                  id="new-label"
+                  value={newEntry.label || ""}
+                  onChange={(e) =>
+                    handleNewEntryChange("label", e.target.value)
+                  }
+                  placeholder="Название контакта"
+                  maxLength={CONTACT_LABEL_MAX_LENGTH}
+                />
+                <div className="flex justify-end mt-1">
+                  <CharacterCounter
+                    current={newEntry.label?.length || 0}
+                    max={CONTACT_LABEL_MAX_LENGTH}
+                  />
+                </div>
+              </div>
             </div>
 
             <div className="flex gap-2">

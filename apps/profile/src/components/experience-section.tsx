@@ -36,6 +36,7 @@ import { useEffect, useState } from "react";
 import { ProfileExperience } from "../types/experience";
 import { defaultExperienceValue } from "../utils/experiences-utils";
 import { UserAdditionalInfo } from "../types/profile";
+import { CharacterCounter } from "@/components/shared/CharacterCounter";
 interface ExperienceSectionProps {
   additionalInfo: UserAdditionalInfo | null;
   onUpdateAdditionalInfo: (updates: Partial<UserAdditionalInfo>) => void;
@@ -56,6 +57,10 @@ export function ExperienceSection({
   const [showAddExperienceForm, setShowAddExperienceForm] = useState(false);
   const [newExperience, setNewExperience] = useState(defaultExperienceValue);
   const [editForm, setEditForm] = useState(defaultExperienceValue);
+
+  const TITLE_MAX_LENGTH = 50;
+  const COMPANY_MAX_LENGTH = 50;
+  const DESCRIPTION_MAX_LENGTH = 400;
 
   useEffect(() => {
     if (additionalInfo?.experience) setExperiences(additionalInfo?.experience);
@@ -275,31 +280,48 @@ export function ExperienceSection({
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="edit-exp-title">Должность</Label>
+                      <div className="flex justify-between items-center mb-2">
+                        <Label htmlFor="edit-exp-title">Должность</Label>
+                        <CharacterCounter
+                          current={editForm.title?.length || 0}
+                          max={TITLE_MAX_LENGTH}
+                        />
+                      </div>
                       <Input
                         id="edit-exp-title"
                         value={editForm.title}
-                        onChange={(e) =>
-                          setEditForm((prev) => ({
-                            ...prev,
-                            title: e.target.value,
-                          }))
-                        }
+                        onChange={(e) => {
+                          if (e.target.value.length <= 64) {
+                            setEditForm((prev) => ({
+                              ...prev,
+                              title: e.target.value,
+                            }));
+                          }
+                        }}
                         placeholder="Senior Developer"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="edit-exp-company">Организация</Label>
+                      <div className="flex justify-between items-center mb-2">
+                        <Label htmlFor="edit-exp-company">Организация</Label>
+                        <CharacterCounter
+                          current={editForm.company?.length || 0}
+                          max={COMPANY_MAX_LENGTH}
+                        />
+                      </div>
                       <Input
                         id="edit-exp-company"
                         value={editForm.company}
-                        onChange={(e) =>
-                          setEditForm((prev) => ({
-                            ...prev,
-                            company: e.target.value,
-                          }))
-                        }
+                        onChange={(e) => {
+                          if (e.target.value.length <= 64) {
+                            setEditForm((prev) => ({
+                              ...prev,
+                              company: e.target.value,
+                            }));
+                          }
+                        }}
                         placeholder="Company Name"
+                        maxLength={COMPANY_MAX_LENGTH}
                       />
                     </div>
                   </div>
@@ -445,7 +467,13 @@ export function ExperienceSection({
                     </div>
                   </div>
                   <div>
-                    <Label htmlFor="edit-exp-description">Описание</Label>
+                    <div className="flex justify-between items-center mb-2">
+                      <Label htmlFor="edit-exp-description">Описание</Label>
+                      <CharacterCounter
+                        current={editForm.description?.length || 0}
+                        max={DESCRIPTION_MAX_LENGTH}
+                      />
+                    </div>
                     <Textarea
                       id="edit-exp-description"
                       value={editForm.description}
@@ -457,6 +485,7 @@ export function ExperienceSection({
                       }
                       placeholder="Describe your role and responsibilities..."
                       rows={3}
+                      maxLength={DESCRIPTION_MAX_LENGTH}
                     />
                   </div>
                 </div>
@@ -508,9 +537,7 @@ export function ExperienceSection({
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>
-                                  Удалить
-                                </AlertDialogTitle>
+                                <AlertDialogTitle>Удалить</AlertDialogTitle>
                                 <AlertDialogDescription>
                                   Вы уверены, что хотите удалить?
                                 </AlertDialogDescription>
@@ -530,7 +557,7 @@ export function ExperienceSection({
                     </div>
                   </div>
                   <p className="text-primary font-medium mb-2">{exp.company}</p>
-                  <p className="text-muted-foreground mb-3">
+                  <p className="text-muted-foreground mb-3 break-words">
                     {exp.description}
                   </p>
                   {exp.achievements.length > 0 && (
@@ -550,30 +577,46 @@ export function ExperienceSection({
               <h3 className="font-semibold text-lg">Добавить</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="exp-title">Должность</Label>
+                  <div className="flex justify-between items-center mb-2">
+                    <Label htmlFor="exp-title">Должность</Label>
+                    <CharacterCounter
+                      current={newExperience.title?.length || 0}
+                      max={TITLE_MAX_LENGTH}
+                    />
+                  </div>
                   <Input
                     id="exp-title"
                     value={newExperience.title}
-                    onChange={(e) =>
-                      setNewExperience((prev) => ({
-                        ...prev,
-                        title: e.target.value,
-                      }))
-                    }
+                    onChange={(e) => {
+                      if (e.target.value.length <= 64) {
+                        setNewExperience((prev) => ({
+                          ...prev,
+                          title: e.target.value,
+                        }));
+                      }
+                    }}
                     placeholder="Senior Developer"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="exp-company">Организация</Label>
+                  <div className="flex justify-between items-center mb-2">
+                    <Label htmlFor="exp-company">Организация</Label>
+                    <CharacterCounter
+                      current={newExperience.company?.length || 0}
+                      max={COMPANY_MAX_LENGTH}
+                    />
+                  </div>
                   <Input
                     id="exp-company"
                     value={newExperience.company}
-                    onChange={(e) =>
-                      setNewExperience((prev) => ({
-                        ...prev,
-                        company: e.target.value,
-                      }))
-                    }
+                    onChange={(e) => {
+                      if (e.target.value.length <= 64) {
+                        setNewExperience((prev) => ({
+                          ...prev,
+                          company: e.target.value,
+                        }));
+                      }
+                    }}
                     placeholder="Company Name"
                   />
                 </div>
@@ -720,7 +763,13 @@ export function ExperienceSection({
                 </div>
               </div>
               <div>
-                <Label htmlFor="exp-description">Описание</Label>
+                <div className="flex justify-between items-center mb-2">
+                  <Label htmlFor="exp-description">Описание</Label>
+                  <CharacterCounter
+                    current={newExperience.description?.length || 0}
+                    max={DESCRIPTION_MAX_LENGTH}
+                  />
+                </div>
                 <Textarea
                   id="exp-description"
                   value={newExperience.description}
@@ -730,8 +779,9 @@ export function ExperienceSection({
                       description: e.target.value,
                     }))
                   }
-                  placeholder="Describe your role and responsibilities..."
+                  placeholder="Расскажите о своей роли и задачах..."
                   rows={3}
+                  maxLength={DESCRIPTION_MAX_LENGTH}
                 />
               </div>
               <div className="flex gap-2">

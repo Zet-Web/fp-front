@@ -14,6 +14,7 @@ interface InformationSectionProps {
   onUpdateProfile: (updates: Partial<UserProfile>) => void;
   onUpdateAdditionalInfo: (updates: Partial<UserAdditionalInfo>) => void;
   isAdditionalInfoLoading?: boolean;
+  onValidationChange?: (section: string, isValid: boolean) => void;
 }
 
 export function InformationSection({
@@ -23,6 +24,7 @@ export function InformationSection({
   additionalInfo,
   onUpdateAdditionalInfo,
   isAdditionalInfoLoading,
+  onValidationChange,
 }: InformationSectionProps) {
   if (isAdditionalInfoLoading) {
     return (
@@ -46,6 +48,7 @@ export function InformationSection({
           additionalInfo={additionalInfo}
           onUpdateAdditionalInfo={onUpdateAdditionalInfo}
           isEditing={isEditing}
+          onValidationChange={onValidationChange}
         />
       )}
       {((additionalInfo?.experience && additionalInfo.experience.length > 0) ||
@@ -70,6 +73,7 @@ export function InformationSection({
           additionalInfo={additionalInfo}
           onUpdateAdditionalInfo={onUpdateAdditionalInfo}
           isEditing={isEditing}
+          onValidationChange={onValidationChange}
         />
       )}
       {((user.birthday && user.birthday.trim()) || isEditing) && (

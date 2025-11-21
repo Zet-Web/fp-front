@@ -1,91 +1,90 @@
 // Event creation form component with clean centered layout
-import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Badge } from '@/components/ui/badge';
+import { useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Globe, MapPin, Calendar, Clock, Users, Link as LinkIcon } from 'lucide-react';
+} from "@/components/ui/select";
+import { Globe, Calendar, Clock, Users, Link as LinkIcon } from "lucide-react";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  EventData,
+  EventResponse,
   EventType,
   EVENT_CATEGORIES,
   EVENT_TYPE_LABELS,
-  EventFormErrors,
-} from './event-types';
-import { UniversalReferenceSelector } from '@/components/shared/UniversalReferenceSelector';
+  eventSchema,
+} from "./event-types";
+import { LocationSelector } from "@/components/shared/LocationSelector";
+import { CharacterCounter } from "@/components/shared/CharacterCounter";
 
 interface EventFormCardProps {
-  eventData: EventData;
-  onChange: (data: EventData) => void;
-  errors?: EventFormErrors;
+  onFormValuesChange: (data: EventResponse) => void;
+  onFormValidChange: (valid: boolean) => void;
+  defaultEventFormValues?: EventResponse | null;
 }
 
-export function EventFormCard({ eventData, onChange, errors }: EventFormCardProps) {
-  const [localErrors, setLocalErrors] = useState<EventFormErrors>({});
-  const displayErrors = errors || localErrors;
+export function EventFormCard({
+  defaultEventFormValues: eventData,
+  onFormValuesChange,
+  onFormValidChange,
+}: EventFormCardProps) {
+  const form = useForm<EventResponse>({
+    resolver: zodResolver(eventSchema),
+    defaultValues: eventData || {
+      eventTypes: [],
+      startDate: "",
+      startTime: "",
+      category: "conference" as const,
+    },
+    mode: "onChange",
+  });
+
+  const {
+    control,
+    register,
+    watch,
+    setValue,
+    formState: { errors, isValid },
+  } = form;
+
+  useEffect(() => {
+    const subscription = form.watch((value) => {
+      onFormValuesChange(value as EventResponse);
+    });
+    return () => subscription.unsubscribe();
+  }, [form, onFormValuesChange]);
+
+  const eventTypes = watch("eventTypes");
+  const showLocationFields = eventTypes.includes("offline");
+
+  const ADDRESS_MAX_LENGTH = 200;
+  const WEBSITE_MAX_LENGTH = 200;
 
   const handleEventTypeToggle = (type: EventType) => {
-    const newTypes = eventData.eventTypes.includes(type)
-      ? eventData.eventTypes.filter((t) => t !== type)
-      : [...eventData.eventTypes, type];
-
-    onChange({ ...eventData, eventTypes: newTypes });
-
-    if (newTypes.length > 0) {
-      setLocalErrors({ ...localErrors, eventTypes: undefined });
-    }
+    const currentTypes = eventTypes || [];
+    const newTypes = currentTypes.includes(type)
+      ? currentTypes.filter((t) => t !== type)
+      : [...currentTypes, type];
+    setValue("eventTypes", newTypes, { shouldValidate: true });
   };
 
-  const handleCityChange = (cityId: number, cityName: string) => {
-    onChange({
-      ...eventData,
-      location: {
-        city: cityName,
-        address: eventData.location?.address || '',
-      },
-    });
-    setLocalErrors({ ...localErrors, city: undefined });
-  };
-
-  const handleAddressChange = (address: string) => {
-    onChange({
-      ...eventData,
-      location: {
-        city: eventData.location?.city || '',
-        address,
-      },
-    });
-  };
-
-  const handleStartDateChange = (value: string) => {
-    onChange({ ...eventData, startDate: value });
-    if (value) {
-      setLocalErrors({ ...localErrors, startDate: undefined });
-    }
-  };
-
-  const handleStartTimeChange = (value: string) => {
-    onChange({ ...eventData, startTime: value });
-    if (value) {
-      setLocalErrors({ ...localErrors, startTime: undefined });
-    }
-  };
-
-  const handleCategoryChange = (value: string) => {
-    onChange({ ...eventData, category: value as EventData['category'] });
-    setLocalErrors({ ...localErrors, category: undefined });
-  };
-
-  const showLocationFields = eventData.eventTypes.includes('offline');
+  useEffect(() => {
+    onFormValidChange(isValid);
+  }, [isValid, onFormValidChange]);
 
   return (
     <Card className="shadow-md">
@@ -94,94 +93,137 @@ export function EventFormCard({ eventData, onChange, errors }: EventFormCardProp
         <CardDescription>Настройки и детали</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <div className="space-y-2">
-      <Label className="flex items-center gap-2">
-        <Calendar className="w-4 h-4" />
-        Категория *
-      </Label>
-      <Select value={eventData.category} onValueChange={handleCategoryChange}>
-        <SelectTrigger className={displayErrors.category ? 'border-destructive' : ''}>
-          <SelectValue placeholder="Select category" />
-        </SelectTrigger>
-        <SelectContent>
-          {EVENT_CATEGORIES.map((cat) => (
-            <SelectItem key={cat.value} value={cat.value}>
-              {cat.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      {displayErrors.category && (
-        <p className="text-xs text-destructive">{displayErrors.category}</p>
-      )}
-    </div>
-
-    <div className="space-y-3">
-      <Label className="flex items-center gap-2">
-        <Globe className="w-4 h-4" />
-        Формат *
-      </Label>
-      <div className="flex flex-wrap gap-3">
-        {(['online', 'offline'] as EventType[]).map((type) => (
-          <div key={type} className="flex items-center">
-            <Checkbox
-              id={`event-type-${type}`}
-              checked={eventData.eventTypes.includes(type)}
-              onCheckedChange={() => handleEventTypeToggle(type)}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <Calendar className="w-4 h-4" />
+              Категория *
+            </Label>
+            <Controller
+              control={control}
+              name="category"
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <SelectTrigger
+                    className={errors.category ? "border-destructive" : ""}
+                  >
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {EVENT_CATEGORIES.map((cat) => (
+                      <SelectItem key={cat.value} value={cat.value}>
+                        {cat.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
             />
-            <label
-              htmlFor={`event-type-${type}`}
-              className="ml-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-            >
-              {EVENT_TYPE_LABELS[type]}
-            </label>
+            {errors.category && (
+              <p className="text-xs text-destructive">
+                {errors.category.message}
+              </p>
+            )}
           </div>
-        ))}
-      </div>
-      {eventData.eventTypes.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {eventData.eventTypes.map((type) => (
-            <Badge key={type} variant="secondary">
-              {EVENT_TYPE_LABELS[type]}
-            </Badge>
-          ))}
-        </div>
-      )}
-      {displayErrors.eventTypes && (
-        <p className="text-xs text-destructive">{displayErrors.eventTypes}</p>
-      )}
-    </div>
-  </div>
 
+          <div className="space-y-3">
+            <Label className="flex items-center gap-2">
+              <Globe className="w-4 h-4" />
+              Формат *
+            </Label>
+            <div className="flex flex-wrap gap-3">
+              {(["online", "offline"] as EventType[]).map((type) => (
+                <div key={type} className="flex items-center">
+                  <Checkbox
+                    id={`event-type-${type}`}
+                    checked={eventTypes?.includes(type)}
+                    onCheckedChange={() => handleEventTypeToggle(type)}
+                  />
+                  <label
+                    htmlFor={`event-type-${type}`}
+                    className="ml-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                  >
+                    {EVENT_TYPE_LABELS[type]}
+                  </label>
+                </div>
+              ))}
+            </div>
+            {eventTypes?.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {eventTypes.map((type) => (
+                  <Badge key={type} variant="secondary">
+                    {EVENT_TYPE_LABELS[type]}
+                  </Badge>
+                ))}
+              </div>
+            )}
+            {errors.eventTypes && (
+              <p className="text-xs text-destructive">
+                {errors.eventTypes.message}
+              </p>
+            )}
+          </div>
+        </div>
 
         {showLocationFields && (
           <div className="space-y-4 p-4 bg-muted/50 rounded-lg">
-            <div className="space-y-2">
-              <UniversalReferenceSelector
-                type="city"
-                value={eventData.location?.city || ''}
-                onChange={handleCityChange}
-                label="Город *"
-                error={displayErrors.city}
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Controller
+                  control={control}
+                  name="location.country"
+                  render={({ field }) => (
+                    <LocationSelector
+                      type="country"
+                      value={field.value?.id || 0}
+                      onChange={(id, name) => {
+                        field.onChange({ id, name });
+                        setValue("location.city", undefined); // Reset city
+                      }}
+                      label="Страна *"
+                      error={errors.location?.country?.message}
+                    />
+                  )}
+                />
+              </div>
+              <div className="space-y-2">
+                <Controller
+                  control={control}
+                  name="location.city"
+                  render={({ field }) => (
+                    <LocationSelector
+                      type="city"
+                      value={field.value?.id || 0}
+                      onChange={(id, name) => field.onChange({ id, name })}
+                      label="Город *"
+                      error={errors.location?.city?.message}
+                    />
+                  )}
+                />
+              </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="address">Адрес</Label>
+              <div className="flex justify-between items-center">
+                <Label htmlFor="address">Адрес</Label>
+                <CharacterCounter
+                  current={eventData?.location?.address?.length || 0}
+                  max={ADDRESS_MAX_LENGTH}
+                />
+              </div>
               <Input
                 id="address"
                 placeholder="Enter event address"
-                value={eventData.location?.address || ''}
-                onChange={(e) => handleAddressChange(e.target.value)}
+                {...register("location.address")}
               />
-              {displayErrors.address && (
-                <p className="text-xs text-destructive">{displayErrors.address}</p>
+              {errors.location?.address && (
+                <p className="text-xs text-destructive">
+                  {errors.location.address.message}
+                </p>
               )}
             </div>
           </div>
         )}
-
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
@@ -192,12 +234,13 @@ export function EventFormCard({ eventData, onChange, errors }: EventFormCardProp
             <Input
               id="startDate"
               type="date"
-              value={eventData.startDate}
-              onChange={(e) => handleStartDateChange(e.target.value)}
-              className={displayErrors.startDate ? 'border-destructive' : ''}
+              {...register("startDate")}
+              className={errors.startDate ? "border-destructive" : ""}
             />
-            {displayErrors.startDate && (
-              <p className="text-xs text-destructive">{displayErrors.startDate}</p>
+            {errors.startDate && (
+              <p className="text-xs text-destructive">
+                {errors.startDate.message}
+              </p>
             )}
           </div>
 
@@ -209,12 +252,13 @@ export function EventFormCard({ eventData, onChange, errors }: EventFormCardProp
             <Input
               id="startTime"
               type="time"
-              value={eventData.startTime}
-              onChange={(e) => handleStartTimeChange(e.target.value)}
-              className={displayErrors.startTime ? 'border-destructive' : ''}
+              {...register("startTime")}
+              className={errors.startTime ? "border-destructive" : ""}
             />
-            {displayErrors.startTime && (
-              <p className="text-xs text-destructive">{displayErrors.startTime}</p>
+            {errors.startTime && (
+              <p className="text-xs text-destructive">
+                {errors.startTime.message}
+              </p>
             )}
           </div>
         </div>
@@ -225,12 +269,13 @@ export function EventFormCard({ eventData, onChange, errors }: EventFormCardProp
             <Input
               id="endDate"
               type="date"
-              value={eventData.endDate || ''}
-              onChange={(e) => onChange({ ...eventData, endDate: e.target.value })}
-              className={displayErrors.endDate ? 'border-destructive' : ''}
+              {...register("endDate")}
+              className={errors.endDate ? "border-destructive" : ""}
             />
-            {displayErrors.endDate && (
-              <p className="text-xs text-destructive">{displayErrors.endDate}</p>
+            {errors.endDate && (
+              <p className="text-xs text-destructive">
+                {errors.endDate.message}
+              </p>
             )}
           </div>
 
@@ -239,32 +284,40 @@ export function EventFormCard({ eventData, onChange, errors }: EventFormCardProp
             <Input
               id="endTime"
               type="time"
-              value={eventData.endTime || ''}
-              onChange={(e) => onChange({ ...eventData, endTime: e.target.value })}
-              className={displayErrors.endTime ? 'border-destructive' : ''}
+              {...register("endTime")}
+              className={errors.endTime ? "border-destructive" : ""}
             />
-            {displayErrors.endTime && (
-              <p className="text-xs text-destructive">{displayErrors.endTime}</p>
+            {errors.endTime && (
+              <p className="text-xs text-destructive">
+                {errors.endTime.message}
+              </p>
             )}
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="website" className="flex items-center gap-2">
-              <LinkIcon className="w-4 h-4" />
-              Сайт
-            </Label>
+            <div className="flex justify-between items-center">
+              <Label htmlFor="website" className="flex items-center gap-2">
+                <LinkIcon className="w-4 h-4" />
+                Сайт
+              </Label>
+              <CharacterCounter
+                current={eventData?.website?.length || 0}
+                max={WEBSITE_MAX_LENGTH}
+              />
+            </div>
             <Input
               id="website"
               type="url"
               placeholder="https://example.com"
-              value={eventData.website || ''}
-              onChange={(e) => onChange({ ...eventData, website: e.target.value })}
-              className={displayErrors.website ? 'border-destructive' : ''}
+              {...register("website")}
+              className={errors.website ? "border-destructive" : ""}
             />
-            {displayErrors.website && (
-              <p className="text-xs text-destructive">{displayErrors.website}</p>
+            {errors.website && (
+              <p className="text-xs text-destructive">
+                {errors.website.message}
+              </p>
             )}
           </div>
 
@@ -273,22 +326,29 @@ export function EventFormCard({ eventData, onChange, errors }: EventFormCardProp
               <Users className="w-4 h-4" />
               Лимит участников
             </Label>
-            <Input
-              id="memberLimit"
-              type="number"
-              min="1"
-              placeholder="No limit"
-              value={eventData.memberLimit || ''}
-              onChange={(e) =>
-                onChange({
-                  ...eventData,
-                  memberLimit: e.target.value ? parseInt(e.target.value) : undefined,
-                })
-              }
-              className={displayErrors.memberLimit ? 'border-destructive' : ''}
+            <Controller
+              control={control}
+              name="memberLimit"
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  id="memberLimit"
+                  type="number"
+                  min="1"
+                  placeholder="No limit"
+                  value={field.value || ""}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    field.onChange(val ? parseInt(val, 10) : undefined);
+                  }}
+                  className={errors.memberLimit ? "border-destructive" : ""}
+                />
+              )}
             />
-            {displayErrors.memberLimit && (
-              <p className="text-xs text-destructive">{displayErrors.memberLimit}</p>
+            {errors.memberLimit && (
+              <p className="text-xs text-destructive">
+                {errors.memberLimit.message}
+              </p>
             )}
           </div>
         </div>
