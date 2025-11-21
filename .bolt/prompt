@@ -20,6 +20,7 @@ All content must use a consistent card-based design system, leveraging Shadcn UI
 5. My plan is change edge functions to direct requests to database (if possible and relevant).
 6. Use "md" to define mobile view. All UI components must be fully mobile-responsive with proper text wrapping and overflow handling to prevent layout breakage on small screens.
 7. All external links in texts, posts, and across the site should open in a new tab.
+8. Text input fields should include character limits with visual counters to guide users and prevent data validation issues.
 
 Rules:
 1. Imports: After updating any code, you must list any new modules, components, or libraries that were imported.
