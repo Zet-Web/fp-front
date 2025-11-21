@@ -34,18 +34,40 @@ interface AwardsSectionProps {
   additionalInfo: UserAdditionalInfo | null;
   onUpdateAdditionalInfo: (updates: Partial<UserAdditionalInfo>) => void;
   isEditing: boolean;
+  onValidationChange?: (section: string, isValid: boolean) => void;
 }
 
 export function AwardsSection({
   isEditing,
   additionalInfo,
   onUpdateAdditionalInfo,
+  onValidationChange,
 }: AwardsSectionProps) {
   const [awards, setAwards] = useState<ProfileAward[]>([]);
   const [showAddAwardForm, setShowAddAwardForm] = useState(false);
   const [editingAward, setEditingAward] = useState<number | null>(null);
   const [newAward, setNewAward] = useState(defaultAwardValue);
   const [editForm, setEditForm] = useState(defaultAwardValue);
+  const [dateError, setDateError] = useState<string | null>(null);
+
+  const validateDate = (date: string): string | null => {
+    if (!date) return null;
+    const year = parseInt(date, 10);
+    const currentYear = new Date().getFullYear();
+    if (isNaN(year) || date.length !== 4) {
+      return "Введите год в формате YYYY";
+    }
+    if (year > currentYear) {
+      return "Год не может быть больше текущего";
+    }
+    return null;
+  };
+
+  useEffect(() => {
+    if (onValidationChange) {
+      onValidationChange("awards", !dateError);
+    }
+  }, [dateError, onValidationChange]);
 
   const TITLE_MAX_LENGTH = 50;
   const ISSUER_MAX_LENGTH = 50;
@@ -151,9 +173,7 @@ export function AwardsSection({
       <CardContent>
         <div className="space-y-6">
           {awards.length === 0 && !isEditing && (
-            <p className="text-muted-foreground italic">
-              Нет данных.
-            </p>
+            <p className="text-muted-foreground italic">Нет данных.</p>
           )}
 
           {awards.map((award, index) => (
@@ -212,35 +232,31 @@ export function AwardsSection({
                       <Input
                         id="edit-award-title"
                         value={editForm.title}
-                        onChange={(e) =>
-                          setEditForm((prev) => ({
-                            ...prev,
-                            title: e.target.value,
-                          }))
-                        }
+                        onChange={(e) => {
+                          if (e.target.value.length <= 64) {
+                            setEditForm((prev) => ({
+                              ...prev,
+                              title: e.target.value,
+                            }));
+                          }
+                        }}
                         placeholder="Название награды или достижения..."
                         maxLength={TITLE_MAX_LENGTH}
                       />
                     </div>
                     <div>
-                      <div className="flex justify-between items-center mb-2">
-                        <Label htmlFor="edit-award-issuer">
-                          Кем выдано
-                        </Label>
-                        <CharacterCounter
-                          current={editForm.issuer?.length || 0}
-                          max={ISSUER_MAX_LENGTH}
-                        />
-                      </div>
+                      <Label htmlFor="edit-award-issuer">Кем выдано</Label>
                       <Input
                         id="edit-award-issuer"
                         value={editForm.issuer}
-                        onChange={(e) =>
-                          setEditForm((prev) => ({
-                            ...prev,
-                            issuer: e.target.value,
-                          }))
-                        }
+                        onChange={(e) => {
+                          if (e.target.value.length <= 64) {
+                            setEditForm((prev) => ({
+                              ...prev,
+                              issuer: e.target.value,
+                            }));
+                          }
+                        }}
                         placeholder="Название организации"
                         maxLength={ISSUER_MAX_LENGTH}
                       />
@@ -250,14 +266,22 @@ export function AwardsSection({
                       <Input
                         id="edit-award-date"
                         value={editForm.date}
-                        onChange={(e) =>
+                        onChange={(e) => {
+                          const val = e.target.value;
                           setEditForm((prev) => ({
                             ...prev,
-                            date: e.target.value,
-                          }))
-                        }
+                            date: val,
+                          }));
+                          setDateError(validateDate(val));
+                        }}
                         placeholder="2025"
+                        className={dateError ? "border-destructive" : ""}
                       />
+                      {dateError && (
+                        <p className="text-xs text-destructive mt-1">
+                          {dateError}
+                        </p>
+                      )}
                     </div>
                   </div>
                   <div>
@@ -331,9 +355,7 @@ export function AwardsSection({
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>
-                                  Удалить
-                                </AlertDialogTitle>
+                                <AlertDialogTitle>Удалить</AlertDialogTitle>
                                 <AlertDialogDescription>
                                   Вы уверены, что хотите удалить?
                                 </AlertDialogDescription>
@@ -355,7 +377,9 @@ export function AwardsSection({
                   <p className="text-primary font-medium mb-2">
                     {award.issuer}
                   </p>
-                  <p className="text-muted-foreground break-words whitespace-pre-wrap">{award.description}</p>
+                  <p className="text-muted-foreground break-words">
+                    {award.description}
+                  </p>
                 </>
               )}
             </div>
@@ -376,35 +400,31 @@ export function AwardsSection({
                   <Input
                     id="award-title"
                     value={newAward.title}
-                    onChange={(e) =>
-                      setNewAward((prev) => ({
-                        ...prev,
-                        title: e.target.value,
-                      }))
-                    }
-                    placeholder="Награда"
-                    maxLength={TITLE_MAX_LENGTH}
+                    onChange={(e) => {
+                      if (e.target.value.length <= 64) {
+                        setNewAward((prev) => ({
+                          ...prev,
+                          title: e.target.value,
+                        }));
+                      }
+                    }}
+                    placeholder="Best Developer Award"
                   />
                 </div>
                 <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <Label htmlFor="award-issuer">Организация</Label>
-                    <CharacterCounter
-                      current={newAward.issuer?.length || 0}
-                      max={ISSUER_MAX_LENGTH}
-                    />
-                  </div>
+                  <Label htmlFor="award-issuer">Кем выдано</Label>
                   <Input
                     id="award-issuer"
                     value={newAward.issuer}
-                    onChange={(e) =>
-                      setNewAward((prev) => ({
-                        ...prev,
-                        issuer: e.target.value,
-                      }))
-                    }
-                    placeholder="Название"
-                    maxLength={ISSUER_MAX_LENGTH}
+                    onChange={(e) => {
+                      if (e.target.value.length <= 64) {
+                        setNewAward((prev) => ({
+                          ...prev,
+                          issuer: e.target.value,
+                        }));
+                      }
+                    }}
+                    placeholder="Tech Company Inc."
                   />
                 </div>
                 <div>
@@ -412,21 +432,21 @@ export function AwardsSection({
                   <Input
                     id="award-date"
                     value={newAward.date}
-                    onChange={(e) =>
-                      setNewAward((prev) => ({ ...prev, date: e.target.value }))
-                    }
-                    placeholder="2025"
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setNewAward((prev) => ({ ...prev, date: val }));
+                      setDateError(validateDate(val));
+                    }}
+                    placeholder="2024"
+                    className={dateError ? "border-destructive" : ""}
                   />
+                  {dateError && (
+                    <p className="text-xs text-destructive mt-1">{dateError}</p>
+                  )}
                 </div>
               </div>
               <div>
-                <div className="flex justify-between items-center mb-2">
-                  <Label htmlFor="award-description">Description</Label>
-                  <CharacterCounter
-                    current={newAward.description?.length || 0}
-                    max={DESCRIPTION_MAX_LENGTH}
-                  />
-                </div>
+                <Label htmlFor="award-description">Описание</Label>
                 <Textarea
                   id="award-description"
                   value={newAward.description}
@@ -436,7 +456,7 @@ export function AwardsSection({
                       description: e.target.value,
                     }))
                   }
-                  placeholder="Расскажите о достижении..."
+                  placeholder="Описание заслуг или достижений..."
                   rows={2}
                   maxLength={DESCRIPTION_MAX_LENGTH}
                 />

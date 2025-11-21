@@ -45,12 +45,14 @@ interface ContactsSectionProps {
   additionalInfo: UserAdditionalInfo | null;
   isEditing: boolean;
   onUpdateAdditionalInfo: (updates: Partial<UserAdditionalInfo>) => void;
+  onValidationChange?: (section: string, isValid: boolean) => void;
 }
 
 export function ContactsSection({
   additionalInfo,
   isEditing,
   onUpdateAdditionalInfo,
+  onValidationChange,
 }: ContactsSectionProps) {
   const [contactEntries, setContactEntries] = useState<ContactInfoEntry[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -74,6 +76,15 @@ export function ContactsSection({
     setContactEntries(updatedEntries);
     onUpdateAdditionalInfo({ contact_info: updatedEntries });
   };
+
+  useEffect(() => {
+    if (onValidationChange) {
+      const hasErrors = contactEntries.some(
+        (entry) => validateContactEntry(entry) !== null
+      );
+      onValidationChange("contacts", !hasErrors);
+    }
+  }, [contactEntries, onValidationChange]);
 
   const moveUp = (index: number) => {
     if (index === 0) return;
@@ -112,8 +123,17 @@ export function ContactsSection({
     field: keyof ContactInfoEntry,
     value: any
   ) => {
+    let newValue = value;
+    if (field === "value" && contactEntries[index].type === ContactType.phone) {
+      newValue = value.replace(/[^0-9+\-\s()]/g, "");
+    }
+
+    if (field === "label" && value.length > 64) {
+      return;
+    }
+
     const updatedEntries = [...contactEntries];
-    updatedEntries[index] = { ...updatedEntries[index], [field]: value };
+    updatedEntries[index] = { ...updatedEntries[index], [field]: newValue };
     setContactEntries(updatedEntries);
   };
 
@@ -141,7 +161,16 @@ export function ContactsSection({
   };
 
   const handleNewEntryChange = (field: keyof ContactInfoEntry, value: any) => {
-    setNewEntry((prev) => ({ ...prev, [field]: value }));
+    let newValue = value;
+    if (field === "value" && newEntry.type === ContactType.phone) {
+      newValue = value.replace(/[^0-9+\-\s()]/g, "");
+    }
+
+    if (field === "label" && value.length > 64) {
+      return;
+    }
+
+    setNewEntry((prev) => ({ ...prev, [field]: newValue }));
   };
 
   const addEntry = () => {
@@ -206,11 +235,7 @@ export function ContactsSection({
 
   const renderViewMode = () => {
     if (contactEntries.length === 0) {
-      return (
-        <p className="text-muted-foreground italic text-sm">
-          Нет данных
-        </p>
-      );
+      return <p className="text-muted-foreground italic text-sm">Нет данных</p>;
     }
 
     return (
@@ -295,6 +320,7 @@ export function ContactsSection({
       <div className="space-y-4">
         {contactEntries.map((entry, index) => {
           const config = getContactTypeConfig(entry.type);
+          const error = validateContactEntry(entry);
 
           return (
             <div key={entry.id} className="border rounded-lg p-4 space-y-3">
@@ -380,47 +406,35 @@ export function ContactsSection({
                     )}
                     {!config?.urlPrefix && "Value"}
                   </Label>
-                  <div>
-                    <Input
-                      id={`value-${entry.id}`}
-                      value={entry.value}
-                      onChange={(e) =>
-                        handleEntryChange(index, "value", e.target.value)
-                      }
-                      onBlur={() => handleBlurEntry(index)}
-                      placeholder={config?.placeholder || "Enter value"}
-                      maxLength={CONTACT_VALUE_MAX_LENGTH}
-                    />
-                    <div className="flex justify-end mt-1">
-                      <CharacterCounter
-                        current={entry.value.length}
-                        max={CONTACT_VALUE_MAX_LENGTH}
-                      />
-                    </div>
-                  </div>
+                  <Input
+                    id={`value-${entry.id}`}
+                    value={entry.value}
+                    onChange={(e) =>
+                      handleEntryChange(index, "value", e.target.value)
+                    }
+                    onBlur={() => handleBlurEntry(index)}
+                    placeholder={config?.placeholder || "Enter value"}
+                    className={error ? "border-destructive" : ""}
+                  />
+                  {error && (
+                    <p className="text-xs text-destructive mt-1">{error}</p>
+                  )}
                 </div>
               </div>
 
               <div>
-                <Label htmlFor={`label-${entry.id}`}>Название (по желанию)</Label>
-                <div>
-                  <Input
-                    id={`label-${entry.id}`}
-                    value={entry.label || ""}
-                    onChange={(e) =>
-                      handleEntryChange(index, "label", e.target.value)
-                    }
-                    onBlur={() => handleBlurEntry(index)}
-                    placeholder="Название контакта"
-                    maxLength={CONTACT_LABEL_MAX_LENGTH}
-                  />
-                  <div className="flex justify-end mt-1">
-                    <CharacterCounter
-                      current={entry.label?.length || 0}
-                      max={CONTACT_LABEL_MAX_LENGTH}
-                    />
-                  </div>
-                </div>
+                <Label htmlFor={`label-${entry.id}`}>
+                  Название (по желанию)
+                </Label>
+                <Input
+                  id={`label-${entry.id}`}
+                  value={entry.label || ""}
+                  onChange={(e) =>
+                    handleEntryChange(index, "label", e.target.value)
+                  }
+                  onBlur={() => handleBlurEntry(index)}
+                  placeholder="Название контакта"
+                />
               </div>
             </div>
           );
@@ -488,7 +502,9 @@ export function ContactsSection({
                 <Input
                   id="new-label"
                   value={newEntry.label || ""}
-                  onChange={(e) => handleNewEntryChange("label", e.target.value)}
+                  onChange={(e) =>
+                    handleNewEntryChange("label", e.target.value)
+                  }
                   placeholder="Название контакта"
                   maxLength={CONTACT_LABEL_MAX_LENGTH}
                 />

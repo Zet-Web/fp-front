@@ -37,6 +37,7 @@ import { useToast } from "@/hooks/use-toast";
 import { FPApi } from "@/lib/api";
 import { formatPostDate } from "@/lib/date-utils";
 import { useAuthContext } from "@/components/auth-provider";
+import { getStorageUrl } from "@/utils/getStorageUrl";
 
 interface PostCardProps {
   post: PostWithAuthor;
@@ -135,7 +136,11 @@ export function FullPostCard({
               onClick={handleProfileClick}
             >
               <AvatarImage
-                src={author?.avatar_url || undefined}
+                src={
+                  author?.avatar_url
+                    ? getStorageUrl(author.avatar_url)
+                    : undefined
+                }
                 alt={displayName}
               />
               <AvatarFallback>{avatarFallback}</AvatarFallback>
@@ -232,7 +237,7 @@ export function FullPostCard({
             {images.length > 0 && (
               <div className="my-4">
                 <img
-                  src={images[0]}
+                  src={getStorageUrl(images[0])}
                   alt="Post content"
                   className="w-full rounded-lg object-contain h-auto"
                 />
@@ -241,9 +246,9 @@ export function FullPostCard({
 
             <PostContentViewer html={content || ""} />
 
-            {type === PostType.EVENT && post.event_data && (
+            {type === PostType.EVENT && post.event && (
               <div className="mt-6">
-                <EventDisplayCard eventData={post.event_data} />
+                <EventDisplayCard eventData={post.event} />
               </div>
             )}
 

@@ -1,29 +1,39 @@
 // Component for displaying event information in posts
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Calendar, Clock, MapPin, Users, Globe, Link as LinkIcon } from 'lucide-react';
-import { EventData, EVENT_TYPE_LABELS } from './event-types';
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Calendar,
+  Clock,
+  MapPin,
+  Users,
+  Globe,
+  Link as LinkIcon,
+} from "lucide-react";
+import { EventResponse, EVENT_TYPE_LABELS } from "./event-types";
 
 interface EventDisplayCardProps {
-  eventData: EventData;
+  eventData: EventResponse;
   compact?: boolean;
 }
 
-export function EventDisplayCard({ eventData, compact = false }: EventDisplayCardProps) {
+export function EventDisplayCard({
+  eventData,
+  compact = false,
+}: EventDisplayCardProps) {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
+    return date.toLocaleDateString("en-US", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
     });
   };
 
   const getCategoryLabel = (category: string) => {
-    return category.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+    return category.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
   };
 
-  const showLocationFields = eventData.eventTypes.includes('offline');
+  const showLocationFields = eventData.eventTypes.includes("offline");
 
   if (compact) {
     return (
@@ -58,7 +68,7 @@ export function EventDisplayCard({ eventData, compact = false }: EventDisplayCar
           {showLocationFields && eventData.location?.city && (
             <div className="flex items-center gap-2">
               <MapPin className="w-4 h-4 text-blue-500 flex-shrink-0" />
-              <span className="truncate">{eventData.location.city}</span>
+              <span className="truncate">{eventData.location.city.name}</span>
             </div>
           )}
 
@@ -78,7 +88,9 @@ export function EventDisplayCard({ eventData, compact = false }: EventDisplayCar
       <CardContent className="p-4 space-y-4">
         <div className="space-y-3">
           <div className="flex items-center gap-2 flex-wrap">
-            <Badge variant="secondary">{getCategoryLabel(eventData.category)}</Badge>
+            <Badge variant="secondary">
+              {getCategoryLabel(eventData.category)}
+            </Badge>
             {eventData.eventTypes.map((type) => (
               <Badge key={type} className="bg-blue-500 hover:bg-blue-600">
                 {EVENT_TYPE_LABELS[type]}
@@ -92,7 +104,9 @@ export function EventDisplayCard({ eventData, compact = false }: EventDisplayCar
             <Calendar className="w-4 h-4 text-blue-500" />
             <div>
               <div className="font-medium">Дата начала</div>
-              <div className="text-muted-foreground">{formatDate(eventData.startDate)}</div>
+              <div className="text-muted-foreground">
+                {formatDate(eventData.startDate)}
+              </div>
             </div>
           </div>
 
@@ -112,7 +126,9 @@ export function EventDisplayCard({ eventData, compact = false }: EventDisplayCar
               <Calendar className="w-4 h-4 text-blue-500" />
               <div>
                 <div className="font-medium">Дата завершения</div>
-                <div className="text-muted-foreground">{formatDate(eventData.endDate)}</div>
+                <div className="text-muted-foreground">
+                  {formatDate(eventData.endDate)}
+                </div>
               </div>
             </div>
           )}
@@ -123,8 +139,9 @@ export function EventDisplayCard({ eventData, compact = false }: EventDisplayCar
               <div>
                 <div className="font-medium">Локация</div>
                 <div className="text-muted-foreground">
-                  {eventData.location.city}
-                  {eventData.location.address && `, ${eventData.location.address}`}
+                  {eventData.location.city.name}
+                  {eventData.location.address &&
+                    `, ${eventData.location.address}`}
                 </div>
               </div>
             </div>
@@ -152,7 +169,9 @@ export function EventDisplayCard({ eventData, compact = false }: EventDisplayCar
               <Users className="w-4 h-4 text-blue-500" />
               <div>
                 <div className="font-medium">Всего</div>
-                <div className="text-muted-foreground">До {eventData.memberLimit} участников</div>
+                <div className="text-muted-foreground">
+                  До {eventData.memberLimit} участников
+                </div>
               </div>
             </div>
           )}

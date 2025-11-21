@@ -39,6 +39,8 @@ import { useAuthContext } from "@/components/auth-provider";
 import { PostStatusBadge } from "./PostStatusBadge";
 import { EventDisplayCard } from "../event/EventDisplayCard";
 import { PostType } from "./post";
+import { getStorageUrl } from "@/utils/getStorageUrl";
+import { EventResponse } from "../event/event-types";
 
 interface PostCardProps {
   postId: number;
@@ -58,7 +60,7 @@ interface PostCardProps {
   status?: PostStatus;
   showStatusBadge?: boolean;
   postType?: PostType;
-  eventData?: any;
+  eventData?: EventResponse | null;
 }
 
 export function PostCard({
@@ -143,7 +145,11 @@ export function PostCard({
               onClick={handleProfileClick}
             >
               <AvatarImage
-                src={author?.avatar_url || undefined}
+                src={
+                  author?.avatar_url
+                    ? getStorageUrl(author.avatar_url)
+                    : undefined
+                }
                 alt={displayName}
               />
               <AvatarFallback>{avatarFallback}</AvatarFallback>
@@ -254,17 +260,16 @@ export function PostCard({
             </div>
 
             {images.length > 0 && (
-  <div className="mt-4 mb-3">
-    <img
-      src={images[0]}
-      alt="Post content"
-      className="w-full rounded-2xl object-cover max-h-[512px] border border-border"
-    />
-  </div>
-)}
+              <div className="mt-4 mb-3">
+                <img
+                  src={getStorageUrl(images[0])}
+                  alt="Post content"
+                  className="w-full rounded-2xl object-cover max-h-[512px] border border-border"
+                />
+              </div>
+            )}
 
-
-            {postType === 'event' && eventData && (
+            {postType === "event" && eventData && (
               <div className="mt-4">
                 <EventDisplayCard eventData={eventData} compact />
               </div>
