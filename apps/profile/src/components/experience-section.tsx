@@ -776,7 +776,7 @@ export function ExperienceSection({
                       description: e.target.value,
                     }))
                   }
-                  placeholder="Describe your role and responsibilities..."
+                  placeholder="Расскажите о своей роли и задачах..."
                   rows={3}
                   maxLength={DESCRIPTION_MAX_LENGTH}
                 />
