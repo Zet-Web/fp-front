@@ -154,8 +154,12 @@ export function MembersTab({
                   <CardContent className="p-4">
                     <div className="flex items-center gap-4">
                       <UserAvatar
-                        src={member.avatar_url}
-                        alt={member.name}
+                        user={{
+                          name: member.name,
+                          username: member.username,
+                          avatar_url: member.avatar_url,
+                          badge: member.badge
+                        }}
                         size="md"
                         className="flex-shrink-0"
                       />

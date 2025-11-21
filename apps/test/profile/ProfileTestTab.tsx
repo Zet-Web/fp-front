@@ -7,11 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { VerifiedBadge } from "@/components/shared/VerifiedBadge";
 import { MembersTab } from "../members/MembersTab";
 import { mockProfileUser, mockAdditionalInfo } from "./mock-profile-data";
 import { mockMembers, mockMembersStats } from "../members/mock-members-data";
-import { MapPin, Edit, Save, X, Camera, UserPlus } from "lucide-react";
+import { MapPin, Camera, UserPlus } from "lucide-react";
 import { BirthdayVisibility, UserAdditionalInfo, UserProfile } from "../../profile/src/types/profile";
 
 enum ProfileTestTabs {
