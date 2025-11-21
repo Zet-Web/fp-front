@@ -382,13 +382,13 @@ export function AwardsSection({
                         title: e.target.value,
                       }))
                     }
-                    placeholder="Best Developer Award"
+                    placeholder="Награда"
                     maxLength={TITLE_MAX_LENGTH}
                   />
                 </div>
                 <div>
                   <div className="flex justify-between items-center mb-2">
-                    <Label htmlFor="award-issuer">Issuer/Organization</Label>
+                    <Label htmlFor="award-issuer">Организация</Label>
                     <CharacterCounter
                       current={newAward.issuer?.length || 0}
                       max={ISSUER_MAX_LENGTH}
@@ -403,7 +403,7 @@ export function AwardsSection({
                         issuer: e.target.value,
                       }))
                     }
-                    placeholder="Tech Company Inc."
+                    placeholder="Название"
                     maxLength={ISSUER_MAX_LENGTH}
                   />
                 </div>
@@ -415,7 +415,7 @@ export function AwardsSection({
                     onChange={(e) =>
                       setNewAward((prev) => ({ ...prev, date: e.target.value }))
                     }
-                    placeholder="2024"
+                    placeholder="2025"
                   />
                 </div>
               </div>
@@ -436,7 +436,7 @@ export function AwardsSection({
                       description: e.target.value,
                     }))
                   }
-                  placeholder="Describe the achievement..."
+                  placeholder="Расскажите о достижении..."
                   rows={2}
                   maxLength={DESCRIPTION_MAX_LENGTH}
                 />
