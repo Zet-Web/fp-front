@@ -227,7 +227,7 @@ export function FullPostCard({
               {title}
             </h1>
 
-            <p className="leading-7 [&:not(:first-child)]:mt-6">{excerpt}</p>
+            <p className="leading-7 [&:not(:first-child)]:mt-4">{excerpt}</p>
 
             {images.length > 0 && (
               <div className="my-4">
