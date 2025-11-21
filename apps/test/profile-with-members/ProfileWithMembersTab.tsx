@@ -23,7 +23,7 @@ const mockUser = {
 
 type TabValue = 'posts' | 'information' | 'members';
 
-export function ProfileWithMembersTab() {
+export function ProfileWithMembers() {
   const [activeTab, setActiveTab] = useState<TabValue>('members');
   const [isFollowing, setIsFollowing] = useState(false);
 
