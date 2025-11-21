@@ -296,7 +296,7 @@ export function ExperienceSection({
                             title: e.target.value,
                           }))
                         }
-                        placeholder="Senior Developer"
+                        placeholder="Юрист"
                         maxLength={TITLE_MAX_LENGTH}
                       />
                     </div>
@@ -592,7 +592,7 @@ export function ExperienceSection({
                         title: e.target.value,
                       }))
                     }
-                    placeholder="Senior Developer"
+                    placeholder="Юрист"
                     maxLength={TITLE_MAX_LENGTH}
                   />
                 </div>
