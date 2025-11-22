@@ -42,7 +42,7 @@ export function AdditionalInfoSection({
               value={user.additional_info || ""}
               onChange={(e) => handleAdditionalInfoChange(e.target.value)}
               className="resize-none"
-              placeholder="Add any additional information..."
+              placeholder="Дополнительная информация..."
               rows={4}
               maxLength={ADDITIONAL_INFO_MAX_LENGTH}
             />
