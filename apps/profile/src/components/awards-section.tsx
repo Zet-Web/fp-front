@@ -424,7 +424,7 @@ export function AwardsSection({
                         }));
                       }
                     }}
-                    placeholder="Tech Company Inc."
+                    placeholder="Название организации, выдавшей награду"
                   />
                 </div>
                 <div>
