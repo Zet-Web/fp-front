@@ -7,7 +7,7 @@ apps/home
 apps/mobileNav
 apps/navigation
 apps/about
-apps/profile
+# apps/profile
 apps/post
 apps/settings
 apps/yurservice
