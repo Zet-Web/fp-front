@@ -8,8 +8,11 @@ import {
   MapPin,
   Camera,
   Upload,
+  Settings,
+  Edit3,
 } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { LocationSelector } from "./LocationSelector";
 import { LocationItem } from "../types/location";
 import { UserProfile } from "../types/profile";
@@ -52,6 +55,7 @@ export function HeroSection({
 }: HeroSectionProps) {
   const { updateProfilePartial } = useAuthContext();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const [isFollowing, setIsFollowing] = useState(Boolean(user.is_following));
   const [isFollowingLoading, setFollowingLoading] = useState(false);
@@ -362,6 +366,16 @@ export function HeroSection({
                     <Button
                       variant="outline"
                       size="sm"
+                      className="px-3 md:px-6 py-2 rounded-full font-medium transition-colors text-sm"
+                      onClick={() => navigate('/settings')}
+                      disabled={isSaving}
+                    >
+                      <Settings className="w-4 h-4 md:mr-2" />
+                      <span className="hidden md:inline">Настройки</span>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
                       className="px-4 md:px-6 py-2 rounded-full font-medium transition-colors text-sm"
                       onClick={onEditToggle}
                       disabled={isSaving}
@@ -381,14 +395,26 @@ export function HeroSection({
                     </Button>
                   </>
                 ) : (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="px-4 md:px-6 py-2 rounded-full font-medium transition-colors text-sm"
-                    onClick={onEditToggle}
-                  >
-                    Ред.
-                  </Button>
+                  <>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="px-3 md:px-6 py-2 rounded-full font-medium transition-colors text-sm"
+                      onClick={onEditToggle}
+                    >
+                      <Edit3 className="w-4 h-4 md:mr-2" />
+                      <span className="hidden md:inline">Ред.</span>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="px-3 md:px-6 py-2 rounded-full font-medium transition-colors text-sm"
+                      onClick={() => navigate('/settings')}
+                    >
+                      <Settings className="w-4 h-4 md:mr-2" />
+                      <span className="hidden md:inline">Настройки</span>
+                    </Button>
+                  </>
                 )}
               </>
             ) : (

@@ -12,6 +12,7 @@ export function Header() {
     const path = location.pathname
 
     if (path === '/' || path === '/home') return null
+    if (path === '/about') return 'О платформе'
     if (path === '/settings') return 'Settings'
     if (path === '/auth') return 'Authentication'
     if (path === '/test') return 'Test'
