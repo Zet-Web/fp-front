@@ -38,7 +38,7 @@ export function PeriodSelector({
 
   return (
     <div className={`space-y-3 ${className}`}>
-      <Label>Период</Label>
+      <Label>Period (Optional)</Label>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
         <MonthSelector
           value={value.start_month}

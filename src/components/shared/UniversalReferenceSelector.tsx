@@ -1,4 +1,4 @@
-// Universal reference selector for cities, countries, regions, universities, and study fields with Russian language support
+// Universal reference selector for cities, countries, regions, and universities with Russian language support
 import { useState, useCallback, useEffect } from "react";
 import {
   Command,
@@ -20,13 +20,12 @@ import {
   Building2,
   Globe,
   GraduationCap,
-  BookOpen,
   Loader2,
   ChevronsUpDown,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
-type ReferenceType = "city" | "country" | "region" | "university" | "study_field";
+type ReferenceType = "city" | "country" | "region" | "university";
 
 interface ReferenceItem {
   id: number;
@@ -53,7 +52,6 @@ const ICONS = {
   country: Globe,
   region: MapPin,
   university: GraduationCap,
-  study_field: BookOpen,
 };
 
 const DEFAULT_PLACEHOLDERS = {
@@ -61,7 +59,6 @@ const DEFAULT_PLACEHOLDERS = {
   country: "Выбрать страну",
   region: "Выбрать регион",
   university: "Выбрать университет",
-  study_field: "Выбрать направление",
 };
 
 const DEFAULT_SEARCH_PLACEHOLDERS = {
@@ -69,7 +66,6 @@ const DEFAULT_SEARCH_PLACEHOLDERS = {
   country: "Введите название...",
   region: "Введите название...",
   university: "Введите название...",
-  study_field: "Поиск направления...",
 };
 
 export function UniversalReferenceSelector({
@@ -99,10 +95,7 @@ export function UniversalReferenceSelector({
 
   const fetchReferences = useCallback(
     async (query: string) => {
-      // For study_field, allow empty query to load all records
-      if (type === 'study_field' && query.length === 0) {
-        // Proceed with empty query to load all
-      } else if (query.length < minSearchLength) {
+      if (query.length < minSearchLength) {
         setResults([]);
         return;
       }
@@ -173,12 +166,6 @@ export function UniversalReferenceSelector({
     }
   }, [value, type]);
 
-  useEffect(() => {
-    if (open && type === 'study_field' && results.length === 0 && !searchQuery) {
-      fetchReferences('');
-    }
-  }, [open, type, results.length, searchQuery, fetchReferences]);
-
   const handleSelect = (item: ReferenceItem) => {
     onChange(item.id, item.name, item);
     setDisplayValue(item.name);
@@ -223,7 +210,7 @@ export function UniversalReferenceSelector({
                   <Loader2 className="w-4 h-4 animate-spin" />
                 </div>
               )}
-              {!isSearching && searchQuery.length < minSearchLength && type !== 'study_field' && (
+              {!isSearching && searchQuery.length < minSearchLength && (
                 <CommandEmpty></CommandEmpty>
               )}
               {!isSearching &&
@@ -231,9 +218,6 @@ export function UniversalReferenceSelector({
                 results.length === 0 && (
                   <CommandEmpty>Ничего не найдено</CommandEmpty>
                 )}
-              {!isSearching && type === 'study_field' && searchQuery.length === 0 && results.length === 0 && (
-                <CommandEmpty>Загрузка...</CommandEmpty>
-              )}
               {!isSearching && results.length > 0 && (
                 <CommandGroup>
                   {results.map((item) => (
