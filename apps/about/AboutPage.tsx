@@ -1,7 +1,7 @@
 // About page describing the platform's mission, features, and capabilities
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Users, CheckCircle2, GraduationCap, Network, TrendingUp, User, Sparkles, Shield, Mail, FileText, ExternalLink } from "lucide-react";
+import { Users, CheckCircle2, GraduationCap, Network, TrendingUp, User, Sparkles, Target, FileText, ExternalLink } from "lucide-react";
 
 export function AboutPage() {
   return (
@@ -198,67 +198,43 @@ export function AboutPage() {
               анализа и покупки отдельных дорогостоящих решений — одна подписка на все необходимые сервисы.
             </p>
 
-            <div className="grid md:grid-cols-2 gap-3 md:gap-4 mt-4">
-              <div className="p-4 rounded-lg bg-blue-500/5 border border-blue-500/10">
-                <h4 className="font-semibold mb-2 text-blue-600 dark:text-blue-400">Каталог юридических услуг</h4>
-                <p className="text-sm text-muted-foreground">
-                  Структурированная база юридических ресурсов с возможностью поиска по регионам и специализациям.
-                </p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 mt-4">
+              <div className="p-3 md:p-4 rounded-lg bg-gradient-to-br from-blue-500/5 to-blue-600/5 border border-blue-500/10 hover:border-blue-500/30 hover:shadow-md transition-all">
+                <h4 className="font-semibold text-sm md:text-base text-center">Каталог юридических услуг</h4>
               </div>
 
-              <div className="p-4 rounded-lg bg-blue-500/5 border border-blue-500/10">
-                <h4 className="font-semibold mb-2 text-blue-600 dark:text-blue-400">Split — калькулятор расчётов</h4>
-                <p className="text-sm text-muted-foreground">
-                  Автоматизированный расчёт и разделение оплат между участниками, генерация платёжных ссылок.
-                </p>
+              <div className="p-3 md:p-4 rounded-lg bg-gradient-to-br from-blue-500/5 to-blue-600/5 border border-blue-500/10 hover:border-blue-500/30 hover:shadow-md transition-all">
+                <h4 className="font-semibold text-sm md:text-base text-center">Split</h4>
               </div>
 
-              <div className="p-4 rounded-lg bg-blue-500/5 border border-blue-500/10">
-                <h4 className="font-semibold mb-2 text-blue-600 dark:text-blue-400">Проверка контрагентов</h4>
-                <p className="text-sm text-muted-foreground">
-                  Комплексный анализ компаний: юридические данные, финансовые показатели, риски и репутация.
-                </p>
+              <div className="p-3 md:p-4 rounded-lg bg-gradient-to-br from-blue-500/5 to-blue-600/5 border border-blue-500/10 hover:border-blue-500/30 hover:shadow-md transition-all">
+                <h4 className="font-semibold text-sm md:text-base text-center">Проверка контрагентов</h4>
               </div>
 
-              <div className="p-4 rounded-lg bg-blue-500/5 border border-blue-500/10">
-                <h4 className="font-semibold mb-2 text-blue-600 dark:text-blue-400">Мониторинг судебных дел</h4>
-                <p className="text-sm text-muted-foreground">
-                  AI-powered отслеживание судебных процессов с автоматическими уведомлениями и аналитикой.
-                </p>
+              <div className="p-3 md:p-4 rounded-lg bg-gradient-to-br from-blue-500/5 to-blue-600/5 border border-blue-500/10 hover:border-blue-500/30 hover:shadow-md transition-all">
+                <h4 className="font-semibold text-sm md:text-base text-center">Мониторинг судебных дел</h4>
               </div>
 
-              <div className="p-4 rounded-lg bg-blue-500/5 border border-blue-500/10">
-                <h4 className="font-semibold mb-2 text-blue-600 dark:text-blue-400">CRM для юристов</h4>
-                <p className="text-sm text-muted-foreground">
-                  Управление клиентами, делами и документооборотом в единой системе с интеграциями.
-                </p>
+              <div className="p-3 md:p-4 rounded-lg bg-gradient-to-br from-blue-500/5 to-blue-600/5 border border-blue-500/10 hover:border-blue-500/30 hover:shadow-md transition-all">
+                <h4 className="font-semibold text-sm md:text-base text-center">CRM для юристов</h4>
               </div>
 
-              <div className="p-4 rounded-lg bg-blue-500/5 border border-blue-500/10">
-                <h4 className="font-semibold mb-2 text-blue-600 dark:text-blue-400">Конструктор документов</h4>
-                <p className="text-sm text-muted-foreground">
-                  Автоматизированная генерация юридических документов на основе шаблонов и AI-ассистента.
-                </p>
+              <div className="p-3 md:p-4 rounded-lg bg-gradient-to-br from-blue-500/5 to-blue-600/5 border border-blue-500/10 hover:border-blue-500/30 hover:shadow-md transition-all">
+                <h4 className="font-semibold text-sm md:text-base text-center">Конструктор документов</h4>
               </div>
 
-              <div className="p-4 rounded-lg bg-blue-500/5 border border-blue-500/10">
-                <h4 className="font-semibold mb-2 text-blue-600 dark:text-blue-400">Правовая аналитика</h4>
-                <p className="text-sm text-muted-foreground">
-                  AI-анализ законодательства, судебной практики и правовых позиций для подготовки дел.
-                </p>
+              <div className="p-3 md:p-4 rounded-lg bg-gradient-to-br from-blue-500/5 to-blue-600/5 border border-blue-500/10 hover:border-blue-500/30 hover:shadow-md transition-all">
+                <h4 className="font-semibold text-sm md:text-base text-center">Правовая аналитика</h4>
               </div>
 
-              <div className="p-4 rounded-lg bg-blue-500/5 border border-blue-500/10">
-                <h4 className="font-semibold mb-2 text-blue-600 dark:text-blue-400">Онлайн-консультации</h4>
-                <p className="text-sm text-muted-foreground">
-                  Защищённая платформа для видеоконференций и обмена документами с клиентами.
-                </p>
+              <div className="p-3 md:p-4 rounded-lg bg-gradient-to-br from-blue-500/5 to-blue-600/5 border border-blue-500/10 hover:border-blue-500/30 hover:shadow-md transition-all">
+                <h4 className="font-semibold text-sm md:text-base text-center">Онлайн-консультации</h4>
               </div>
             </div>
 
             <div className="mt-4 p-4 rounded-lg bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/20">
-              <p className="text-sm font-medium text-blue-600 dark:text-blue-400">
-                💡 Все сервисы интегрированы, работают на единой платформе и постоянно совершенствуются
+              <p className="text-sm font-medium text-center">
+                Все сервисы интегрированы, работают на единой платформе и постоянно совершенствуются
                 с применением искусственного интеллекта для повышения эффективности юридической практики.
               </p>
             </div>
@@ -268,58 +244,59 @@ export function AboutPage() {
 
       <section className="space-y-3 md:space-y-4">
         <div className="flex items-center gap-2 md:gap-3">
-          <Shield className="h-5 w-5 md:h-6 md:w-6 text-blue-500" />
+          <Target className="h-5 w-5 md:h-6 md:w-6 text-blue-500" />
           <h2 className="scroll-m-20 text-xl md:text-2xl lg:text-3xl font-semibold tracking-tight">
-            Безопасность и конфиденциальность
+            Наши ценности
           </h2>
         </div>
 
         <Card className="shadow-md">
           <CardContent className="p-4 md:p-6 space-y-3 md:space-y-4">
             <p className="text-sm md:text-base leading-relaxed">
-              Мы понимаем критическую важность защиты данных в юридической практике и применяем
-              передовые стандарты безопасности.
+              Мы создаем платформу, которая отражает лучшие традиции юридического сообщества и
+              современные стандарты цифрового взаимодействия.
             </p>
 
             <div className="grid md:grid-cols-3 gap-4 mt-4">
               <div className="p-4 rounded-lg bg-muted/50">
-                <h4 className="font-semibold mb-2">Шифрование данных</h4>
+                <h4 className="font-semibold mb-2">Профессионализм</h4>
                 <p className="text-sm text-muted-foreground">
-                  End-to-end шифрование всех коммуникаций и хранимых документов для защиты
-                  конфиденциальной информации.
+                  Создание пространства для обмена опытом, развития экспертизы и повышения
+                  стандартов юридической практики.
                 </p>
               </div>
 
               <div className="p-4 rounded-lg bg-muted/50">
-                <h4 className="font-semibold mb-2">Контроль доступа</h4>
+                <h4 className="font-semibold mb-2">Открытость</h4>
                 <p className="text-sm text-muted-foreground">
-                  Гранулярное управление правами доступа, двухфакторная аутентификация и
-                  аудит всех действий пользователей.
+                  Прозрачность в работе платформы, открытый диалог с сообществом и постоянное
+                  развитие на основе обратной связи.
                 </p>
               </div>
 
               <div className="p-4 rounded-lg bg-muted/50">
-                <h4 className="font-semibold mb-2">Соответствие стандартам</h4>
+                <h4 className="font-semibold mb-2">Инновации</h4>
                 <p className="text-sm text-muted-foreground">
-                  Соблюдение требований законодательства о персональных данных и профессиональной
-                  этики адвокатов.
+                  Внедрение современных технологий для упрощения рутинных задач и фокуса на
+                  интеллектуальной работе.
                 </p>
               </div>
             </div>
 
             <div className="grid md:grid-cols-2 gap-4 mt-4">
               <div className="p-4 rounded-lg bg-muted/50">
-                <h4 className="font-semibold mb-2">Резервное копирование</h4>
+                <h4 className="font-semibold mb-2">Этика и конфиденциальность</h4>
                 <p className="text-sm text-muted-foreground">
-                  Автоматическое создание резервных копий с возможностью восстановления данных
-                  в любой момент времени.
+                  Строгое соблюдение адвокатской тайны, защита персональных данных и уважение
+                  профессиональных стандартов.
                 </p>
               </div>
 
               <div className="p-4 rounded-lg bg-muted/50">
-                <h4 className="font-semibold mb-2">Приватность по умолчанию</h4>
+                <h4 className="font-semibold mb-2">Сообщество</h4>
                 <p className="text-sm text-muted-foreground">
-                  Все профили и данные приватны по умолчанию — вы сами решаете, что и кому показывать.
+                  Поддержка взаимопомощи, наставничества и коллаборации между юристами разных
+                  уровней и специализаций.
                 </p>
               </div>
             </div>
@@ -327,116 +304,59 @@ export function AboutPage() {
         </Card>
       </section>
 
-      <section className="space-y-3 md:space-y-4">
-        <div className="flex items-center gap-2 md:gap-3">
-          <Mail className="h-5 w-5 md:h-6 md:w-6 text-blue-500" />
-          <h2 className="scroll-m-20 text-xl md:text-2xl lg:text-3xl font-semibold tracking-tight">
-            Контакты и правовая информация
-          </h2>
+      <footer className="mt-12 pt-8 border-t">
+        <div className="space-y-6">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <p className="text-xs text-muted-foreground">© 2024 Фонд Права</p>
+            </div>
+
+            <div className="flex flex-col md:flex-row md:items-center gap-4 text-sm">
+              <a
+                href="mailto:info@fondprava.ru"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                info@fondprava.ru
+              </a>
+              <span className="hidden md:inline text-muted-foreground">•</span>
+              <a
+                href="/terms"
+                className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Пользовательское соглашение
+                <ExternalLink className="h-3 w-3" />
+              </a>
+              <span className="hidden md:inline text-muted-foreground">•</span>
+              <a
+                href="/privacy"
+                className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Политика конфиденциальности
+                <ExternalLink className="h-3 w-3" />
+              </a>
+              <span className="hidden md:inline text-muted-foreground">•</span>
+              <a
+                href="/cookies"
+                className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Cookie
+                <ExternalLink className="h-3 w-3" />
+              </a>
+            </div>
+          </div>
+
+          <div className="text-xs text-muted-foreground leading-relaxed">
+            Использование платформы регулируется действующим законодательством Российской Федерации.
+            Все материалы и сервисы предоставляются в информационных целях и не являются юридической консультацией.
+          </div>
         </div>
-
-        <div className="grid md:grid-cols-2 gap-4">
-          <Card className="shadow-md hover:shadow-lg transition-shadow">
-            <CardContent className="p-4 md:p-6 space-y-4">
-              <div className="flex items-start gap-3">
-                <Mail className="h-5 w-5 text-blue-500 flex-shrink-0 mt-1" />
-                <div className="space-y-1">
-                  <h3 className="font-semibold">Связаться с нами</h3>
-                  <a
-                    href="mailto:info@fondprava.ru"
-                    className="text-sm text-blue-600 dark:text-blue-400 hover:underline block"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    info@fondprava.ru
-                  </a>
-                  <a
-                    href="mailto:support@fondprava.ru"
-                    className="text-sm text-blue-600 dark:text-blue-400 hover:underline block"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    support@fondprava.ru
-                  </a>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <Users className="h-5 w-5 text-blue-500 flex-shrink-0 mt-1" />
-                <div className="space-y-1">
-                  <h3 className="font-semibold">Сотрудничество</h3>
-                  <a
-                    href="mailto:partnership@fondprava.ru"
-                    className="text-sm text-blue-600 dark:text-blue-400 hover:underline block"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    partnership@fondprava.ru
-                  </a>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="shadow-md hover:shadow-lg transition-shadow">
-            <CardContent className="p-4 md:p-6 space-y-4">
-              <div className="flex items-start gap-3">
-                <FileText className="h-5 w-5 text-blue-500 flex-shrink-0 mt-1" />
-                <div className="space-y-2">
-                  <h3 className="font-semibold">Правовые документы</h3>
-                  <div className="space-y-1">
-                    <a
-                      href="/terms"
-                      className="text-sm text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Пользовательское соглашение
-                      <ExternalLink className="h-3 w-3" />
-                    </a>
-                    <a
-                      href="/privacy"
-                      className="text-sm text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Политика конфиденциальности
-                      <ExternalLink className="h-3 w-3" />
-                    </a>
-                    <a
-                      href="/cookies"
-                      className="text-sm text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Политика использования cookie
-                      <ExternalLink className="h-3 w-3" />
-                    </a>
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-3 border-t">
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  © 2024 Фонд Права. Все права защищены. <br />
-                  ИНН: 1234567890 | ОГРН: 1234567890123
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <Card className="shadow-md bg-muted/30">
-          <CardContent className="p-4 md:p-6">
-            <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">
-              <strong className="text-foreground">Юридическая информация:</strong> Использование платформы
-              регулируется действующим законодательством Российской Федерации. Все материалы и сервисы
-              предоставляются в информационных целях и не являются юридической консультацией.
-              Для получения профессиональной юридической помощи обратитесь к квалифицированному специалисту.
-            </p>
-          </CardContent>
-        </Card>
-      </section>
+      </footer>
     </div>
   );
 }
