@@ -529,7 +529,7 @@ export function EditablePostCard({
                     id="edit-slug"
                     value={editedSlug}
                     onChange={(e) => setEditedSlug(e.target.value)}
-                    placeholder="url-friendly-slug (optional)"
+                    placeholder="ссылка (по желанию)"
                     maxLength={SLUG_MAX_LENGTH}
                   />
                   <div className="flex justify-end mt-1">

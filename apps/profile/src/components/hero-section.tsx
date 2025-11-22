@@ -320,7 +320,7 @@ export function HeroSection({
                   value={user.about || ""}
                   onChange={(e) => handleAboutChange(e.target.value)}
                   className="resize-none"
-                  placeholder="Tell others about yourself..."
+                  placeholder="Расскажите о себе..."
                   rows={3}
                   maxLength={ABOUT_MAX_LENGTH}
                 />

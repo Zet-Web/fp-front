@@ -408,7 +408,7 @@ export function AwardsSection({
                         }));
                       }
                     }}
-                    placeholder="Best Developer Award"
+                    placeholder="Награда или достижение"
                   />
                 </div>
                 <div>
@@ -424,7 +424,7 @@ export function AwardsSection({
                         }));
                       }
                     }}
-                    placeholder="Tech Company Inc."
+                    placeholder="Название организации, выдавшей награду"
                   />
                 </div>
                 <div>
