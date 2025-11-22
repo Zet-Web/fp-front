@@ -1,4 +1,4 @@
-// Demo tab showcasing date selection components and education section
+// Demo tab showcasing date selection components
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -9,8 +9,6 @@ import { DateSelector, DateValue } from "@/components/shared/DateSelector";
 import { PeriodSelector, PeriodData } from "@/components/shared/PeriodSelector";
 import { formatPeriod, getMonthLabel, calculateAge } from "@/lib/date-utils";
 import { Badge } from "@/components/ui/badge";
-import { EducationSection } from "../../profile/src/components/education-section";
-import { UserAdditionalInfo } from "../../profile/src/types/profile";
 
 export function DateSelectorsDemo() {
   const [day, setDay] = useState<string>("not-set");
@@ -38,29 +36,6 @@ export function DateSelectorsDemo() {
     end_year: "not-set",
     is_current: true,
   });
-
-  const [isEditing, setIsEditing] = useState(true);
-  const [additionalInfo, setAdditionalInfo] = useState<UserAdditionalInfo | null>({
-    education: [
-      {
-        id: 1,
-        degree: { id: 1, name: "Бакалавр компьютерных наук" },
-        degree_id: 1,
-        university: { id: 100, name: "МГУ им. М.В. Ломоносова" },
-        university_id: 100,
-        start_month: "09",
-        start_year: "2018",
-        end_month: "06",
-        end_year: "2022",
-        is_current: false,
-        description: "Специализация: разработка программного обеспечения",
-      },
-    ],
-  });
-
-  const handleUpdateAdditionalInfo = (updates: Partial<UserAdditionalInfo>) => {
-    setAdditionalInfo((prev) => (prev ? { ...prev, ...updates } : null));
-  };
 
   const formatDateValue = (date: DateValue): string => {
     const parts = [];
@@ -311,63 +286,6 @@ export function DateSelectorsDemo() {
                 </CardContent>
               </Card>
             </div>
-          </div>
-
-          <Separator />
-
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-semibold">Education Section Demo</h3>
-                <p className="text-sm text-muted-foreground">
-                  Test the education section with study field and university selectors
-                </p>
-              </div>
-              <Badge
-                variant={isEditing ? "default" : "secondary"}
-                className="cursor-pointer"
-                onClick={() => setIsEditing(!isEditing)}
-              >
-                {isEditing ? "Edit Mode" : "View Mode"}
-              </Badge>
-            </div>
-
-            <Card className="bg-muted/50">
-              <CardContent className="pt-6">
-                <EducationSection
-                  isEditing={isEditing}
-                  additionalInfo={additionalInfo}
-                  onUpdateAdditionalInfo={handleUpdateAdditionalInfo}
-                />
-
-                <Separator className="my-6" />
-
-                <div className="space-y-3">
-                  <p className="text-sm font-medium">Current State:</p>
-                  <pre className="text-xs bg-muted p-3 rounded overflow-auto max-h-48">
-                    {JSON.stringify(additionalInfo?.education, null, 2)}
-                  </pre>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-muted-foreground">
-                    <p>
-                      <span className="font-medium text-foreground">Study Field:</span>{" "}
-                      Uses UniversalReferenceSelector with study_field type
-                    </p>
-                    <p>
-                      <span className="font-medium text-foreground">University:</span>{" "}
-                      Uses UniversalReferenceSelector with university type
-                    </p>
-                    <p>
-                      <span className="font-medium text-foreground">Search:</span>{" "}
-                      Study field shows all records on open, university requires 3 chars
-                    </p>
-                    <p>
-                      <span className="font-medium text-foreground">Period:</span>{" "}
-                      Uses PeriodSelector component
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
           </div>
 
           <Separator />

@@ -8,6 +8,7 @@ import { SortableListControls } from "@/components/shared/SortableListControls";
 import { InlineEditActions } from "@/components/shared/InlineEditActions";
 import { DeleteConfirmationDialog } from "@/components/shared/DeleteConfirmationDialog";
 import { PeriodSelector, PeriodData } from "@/components/shared/PeriodSelector";
+import { DatabaseDropdown } from "@/components/shared/DatabaseDropdown";
 import { UniversalReferenceSelector } from "@/components/shared/UniversalReferenceSelector";
 import { formatPeriod } from "@/lib/date-utils";
 import { defaultEducationValue } from "../utils/education-utils";
@@ -166,9 +167,11 @@ export function EducationSection({
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <UniversalReferenceSelector
-                    type="study_field"
-                    value={editForm.degree_id || 0}
+                  <DatabaseDropdown
+                    table="list_study_field"
+                    valueColumn="id"
+                    labelColumn="name"
+                    value={editForm.degree_id}
                     onChange={(value, label) =>
                       setEditForm((prev) => ({
                         ...prev,
@@ -176,12 +179,10 @@ export function EducationSection({
                         degree_id: Number(value),
                       }))
                     }
-                    label="Факультет (направление)"
+                    label="Степень"
                     placeholder="Выбрать..."
-                    searchPlaceholder="Поиск направления..."
-                    minSearchLength={0}
-                    showIcon={true}
-                    limit={100}
+                    searchPlaceholder="Поиск..."
+                    orderBy="name"
                   />
 
                   <UniversalReferenceSelector
@@ -293,9 +294,11 @@ export function EducationSection({
           <div className="border-l-2 border-dashed border-primary/20 pl-4 space-y-4">
             <h3 className="font-semibold text-lg">Добавить</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <UniversalReferenceSelector
-                type="study_field"
-                value={newEducation.degree_id || 0}
+              <DatabaseDropdown
+                table="list_study_field"
+                valueColumn="id"
+                labelColumn="name"
+                value={editForm.degree_id}
                 onChange={(value, label) =>
                   setNewEducation((prev) => ({
                     ...prev,
@@ -305,10 +308,8 @@ export function EducationSection({
                 }
                 label="Факультет (направление)"
                 placeholder="Выбрать..."
-                searchPlaceholder="Поиск направления..."
-                minSearchLength={0}
-                showIcon={true}
-                limit={100}
+                searchPlaceholder="Поиск..."
+                orderBy="name"
               />
 
               <UniversalReferenceSelector
@@ -330,11 +331,11 @@ export function EducationSection({
 
             <PeriodSelector
               value={{
-                start_month: newEducation.start_month || "",
-                start_year: newEducation.start_year || "",
-                end_month: newEducation.end_month || "",
-                end_year: newEducation.end_year || "",
-                is_current: Boolean(newEducation.is_current),
+                start_month: editForm.start_month || "",
+                start_year: editForm.start_year || "",
+                end_month: editForm.end_month || "",
+                end_year: editForm.end_year || "",
+                is_current: Boolean(editForm.is_current),
               }}
               onChange={(period) => handlePeriodChange(period, true)}
               currentLabel="По настоящее время"
