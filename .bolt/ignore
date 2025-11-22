@@ -1,4 +1,4 @@
-# apps/test
+apps/test
 apps/404
 apps/auth
 apps/chats
@@ -6,15 +6,16 @@ apps/header
 apps/home
 apps/mobileNav
 apps/navigation
-apps/about
-# apps/profile
+# apps/about
+apps/profile
 apps/post
 apps/settings
-apps/yurservice
 apps/network
 apps/quiz
-apps/contragent
-apps/split
+
+# apps/yurservice
+# apps/contragent
+# apps/split
 
 # src/components
 # shared-src
