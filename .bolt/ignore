@@ -1,13 +1,13 @@
-# apps/test
+apps/test
 apps/404
 apps/auth
 apps/chats
-# apps/header
-# apps/home
-# apps/mobileNav
-# apps/navigation
+apps/header
+apps/home
+apps/mobileNav
+apps/navigation
 apps/about
-# apps/profile
+apps/profile
 apps/post
 # apps/settings
 apps/yurservice
