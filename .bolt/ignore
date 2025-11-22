@@ -2,11 +2,11 @@ apps/test
 apps/404
 apps/auth
 apps/chats
-apps/header
+# apps/header
 # apps/home
 # apps/mobileNav
 # apps/navigation
-# apps/about
+apps/about
 # apps/profile
 apps/post
 # apps/settings
@@ -17,4 +17,4 @@ apps/contragent
 apps/split
 
 # src/components
-# shared-src
+shared-src
