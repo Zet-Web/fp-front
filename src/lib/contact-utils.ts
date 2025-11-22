@@ -31,6 +31,9 @@ export const CONTACT_TYPES: ContactTypeConfig[] = [
     label: "Телефон",
     icon: Phone,
     placeholder: "+1234567890",
+    validateValue: (value: string) => {
+    return value.trim().length > 0;
+  },
     formatValue: (value: string) => value.trim(),
   },
   {
