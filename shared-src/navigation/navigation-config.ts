@@ -29,7 +29,7 @@ export const desktopNavigationItems: NavItem[] = [
       return '/auth'
     }
   },
-  { icon: Info, label: "О платформе", path: "/about" },
+  { icon: Info, label: "О проекте", path: "/about" },
 ]
 
 // Mobile bottom navigation items (limited set for bottom bar)
