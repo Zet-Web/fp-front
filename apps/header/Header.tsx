@@ -13,13 +13,13 @@ export function Header() {
 
     if (path === '/' || path === '/home') return null
     if (path === '/about') return 'О проекте'
-    if (path === '/settings') return 'Settings'
-    if (path === '/auth') return 'Authentication'
+    if (path === '/settings') return 'Настройки'
+    if (path === '/auth') return 'Авторизация'
     if (path === '/test') return 'Test'
     if (path === '/explore') return 'Explore'
-    if (path.startsWith('/post/')) return 'Post'
+    if (path.startsWith('/post/')) return 'Публикация'
     if (path === '/profile' || (profile?.username && path === `/${profile.username}`)) {
-      return profile?.name || profile?.username || 'Profile'
+      return profile?.name || profile?.username || 'Профиль'
     }
     if (path.startsWith('/')) {
       const username = path.substring(1)
