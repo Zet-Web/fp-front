@@ -298,7 +298,7 @@ export function EducationSection({
                 table="list_study_field"
                 valueColumn="id"
                 labelColumn="name"
-                value={editForm.degree_id}
+                value={newEducation.degree_id}
                 onChange={(value, label) =>
                   setNewEducation((prev) => ({
                     ...prev,
@@ -331,11 +331,11 @@ export function EducationSection({
 
             <PeriodSelector
               value={{
-                start_month: editForm.start_month || "",
-                start_year: editForm.start_year || "",
-                end_month: editForm.end_month || "",
-                end_year: editForm.end_year || "",
-                is_current: Boolean(editForm.is_current),
+                start_month: newEducation.start_month || "",
+                start_year: newEducation.start_year || "",
+                end_month: newEducation.end_month || "",
+                end_year: newEducation.end_year || "",
+                is_current: Boolean(newEducation.is_current),
               }}
               onChange={(period) => handlePeriodChange(period, true)}
               currentLabel="По настоящее время"
