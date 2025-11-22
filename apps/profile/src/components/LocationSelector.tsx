@@ -258,7 +258,7 @@ export function LocationSelector({
               <TabsContent value="country" className="mt-0">
                 <Command shouldFilter={false}>
                   <CommandInput
-                    placeholder="Search countries..."
+                    placeholder="Поиск..."
                     value={searchQuery}
                     onValueChange={setSearchQuery}
                   />
