@@ -327,7 +327,7 @@ export function AboutPage() {
                 Политика конфиденциальности
                 <ExternalLink className="h-3 w-3" />
               </a>
-              <span className="hidden md:inline text-muted-foreground">•</span>
+              {/*<span className="hidden md:inline text-muted-foreground">•</span>
               <a
                 href="/cookies"
                 className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
@@ -336,7 +336,7 @@ export function AboutPage() {
               >
                 Cookie
                 <ExternalLink className="h-3 w-3" />
-              </a>
+              </a> */}
             </div>
           </div>
 
