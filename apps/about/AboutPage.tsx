@@ -278,7 +278,7 @@ export function AboutPage() {
               <div className="p-4 rounded-lg bg-muted/50">
                 <h4 className="font-semibold mb-2">Этика</h4>
                 <p className="text-sm text-muted-foreground">
-                  Соблюдение общепринятых правил, конфиденциальность, защита данных и уважение участников.
+                  Общение и коммуникация строится на основе добросовестности, этических норм, взаимоуважении, конфиденциальности.
                 </p>
               </div>
 
