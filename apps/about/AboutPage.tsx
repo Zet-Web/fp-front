@@ -302,7 +302,7 @@ export function AboutPage() {
 
             <div className="flex flex-col md:flex-row md:items-center gap-4 text-sm">
               <a
-                href="mailto:info@fondprava.ru"
+                href="mailto:info@fondprava.com"
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 info@fondprava.com
