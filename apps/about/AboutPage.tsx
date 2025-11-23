@@ -269,7 +269,7 @@ export function AboutPage() {
               <div className="p-4 rounded-lg bg-muted/50">
                 <h4 className="font-semibold mb-2">Инновации</h4>
                 <p className="text-sm text-muted-foreground">
-                  Внедрение современных технологий для упрощения рутинных задач и фокуса на интеллектуальной работе.
+                  Внедрение технологий для экономии времени от рутинных задач и фокуса на интеллектуальной работе.
                 </p>
               </div>
             </div>
