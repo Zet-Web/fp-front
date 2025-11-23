@@ -254,8 +254,7 @@ export function AboutPage() {
               <div className="p-4 rounded-lg bg-muted/50">
                 <h4 className="font-semibold mb-2">Профессионализм</h4>
                 <p className="text-sm text-muted-foreground">
-                  Пространство для обмена опытом, развития экспертизы и повышения
-                  уровня юридической практики.
+                  Пространство для обмена опытом, развития экспертизы и повышения качества юридических услуг.
                 </p>
               </div>
 
