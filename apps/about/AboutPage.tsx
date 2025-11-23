@@ -285,8 +285,7 @@ export function AboutPage() {
               <div className="p-4 rounded-lg bg-muted/50">
                 <h4 className="font-semibold mb-2">Сообщество</h4>
                 <p className="text-sm text-muted-foreground">
-                  Поддержка взаимопомощи, наставничества и коллаборации между юристами разных
-                  уровней и специализаций.
+                  Поддержка взаимопомощи, наставничества и коллаборации между юристами разных уровней и специализаций.
                 </p>
               </div>
             </div>
