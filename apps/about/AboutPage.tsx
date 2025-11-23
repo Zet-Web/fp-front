@@ -305,7 +305,7 @@ export function AboutPage() {
                 href="mailto:info@fondprava.ru"
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
-                info@fondprava.ru
+                info@fondprava.com
               </a>
               <span className="hidden md:inline text-muted-foreground">•</span>
               <a
