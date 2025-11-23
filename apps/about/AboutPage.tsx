@@ -247,8 +247,7 @@ export function AboutPage() {
         <Card className="shadow-md">
           <CardContent className="p-4 md:p-6 space-y-3 md:space-y-4">
             <p className="text-sm md:text-base leading-relaxed">
-              Мы создаем платформу, которая отражает лучшие традиции юридического сообщества и
-              современные стандарты цифрового взаимодействия.
+              Соединяем лучшие традиции юридического мира и современные стандарты цифрового взаимодействия.
             </p>
 
             <div className="grid md:grid-cols-3 gap-4 mt-4">
