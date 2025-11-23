@@ -431,6 +431,7 @@ export default function QuizForm({
                             <AlertDialogCancel>Отмена</AlertDialogCancel>
                             <AlertDialogAction
                               onClick={() => questionsField.remove(index)}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                             >
                               Удалить
                             </AlertDialogAction>

@@ -256,7 +256,10 @@ export function BirthdaySection({
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Отмена</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleRemoveBirthday}>
+                    <AlertDialogAction
+                      onClick={handleRemoveBirthday}
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    >
                       Удалить
                     </AlertDialogAction>
                   </AlertDialogFooter>

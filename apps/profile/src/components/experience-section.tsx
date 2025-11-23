@@ -382,6 +382,7 @@ export function ExperienceSection({
                                 <AlertDialogCancel>Отмена</AlertDialogCancel>
                                 <AlertDialogAction
                                   onClick={() => removeExperience(exp.id)}
+                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                                 >
                                   Удалить
                                 </AlertDialogAction>
