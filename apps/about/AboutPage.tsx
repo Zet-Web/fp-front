@@ -220,7 +220,7 @@ export function AboutPage() {
               </div>
 
               <div className="p-3 md:p-4 rounded-lg bg-gradient-to-br from-blue-500/5 to-blue-600/5 border border-blue-500/10 hover:border-blue-500/30 hover:shadow-md transition-all">
-                <h4 className="font-semibold text-sm md:text-base text-center">Конструктор документов</h4>
+                <h4 className="font-semibold text-sm md:text-base text-center">AI-ассистент</h4>
               </div>
 
               <div className="p-3 md:p-4 rounded-lg bg-gradient-to-br from-blue-500/5 to-blue-600/5 border border-blue-500/10 hover:border-blue-500/30 hover:shadow-md transition-all">
@@ -228,7 +228,7 @@ export function AboutPage() {
               </div>
 
               <div className="p-3 md:p-4 rounded-lg bg-gradient-to-br from-blue-500/5 to-blue-600/5 border border-blue-500/10 hover:border-blue-500/30 hover:shadow-md transition-all">
-                <h4 className="font-semibold text-sm md:text-base text-center">AI-ассистент</h4>
+                <h4 className="font-semibold text-sm md:text-base text-center">И другие сервисы</h4>
               </div>
             </div>
 
