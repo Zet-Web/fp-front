@@ -200,15 +200,11 @@ export function AboutPage() {
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 mt-4">
               <div className="p-3 md:p-4 rounded-lg bg-gradient-to-br from-blue-500/5 to-blue-600/5 border border-blue-500/10 hover:border-blue-500/30 hover:shadow-md transition-all">
-                <h4 className="font-semibold text-sm md:text-base text-center">Каталог юридических услуг</h4>
+                <h4 className="font-semibold text-sm md:text-base text-center">Каталог юридических инструментов</h4>
               </div>
 
               <div className="p-3 md:p-4 rounded-lg bg-gradient-to-br from-blue-500/5 to-blue-600/5 border border-blue-500/10 hover:border-blue-500/30 hover:shadow-md transition-all">
-                <h4 className="font-semibold text-sm md:text-base text-center">Split</h4>
-              </div>
-
-              <div className="p-3 md:p-4 rounded-lg bg-gradient-to-br from-blue-500/5 to-blue-600/5 border border-blue-500/10 hover:border-blue-500/30 hover:shadow-md transition-all">
-                <h4 className="font-semibold text-sm md:text-base text-center">Проверка контрагентов</h4>
+                <h4 className="font-semibold text-sm md:text-base text-center">Проверка контрагента</h4>
               </div>
 
               <div className="p-3 md:p-4 rounded-lg bg-gradient-to-br from-blue-500/5 to-blue-600/5 border border-blue-500/10 hover:border-blue-500/30 hover:shadow-md transition-all">
@@ -216,7 +212,11 @@ export function AboutPage() {
               </div>
 
               <div className="p-3 md:p-4 rounded-lg bg-gradient-to-br from-blue-500/5 to-blue-600/5 border border-blue-500/10 hover:border-blue-500/30 hover:shadow-md transition-all">
-                <h4 className="font-semibold text-sm md:text-base text-center">CRM для юристов</h4>
+                <h4 className="font-semibold text-sm md:text-base text-center">CRM</h4>
+              </div>
+
+              <div className="p-3 md:p-4 rounded-lg bg-gradient-to-br from-blue-500/5 to-blue-600/5 border border-blue-500/10 hover:border-blue-500/30 hover:shadow-md transition-all">
+                <h4 className="font-semibold text-sm md:text-base text-center">Справочно-правовая система</h4>
               </div>
 
               <div className="p-3 md:p-4 rounded-lg bg-gradient-to-br from-blue-500/5 to-blue-600/5 border border-blue-500/10 hover:border-blue-500/30 hover:shadow-md transition-all">
@@ -224,7 +224,7 @@ export function AboutPage() {
               </div>
 
               <div className="p-3 md:p-4 rounded-lg bg-gradient-to-br from-blue-500/5 to-blue-600/5 border border-blue-500/10 hover:border-blue-500/30 hover:shadow-md transition-all">
-                <h4 className="font-semibold text-sm md:text-base text-center">Правовая аналитика</h4>
+                <h4 className="font-semibold text-sm md:text-base text-center">Сплит</h4>
               </div>
 
               <div className="p-3 md:p-4 rounded-lg bg-gradient-to-br from-blue-500/5 to-blue-600/5 border border-blue-500/10 hover:border-blue-500/30 hover:shadow-md transition-all">
@@ -232,12 +232,6 @@ export function AboutPage() {
               </div>
             </div>
 
-            <div className="mt-4 p-4 rounded-lg bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/20">
-              <p className="text-sm font-medium text-center">
-                Все сервисы интегрированы, работают на единой платформе и постоянно совершенствуются
-                с применением искусственного интеллекта для повышения эффективности юридической практики.
-              </p>
-            </div>
           </CardContent>
         </Card>
       </section>
