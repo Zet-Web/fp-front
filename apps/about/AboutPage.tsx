@@ -309,7 +309,7 @@ export function AboutPage() {
               </a>
               <span className="hidden md:inline text-muted-foreground">•</span>
               <a
-                href="/terms"
+                href="/post/terms"
                 className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -319,7 +319,7 @@ export function AboutPage() {
               </a>
               <span className="hidden md:inline text-muted-foreground">•</span>
               <a
-                href="/privacy"
+                href="/post/privacy"
                 className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
                 target="_blank"
                 rel="noopener noreferrer"
