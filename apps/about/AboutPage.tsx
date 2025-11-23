@@ -308,7 +308,7 @@ export function AboutPage() {
         <div className="space-y-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <p className="text-xs text-muted-foreground">© 2024 Фонд Права</p>
+              <p className="text-xs text-muted-foreground">© 2025 Фонд Права</p>
             </div>
 
             <div className="flex flex-col md:flex-row md:items-center gap-4 text-sm">
