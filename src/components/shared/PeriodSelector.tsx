@@ -1,13 +1,8 @@
+// Reusable period selector component using shared month/year selectors
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { MONTHS, generateYears } from "@/lib/date-utils";
+import { MonthSelector } from "./MonthSelector";
+import { YearSelector } from "./YearSelector";
 
 export interface PeriodData {
   start_month: string;
@@ -34,8 +29,6 @@ export function PeriodSelector({
   startYearFrom = 1930,
   className = "",
 }: PeriodSelectorProps) {
-  const years = generateYears(startYearFrom);
-
   const handleChange = (
     field: keyof PeriodData,
     newValue: string | boolean
@@ -47,98 +40,37 @@ export function PeriodSelector({
     <div className={`space-y-3 ${className}`}>
       <Label>Period (Optional)</Label>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-        <div>
-          <Label
-            htmlFor="start-month"
-            className="text-xs text-muted-foreground"
-          >
-            Месяц начала
-          </Label>
-          <Select
-            value={value.start_month}
-            onValueChange={(val) => handleChange("start_month", val)}
-          >
-            <SelectTrigger id="start-month">
-              <SelectValue placeholder="Month" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="not-set">-</SelectItem>
-              {MONTHS.map((month) => (
-                <SelectItem key={month.value} value={month.value}>
-                  {month.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <MonthSelector
+          value={value.start_month}
+          onChange={(val) => handleChange("start_month", val)}
+          label="Месяц начала"
+          id="start-month"
+        />
 
-        <div>
-          <Label htmlFor="start-year" className="text-xs text-muted-foreground">
-            Год начала
-          </Label>
-          <Select
-            value={value.start_year}
-            onValueChange={(val) => handleChange("start_year", val)}
-          >
-            <SelectTrigger id="start-year">
-              <SelectValue placeholder="Year" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="not-set">-</SelectItem>
-              {years.map((year) => (
-                <SelectItem key={year} value={year}>
-                  {year}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <YearSelector
+          value={value.start_year}
+          onChange={(val) => handleChange("start_year", val)}
+          startYear={startYearFrom}
+          label="Год начала"
+          id="start-year"
+        />
 
-        <div>
-          <Label htmlFor="end-month" className="text-xs text-muted-foreground">
-            Месяц завершения
-          </Label>
-          <Select
-            value={value.end_month}
-            onValueChange={(val) => handleChange("end_month", val)}
-            disabled={value.is_current}
-          >
-            <SelectTrigger id="end-month">
-              <SelectValue placeholder="Month" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="not-set">-</SelectItem>
-              {MONTHS.map((month) => (
-                <SelectItem key={month.value} value={month.value}>
-                  {month.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <MonthSelector
+          value={value.end_month}
+          onChange={(val) => handleChange("end_month", val)}
+          disabled={value.is_current}
+          label="Месяц завершения"
+          id="end-month"
+        />
 
-        <div>
-          <Label htmlFor="end-year" className="text-xs text-muted-foreground">
-            Год завершения
-          </Label>
-          <Select
-            value={value.end_year}
-            onValueChange={(val) => handleChange("end_year", val)}
-            disabled={value.is_current}
-          >
-            <SelectTrigger id="end-year">
-              <SelectValue placeholder="Year" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="not-set">-</SelectItem>
-              {years.map((year) => (
-                <SelectItem key={year} value={year}>
-                  {year}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <YearSelector
+          value={value.end_year}
+          onChange={(val) => handleChange("end_year", val)}
+          startYear={startYearFrom}
+          disabled={value.is_current}
+          label="Год завершения"
+          id="end-year"
+        />
       </div>
 
       {showCurrent && (

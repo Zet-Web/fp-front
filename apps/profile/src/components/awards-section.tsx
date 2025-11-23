@@ -364,6 +364,7 @@ export function AwardsSection({
                                 <AlertDialogCancel>Отмена</AlertDialogCancel>
                                 <AlertDialogAction
                                   onClick={() => removeAward(award.id)}
+                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                                 >
                                   Удалить
                                 </AlertDialogAction>

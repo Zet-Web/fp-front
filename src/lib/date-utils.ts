@@ -121,3 +121,30 @@ export function formatPostDate(dateString: string): string {
     return ''
   }
 }
+
+export function generateDays(month: string = '01', year: string = '2000'): string[] {
+  const maxDays = getDaysInMonth(month, year)
+  const days: string[] = []
+  for (let day = 1; day <= maxDays; day++) {
+    days.push(day.toString().padStart(2, '0'))
+  }
+  return days
+}
+
+export function getMonthLabel(monthValue: string): string {
+  return MONTHS.find(m => m.value === monthValue)?.label || monthValue
+}
+
+export function isValidDate(day: string, month: string, year: string): boolean {
+  if (day === 'not-set' && month === 'not-set' && year === 'not-set') {
+    return false
+  }
+
+  if (year !== 'not-set' && month !== 'not-set' && day !== 'not-set') {
+    const maxDays = getDaysInMonth(month, year)
+    const dayNum = parseInt(day)
+    return dayNum >= 1 && dayNum <= maxDays
+  }
+
+  return true
+}

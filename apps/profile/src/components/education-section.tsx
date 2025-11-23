@@ -1,12 +1,22 @@
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { GraduationCap, Edit, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { SectionCard } from "@/components/shared/SectionCard";
 import { SortableListControls } from "@/components/shared/SortableListControls";
 import { InlineEditActions } from "@/components/shared/InlineEditActions";
-import { DeleteConfirmationDialog } from "@/components/shared/DeleteConfirmationDialog";
 import { PeriodSelector, PeriodData } from "@/components/shared/PeriodSelector";
 import { DatabaseDropdown } from "@/components/shared/DatabaseDropdown";
 import { UniversalReferenceSelector } from "@/components/shared/UniversalReferenceSelector";
@@ -261,11 +271,8 @@ export function EducationSection({
                         >
                           <Edit className="w-4 h-4" />
                         </Button>
-                        <DeleteConfirmationDialog
-                          title="Удалить"
-                          description="Вы уверены, что хотите удалить?"
-                          onConfirm={() => removeEducation(edu.id)}
-                          triggerButton={
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
                             <Button
                               size="sm"
                               variant="ghost"
@@ -273,8 +280,25 @@ export function EducationSection({
                             >
                               <Trash2 className="w-4 h-4" />
                             </Button>
-                          }
-                        />
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Удалить</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Вы уверены, что хотите удалить?
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Отмена</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => removeEducation(edu.id)}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              >
+                                Удалить
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </div>
                     )}
                   </div>
@@ -298,7 +322,7 @@ export function EducationSection({
                 table="list_study_field"
                 valueColumn="id"
                 labelColumn="name"
-                value={editForm.degree_id}
+                value={newEducation.degree_id}
                 onChange={(value, label) =>
                   setNewEducation((prev) => ({
                     ...prev,
@@ -331,11 +355,11 @@ export function EducationSection({
 
             <PeriodSelector
               value={{
-                start_month: editForm.start_month || "",
-                start_year: editForm.start_year || "",
-                end_month: editForm.end_month || "",
-                end_year: editForm.end_year || "",
-                is_current: Boolean(editForm.is_current),
+                start_month: newEducation.start_month || "",
+                start_year: newEducation.start_year || "",
+                end_month: newEducation.end_month || "",
+                end_year: newEducation.end_year || "",
+                is_current: Boolean(newEducation.is_current),
               }}
               onChange={(period) => handlePeriodChange(period, true)}
               currentLabel="По настоящее время"
