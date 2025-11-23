@@ -343,7 +343,7 @@ export function EditablePostCard({
                     htmlFor="edit-members-enabled"
                     className="text-xs md:text-sm font-medium cursor-pointer"
                   >
-                    Включить участников
+                    Включить раздел участников
                   </Label>
                 </div>
               </div>
