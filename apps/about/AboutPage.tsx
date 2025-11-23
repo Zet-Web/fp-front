@@ -254,8 +254,8 @@ export function AboutPage() {
               <div className="p-4 rounded-lg bg-muted/50">
                 <h4 className="font-semibold mb-2">Профессионализм</h4>
                 <p className="text-sm text-muted-foreground">
-                  Создание пространства для обмена опытом, развития экспертизы и повышения
-                  стандартов юридической практики.
+                  Пространство для обмена опытом, развития экспертизы и повышения
+                  уровня юридической практики.
                 </p>
               </div>
 
@@ -270,18 +270,16 @@ export function AboutPage() {
               <div className="p-4 rounded-lg bg-muted/50">
                 <h4 className="font-semibold mb-2">Инновации</h4>
                 <p className="text-sm text-muted-foreground">
-                  Внедрение современных технологий для упрощения рутинных задач и фокуса на
-                  интеллектуальной работе.
+                  Внедрение современных технологий для упрощения рутинных задач и фокуса на интеллектуальной работе.
                 </p>
               </div>
             </div>
 
             <div className="grid md:grid-cols-2 gap-4 mt-4">
               <div className="p-4 rounded-lg bg-muted/50">
-                <h4 className="font-semibold mb-2">Этика и конфиденциальность</h4>
+                <h4 className="font-semibold mb-2">Этика</h4>
                 <p className="text-sm text-muted-foreground">
-                  Строгое соблюдение адвокатской тайны, защита персональных данных и уважение
-                  профессиональных стандартов.
+                  Соблюдение общепринятых правил, конфиденциальность, защита данных и уважение участников.
                 </p>
               </div>
 
