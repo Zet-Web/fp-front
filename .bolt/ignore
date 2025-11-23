@@ -6,8 +6,8 @@ apps/header
 apps/mobileNav
 apps/navigation
 apps/home
-# apps/about
-apps/profile
+apps/about
+# apps/profile
 apps/post
 apps/settings
 apps/network
