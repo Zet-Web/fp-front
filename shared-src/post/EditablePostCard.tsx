@@ -512,7 +512,7 @@ export function EditablePostCard({
                 <TiptapEditor
                   value={editedContent}
                   onChange={(e) => setEditedContent(e)}
-                  maxCharacters={5000}
+                  maxCharacters={10000}
                   showCharacterCount={true}
                 />
               </div>
