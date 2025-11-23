@@ -340,7 +340,7 @@ export function AboutPage() {
             </div>
           </div>
 
-          <div className="text-sm text-muted-foreground leading-relaxed">
+          <div className="text-xs text-muted-foreground leading-relaxed">
             Пользование сайтом означает согласие c пользовательским соглашением и условиями обработки персональных данных.
           </div>
         </div>
