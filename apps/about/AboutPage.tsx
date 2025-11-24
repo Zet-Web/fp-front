@@ -1,7 +1,7 @@
 // About page describing the platform's mission, features, and capabilities
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Users, CheckCircle2, GraduationCap, Network, TrendingUp, User } from "lucide-react";
+import { Users, CheckCircle2, GraduationCap, Network, TrendingUp, User, Sparkles, Target, FileText, ExternalLink } from "lucide-react";
 
 export function AboutPage() {
   return (
@@ -35,8 +35,8 @@ export function AboutPage() {
               также сообщества и объединения. Мы понимаем вызовы и потребности юридического сообщества.
             </p>
             <p className="text-sm md:text-base leading-relaxed">
-              Также приглашаются специалисты смежных отраслей, эксперты, оценщики, медиаторы для создания
-              обширного профессионального сообщества.
+              Также приглашаются специалисты смежных отраслей, эксперты, оценщики, медиаторы для сотрудничества и создания
+              обширного профессионального объединения.
             </p>
           </CardContent>
         </Card>
@@ -182,6 +182,169 @@ export function AboutPage() {
           </Card>
         </div>
       </section>
+
+      <section className="space-y-3 md:space-y-4">
+        <div className="flex items-center gap-2 md:gap-3">
+          <Sparkles className="h-5 w-5 md:h-6 md:w-6 text-blue-500" />
+          <h2 className="scroll-m-20 text-xl md:text-2xl lg:text-3xl font-semibold tracking-tight">
+            SaaS и AI-сервисы
+          </h2>
+        </div>
+
+        <Card className="shadow-md">
+          <CardContent className="p-4 md:p-6 space-y-3 md:space-y-4">
+            <p className="text-sm md:text-base leading-relaxed">
+              Единая экосистема профессиональных инструментов для юридической практики. Вместо поиска,
+              анализа и покупки отдельных дорогостоящих решений — одна подписка на все необходимые сервисы.
+            </p>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 mt-4">
+              <div className="p-3 md:p-4 rounded-lg bg-gradient-to-br from-blue-500/5 to-blue-600/5 border border-blue-500/10 hover:border-blue-500/30 hover:shadow-md transition-all">
+                <h4 className="font-semibold text-sm md:text-base text-center">Юридические сервисы</h4>
+              </div>
+
+              <div className="p-3 md:p-4 rounded-lg bg-gradient-to-br from-blue-500/5 to-blue-600/5 border border-blue-500/10 hover:border-blue-500/30 hover:shadow-md transition-all">
+                <h4 className="font-semibold text-sm md:text-base text-center">Проверка контрагента</h4>
+              </div>
+
+              <div className="p-3 md:p-4 rounded-lg bg-gradient-to-br from-blue-500/5 to-blue-600/5 border border-blue-500/10 hover:border-blue-500/30 hover:shadow-md transition-all">
+                <h4 className="font-semibold text-sm md:text-base text-center">Мониторинг судебных дел</h4>
+              </div>
+
+              <div className="p-3 md:p-4 rounded-lg bg-gradient-to-br from-blue-500/5 to-blue-600/5 border border-blue-500/10 hover:border-blue-500/30 hover:shadow-md transition-all">
+                <h4 className="font-semibold text-sm md:text-base text-center">CRM</h4>
+              </div>
+
+              <div className="p-3 md:p-4 rounded-lg bg-gradient-to-br from-blue-500/5 to-blue-600/5 border border-blue-500/10 hover:border-blue-500/30 hover:shadow-md transition-all">
+                <h4 className="font-semibold text-sm md:text-base text-center">Справочно-правовая система</h4>
+              </div>
+
+              <div className="p-3 md:p-4 rounded-lg bg-gradient-to-br from-blue-500/5 to-blue-600/5 border border-blue-500/10 hover:border-blue-500/30 hover:shadow-md transition-all">
+                <h4 className="font-semibold text-sm md:text-base text-center">AI-ассистент</h4>
+              </div>
+
+              <div className="p-3 md:p-4 rounded-lg bg-gradient-to-br from-blue-500/5 to-blue-600/5 border border-blue-500/10 hover:border-blue-500/30 hover:shadow-md transition-all">
+                <h4 className="font-semibold text-sm md:text-base text-center">Сплит</h4>
+              </div>
+
+              <div className="p-3 md:p-4 rounded-lg bg-gradient-to-br from-blue-500/5 to-blue-600/5 border border-blue-500/10 hover:border-blue-500/30 hover:shadow-md transition-all">
+                <h4 className="font-semibold text-sm md:text-base text-center">И другие сервисы</h4>
+              </div>
+            </div>
+
+          </CardContent>
+        </Card>
+      </section>
+
+      <section className="space-y-3 md:space-y-4">
+        <div className="flex items-center gap-2 md:gap-3">
+          <Target className="h-5 w-5 md:h-6 md:w-6 text-blue-500" />
+          <h2 className="scroll-m-20 text-xl md:text-2xl lg:text-3xl font-semibold tracking-tight">
+            Наши ценности
+          </h2>
+        </div>
+
+        <Card className="shadow-md">
+          <CardContent className="p-4 md:p-6 space-y-3 md:space-y-4">
+            <p className="text-sm md:text-base leading-relaxed">
+              Соединяя традиции юридического мира и современные стандарты цифрового взаимодействия.
+            </p>
+
+            <div className="grid md:grid-cols-3 gap-4 mt-4">
+              <div className="p-4 rounded-lg bg-muted/50">
+                <h4 className="font-semibold mb-2">Профессионализм</h4>
+                <p className="text-sm text-muted-foreground">
+                  Пространство для обмена опытом, развития экспертизы и повышения качества юридических услуг.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-lg bg-muted/50">
+                <h4 className="font-semibold mb-2">Открытость</h4>
+                <p className="text-sm text-muted-foreground">
+                  Прозрачность в работе платформы, открытый диалог с сообществом и постоянное
+                  развитие на основе обратной связи.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-lg bg-muted/50">
+                <h4 className="font-semibold mb-2">Инновации</h4>
+                <p className="text-sm text-muted-foreground">
+                  Внедрение технологий для экономии времени от рутинных задач и фокуса на интеллектуальной работе.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4 mt-4">
+              <div className="p-4 rounded-lg bg-muted/50">
+                <h4 className="font-semibold mb-2">Этика</h4>
+                <p className="text-sm text-muted-foreground">
+                  Общение и коммуникация строится на основе добросовестности, этических норм, взаимоуважении, конфиденциальности.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-lg bg-muted/50">
+                <h4 className="font-semibold mb-2">Сообщество</h4>
+                <p className="text-sm text-muted-foreground">
+                  Поддержка взаимопомощи, наставничества и коллаборации между юристами разных уровней и специализаций.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </section>
+
+      <footer className="mt-12 pt-8 border-t">
+        <div className="space-y-6">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <p className="text-sm text-muted-foreground">© 2025 Фонд Права</p>
+            </div>
+
+            <div className="flex flex-col md:flex-row md:items-center gap-4 text-sm">
+              <a
+                href="mailto:info@fondprava.com"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                info@fondprava.com
+              </a>
+              <span className="hidden md:inline text-muted-foreground">•</span>
+              <a
+                href="/post/terms"
+                className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Пользовательское соглашение
+                <ExternalLink className="h-3 w-3" />
+              </a>
+              <span className="hidden md:inline text-muted-foreground">•</span>
+              <a
+                href="/post/privacy"
+                className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Политика конфиденциальности
+                <ExternalLink className="h-3 w-3" />
+              </a>
+              {/*<span className="hidden md:inline text-muted-foreground">•</span>
+              <a
+                href="/cookies"
+                className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Cookie
+                <ExternalLink className="h-3 w-3" />
+              </a> */}
+            </div>
+          </div>
+
+          <div className="text-xs text-muted-foreground leading-relaxed">
+            Пользование сайтом означает согласие c пользовательским соглашением и условиями обработки персональных данных.
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

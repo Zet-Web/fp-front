@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -33,7 +34,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useSettingsData } from "./hooks/use-settings-data";
-import { Clock, Palette, LogOut, Check, ChevronsUpDown } from "lucide-react";
+import { Clock, Palette, LogOut, Check, ChevronsUpDown, Users } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -142,6 +143,7 @@ export function MainSettings({
   const { signOut } = useAuthContext();
   const [timezoneOpen, setTimezoneOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [membersEnabled, setMembersEnabled] = useState(false);
 
   // Filter timezones based on search term
   const filteredTimezones = useMemo(() => {
@@ -192,6 +194,31 @@ export function MainSettings({
 
   return (
     <div className="space-y-6">
+      {/* Members Tab Settings */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Users className="w-5 h-5" />
+            Вкладка Участники
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label htmlFor="members-toggle">Включить вкладку Участники</Label>
+              <p className="text-xs text-muted-foreground">
+                Отображение вкладки с участниками в профиле
+              </p>
+            </div>
+            <Switch
+              id="members-toggle"
+              checked={membersEnabled}
+              onCheckedChange={setMembersEnabled}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Timezone Settings */}
       <Card>
         <CardHeader>

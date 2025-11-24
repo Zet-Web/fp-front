@@ -173,7 +173,7 @@ export function PostPage() {
     if (authLoading) return;
     loadPost(urlCode);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authLoading, urlCode, profile]);
+  }, [authLoading, urlCode, profile?.id]);
 
   const handleSave = async (
     updates: Partial<PostWithAuthor>,

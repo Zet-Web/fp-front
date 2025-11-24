@@ -342,7 +342,7 @@ export function EditablePostCard({
                     htmlFor="edit-members-enabled"
                     className="text-xs md:text-sm font-medium cursor-pointer"
                   >
-                    Включить участников
+                    Включить раздел участников
                   </Label>
                 </div>
               </div>
@@ -511,7 +511,7 @@ export function EditablePostCard({
                 <TiptapEditor
                   value={editedContent}
                   onChange={(e) => setEditedContent(e)}
-                  maxCharacters={5000}
+                  maxCharacters={10000}
                   showCharacterCount={true}
                 />
               </div>

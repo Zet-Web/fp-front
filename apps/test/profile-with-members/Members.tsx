@@ -281,18 +281,6 @@ export function Members() {
 
           {/* Settings */}
           <div className="space-y-4 mb-6 p-4 bg-muted/50 rounded-lg">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="members-enabled" className="text-sm font-medium">
-                Members Tab Enabled
-              </Label>
-              <Switch
-                id="members-enabled"
-                checked={isEnabled}
-                onCheckedChange={setIsEnabled}
-              />
-            </div>
-
-            <Separator />
 
             <div className="space-y-3">
               <div className="flex items-center justify-between">

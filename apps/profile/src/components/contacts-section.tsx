@@ -367,7 +367,10 @@ export function ContactsSection({
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Отмена</AlertDialogCancel>
-                      <AlertDialogAction onClick={() => removeEntry(index)}>
+                      <AlertDialogAction
+                        onClick={() => removeEntry(index)}
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      >
                         Удалить
                       </AlertDialogAction>
                     </AlertDialogFooter>

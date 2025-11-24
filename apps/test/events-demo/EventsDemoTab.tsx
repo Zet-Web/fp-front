@@ -32,7 +32,7 @@ export function EventsDemoTab() {
     startTime: "",
     category: "conference",
   });
-
+  const [isFormValid, setIsFormValid] = useState(false);
   const [showForm, setShowForm] = useState(true);
 
   const handleSave = () => {
@@ -58,9 +58,12 @@ export function EventsDemoTab() {
               <EventFormCard
                 defaultEventFormValues={eventData}
                 onFormValuesChange={setEventData}
+                onFormValidChange={setIsFormValid}
               />
               <div className="flex gap-2">
-                <Button onClick={handleSave}>Save Event (Console Log)</Button>
+                <Button onClick={handleSave} disabled={!isFormValid}>
+                  Save Event (Console Log)
+                </Button>
                 <Button
                   variant="outline"
                   onClick={() => {
