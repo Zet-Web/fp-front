@@ -225,9 +225,9 @@ export function PublicProfileTestTab() {
       {/* Settings Page Simulation with Profiles Tab */}
       <Card className="shadow-sm">
         <CardHeader>
-          <CardTitle>Настройки - Вкладка "Профили"</CardTitle>
+          <CardTitle>Настройки (страница /settings)</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Управление всеми профилями пользователя
+            Пример доп таба для отображения списка профилей
           </p>
         </CardHeader>
         <CardContent>
