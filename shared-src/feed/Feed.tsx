@@ -77,7 +77,8 @@ export function Feed({
     setPage(1);
     setHasMore(true);
     setIsInitialLoading(true);
-  }, [filters]);
+  }, [filters, filterByUsername]);  // Added filterByUsername
+
 
   useEffect(() => {
     if (!hasMore) return;
