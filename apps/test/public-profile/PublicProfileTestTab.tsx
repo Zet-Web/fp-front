@@ -57,9 +57,9 @@ export function PublicProfileTestTab() {
       {/* Test Navigation Sidebar Preview */}
       <Card className="shadow-sm">
         <CardContent className="p-6">
-          <h3 className="text-lg font-semibold mb-4">Updated Sidebar Navigation (Preview)</h3>
+          <h3 className="text-lg font-semibold mb-4">Нижняя часть панели меню</h3>
           <div className="space-y-2 max-w-xs">
-            <div className="text-sm text-muted-foreground mb-2">Bottom items:</div>
+            <div className="text-sm text-muted-foreground mb-2">Кнопки:</div>
 
             {/* Create Button with Dropdown */}
             <DropdownMenu open={showCreateMenu} onOpenChange={setShowCreateMenu}>
