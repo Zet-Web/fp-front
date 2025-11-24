@@ -174,7 +174,7 @@ export function PublicProfileTestTab() {
         <CardContent className="p-6">
           <h3 className="text-lg font-semibold mb-4">Нижняя часть панели меню</h3>
           <div className="space-y-2 max-w-xs">
-            <div className="text-sm text-muted-foreground mb-2">Кнопки:</div>
+            <div className="text-sm text-muted-foreground mb-2">Кнопка для создания поста и профиля</div>
 
             {/* Create Button with Dropdown */}
             <DropdownMenu open={showCreateMenu} onOpenChange={setShowCreateMenu}>
