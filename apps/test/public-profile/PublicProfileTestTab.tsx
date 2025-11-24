@@ -154,17 +154,10 @@ export function PublicProfileTestTab() {
   const handleJoinRequest = () => {
     if (mockPublicProfile.privacy === 'public') {
       toast.success('Вы успешно присоединились к профилю!');
-      setShowJoinDialog(false);
-      setJoinMessage('');
     } else {
-      if (!joinMessage.trim()) {
-        toast.error('Пожалуйста, напишите сообщение для запроса');
-        return;
-      }
       toast.success('Запрос на присоединение отправлен. Ожидайте подтверждения от администратора.');
-      setShowJoinDialog(false);
-      setJoinMessage('');
     }
+    setJoinMessage('');
   };
 
   return (
@@ -566,44 +559,14 @@ export function PublicProfileTestTab() {
                   </p>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {mockPublicProfile.privacy === 'private' && (
-                    <div className="space-y-2">
-                      <Label htmlFor="join-message">Сообщение для администратора</Label>
-                      <Textarea
-                        id="join-message"
-                        placeholder="Расскажите, почему вы хотите присоединиться к этому профилю..."
-                        value={joinMessage}
-                        onChange={(e) => setJoinMessage(e.target.value)}
-                        rows={3}
-                        maxLength={500}
-                      />
-                      <p className="text-xs text-muted-foreground">
-                        {joinMessage.length}/500 символов
-                      </p>
-                    </div>
-                  )}
-
-                  <div className="flex gap-3">
-                    <Button
-                      onClick={handleJoinRequest}
-                      size="sm"
-                    >
-                      <Send className="w-4 h-4 mr-2" />
-                      {mockPublicProfile.privacy === 'private' ? 'Отправить запрос' : 'Присоединиться'}
-                    </Button>
-                    {mockPublicProfile.privacy === 'private' && joinMessage && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setJoinMessage('');
-                          toast.info('Форма очищена');
-                        }}
-                      >
-                        Очистить
-                      </Button>
-                    )}
-                  </div>
+                  <Button
+                    onClick={handleJoinRequest}
+                    size="sm"
+                    className="w-full md:w-auto"
+                  >
+                    <Send className="w-4 h-4 mr-2" />
+                    {mockPublicProfile.privacy === 'private' ? 'Отправить запрос' : 'Присоединиться'}
+                  </Button>
 
                   {mockPublicProfile.privacy === 'private' && (
                     <div className="p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-md">
