@@ -227,7 +227,7 @@ export function PublicProfileTestTab() {
         <CardHeader>
           <CardTitle>Настройки (страница /settings)</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Пример доп таба для отображения списка своих профилей
+            Пример доп таба для отображения списка своих профилей на странице настроек
           </p>
         </CardHeader>
         <CardContent>
