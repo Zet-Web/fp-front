@@ -280,13 +280,7 @@ export function PublicProfileTestTab() {
 
               {/* Public Profiles Section */}
               <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-base font-semibold">Публичные профили ({profiles.length})</h3>
-                  <Button size="sm" onClick={handleCreateProfile}>
-                    <Plus className="w-4 h-4 mr-2" />
-                    Создать профиль
-                  </Button>
-                </div>
+
 
                 {profiles.length === 0 ? (
                   <Card className="shadow-sm">
