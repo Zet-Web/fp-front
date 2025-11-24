@@ -260,9 +260,6 @@ export function PublicProfileTestTab() {
             <button className="py-3 px-1 border-b-2 border-transparent text-sm font-medium text-muted-foreground hover:text-foreground">
               Информация
             </button>
-            <button className="py-3 px-1 border-b-2 border-transparent text-sm font-medium text-muted-foreground hover:text-foreground">
-              Команда
-            </button>
           </div>
         </div>
 
