@@ -77,7 +77,8 @@ export function Feed({
     setPage(1);
     setHasMore(true);
     setIsInitialLoading(true);
-  }, [filters]);
+  }, [filters, filterByUsername]);  // Added filterByUsername
+
 
   useEffect(() => {
     if (!hasMore) return;
@@ -144,7 +145,7 @@ export function Feed({
       controller.abort();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, filters, itemsPerPage, hasMore, shouldShowAuthPrompt, filterByUsername]);
+  }, [page, filters, itemsPerPage, hasMore, shouldShowAuthPrompt]);
 
   const attachObserver = useCallback(
     (node: HTMLDivElement | null) => {

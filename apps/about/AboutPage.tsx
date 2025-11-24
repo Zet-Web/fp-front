@@ -297,19 +297,19 @@ export function AboutPage() {
         <div className="space-y-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <p className="text-xs text-muted-foreground">© 2025 Фонд Права</p>
+              <p className="text-sm text-muted-foreground">© 2025 Фонд Права</p>
             </div>
 
             <div className="flex flex-col md:flex-row md:items-center gap-4 text-sm">
               <a
-                href="mailto:info@fondprava.ru"
+                href="mailto:info@fondprava.com"
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
-                info@fondprava.ru
+                info@fondprava.com
               </a>
               <span className="hidden md:inline text-muted-foreground">•</span>
               <a
-                href="/terms"
+                href="/post/terms"
                 className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -319,7 +319,7 @@ export function AboutPage() {
               </a>
               <span className="hidden md:inline text-muted-foreground">•</span>
               <a
-                href="/privacy"
+                href="/post/privacy"
                 className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -327,7 +327,7 @@ export function AboutPage() {
                 Политика конфиденциальности
                 <ExternalLink className="h-3 w-3" />
               </a>
-              <span className="hidden md:inline text-muted-foreground">•</span>
+              {/*<span className="hidden md:inline text-muted-foreground">•</span>
               <a
                 href="/cookies"
                 className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
@@ -336,12 +336,12 @@ export function AboutPage() {
               >
                 Cookie
                 <ExternalLink className="h-3 w-3" />
-              </a>
+              </a> */}
             </div>
           </div>
 
           <div className="text-xs text-muted-foreground leading-relaxed">
-            Пользование сайтом означает согласие пользовательским соглашением и условиями обработки персональных данных.
+            Пользование сайтом означает согласие c пользовательским соглашением и условиями обработки персональных данных.
           </div>
         </div>
       </footer>
