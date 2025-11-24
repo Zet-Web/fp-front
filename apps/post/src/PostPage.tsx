@@ -139,6 +139,8 @@ export function PostPage() {
             website: data.website,
             category: data.category,
             memberLimit: data.memberLimit,
+            privacy: data.privacy,
+            membersVisibility: data.membersVisibility,
           };
 
           setEventData(mappedEventData);

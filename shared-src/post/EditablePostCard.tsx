@@ -87,7 +87,8 @@ export function EditablePostCard({
   const [editedType, setEditedType] = useState(type);
   const [editedStatus, setEditedStatus] = useState(status);
   const [editedIsPinned, setEditedIsPinned] = useState(isPinned);
-  const [editedMembersEnabled, setEditedMembersEnabled] = useState(membersEnabled);
+  const [editedMembersEnabled, setEditedMembersEnabled] =
+    useState(membersEnabled);
   const [editedSlug, setEditedSlug] = useState(slug);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isUploadingCover, setIsUploadingCover] = useState(false);
@@ -108,8 +109,6 @@ export function EditablePostCard({
   // Event
   const [isEventFormValid, setIsEventFormValid] = useState(true);
   const [eventData, setEventData] = useState<EventResponse | null>(null);
-
-  console.log("eventData", eventData);
 
   const handleUpdateEventData = useCallback((data: EventResponse) => {
     setEventData(data);
