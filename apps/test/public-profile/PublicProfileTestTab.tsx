@@ -69,7 +69,7 @@ export function PublicProfileTestTab() {
                   className="w-full justify-start h-12 px-4 hover:bg-accent/50"
                 >
                   <Plus className="h-5 w-5 mr-3" />
-                  <span className="text-base">+ Создать</span>
+                  <span className="text-base">Создать</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-56">
