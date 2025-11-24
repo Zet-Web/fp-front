@@ -1,8 +1,8 @@
-// Public profile test tab with mock data, settings profiles tab, and join request form
+// Public profile test tab with mock data, settings profiles tab, and join request form inside Members tab
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plus, FileText, UserPlus, Trash2, Users, Building2, FolderKanban, Shield, UserCircle, Lock, Globe, Send } from 'lucide-react';
+import { Plus, FileText, UserPlus, Trash2, Users, Lock, Globe, Send } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -133,7 +133,7 @@ export function PublicProfileTestTab() {
   const [creatingProfile, setCreatingProfile] = useState(false);
   const [profiles, setProfiles] = useState(mockUserProfiles);
   const [joinMessage, setJoinMessage] = useState('');
-  const [showJoinDialog, setShowJoinDialog] = useState(false);
+  const [activeProfileTab, setActiveProfileTab] = useState('posts');
 
   const handleCreatePost = () => {
     setShowCreateMenu(false);
@@ -232,11 +232,9 @@ export function PublicProfileTestTab() {
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="profiles" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 md:grid-cols-4">
+            <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="general">Основное</TabsTrigger>
               <TabsTrigger value="profiles">Профили</TabsTrigger>
-              <TabsTrigger value="privacy">Приватность</TabsTrigger>
-              <TabsTrigger value="notifications" className="hidden md:block">Уведомления</TabsTrigger>
             </TabsList>
 
             <TabsContent value="general" className="space-y-4">
@@ -306,7 +304,6 @@ export function PublicProfileTestTab() {
                 ) : (
                   <div className="space-y-3">
                     {profiles.map((profile) => {
-                      const ProfileIcon = getProfileTypeIcon(profile.profile_type);
                       const canDelete = profile.role === 'owner';
 
                       return (
@@ -321,31 +318,8 @@ export function PublicProfileTestTab() {
                               </Avatar>
 
                               <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-2 mb-1 flex-wrap">
-                                  <h4 className="font-semibold truncate">{profile.name}</h4>
-                                  <Badge variant="outline" className="text-xs flex items-center gap-1">
-                                    <ProfileIcon className="w-3 h-3" />
-                                    {getProfileTypeLabel(profile.profile_type)}
-                                  </Badge>
-                                  <Badge variant="secondary" className="text-xs">
-                                    {getRoleLabel(profile.role)}
-                                  </Badge>
-                                  {profile.privacy === 'private' ? (
-                                    <Badge variant="destructive" className="text-xs flex items-center gap-1">
-                                      <Lock className="w-3 h-3" />
-                                      Приватный
-                                    </Badge>
-                                  ) : (
-                                    <Badge variant="default" className="text-xs flex items-center gap-1 bg-green-500">
-                                      <Globe className="w-3 h-3" />
-                                      Открытый
-                                    </Badge>
-                                  )}
-                                </div>
-                                <p className="text-sm text-muted-foreground truncate mb-1">@{profile.username}</p>
-                                <p className="text-xs text-muted-foreground">
-                                  {profile.members_count} участников • Создан {new Date(profile.created_at).toLocaleDateString('ru-RU')}
-                                </p>
+                                <h4 className="font-semibold truncate mb-1">{profile.name}</h4>
+                                <p className="text-sm text-muted-foreground truncate">@{profile.username}</p>
                               </div>
 
                               <div className="flex gap-2">
@@ -389,110 +363,7 @@ export function PublicProfileTestTab() {
                 )}
               </div>
             </TabsContent>
-
-            <TabsContent value="privacy" className="space-y-4">
-              <p className="text-sm text-muted-foreground">Настройки приватности...</p>
-            </TabsContent>
-
-            <TabsContent value="notifications" className="space-y-4">
-              <p className="text-sm text-muted-foreground">Настройки уведомлений...</p>
-            </TabsContent>
           </Tabs>
-        </CardContent>
-      </Card>
-
-      {/* Join Request Form */}
-      <Card className="shadow-sm">
-        <CardHeader>
-          <CardTitle>Форма запроса на присоединение</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Пользователи могут запрашивать вступление в приватные профили или сразу присоединяться к открытым
-          </p>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Profile Info */}
-          <div className="flex items-center gap-4 p-4 bg-muted/50 rounded-lg">
-            <Avatar className="w-16 h-16">
-              <AvatarImage src={undefined} alt={mockPublicProfile.name} />
-              <AvatarFallback className="text-lg text-gray-700">
-                TC
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                <h4 className="font-semibold">{mockPublicProfile.name}</h4>
-                {mockPublicProfile.privacy === 'private' ? (
-                  <Badge variant="destructive" className="text-xs flex items-center gap-1">
-                    <Lock className="w-3 h-3" />
-                    Приватный
-                  </Badge>
-                ) : (
-                  <Badge variant="default" className="text-xs flex items-center gap-1 bg-green-500">
-                    <Globe className="w-3 h-3" />
-                    Открытый
-                  </Badge>
-                )}
-              </div>
-              <p className="text-sm text-muted-foreground">@{mockPublicProfile.username}</p>
-            </div>
-          </div>
-
-          {/* Join Form */}
-          <div className="space-y-4">
-            {mockPublicProfile.privacy === 'private' && (
-              <div className="space-y-2">
-                <Label htmlFor="join-message">Сообщение для администратора</Label>
-                <Textarea
-                  id="join-message"
-                  placeholder="Расскажите, почему вы хотите присоединиться к этому профилю..."
-                  value={joinMessage}
-                  onChange={(e) => setJoinMessage(e.target.value)}
-                  rows={4}
-                  maxLength={500}
-                />
-                <p className="text-xs text-muted-foreground">
-                  {joinMessage.length}/500 символов
-                </p>
-              </div>
-            )}
-
-            <div className="flex gap-3">
-              <Button
-                onClick={handleJoinRequest}
-                className="flex-1"
-              >
-                <Send className="w-4 h-4 mr-2" />
-                {mockPublicProfile.privacy === 'private' ? 'Отправить запрос' : 'Присоединиться'}
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setJoinMessage('');
-                  toast.info('Форма очищена');
-                }}
-              >
-                Отмена
-              </Button>
-            </div>
-
-            {mockPublicProfile.privacy === 'private' && (
-              <div className="p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-md">
-                <p className="text-xs text-amber-800 dark:text-amber-200">
-                  <Shield className="w-4 h-4 inline mr-1" />
-                  Это приватный профиль. Ваш запрос будет рассмотрен администратором.
-                </p>
-              </div>
-            )}
-
-            {mockPublicProfile.privacy === 'public' && (
-              <div className="p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md">
-                <p className="text-xs text-green-800 dark:text-green-200">
-                  <Globe className="w-4 h-4 inline mr-1" />
-                  Это открытый профиль. Вы можете присоединиться сразу без подтверждения.
-                </p>
-              </div>
-            )}
-          </div>
         </CardContent>
       </Card>
 
@@ -601,17 +472,6 @@ export function PublicProfileTestTab() {
                   <span className="text-xs px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full">
                     3 участника
                   </span>
-                  {mockPublicProfile.privacy === 'private' ? (
-                    <span className="text-xs px-2 py-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-full flex items-center gap-1">
-                      <Lock className="w-3 h-3" />
-                      Приватный
-                    </span>
-                  ) : (
-                    <span className="text-xs px-2 py-1 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded-full flex items-center gap-1">
-                      <Globe className="w-3 h-3" />
-                      Открытый
-                    </span>
-                  )}
                 </div>
               </div>
 
@@ -642,9 +502,8 @@ export function PublicProfileTestTab() {
                     variant="outline"
                     size="sm"
                     className="px-4 md:px-6 py-2 rounded-full font-medium transition-colors text-sm"
-                    onClick={() => setShowJoinDialog(true)}
                   >
-                    {mockPublicProfile.privacy === 'private' ? 'Запросить доступ' : 'Присоединиться'}
+                    Подписаться
                   </Button>
                 )}
               </div>
@@ -653,30 +512,140 @@ export function PublicProfileTestTab() {
         </div>
 
         {/* Mock tabs */}
-        <div className="border-b border-border">
-          <div className="flex gap-8 px-6">
-            <button className="py-3 px-1 border-b-2 border-blue-500 text-sm font-medium text-blue-500">
-              Публикации
-            </button>
-            <button className="py-3 px-1 border-b-2 border-transparent text-sm font-medium text-muted-foreground hover:text-foreground">
-              Информация
-            </button>
-            <button className="py-3 px-1 border-b-2 border-transparent text-sm font-medium text-muted-foreground hover:text-foreground">
-              Участники
-            </button>
+        <Tabs value={activeProfileTab} onValueChange={setActiveProfileTab} className="w-full">
+          <div className="border-b border-border">
+            <TabsList className="bg-transparent h-auto p-0 space-x-8 px-6">
+              <TabsTrigger
+                value="posts"
+                className="py-3 px-1 border-b-2 border-transparent data-[state=active]:border-blue-500 data-[state=active]:text-blue-500 rounded-none bg-transparent"
+              >
+                Публикации
+              </TabsTrigger>
+              <TabsTrigger
+                value="info"
+                className="py-3 px-1 border-b-2 border-transparent data-[state=active]:border-blue-500 data-[state=active]:text-blue-500 rounded-none bg-transparent"
+              >
+                Информация
+              </TabsTrigger>
+              <TabsTrigger
+                value="members"
+                className="py-3 px-1 border-b-2 border-transparent data-[state=active]:border-blue-500 data-[state=active]:text-blue-500 rounded-none bg-transparent"
+              >
+                Участники
+              </TabsTrigger>
+            </TabsList>
           </div>
-        </div>
 
-        {/* Mock content area */}
-        <div className="mt-6 px-6">
-          <Card className="shadow-sm">
-            <CardContent className="p-6">
-              <p className="text-center text-muted-foreground">
-                Здесь будет содержимое профиля (публикации, информационные разделы, участники, и т.д.)
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+          {/* Posts Tab */}
+          <TabsContent value="posts" className="mt-6 px-6">
+            <Card className="shadow-sm">
+              <CardContent className="p-6">
+                <p className="text-center text-muted-foreground">
+                  Здесь будут публикации профиля
+                </p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Info Tab */}
+          <TabsContent value="info" className="mt-6 px-6">
+            <Card className="shadow-sm">
+              <CardContent className="p-6">
+                <p className="text-center text-muted-foreground">
+                  Здесь будет информация о профиле
+                </p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Members Tab with Join Request Form */}
+          <TabsContent value="members" className="mt-6 px-6 space-y-4">
+            {/* Join Request Form */}
+            {!creatingProfile && (
+              <Card className="shadow-sm border-blue-200 dark:border-blue-800">
+                <CardHeader>
+                  <CardTitle className="text-base">Запрос на присоединение</CardTitle>
+                  <p className="text-sm text-muted-foreground">
+                    {mockPublicProfile.privacy === 'private'
+                      ? 'Отправьте запрос для присоединения к этому приватному профилю'
+                      : 'Присоединитесь к этому открытому профилю'}
+                  </p>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {mockPublicProfile.privacy === 'private' && (
+                    <div className="space-y-2">
+                      <Label htmlFor="join-message">Сообщение для администратора</Label>
+                      <Textarea
+                        id="join-message"
+                        placeholder="Расскажите, почему вы хотите присоединиться к этому профилю..."
+                        value={joinMessage}
+                        onChange={(e) => setJoinMessage(e.target.value)}
+                        rows={3}
+                        maxLength={500}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        {joinMessage.length}/500 символов
+                      </p>
+                    </div>
+                  )}
+
+                  <div className="flex gap-3">
+                    <Button
+                      onClick={handleJoinRequest}
+                      size="sm"
+                    >
+                      <Send className="w-4 h-4 mr-2" />
+                      {mockPublicProfile.privacy === 'private' ? 'Отправить запрос' : 'Присоединиться'}
+                    </Button>
+                    {mockPublicProfile.privacy === 'private' && joinMessage && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setJoinMessage('');
+                          toast.info('Форма очищена');
+                        }}
+                      >
+                        Очистить
+                      </Button>
+                    )}
+                  </div>
+
+                  {mockPublicProfile.privacy === 'private' && (
+                    <div className="p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-md">
+                      <p className="text-xs text-amber-800 dark:text-amber-200">
+                        <Lock className="w-3 h-3 inline mr-1" />
+                        Это приватный профиль. Ваш запрос будет рассмотрен администратором.
+                      </p>
+                    </div>
+                  )}
+
+                  {mockPublicProfile.privacy === 'public' && (
+                    <div className="p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md">
+                      <p className="text-xs text-green-800 dark:text-green-200">
+                        <Globe className="w-3 h-3 inline mr-1" />
+                        Это открытый профиль. Вы можете присоединиться сразу без подтверждения.
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Members List */}
+            <Card className="shadow-sm">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <Users className="w-5 h-5 text-muted-foreground" />
+                  <h3 className="font-semibold">Участники (3)</h3>
+                </div>
+                <p className="text-sm text-muted-foreground text-center py-4">
+                  Список участников профиля появится здесь
+                </p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
