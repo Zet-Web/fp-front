@@ -261,9 +261,6 @@ export function PublicProfileTestTab() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
                           <h4 className="font-semibold truncate">John Doe</h4>
-                          <Badge variant="secondary" className="text-xs">
-                            Личный
-                          </Badge>
                         </div>
                         <p className="text-sm text-muted-foreground truncate">@john</p>
                       </div>
