@@ -42,9 +42,10 @@ export interface EventResponse {
   website?: string;
   category: EventCategory;
   memberLimit?: number;
-  author_id?: string;
+  authorId?: string;
   privacy: EventPrivacy;
   membersVisibility: EventMembersVisibility;
+  membersEnabled?: boolean;
 }
 
 export interface EventFormErrors {
@@ -142,6 +143,7 @@ export const eventSchema = z
       }
     ),
     memberLimit: z.number().min(1).optional(),
+    membersEnabled: z.boolean().optional(),
   })
   .superRefine((data, ctx) => {
     if (data.eventTypes.includes("offline")) {

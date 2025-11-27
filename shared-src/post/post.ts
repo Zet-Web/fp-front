@@ -30,7 +30,6 @@ export interface Post {
   type: PostType
   status: PostStatus
   is_pinned: boolean
-  is_featured: boolean
   is_saved?: boolean
   members_enabled?: boolean
   event?: EventResponse | null
@@ -42,9 +41,6 @@ export interface PostAuthor {
   username: string | null
   avatar_url: string | null
   badge: string[] | null
-  telegram_username: string | null
-  city: string | null
-  country: string | null
 }
 
 export interface PostWithAuthor extends Post {

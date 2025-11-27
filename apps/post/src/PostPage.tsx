@@ -13,12 +13,15 @@ import { QuizFormData, QuizResponse } from "@/apps/quiz/types/quiz";
 import { FullPostCard } from "../../../shared-src/feed/FullPostCard";
 import { useToast } from "@/hooks/use-toast";
 import { EventFormData, EventResponse } from "@/shared-src/event/event-types";
+import { useActiveProfile } from "../../../shared-src/profile/ActiveProfileContext";
 
 export function PostPage() {
   const { urlCode } = useParams<{ urlCode: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
+
+  const { activeProfile } = useActiveProfile();
 
   const switchToEditMode = searchParams.get("editMode");
 
@@ -51,6 +54,7 @@ export function PostPage() {
 
         setIsCreateMode(true);
         setIsEditing(true);
+
         setPost({
           id: 0,
           title: "",
@@ -64,12 +68,12 @@ export function PostPage() {
           members_enabled: false,
           url: "",
           slug: undefined,
+          author_id: activeProfile?.id || "",
           author: {
-            id: profile?.id || "",
-            name: profile?.name || "",
-            username: profile?.username || "",
-            telegram_username: profile?.telegram_username || null,
-            avatar_url: profile?.avatar_url || null,
+            id: activeProfile?.id || "",
+            name: activeProfile?.name || "",
+            username: activeProfile?.username || "",
+            avatar_url: activeProfile?.avatar_url || null,
             badge: null,
           },
           created_at: new Date().toISOString(),
@@ -141,11 +145,10 @@ export function PostPage() {
             memberLimit: data.memberLimit,
             privacy: data.privacy,
             membersVisibility: data.membersVisibility,
+            membersEnabled: data.membersEnabled,
           };
 
           setEventData(mappedEventData);
-
-          console.log("EVENT DATA LOADED", mappedEventData);
         }
       }
 
@@ -170,6 +173,24 @@ export function PostPage() {
   };
 
   useEffect(() => {
+    if (activeProfile) {
+      setPost((prev) => {
+        if (!prev) return null;
+        return {
+          ...prev,
+          author: {
+            id: activeProfile.id || "",
+            name: activeProfile.name || "",
+            username: activeProfile.username || "",
+            avatar_url: activeProfile.avatar_url || null,
+            badge: null,
+          },
+        };
+      });
+    }
+  }, [activeProfile]);
+
+  useEffect(() => {
     if (authLoading) return;
     loadPost(urlCode);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -185,11 +206,15 @@ export function PostPage() {
     try {
       setIsSaving(true);
 
-      const updatedPost = {
+      const updatedPost: PostWithAuthor & { public_profile_id?: string } = {
         ...post,
         ...updates,
         updated_at: new Date().toISOString(),
       };
+
+      if (activeProfile?.isPublicProfile) {
+        updatedPost["public_profile_id"] = activeProfile.id;
+      }
 
       let postId: number | null = null;
       let postUrl: string | null = null;
@@ -326,7 +351,9 @@ export function PostPage() {
     }
   };
 
-  const isOwner = post?.author?.id === currentUserId;
+  const isOwner =
+    post?.author?.id === currentUserId ||
+    post?.author?.id === activeProfile?.id;
 
   if (isLoading) {
     return (
@@ -367,7 +394,6 @@ export function PostPage() {
             type={post.type}
             status={post.status}
             isPinned={post.is_pinned}
-            membersEnabled={post.members_enabled}
             slug={post.slug}
             author={post.author}
             onSave={handleSave}

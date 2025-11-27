@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
 import { Session } from '@supabase/supabase-js'
+import { FPApi } from '@/lib/api'
 
 interface UserSettings {
   timezone: string
   theme_mode: 'light' | 'dark' | 'system'
+  members_enabled: boolean
 }
 
 interface SettingsState {
@@ -20,6 +21,18 @@ interface TimezoneOption {
   region: string
   city: string
   offset: string
+}
+
+interface GetUserSettingsResponse {
+  timezone: string
+  theme_mode: string
+  members_enabled: boolean
+}
+
+interface UpdateUserSettingsRequest {
+  timezone?: string
+  theme_mode?: string
+  members_enabled?: boolean
 }
 
 // Filter out confusing or administrative timezone identifiers
@@ -131,7 +144,7 @@ export function useSettingsData(session: Session | null) {
         }
 
         console.log('📡 [Settings] About to fetch user settings...')
-        // Fetch real user settings from Supabase
+        // Fetch real user settings from backend API
         await fetchUserSettings(session)
 
       } catch (error) {
@@ -161,35 +174,19 @@ export function useSettingsData(session: Session | null) {
         return
       }
 
-      console.log('🔍 [Settings] User authenticated, calling SQL function...')
+      console.log('🔍 [Settings] User authenticated, calling backend API...')
 
-      // Call SQL function to fetch settings
-      const { data, error } = await supabase
-        .rpc('settings_get_data')
+      // Call backend API to fetch settings
+      const response = await FPApi.axios.get<GetUserSettingsResponse>('/profile/settings')
+      const data = response.data
 
-      console.log('🔍 [Settings] RPC response:', { data, error })
-
-      if (error) {
-        console.error('❌ [Settings] RPC returned error:', error)
-        throw new Error(error.message || 'Failed to fetch settings')
-      }
-
-      if (!data || data.length === 0) {
-        console.error('❌ [Settings] No settings data received')
-        setSettingsState(prev => ({
-          ...prev,
-          isLoading: false,
-          error: 'No settings data received'
-        }))
-        return
-      }
-
-      console.log('✅ [Settings] Successfully fetched settings:', data[0])
+      console.log('✅ [Settings] Successfully fetched settings:', data)
 
       // Update settings state with fetched data
       const userSettings: UserSettings = {
-        timezone: data[0].timezone || 'UTC',
-        theme_mode: (data[0].theme_mode as 'light' | 'dark' | 'system') || 'system'
+        timezone: data.timezone || 'UTC',
+        theme_mode: (data.theme_mode as 'light' | 'dark' | 'system') || 'system',
+        members_enabled: data.members_enabled ?? false
       }
 
       console.log('✅ [Settings] Processed user settings:', userSettings)
@@ -213,22 +210,35 @@ export function useSettingsData(session: Session | null) {
 
   const updateSettings = async (updatedData: Partial<UserSettings>) => {
     if (settingsState.settings && session?.user) {
-      const newSettings = { ...settingsState.settings, ...updatedData }
-
       try {
-        const { error } = await supabase
-          .rpc('settings_update_data', {
-            p_timezone: newSettings.timezone,
-            p_theme_mode: newSettings.theme_mode
-          })
-
-        if (error) {
-          throw new Error(error.message || 'Failed to save settings')
+        // Prepare request body with only the fields being updated
+        const requestBody: UpdateUserSettingsRequest = {}
+        if (updatedData.timezone !== undefined) {
+          requestBody.timezone = updatedData.timezone
+        }
+        if (updatedData.theme_mode !== undefined) {
+          requestBody.theme_mode = updatedData.theme_mode
+        }
+        if (updatedData.members_enabled !== undefined) {
+          requestBody.members_enabled = updatedData.members_enabled
         }
 
+        // Call backend API to update settings
+        const response = await FPApi.axios.patch<GetUserSettingsResponse>(
+          '/profile/settings',
+          requestBody
+        )
+
+        console.log('✅ [Settings] Settings updated successfully:', response.data)
+
+        // Update local state with response from server
         setSettingsState(prev => ({
           ...prev,
-          settings: newSettings,
+          settings: {
+            timezone: response.data.timezone,
+            theme_mode: response.data.theme_mode as 'light' | 'dark' | 'system',
+            members_enabled: response.data.members_enabled
+          },
           hasUnsavedChanges: false
         }))
 
@@ -251,18 +261,17 @@ export function useSettingsData(session: Session | null) {
         throw new Error('Authentication required to save settings')
       }
 
-      // Call SQL function to update settings
-      const { data, error } = await supabase
-        .rpc('settings_update_data', {
-          p_timezone: settingsState.settings.timezone,
-          p_theme_mode: settingsState.settings.theme_mode
-        })
+      // Call backend API to update settings
+      const response = await FPApi.axios.patch<GetUserSettingsResponse>(
+        '/profile/settings',
+        {
+          timezone: settingsState.settings.timezone,
+          theme_mode: settingsState.settings.theme_mode,
+          members_enabled: settingsState.settings.members_enabled
+        }
+      )
 
-      if (error) {
-        throw new Error(error.message || 'Failed to save settings')
-      }
-
-      console.log('Settings saved successfully:', data)
+      console.log('Settings saved successfully:', response.data)
     } catch (error) {
       console.error('Failed to save settings:', error)
       throw error

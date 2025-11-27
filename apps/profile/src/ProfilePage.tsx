@@ -13,16 +13,21 @@ import { UserAdditionalInfo, UserProfile } from "./types/profile";
 import { getObjectDifferences } from "@/utils/getObjectDifferences";
 import { FPApi } from "@/lib/api";
 import { useAuthContext } from "@/components/auth-provider";
+import { Members } from "../../../shared-src/members/Members";
+import { getMyProfileMembershipStatus } from "../../../shared-src/profile/api";
+import type { MembershipStatusResponse } from "../../../shared-src/profile/types";
 
 enum ProfileTabs {
   information = "information",
   posts = "posts",
+  members = "members",
+  public_profiles = "public_profiles",
 }
 
 export function ProfilePage() {
   const { updateProfilePartial } = useAuthContext();
   const {
-    user,
+    user: profile,
     isLoading,
     error,
     isOwnProfile,
@@ -40,12 +45,19 @@ export function ProfilePage() {
   const [currentTab, setCurrentTab] = useState<ProfileTabs>(ProfileTabs.posts);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [profileData, setProfileData] = useState(user);
+  const [profileData, setProfileData] = useState(profile);
   const [currentAdditionalInfo, setCurrentAdditionalInfo] =
     useState(addititonalInfo);
 
+  const [membershipStatus, setMembershipStatus] =
+    useState<MembershipStatusResponse | null>(null);
+  const [membersUpdateKey, setMembersUpdateKey] = useState(0);
+
   const [cities, setCities] = useState<LocationItem[]>([]);
   const [countries, setCountries] = useState<LocationItem[]>([]);
+
+  const showProfileMembers = profileData?.members_enabled;
+  const isPublicProfile = profileData?.profile_type === "public";
 
   const {
     addLocation,
@@ -54,7 +66,7 @@ export function ProfilePage() {
     getFormattedLocationString,
     handleSaveLocation,
   } = useLocationData({
-    user,
+    user: profile,
     cities,
     setCities,
     countries,
@@ -62,12 +74,12 @@ export function ProfilePage() {
   });
 
   useEffect(() => {
-    if (user) {
-      setProfileData(user);
-      setCities(user.cities);
-      setCountries(user.countries);
+    if (profile) {
+      setProfileData(profile);
+      setCities(profile.cities);
+      setCountries(profile.countries);
     }
-  }, [user]);
+  }, [profile]);
 
   useEffect(() => {
     if (addititonalInfo) {
@@ -75,30 +87,45 @@ export function ProfilePage() {
     }
   }, [addititonalInfo]);
 
-  // Handle redirection when user visits /profile
+  useEffect(() => {
+    if (profile && !isOwnProfile) {
+      getMyProfileMembershipStatus(profile.id)
+        .then(setMembershipStatus)
+        .catch(() => setMembershipStatus(null));
+    }
+  }, [profile, isOwnProfile]);
+
   useEffect(() => {
     if (redirectPath) {
-      navigate(redirectPath, { replace: true });
+      navigate(redirectPath);
     }
   }, [redirectPath, navigate]);
+
+  useEffect(() => {
+    setCurrentTab(ProfileTabs.posts);
+  }, [profile]);
 
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
     if (isEditing) {
-      setProfileData(user);
-      setCities(user?.cities || []);
-      setCountries(user?.countries || []);
+      setProfileData(profile);
+      setCities(profile?.cities || []);
+      setCountries(profile?.countries || []);
       setCurrentAdditionalInfo(addititonalInfo);
     }
   };
 
   const updateProfileData = async () => {
-    if (!user || !profileData) return;
+    if (!profile || !profileData) return;
 
-    const dataToUpdate: Partial<UserProfile> = getObjectDifferences(
-      user,
-      profileData
-    );
+    const dataToUpdate: Partial<
+      UserProfile & { public_profile_id?: string | null }
+    > = getObjectDifferences(profile, profileData);
+
+    // For public profile
+    if (isPublicProfile) {
+      dataToUpdate["public_profile_id"] = profile.id;
+    }
 
     await FPApi.axios.patch("/profile/update", dataToUpdate);
     updateProfilePartial(dataToUpdate);
@@ -106,7 +133,14 @@ export function ProfilePage() {
 
   const updateAdditionalInfo = async () => {
     if (!addititonalInfo || !currentAdditionalInfo) return;
-    const dataToUpdate: Partial<UserAdditionalInfo> = currentAdditionalInfo;
+    const dataToUpdate: Partial<
+      UserAdditionalInfo & { public_profile_id?: string | null }
+    > = currentAdditionalInfo;
+
+    // For public profile
+    if (isPublicProfile && profile) {
+      dataToUpdate["public_profile_id"] = profile.id;
+    }
 
     await FPApi.axios.patch("/profile/update-additional-info", dataToUpdate);
   };
@@ -138,7 +172,10 @@ export function ProfilePage() {
     setIsSaving(true);
 
     try {
-      await handleSaveLocation();
+      if (!isPublicProfile) {
+        await handleSaveLocation();
+      }
+
       await updateProfileData();
       await updateAdditionalInfo();
       await refetchProfile(true);
@@ -162,6 +199,15 @@ export function ProfilePage() {
     if (currentTab === ProfileTabs.information) setNeedLoadAdditionalInfo(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTab]);
+
+  const handleMembershipUpdate = () => {
+    if (profile && !isOwnProfile) {
+      getMyProfileMembershipStatus(profile.id)
+        .then(setMembershipStatus)
+        .catch(() => setMembershipStatus(null));
+    }
+    setMembersUpdateKey((prev) => prev + 1);
+  };
 
   // Show loading state
   if (isLoading) {
@@ -229,6 +275,9 @@ export function ProfilePage() {
           onAddLocation={addLocation}
           onRemoveLocation={removeLocation}
           onClearAllLocations={clearAllLocations}
+          isPublicProfile={isPublicProfile}
+          membershipStatus={membershipStatus}
+          onMembershipUpdate={handleMembershipUpdate}
         />
 
         <Tabs
@@ -237,17 +286,29 @@ export function ProfilePage() {
           defaultValue="posts"
           className="w-full"
         >
-          <TabsList className="grid w-full grid-cols-2 mb-6">
+          <TabsList
+            className={`grid w-full ${
+              showProfileMembers ? "grid-cols-3" : "grid-cols-2"
+            } mb-6`}
+          >
             <TabsTrigger value="posts" className="text-sm font-medium">
               Публикации
             </TabsTrigger>
             <TabsTrigger value="information" className="text-sm font-medium">
               Информация
             </TabsTrigger>
+            {showProfileMembers && (
+              <TabsTrigger value="members" className="text-sm font-medium">
+                Участники
+              </TabsTrigger>
+            )}
           </TabsList>
 
           <TabsContent value="posts" className="mt-0">
-            <PostsSection user={profileData} isOwnProfile={isOwnProfile} />
+            <PostsSection
+              usernameFilter={profile?.username || ""}
+              isOwnProfile={isOwnProfile}
+            />
           </TabsContent>
 
           <TabsContent value="information" className="mt-0">
@@ -259,8 +320,24 @@ export function ProfilePage() {
               onUpdateAdditionalInfo={handleUpdateAdditionalInfo}
               isAdditionalInfoLoading={isAdditionalInfoLoading}
               onValidationChange={handleValidationChange}
+              isPublicProfile={isPublicProfile}
             />
           </TabsContent>
+
+          {showProfileMembers && (
+            <TabsContent value="members" className="mt-0">
+              <Members
+                profileId={profileData.id}
+                authorId={profileData.owner_id || profileData.id}
+                currentUserId={profile?.id}
+                defaultMembersVisibility={
+                  profileData.members_visibility || "all"
+                }
+                defaultPrivacy={profileData.membership_privacy || "public"}
+                updateKey={membersUpdateKey}
+              />
+            </TabsContent>
+          )}
         </Tabs>
       </div>
     </div>

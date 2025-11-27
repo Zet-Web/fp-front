@@ -12,6 +12,7 @@ import { FeedFilters } from "./feed-filters";
 import { FPApi } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { LogIn } from "lucide-react";
+import { useActiveProfile } from "../profile/ActiveProfileContext";
 
 interface FeedProps {
   filters: FeedFilters | null;
@@ -56,6 +57,7 @@ export function Feed({
   const navigate = useNavigate();
   const { toast } = useToast();
   const { profile, isAuthenticated } = useAuthContext();
+  const { activeProfile } = useActiveProfile();
 
   const [posts, setPosts] = useState<PostWithAuthor[]>([]);
   const [page, setPage] = useState(1);
@@ -77,8 +79,7 @@ export function Feed({
     setPage(1);
     setHasMore(true);
     setIsInitialLoading(true);
-  }, [filters, filterByUsername]);  // Added filterByUsername
-
+  }, [filters, filterByUsername]);
 
   useEffect(() => {
     if (!hasMore) return;
@@ -145,7 +146,7 @@ export function Feed({
       controller.abort();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, filters, itemsPerPage, hasMore, shouldShowAuthPrompt]);
+  }, [page, filters, hasMore, shouldShowAuthPrompt, filterByUsername]);
 
   const attachObserver = useCallback(
     (node: HTMLDivElement | null) => {
@@ -272,7 +273,8 @@ export function Feed({
     <div className="space-y-6">
       {posts.map((post) => {
         const isOwner = currentUserId
-          ? post.author_id === currentUserId
+          ? post.author_id === currentUserId ||
+            post.author_id === activeProfile?.id
           : false;
 
         return (

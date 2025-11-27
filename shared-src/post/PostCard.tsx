@@ -92,8 +92,7 @@ export function PostCard({
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const displayName = author?.name || author?.username || "User";
-  const displayUsername =
-    author?.username || author?.telegram_username || "user";
+  const displayUsername = author?.username || "user";
   const avatarFallback = displayName
     .split(" ")
     .map((n) => n[0])
