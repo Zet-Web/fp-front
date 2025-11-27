@@ -18,9 +18,10 @@ import { useNavigate } from "react-router-dom";
 type Props = {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
+  large?: boolean;
 };
 
-export function ProfileSwitcher({ isOpen, setIsOpen }: Props) {
+export function ProfileSwitcher({ isOpen, setIsOpen, large }: Props) {
   const navigate = useNavigate();
   const { profile } = useAuthContext();
   const {
@@ -93,8 +94,14 @@ export function ProfileSwitcher({ isOpen, setIsOpen }: Props) {
                   .slice(0, 2)}
               </AvatarFallback>
             </Avatar>
-            <div className="hidden md:flex flex-col items-start min-w-0">
-              <p className="text-sm font-medium truncate max-w-[120px]">
+            <div className="flex flex-col items-start min-w-0">
+              <p
+                className={
+                  large
+                    ? "text-sm font-medium truncate "
+                    : "text-xs font-medium truncate max-w-[120px]"
+                }
+              >
                 {activeProfile.name}
               </p>
               <p className="text-xs text-muted-foreground truncate max-w-[120px]">
@@ -198,14 +205,19 @@ export function ProfileSwitcher({ isOpen, setIsOpen }: Props) {
           </>
         )}
 
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={handleManageProfiles}
-          className="cursor-pointer text-primary"
-        >
-          <Users className="w-4 h-4 mr-2" />
-          Управление профилями
-        </DropdownMenuItem>
+        {!large && (
+          <>
+            <DropdownMenuSeparator />
+
+            <DropdownMenuItem
+              onClick={handleManageProfiles}
+              className="cursor-pointer text-primary"
+            >
+              <Users className="w-4 h-4 mr-2" />
+              Управление профилями
+            </DropdownMenuItem>
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

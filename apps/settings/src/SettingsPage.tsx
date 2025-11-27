@@ -57,6 +57,7 @@ import {
   getMyPublicProfiles,
   deletePublicProfile,
 } from "../../../shared-src/profile/api";
+import { ProfileSwitcher } from "../../../shared-src/profile/ProfileSwitcher";
 
 interface UserSettings {
   timezone: string;
@@ -167,10 +168,11 @@ export function MainSettings({
   const { setTheme } = useTheme();
   const navigate = useNavigate();
   const { signOut } = useAuthContext();
+
+  const [isProfileSwitcherOpen, setIsProfileSwitcherOpen] = useState(false);
   const [timezoneOpen, setTimezoneOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Filter timezones based on search term
   const filteredTimezones = useMemo(() => {
     if (!searchTerm.trim()) return allTimezones || [];
 
@@ -230,6 +232,13 @@ export function MainSettings({
   return (
     <div className="space-y-6">
       {/* Members Tab Settings */}
+
+      <ProfileSwitcher
+        isOpen={isProfileSwitcherOpen}
+        setIsOpen={setIsProfileSwitcherOpen}
+        large
+      />
+
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -409,7 +418,7 @@ function ProfilesTab() {
     try {
       setLoadingProfiles(true);
       const data = await getMyPublicProfiles();
-      setPublicProfiles(data);
+      setPublicProfiles(data as unknown as PublicProfile[]);
     } catch (error) {
       console.error("Failed to load public profiles", error);
       toast.error("Не удалось загрузить публичные профили");

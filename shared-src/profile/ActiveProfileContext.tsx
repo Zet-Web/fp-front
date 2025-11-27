@@ -53,9 +53,9 @@ export function ActiveProfileProvider({ children }: { children: ReactNode }) {
       setPublicProfiles(
         profiles.map((p) => ({
           id: p.id,
-          name: p.name,
-          username: p.username,
-          avatar_url: p.avatar_url,
+          name: p.name || "",
+          username: p.username || "",
+          avatar_url: p.avatar_url || undefined,
           isPublicProfile: true,
         }))
       );

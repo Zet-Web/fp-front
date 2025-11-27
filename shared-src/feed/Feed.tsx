@@ -56,7 +56,7 @@ export function Feed({
 }: FeedProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { profile, isAuthenticated } = useAuthContext();
+  const { isAuthenticated } = useAuthContext();
   const { activeProfile } = useActiveProfile();
 
   const [posts, setPosts] = useState<PostWithAuthor[]>([]);
@@ -68,7 +68,7 @@ export function Feed({
   const observerRef = useRef<HTMLDivElement | null>(null);
   const observerInstance = useRef<IntersectionObserver | null>(null);
 
-  const currentUserId = profile?.id || "";
+  const currentUserId = activeProfile?.id || "";
 
   const requiresAuth =
     filters?.view === "following" || filters?.view === "saved";
@@ -273,8 +273,7 @@ export function Feed({
     <div className="space-y-6">
       {posts.map((post) => {
         const isOwner = currentUserId
-          ? post.author_id === currentUserId ||
-            post.author_id === activeProfile?.id
+          ? post.author_id === currentUserId
           : false;
 
         return (

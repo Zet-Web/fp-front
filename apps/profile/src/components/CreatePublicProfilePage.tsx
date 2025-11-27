@@ -17,12 +17,15 @@ import { CreatePublicProfileDto } from "../../../../shared-src/profile/types";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { CharacterCounter } from "@/components/shared/CharacterCounter";
+import { useActiveProfile } from "../../../../shared-src/profile/ActiveProfileContext";
 
 const NAME_MAX_LENGTH = 50;
 const ABOUT_MAX_LENGTH = 400;
 
 export function CreatePublicProfilePage() {
   const navigate = useNavigate();
+  const { loadPublicProfiles } = useActiveProfile();
+
   const [isCreating, setIsCreating] = useState(false);
   const [formData, setFormData] = useState<CreatePublicProfileDto>({
     name: "",
@@ -50,6 +53,7 @@ export function CreatePublicProfilePage() {
       const result = await createPublicProfile(formData);
       toast.success("Публичный профиль создан");
       if (result.username) {
+        await loadPublicProfiles();
         navigate(`/${result.username}`);
       }
 

@@ -24,6 +24,7 @@ import {
   MemberStatus,
 } from "../members/api";
 import { toast } from "sonner";
+import { useActiveProfile } from "../profile/ActiveProfileContext";
 
 interface EventDisplayCardProps {
   eventData: EventResponse;
@@ -34,13 +35,14 @@ export function EventDisplayCard({
   eventData,
   compact = false,
 }: EventDisplayCardProps) {
-  const { profile, isAuthenticated } = useAuthContext();
+  const { activeProfile } = useActiveProfile();
+  const { isAuthenticated } = useAuthContext();
   const [joinStatus, setJoinStatus] = useState<MemberStatus | null>(null);
   const [loadingStatus, setLoadingStatus] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [updateKey, setUpdateKey] = useState(0);
 
-  const isOwner = profile?.id === eventData.authorId;
+  const isOwner = activeProfile?.id === eventData.authorId;
 
   useEffect(() => {
     if (isAuthenticated && eventData.id) {
@@ -50,7 +52,8 @@ export function EventDisplayCard({
   }, [isAuthenticated, eventData.id]);
 
   const fetchStatus = async () => {
-    if (!eventData.id) return;
+    if (!eventData.id || activeProfile?.isPublicProfile) return;
+
     try {
       setLoadingStatus(true);
       const res = await getMyJoinStatus(eventData.id);
@@ -75,6 +78,7 @@ export function EventDisplayCard({
       fetchStatus();
       setUpdateKey((prev) => prev + 1);
     } catch (error) {
+      console.error("Failed to join event", error);
       toast.error("Не удалось присоединиться");
     } finally {
       setActionLoading(false);
@@ -90,6 +94,7 @@ export function EventDisplayCard({
       fetchStatus();
       setUpdateKey((prev) => prev + 1);
     } catch (error) {
+      console.error("Failed to leave event", error);
       toast.error("Не удалось покинуть мероприятие");
     } finally {
       setActionLoading(false);
@@ -117,11 +122,16 @@ export function EventDisplayCard({
       (eventData.membersVisibility === "members" && joinStatus === "member"));
 
   const renderActionButtons = () => {
-    if (!isAuthenticated || !eventData.id || !eventData.membersEnabled)
+    if (
+      !isAuthenticated ||
+      !eventData.id ||
+      !eventData.membersEnabled ||
+      activeProfile?.isPublicProfile
+    )
       return null;
     if (loadingStatus) return <Loader2 className="w-4 h-4 animate-spin" />;
 
-    if (joinStatus === "member") {
+    if (joinStatus === "member" && !isOwner) {
       return (
         <div className="flex gap-2 mt-4">
           <Button
@@ -331,7 +341,7 @@ export function EventDisplayCard({
           <Members
             eventId={eventData.id}
             authorId={eventData.authorId}
-            currentUserId={profile?.id}
+            currentUserId={activeProfile?.id}
             updateKey={updateKey}
             defaultMembersVisibility={eventData.membersVisibility}
             defaultPrivacy={eventData.privacy}

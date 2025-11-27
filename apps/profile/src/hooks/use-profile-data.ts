@@ -145,8 +145,6 @@ export function useProfileData() {
                 (profileData.profile_type === "public" &&
                   profileData.owner_id === authProfile?.id);
 
-                console.log(profileData, authProfile)
-
               setProfileState((prev) => ({
                 ...prev,
                 user: profileData,

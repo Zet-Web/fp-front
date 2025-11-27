@@ -6,6 +6,7 @@ import {
   MembershipStatusResponse,
   ProfileMemberRole,
 } from "./types";
+import { Profile } from "@/types/profile";
 
 export async function createPublicProfile(dto: CreatePublicProfileDto) {
   const res = await FPApi.axios.post("/profile/public", dto);
@@ -13,7 +14,7 @@ export async function createPublicProfile(dto: CreatePublicProfileDto) {
 }
 
 export async function getMyPublicProfiles() {
-  const res = await FPApi.axios.get("/profile/public/my");
+  const res = await FPApi.axios.get<Profile[]>("/profile/public/my");
   return res.data;
 }
 

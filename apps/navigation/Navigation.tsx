@@ -34,17 +34,20 @@ import {
   createButtonConfig,
   desktopNavigationItems,
 } from "../../shared-src/navigation/navigation-config";
+import { useActiveProfile } from "../../shared-src/profile/ActiveProfileContext";
 
 export function Navigation() {
   const location = useLocation();
-  const { user, profile, isAuthenticated, loading } = useAuthContext();
+  const { activeProfile } = useActiveProfile();
+
+  const { user, isAuthenticated, loading } = useAuthContext();
   const { setTheme } = useTheme();
   const { leftCollapsed, rightCollapsed, toggleLeft, collapseAll, expandAll } =
     useSidebar();
   const [isProfileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [showCreateMenu, setShowCreateMenu] = useState(false);
 
-  const displayName = profile?.name || profile?.username || "User";
+  const displayName = activeProfile?.name || activeProfile?.username || "User";
   const avatarFallback = displayName
     .split(" ")
     .map((n) => n[0])
@@ -89,7 +92,7 @@ export function Navigation() {
               {desktopNavigationItems.map((item) => {
                 const itemPath =
                   typeof item.path === "function"
-                    ? item.path(profile, isAuthenticated)
+                    ? item.path(activeProfile, isAuthenticated)
                     : item.path;
 
                 return (
@@ -163,17 +166,18 @@ export function Navigation() {
                   <TooltipTrigger asChild>
                     <Link
                       to={
-                        typeof profileNavItem?.path === "function"
-                          ? profileNavItem?.path(profile, isAuthenticated)
-                          : profileNavItem?.path
+                        typeof profileNavItem?.path === "function" &&
+                        activeProfile
+                          ? profileNavItem?.path(activeProfile, isAuthenticated)
+                          : (profileNavItem?.path as string)
                       }
                       className="cursor-pointer hover:opacity-80 transition-opacity"
                     >
                       <Avatar className="w-10 h-10">
                         <AvatarImage
                           src={
-                            profile?.avatar_url
-                              ? getStorageUrl(profile.avatar_url)
+                            activeProfile?.avatar_url
+                              ? getStorageUrl(activeProfile.avatar_url)
                               : undefined
                           }
                           alt="Profile"
@@ -186,13 +190,15 @@ export function Navigation() {
                   </TooltipTrigger>
                   <TooltipContent side="right">
                     <p>
-                      {profile?.name ||
+                      {activeProfile?.name ||
                         user.user_metadata?.name ||
                         user.email?.split("@")[0] ||
                         "User"}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {profile?.username ? `@${profile.username}` : ""}
+                      {activeProfile?.username
+                        ? `@${activeProfile.username}`
+                        : ""}
                     </p>
                   </TooltipContent>
                 </Tooltip>
@@ -309,7 +315,7 @@ export function Navigation() {
             {desktopNavigationItems.map((item) => {
               const itemPath =
                 typeof item.path === "function"
-                  ? item.path(profile, isAuthenticated)
+                  ? item.path(activeProfile, isAuthenticated)
                   : item.path;
 
               return (

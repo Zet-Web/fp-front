@@ -16,6 +16,7 @@ import { useAuthContext } from "@/components/auth-provider";
 import { Members } from "../../../shared-src/members/Members";
 import { getMyProfileMembershipStatus } from "../../../shared-src/profile/api";
 import type { MembershipStatusResponse } from "../../../shared-src/profile/types";
+import { useActiveProfile } from "../../../shared-src/profile/ActiveProfileContext";
 
 enum ProfileTabs {
   information = "information",
@@ -26,6 +27,8 @@ enum ProfileTabs {
 
 export function ProfilePage() {
   const { updateProfilePartial } = useAuthContext();
+  const { activeProfile } = useActiveProfile();
+
   const {
     user: profile,
     isLoading,
@@ -326,16 +329,42 @@ export function ProfilePage() {
 
           {showProfileMembers && (
             <TabsContent value="members" className="mt-0">
-              <Members
-                profileId={profileData.id}
-                authorId={profileData.owner_id || profileData.id}
-                currentUserId={profile?.id}
-                defaultMembersVisibility={
-                  profileData.members_visibility || "all"
-                }
-                defaultPrivacy={profileData.membership_privacy || "public"}
-                updateKey={membersUpdateKey}
-              />
+              <>
+                {profileData.members_visibility === "owner" &&
+                  profile?.id !== activeProfile?.id && (
+                    <div className="w-full">
+                      <p className="text-center text-muted-foreground">
+                        Участников профиля может просматривать только владелец
+                      </p>
+                    </div>
+                  )}
+
+                {profileData.members_visibility === "members" &&
+                  membershipStatus?.status !== "active" &&
+                  profile?.id !== activeProfile?.id && (
+                    <div className="w-full">
+                      <p className="text-center text-muted-foreground">
+                        Список участников доступен только для подписчиков
+                      </p>
+                    </div>
+                  )}
+
+                {(profileData.members_visibility === "all" ||
+                  (profileData.members_visibility === "members" &&
+                    membershipStatus?.status === "active") ||
+                  profile?.id === activeProfile?.id) && (
+                  <Members
+                    profileId={profileData.id}
+                    authorId={profileData.id}
+                    currentUserId={activeProfile?.id}
+                    defaultMembersVisibility={
+                      profileData.members_visibility || "all"
+                    }
+                    defaultPrivacy={profileData.membership_privacy || "public"}
+                    updateKey={membersUpdateKey}
+                  />
+                )}
+              </>
             </TabsContent>
           )}
         </Tabs>

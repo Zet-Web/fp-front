@@ -12,14 +12,14 @@ import {
   Info,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import type { Profile } from "@/types/profile";
+import { ActiveProfile } from "../profile/ActiveProfileContext";
 
 export interface NavItem {
   icon: LucideIcon;
   label: string;
   path:
     | string
-    | ((profile: Profile | null, isAuthenticated: boolean) => string);
+    | ((profile: ActiveProfile | null, isAuthenticated: boolean) => string);
   authRequired?: boolean;
 }
 

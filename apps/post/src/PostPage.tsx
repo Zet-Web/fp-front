@@ -31,6 +31,7 @@ export function PostPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [isCreateMode, setIsCreateMode] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [editPostUpdateKey, setEditPostUpdateKey] = useState(0);
 
   // Quiz data
   const [quizData, setQuizData] = useState<QuizFormData | null>(null);
@@ -38,8 +39,8 @@ export function PostPage() {
   // Event data
   const [eventData, setEventData] = useState<EventFormData | null>(null);
 
-  const { profile, isAuthenticated, loading: authLoading } = useAuthContext();
-  const currentUserId = profile?.id || "";
+  const { isAuthenticated, loading: authLoading } = useAuthContext();
+  const currentUserId = activeProfile?.id || "";
 
   const loadPost = async (postUrlCode?: string) => {
     setIsLoading(true);
@@ -79,6 +80,7 @@ export function PostPage() {
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         });
+        setEditPostUpdateKey((prev) => prev + 1);
         setIsLoading(false);
         return;
       }
@@ -89,8 +91,8 @@ export function PostPage() {
       const foundPost = res.data;
 
       if (
-        !!profile &&
-        profile.id === foundPost.post.author_id &&
+        !!activeProfile &&
+        activeProfile.id === foundPost.post.author_id &&
         foundPost.post.type === PostType.QUIZ
       ) {
         const res = await FPApi.axios.get<QuizResponse>(
@@ -121,8 +123,8 @@ export function PostPage() {
       }
 
       if (
-        !!profile &&
-        profile.id === foundPost.post.author_id &&
+        !!activeProfile &&
+        activeProfile.id === foundPost.post.author_id &&
         foundPost.post.type === PostType.EVENT
       ) {
         const res = await FPApi.axios.get<EventResponse>(
@@ -172,6 +174,8 @@ export function PostPage() {
     }
   };
 
+  console.log("POST", post);
+
   useEffect(() => {
     if (activeProfile) {
       setPost((prev) => {
@@ -194,7 +198,7 @@ export function PostPage() {
     if (authLoading) return;
     loadPost(urlCode);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authLoading, urlCode, profile?.id]);
+  }, [authLoading, urlCode, activeProfile?.id]);
 
   const handleSave = async (
     updates: Partial<PostWithAuthor>,
@@ -202,6 +206,9 @@ export function PostPage() {
     eventData?: EventFormData | null
   ) => {
     if (!post) return;
+
+    let postId: number | null = null;
+    let postUrl: string | null = null;
 
     try {
       setIsSaving(true);
@@ -215,9 +222,6 @@ export function PostPage() {
       if (activeProfile?.isPublicProfile) {
         updatedPost["public_profile_id"] = activeProfile.id;
       }
-
-      let postId: number | null = null;
-      let postUrl: string | null = null;
 
       if (isCreateMode) {
         const createPostRes = await FPApi.axios.post<{
@@ -258,6 +262,7 @@ export function PostPage() {
           timerMinutes: quizData.settings.timerMinutes,
           visibility: quizData.settings.visibility,
           questions: quizData.questions,
+          authorId: activeProfile?.id,
         };
 
         if (quizData.id) {
@@ -283,6 +288,10 @@ export function PostPage() {
           website: eventData.website,
           category: eventData.category,
           memberLimit: eventData.memberLimit,
+          privacy: eventData.privacy,
+          membersVisibility: eventData.membersVisibility,
+          membersEnabled: eventData.membersEnabled,
+          authorId: activeProfile?.id,
         };
 
         if (eventData.id) {
@@ -312,6 +321,10 @@ export function PostPage() {
       setIsCreateMode(false);
       setIsEditing(false);
     } catch (error) {
+      if (isCreateMode && postId) {
+        await FPApi.axios.delete(`/post/delete/${postId}`);
+      }
+
       toast({
         title: "Error while saving post",
         description: `${(error as Error)?.message || ""}`,
@@ -351,9 +364,7 @@ export function PostPage() {
     }
   };
 
-  const isOwner =
-    post?.author?.id === currentUserId ||
-    post?.author?.id === activeProfile?.id;
+  const isOwner = post?.author?.id === currentUserId;
 
   if (isLoading) {
     return (
@@ -386,6 +397,7 @@ export function PostPage() {
       <div className="container mx-auto px-4 md:px-6 py-4 md:py-6 max-w-4xl">
         {isEditing ? (
           <EditablePostCard
+            key={editPostUpdateKey}
             title={post.title}
             excerpt={post.excerpt}
             content={post.content}

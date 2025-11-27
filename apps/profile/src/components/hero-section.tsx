@@ -219,7 +219,6 @@ export function HeroSection({
     setIsMembershipLoading(true);
     try {
       await joinPublicProfile(user.id);
-      toast({ title: "Заявка на вступление отправлена" });
       onMembershipUpdate?.();
     } catch (error) {
       console.error(error);

@@ -49,6 +49,7 @@ import {
   removeProfileMember,
   changeProfileMembersVisibility,
   changeProfileMembershipPrivacy,
+  getPendingProfileMemberRequests,
 } from "../profile/api";
 import { ProfileMember } from "../profile/types";
 import { toast } from "sonner";
@@ -94,6 +95,8 @@ export function Members({
   defaultPrivacy,
   updateKey,
 }: MembersProps) {
+  const isOwner = currentUserId === authorId;
+
   const [allMembers, setAllMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
   const [sentInvites, setSentInvites] = useState<SentInvite[]>(mockSentInvites);
@@ -127,8 +130,13 @@ export function Members({
       setLoading(true);
       if (profileId) {
         const profileMembers = await fetchProfileMembers(profileId);
+        let pendingMembers: ProfileMember[] = [];
+        if (isOwner) {
+          pendingMembers = await getPendingProfileMemberRequests(profileId);
+        }
+        const allMembers = [...profileMembers, ...pendingMembers];
         // Convert ProfileMember to Member format
-        const members: Member[] = profileMembers.map((pm: ProfileMember) => ({
+        const members: Member[] = allMembers.map((pm: ProfileMember) => ({
           id: 0,
           event_id: 0,
           profile_id: pm.profile.id,
@@ -223,7 +231,9 @@ export function Members({
     if (selectedRequest) {
       try {
         if (profileId) {
-          const profileMembers = await fetchProfileMembers(profileId);
+          const profileMembers = await getPendingProfileMemberRequests(
+            profileId
+          );
           const member = profileMembers.find(
             (m: ProfileMember) =>
               m.profile.username === selectedRequest.profile.username
@@ -329,8 +339,6 @@ export function Members({
   const filteredSentInvites = filterBySearch(sentInvites) as SentInvite[];
 
   const totalCount = admins.length + membersList.length;
-
-  const isOwner = currentUserId === authorId;
 
   const MemberItem = ({ member, role }: { member: Member; role: string }) => (
     <div className="flex items-center gap-4 py-3">
