@@ -19,7 +19,7 @@ export const MOCK_NETWORK_NODES: NetworkNode[] = [
     isCurrentUser: true,
   },
   {
-    id: 'ruslan-galiullin',
+    id: 'vladimir',
     name: 'Владимир Сергеев',
     username: 'vlad',
     about: 'Юрист | Специалист по корпоративному праву',
@@ -321,7 +321,7 @@ export const MOCK_NETWORK_NODES: NetworkNode[] = [
 ];
 
 export const MOCK_NETWORK_EDGES: NetworkEdge[] = [
-  { source: 'timur-kakokho', target: 'ruslan-galiullin', connectionType: 'direct', relationship: 'Коллега', mutualConnections: 3 },
+  { source: 'timur-kakokho', target: 'vladimir', connectionType: 'direct', relationship: 'Коллега', mutualConnections: 3 },
   { source: 'timur-kakokho', target: 'daniil-petrov', connectionType: 'colleague', relationship: 'Коллега по IT', mutualConnections: 5 },
   { source: 'timur-kakokho', target: 'imeni-plevalko', connectionType: 'partner', relationship: 'Деловой партнёр', mutualConnections: 2 },
   { source: 'timur-kakokho', target: 'danil-gubeydullin', connectionType: 'community', relationship: 'Через ТК РФ', mutualConnections: 1 },
@@ -336,8 +336,8 @@ export const MOCK_NETWORK_EDGES: NetworkEdge[] = [
   { source: 'daniil-petrov', target: 'inkoterms-club', connectionType: 'community', relationship: 'Участник клуба' },
   { source: 'daniil-petrov', target: 'pavel-fedorov', connectionType: 'colleague', relationship: 'Коллега', mutualConnections: 1 },
 
-  { source: 'ruslan-galiullin', target: 'auto-lawyers', connectionType: 'community', relationship: 'Участник сообщества' },
-  { source: 'ruslan-galiullin', target: 'maria-lebedeva', connectionType: 'client', relationship: 'Клиент', mutualConnections: 1 },
+  { source: 'vladimir', target: 'auto-lawyers', connectionType: 'community', relationship: 'Участник сообщества' },
+  { source: 'vladimir', target: 'maria-lebedeva', connectionType: 'client', relationship: 'Клиент', mutualConnections: 1 },
 
   { source: 'imeni-plevalko', target: 'anna-mikhailova', connectionType: 'partner', relationship: 'Партнёр', mutualConnections: 2 },
   { source: 'imeni-plevalko', target: 'it-lawyers', connectionType: 'community', relationship: 'Участник сообщества' },
