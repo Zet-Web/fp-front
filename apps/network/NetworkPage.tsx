@@ -63,10 +63,10 @@ export function NetworkPage() {
       <div className="container mx-auto px-4 py-6 max-w-7xl">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-foreground mb-2">
-            Контакты (Демо режим)
+            Контакты
           </h1>
           <p className="text-muted-foreground">
-            Профессиональные связи
+            Профессиональные связи и нетворк
           </p>
         </div>
 
