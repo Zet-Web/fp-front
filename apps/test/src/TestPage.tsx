@@ -9,6 +9,7 @@ import { EventsDemoTab } from '../events-demo/EventsDemoTab';
 import { DateSelectorsDemo } from '../date-selectors/DateSelectorsDemo';
 import { ProfileWithMembers } from '../profile-with-members/ProfileWithMembers';
 import { PublicProfileTestTab } from '../public-profile/PublicProfileTestTab';
+import { NetworkDemoTab } from '../network-demo/NetworkDemoTab';
 
 const tabMap: Record<string, string> = {
   '1': 'profile',
@@ -17,7 +18,8 @@ const tabMap: Record<string, string> = {
   '5': 'events',
   '6': 'events-demo',
   '7': 'date-selectors',
-  '8': 'public-profile'
+  '8': 'public-profile',
+  '9': 'network-demo'
 };
 
 export function TestPage() {
@@ -52,7 +54,7 @@ export function TestPage() {
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-7 h-auto">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-8 h-auto">
           <TabsTrigger value="profile">Profile</TabsTrigger>
           <TabsTrigger value="profile2">Profile 2</TabsTrigger>
           <TabsTrigger value="quiz3">Quiz Variants</TabsTrigger>
@@ -60,6 +62,7 @@ export function TestPage() {
           <TabsTrigger value="events-demo">Events Demo</TabsTrigger>
           <TabsTrigger value="date-selectors">Date Selectors</TabsTrigger>
           <TabsTrigger value="public-profile">Public Profile</TabsTrigger>
+          <TabsTrigger value="network-demo">Network Demo</TabsTrigger>
         </TabsList>
 
         <TabsContent value="profile">
@@ -88,6 +91,10 @@ export function TestPage() {
 
         <TabsContent value="public-profile">
           <PublicProfileTestTab />
+        </TabsContent>
+
+        <TabsContent value="network-demo">
+          <NetworkDemoTab />
         </TabsContent>
       </Tabs>
     </div>
