@@ -70,7 +70,8 @@ export function NetworkPage() {
           </p>
         </div>
 
-        <NetworkStats stats={stats} />
+        {/* Temporarily commented for test mode */}
+        {/* <NetworkStats stats={stats} /> */}
 
         <div className="mb-6">
           <NetworkFilters

@@ -93,6 +93,7 @@ export function getConnectionTypeColor(type: ConnectionType, theme: 'light' | 'd
       colleague: '#06b6d4',
       client: '#f97316',
       partner: '#14b8a6',
+      event: '#f97316',
     },
     dark: {
       direct: '#60a5fa',
@@ -103,6 +104,7 @@ export function getConnectionTypeColor(type: ConnectionType, theme: 'light' | 'd
       colleague: '#22d3ee',
       client: '#fb923c',
       partner: '#2dd4bf',
+      event: '#fb923c',
     },
   };
 
@@ -119,6 +121,7 @@ export function getConnectionTypeBadgeColor(type: ConnectionType): string {
     colleague: 'bg-cyan-500',
     client: 'bg-orange-500',
     partner: 'bg-teal-500',
+    event: 'bg-orange-500',
   };
 
   return colors[type] || 'bg-blue-500';
@@ -126,14 +129,15 @@ export function getConnectionTypeBadgeColor(type: ConnectionType): string {
 
 export function getConnectionTypeLabel(type: ConnectionType): string {
   const labels: Record<ConnectionType, string> = {
-    direct: 'Прямое соединение',
+    direct: 'Прямая связь',
     following: 'Подписки',
     follower: 'Подписчики',
-    community: 'Сообщества',
+    community: 'Сообщество',
     mutual: 'Взаимные',
     colleague: 'Коллеги',
     client: 'Клиенты',
     partner: 'Партнёры',
+    event: 'Событие',
   };
 
   return labels[type] || type;

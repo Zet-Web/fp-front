@@ -29,13 +29,8 @@ interface NetworkFiltersProps {
 
 const CONNECTION_TYPE_OPTIONS: ConnectionType[] = [
   'direct',
-  'following',
-  'follower',
   'community',
-  'mutual',
-  'colleague',
-  'client',
-  'partner',
+  'event',
 ];
 
 export function NetworkFilters({ filters, communities, onFiltersChange }: NetworkFiltersProps) {
@@ -132,69 +127,6 @@ export function NetworkFilters({ filters, communities, onFiltersChange }: Networ
                 </div>
               </PopoverContent>
             </Popover>
-
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" className="relative">
-                  <Users className="h-4 w-4 mr-2" />
-                  Сообщества
-                  {filters.communities.length > 0 && (
-                    <Badge
-                      variant="default"
-                      className="ml-2 bg-blue-500 hover:bg-blue-600 text-white h-5 w-5 p-0 flex items-center justify-center rounded-full"
-                    >
-                      {filters.communities.length}
-                    </Badge>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-64" align="end">
-                <div className="space-y-2">
-                  <h4 className="font-semibold text-sm mb-3">Сообщества</h4>
-                  {communities.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">
-                      Нет доступных сообществ
-                    </p>
-                  ) : (
-                    communities.map((community) => (
-                      <div key={community} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`community-${community}`}
-                          checked={filters.communities.includes(community)}
-                          onCheckedChange={() => handleCommunityToggle(community)}
-                        />
-                        <label
-                          htmlFor={`community-${community}`}
-                          className="text-sm cursor-pointer flex-1"
-                        >
-                          {community}
-                        </label>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </PopoverContent>
-            </Popover>
-
-            <Select value={filters.connectionLevel} onValueChange={handleLevelChange}>
-              <SelectTrigger className="w-[140px]">
-                <SelectValue placeholder="Уровень" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Все уровни</SelectItem>
-                <SelectItem value="1">Уровень 1</SelectItem>
-                <SelectItem value="2">Уровень 2</SelectItem>
-                <SelectItem value="3">Уровень 3</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Button
-              variant={filters.showMutualOnly ? 'default' : 'outline'}
-              onClick={handleMutualToggle}
-              className={filters.showMutualOnly ? 'bg-blue-500 hover:bg-blue-600' : ''}
-            >
-              Взаимные
-            </Button>
 
             {activeFilterCount > 0 && (
               <Button

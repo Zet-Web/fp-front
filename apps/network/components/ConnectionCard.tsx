@@ -4,8 +4,7 @@ import { NetworkNode } from '../types/network';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MessageCircle, Eye, Users } from 'lucide-react';
-import { getConnectionTypeBadgeColor, getConnectionTypeLabel } from '../lib/network-utils';
+import { ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface ConnectionCardProps {
@@ -45,81 +44,30 @@ export function ConnectionCard({ node, mutualConnections, onClick }: ConnectionC
                   onClick={onClick}
                   className="text-left hover:text-blue-500 transition-colors"
                 >
-                  <h3 className="font-semibold text-base text-foreground truncate">
-                    {node.name}
+                  <h3 className="font-semibold text-base text-foreground">
+                    {node.name} <span className="text-sm text-muted-foreground font-normal">(@{node.username})</span>
                   </h3>
                 </button>
-                <p className="text-sm text-muted-foreground truncate">
-                  @{node.username}
-                </p>
               </div>
 
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8"
-                  asChild
-                >
-                  <Link to={`/${node.username}`}>
-                    <Eye className="h-4 w-4" />
-                  </Link>
-                </Button>
-                {node.role !== 'Сообщество' && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8"
-                  >
-                    <MessageCircle className="h-4 w-4" />
-                  </Button>
-                )}
-              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex-shrink-0"
+                asChild
+              >
+                <Link to={`/${node.username}`}>
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  Открыть
+                </Link>
+              </Button>
             </div>
-
-            {node.role && (
-              <p className="text-sm text-muted-foreground mb-2">
-                {node.role}
-                {node.company && ` • ${node.company}`}
-              </p>
-            )}
 
             {node.about && (
               <p className="text-sm text-foreground/80 line-clamp-2 mb-3">
                 {node.about}
               </p>
             )}
-
-            <div className="flex flex-wrap gap-2 items-center">
-              {node.connectionType.slice(0, 3).map((type, index) => (
-                <Badge
-                  key={index}
-                  variant="secondary"
-                  className={`${getConnectionTypeBadgeColor(type)} text-white text-xs`}
-                >
-                  {getConnectionTypeLabel(type)}
-                </Badge>
-              ))}
-
-              {node.connectionType.length > 3 && (
-                <Badge variant="outline" className="text-xs">
-                  +{node.connectionType.length - 3}
-                </Badge>
-              )}
-
-              {mutualConnections && mutualConnections > 0 && (
-                <Badge variant="outline" className="text-xs flex items-center gap-1">
-                  <Users className="h-3 w-3" />
-                  {mutualConnections} общих
-                </Badge>
-              )}
-
-              {node.level > 1 && (
-                <Badge variant="outline" className="text-xs">
-                  Уровень {node.level}
-                </Badge>
-              )}
-            </div>
 
             {node.communities.length > 0 && (
               <div className="mt-3 pt-3 border-t border-border">
