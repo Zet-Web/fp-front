@@ -102,8 +102,8 @@ export function NetworkListView({ data, onNodeClick, emptyMessage }: NetworkList
                   <SelectItem value="connections-desc">По связям</SelectItem>
                 </SelectContent>
               </Select>
-            </div>*/}
-          </div>
+            </div>
+          </div>*/}
         </CardHeader>
       </Card>
 
