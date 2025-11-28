@@ -44,11 +44,15 @@ export function ConnectionCard({ node, mutualConnections, onClick }: ConnectionC
                   onClick={onClick}
                   className="text-left hover:text-blue-500 transition-colors"
                 >
-                  <h3 className="font-semibold text-base text-foreground">
-                    {node.name} <span className="text-sm text-muted-foreground font-normal">(@{node.username})</span>
+                  <h3 className="font-semibold text-base text-foreground truncate">
+                    {node.name}
                   </h3>
                 </button>
+                <p className="text-sm text-muted-foreground truncate">
+                  @{node.username}
+                </p>
               </div>
+
 
               <Button
                 variant="outline"
