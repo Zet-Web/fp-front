@@ -81,6 +81,8 @@ export function PostPage() {
           updated_at: new Date().toISOString(),
         });
         setEditPostUpdateKey((prev) => prev + 1);
+        setQuizData(null);
+        setEventData(null);
         setIsLoading(false);
         return;
       }
@@ -173,8 +175,6 @@ export function PostPage() {
       setIsLoading(false);
     }
   };
-
-  console.log("POST", post);
 
   useEffect(() => {
     if (activeProfile) {

@@ -41,7 +41,7 @@ export interface PostAuthor {
   username: string | null
   avatar_url: string | null
   badge: string[] | null
-  is_verified: boolean
+  is_verified?: boolean
 }
 
 export interface PostWithAuthor extends Post {

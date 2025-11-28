@@ -21,6 +21,7 @@ interface ActiveProfileContextType {
   setActiveProfile: (profile: ActiveProfile) => void;
   loadPublicProfiles: () => Promise<void>;
   isLoading: boolean;
+  resetActiveProfiles: () => void;
 }
 
 const ActiveProfileContext = createContext<
@@ -71,6 +72,12 @@ export function ActiveProfileProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("activeProfile", JSON.stringify(profile));
   };
 
+  const resetActiveProfiles = () => {
+    localStorage.removeItem("activeProfile");
+    setActiveProfileState(null);
+    setPublicProfiles([]);
+  };
+
   return (
     <ActiveProfileContext.Provider
       value={{
@@ -79,6 +86,7 @@ export function ActiveProfileProvider({ children }: { children: ReactNode }) {
         setActiveProfile,
         loadPublicProfiles,
         isLoading,
+        resetActiveProfiles,
       }}
     >
       {children}

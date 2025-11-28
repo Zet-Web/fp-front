@@ -64,7 +64,7 @@ export function ProfileSwitcher({ isOpen, setIsOpen, large }: Props) {
   };
 
   const handleManageProfiles = () => {
-    navigate(`/${profile.username}?tab=public_profiles`);
+    navigate(`/settings?tab=profiles`);
     setIsOpen(false);
   };
 

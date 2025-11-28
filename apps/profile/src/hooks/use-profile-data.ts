@@ -3,6 +3,7 @@ import { useAuthContext } from "@/components/auth-provider";
 import { FPApi } from "@/lib/api";
 import { UserAdditionalInfo, UserProfile } from "../types/profile";
 import { useLocation } from "react-router-dom";
+import { useActiveProfile } from "../../../../shared-src/profile/ActiveProfileContext";
 
 const DEFAULT_PROFILE_PATH = "profile";
 
@@ -18,6 +19,7 @@ interface ProfileState {
 
 export function useProfileData() {
   const location = useLocation();
+  const { resetActiveProfiles } = useActiveProfile();
 
   const [needLoadAdditionalInfo, setNeedLoadAdditionalInfo] = useState(false);
   const [isAdditionalInfoLoading, setAdditionalInfoLoading] = useState(false);
@@ -247,12 +249,14 @@ export function useProfileData() {
   };
 
   const logout = () => {
+    resetActiveProfiles()
     setProfileState((prev) => ({
       ...prev,
       user: null,
       addititonalInfo: null,
       isOwnProfile: false,
     }));
+
   };
 
   useEffect(() => {
