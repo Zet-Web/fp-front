@@ -82,6 +82,8 @@ export function NetworkListView({ data, onNodeClick, emptyMessage }: NetworkList
 
   return (
     <div className="space-y-4">
+
+      {/* Temporarily commented for test mode */}
       {/* <Card className="shadow-sm">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
