@@ -33,6 +33,7 @@ export interface UserProfile {
   members_enabled: boolean;
   members_visibility?: "all" | "members" | "owner";
   membership_privacy?: "public" | "private";
+  is_verified: boolean;
 }
 
 export interface UserAdditionalInfo {

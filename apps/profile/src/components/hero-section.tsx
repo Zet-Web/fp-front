@@ -26,6 +26,7 @@ import {
   leavePublicProfile,
 } from "../../../../shared-src/profile/api";
 import type { MembershipStatusResponse } from "../../../../shared-src/profile/types";
+import { VerifiedBadge } from "@/components/shared/VerifiedBadge";
 
 interface HeroSectionProps {
   user: UserProfile;
@@ -359,9 +360,14 @@ export function HeroSection({
                   </div>
                 </div>
               ) : (
-                <h1 className="text-3xl font-bold truncate overflow-hidden">
-                  {displayName}
-                </h1>
+                <div className="flex items-center gap-3">
+                  <h1 className="text-3xl font-bold truncate overflow-hidden">
+                    {displayName}
+                  </h1>
+                  {user.is_verified && (
+                    <VerifiedBadge isVerified={user.is_verified} size="md" />
+                  )}
+                </div>
               )}
               {user.badge?.includes("verified") && (
                 <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">

@@ -8,6 +8,7 @@ import { QuizResponse, QuizResultsTableRow } from "../types/quiz";
 import { useEffect, useMemo, useState } from "react";
 import debounce from "lodash.debounce";
 import { FPApi } from "@/lib/api";
+import { VerifiedBadge } from "@/components/shared/VerifiedBadge";
 
 type Props = {
   quizId: number;
@@ -256,7 +257,15 @@ export const QuizResults: React.FC<Props> = ({
                         </div>
                       </td>
                       <td className="py-3 px-4">
-                        {row.profile?.name ?? "Аноним"}
+                        <div className="flex items-center gap-2">
+                          {row.profile?.name ?? "Аноним"}
+                          {row.profile?.is_verified && (
+                            <VerifiedBadge
+                              isVerified={row.profile?.is_verified}
+                              size="sm"
+                            />
+                          )}
+                        </div>
                       </td>
                       <td className="py-3 px-4 text-right">
                         <Badge variant="secondary" className="font-semibold">

@@ -103,7 +103,7 @@ export type QuizResultsTableRow = {
   id: number;
   score: number;
   created_at: string;
-  profile?: { name?: string | null; avatar_url?: string | null } | null;
+  profile?: { name?: string | null; avatar_url?: string | null, is_verified: boolean } | null;
   rank: number;
 };
 

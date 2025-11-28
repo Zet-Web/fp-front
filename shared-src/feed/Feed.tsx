@@ -102,7 +102,8 @@ export function Feed({
           filters,
           page,
           itemsPerPage,
-          filterByUsername
+          filterByUsername,
+          controller.signal
         );
 
         const existingIds = new Set(posts.map((p) => p.id));
@@ -129,13 +130,17 @@ export function Feed({
             setHasMore(true);
           }
         }
+
+        setIsInitialLoading(false);
       } catch (err) {
+        if ((err as Error).name === "CanceledError") {
+          return;
+        }
         toast({
           title: "Failed to load posts",
           description: (err as Error).message || "",
         });
       } finally {
-        setIsInitialLoading(false);
         setIsFetchingMore(false);
       }
     };
