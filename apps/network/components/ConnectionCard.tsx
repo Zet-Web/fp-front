@@ -75,7 +75,7 @@ export function ConnectionCard({ node, mutualConnections, onClick }: ConnectionC
 
             {node.communities.length > 0 && (
               <div className="mt-3 pt-3 border-t border-border">
-                <p className="text-xs text-muted-foreground mb-1">Сообщества:</p>
+                <p className="text-xs text-muted-foreground mb-1">Что общего:</p>
                 <div className="flex flex-wrap gap-1">
                   {node.communities.slice(0, 3).map((community, index) => (
                     <Badge
