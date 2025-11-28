@@ -6,7 +6,7 @@ export type FetchPostResponse = {
     posts: PostWithAuthor[]; count: number;
 }
 
-export async function fetchPosts(filters: FeedFilters | null, page: number, itemsPerPage: number, filterByUsername?: string | null): Promise<FetchPostResponse> {
+export async function fetchPosts(filters: FeedFilters | null, page: number, itemsPerPage: number, filterByUsername?: string | null, signal?: AbortSignal): Promise<FetchPostResponse> {
   const params = new URLSearchParams(filters ? {
     limit: itemsPerPage.toString(),
     offset: ((page - 1) * itemsPerPage).toString(),
@@ -20,6 +20,6 @@ export async function fetchPosts(filters: FeedFilters | null, page: number, item
   if (filters?.location?.country) params.set("country", filters.location.country);
   if (filters?.location?.city) params.set("city", filters.location.city);
 
-  const res = await FPApi.axios.get<FetchPostResponse>(`/post/search?${params.toString()}`);
+  const res = await FPApi.axios.get<FetchPostResponse>(`/post/search?${params.toString()}`, { signal });
   return res.data
 }

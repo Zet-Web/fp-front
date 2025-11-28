@@ -35,14 +35,6 @@ export function useProfileData() {
   const { profile: authProfile, isAuthenticated } = useAuthContext();
 
   const extractUsernameFromUrl = useCallback((): string | null => {
-    const urlParams = new URLSearchParams(location.search);
-    const username = urlParams.get("username");
-
-    if (username) {
-      console.log("Extracted username from query params:", username);
-      return username;
-    }
-
     const pathSegments = location.pathname.split("/").filter(Boolean);
     if (pathSegments.length > 0) {
       const lastSegment = pathSegments[pathSegments.length - 1];
@@ -56,7 +48,7 @@ export function useProfileData() {
     }
 
     return null;
-  }, [authProfile?.username, location.pathname, location.search]);
+  }, [authProfile?.username, location]);
 
   const fetchAdditionalInfoByUsername = async (
     username: string
@@ -148,7 +140,10 @@ export function useProfileData() {
 
             if (profileData) {
               const isOwnProfile =
-                isAuthenticated && authProfile?.username === requestedUsername;
+                (isAuthenticated &&
+                  authProfile?.username === requestedUsername) ||
+                (profileData.profile_type === "public" &&
+                  profileData.owner_id === authProfile?.id);
 
               setProfileState((prev) => ({
                 ...prev,
@@ -190,7 +185,7 @@ export function useProfileData() {
     };
 
     initializeProfileData();
-  }, [extractUsernameFromUrl, isAuthenticated, authProfile?.username]);
+  }, [extractUsernameFromUrl, isAuthenticated, authProfile]);
 
   const updateProfile = (updatedProfile: Partial<UserProfile>) => {
     if (profileState.user && profileState.isOwnProfile) {

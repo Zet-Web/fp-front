@@ -12,6 +12,7 @@ import { FeedFilters } from "./feed-filters";
 import { FPApi } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { LogIn } from "lucide-react";
+import { useActiveProfile } from "../profile/ActiveProfileContext";
 
 interface FeedProps {
   filters: FeedFilters | null;
@@ -55,7 +56,8 @@ export function Feed({
 }: FeedProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { profile, isAuthenticated } = useAuthContext();
+  const { isAuthenticated } = useAuthContext();
+  const { activeProfile } = useActiveProfile();
 
   const [posts, setPosts] = useState<PostWithAuthor[]>([]);
   const [page, setPage] = useState(1);
@@ -66,7 +68,7 @@ export function Feed({
   const observerRef = useRef<HTMLDivElement | null>(null);
   const observerInstance = useRef<IntersectionObserver | null>(null);
 
-  const currentUserId = profile?.id || "";
+  const currentUserId = activeProfile?.id || "";
 
   const requiresAuth =
     filters?.view === "following" || filters?.view === "saved";
@@ -77,8 +79,7 @@ export function Feed({
     setPage(1);
     setHasMore(true);
     setIsInitialLoading(true);
-  }, [filters, filterByUsername]);  // Added filterByUsername
-
+  }, [filters, filterByUsername]);
 
   useEffect(() => {
     if (!hasMore) return;
@@ -101,7 +102,8 @@ export function Feed({
           filters,
           page,
           itemsPerPage,
-          filterByUsername
+          filterByUsername,
+          controller.signal
         );
 
         const existingIds = new Set(posts.map((p) => p.id));
@@ -128,13 +130,17 @@ export function Feed({
             setHasMore(true);
           }
         }
+
+        setIsInitialLoading(false);
       } catch (err) {
+        if ((err as Error).name === "CanceledError") {
+          return;
+        }
         toast({
           title: "Failed to load posts",
           description: (err as Error).message || "",
         });
       } finally {
-        setIsInitialLoading(false);
         setIsFetchingMore(false);
       }
     };
@@ -145,7 +151,7 @@ export function Feed({
       controller.abort();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, filters, itemsPerPage, hasMore, shouldShowAuthPrompt]);
+  }, [page, filters, hasMore, shouldShowAuthPrompt, filterByUsername]);
 
   const attachObserver = useCallback(
     (node: HTMLDivElement | null) => {

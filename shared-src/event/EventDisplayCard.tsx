@@ -1,6 +1,7 @@
 // Component for displaying event information in posts
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Calendar,
   Clock,
@@ -8,8 +9,22 @@ import {
   Users,
   Globe,
   Link as LinkIcon,
+  UserPlus,
+  LogOut,
+  Loader2,
 } from "lucide-react";
 import { EventResponse, EVENT_TYPE_LABELS } from "./event-types";
+import { useState, useEffect } from "react";
+import { useAuthContext } from "@/components/auth-provider";
+import { Members } from "../members/Members";
+import {
+  joinEvent,
+  leaveEvent,
+  getMyJoinStatus,
+  MemberStatus,
+} from "../members/api";
+import { toast } from "sonner";
+import { useActiveProfile } from "../profile/ActiveProfileContext";
 
 interface EventDisplayCardProps {
   eventData: EventResponse;
@@ -20,6 +35,72 @@ export function EventDisplayCard({
   eventData,
   compact = false,
 }: EventDisplayCardProps) {
+  const { activeProfile } = useActiveProfile();
+  const { isAuthenticated } = useAuthContext();
+  const [joinStatus, setJoinStatus] = useState<MemberStatus | null>(null);
+  const [loadingStatus, setLoadingStatus] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
+  const [updateKey, setUpdateKey] = useState(0);
+
+  const isOwner = activeProfile?.id === eventData.authorId;
+
+  useEffect(() => {
+    if (isAuthenticated && eventData.id) {
+      fetchStatus();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated, eventData.id]);
+
+  const fetchStatus = async () => {
+    if (!eventData.id || activeProfile?.isPublicProfile) return;
+
+    try {
+      setLoadingStatus(true);
+      const res = await getMyJoinStatus(eventData.id);
+      setJoinStatus(res.status);
+    } catch (error) {
+      console.error("Failed to fetch join status", error);
+    } finally {
+      setLoadingStatus(false);
+    }
+  };
+
+  const handleJoin = async () => {
+    if (!eventData.id) return;
+    try {
+      setActionLoading(true);
+      await joinEvent(eventData.id);
+      toast.success(
+        eventData.privacy === "private"
+          ? "Заявка отправлена"
+          : "Вы присоединились к мероприятию"
+      );
+      fetchStatus();
+      setUpdateKey((prev) => prev + 1);
+    } catch (error) {
+      console.error("Failed to join event", error);
+      toast.error("Не удалось присоединиться");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleLeave = async () => {
+    if (!eventData.id) return;
+    try {
+      setActionLoading(true);
+      await leaveEvent(eventData.id);
+      toast.success("Вы покинули мероприятие");
+      fetchStatus();
+      setUpdateKey((prev) => prev + 1);
+    } catch (error) {
+      console.error("Failed to leave event", error);
+      toast.error("Не удалось покинуть мероприятие");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
@@ -34,6 +115,75 @@ export function EventDisplayCard({
   };
 
   const showLocationFields = eventData.eventTypes.includes("offline");
+  const showMembers =
+    eventData.membersEnabled &&
+    (isOwner ||
+      eventData.membersVisibility === "all" ||
+      (eventData.membersVisibility === "members" && joinStatus === "member"));
+
+  const renderActionButtons = () => {
+    if (
+      !isAuthenticated ||
+      !eventData.id ||
+      !eventData.membersEnabled ||
+      activeProfile?.isPublicProfile
+    )
+      return null;
+    if (loadingStatus) return <Loader2 className="w-4 h-4 animate-spin" />;
+
+    if (joinStatus === "member" && !isOwner) {
+      return (
+        <div className="flex gap-2 mt-4">
+          <Button
+            variant="destructive"
+            size="sm"
+            onClick={handleLeave}
+            disabled={actionLoading}
+          >
+            {actionLoading ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <>
+                <LogOut className="w-4 h-4" />
+                Покинуть мероприятие
+              </>
+            )}
+          </Button>
+        </div>
+      );
+    }
+
+    if (joinStatus === "pending") {
+      return (
+        <Button variant="secondary" size="sm" className="w-full mt-4" disabled>
+          <Clock className="w-4 h-4 mr-2" />
+          Заявка на рассмотрении
+        </Button>
+      );
+    }
+
+    if (joinStatus === "can_join" || joinStatus === "submit_join") {
+      return (
+        <Button
+          size="sm"
+          className="w-full mt-4"
+          onClick={handleJoin}
+          disabled={actionLoading}
+        >
+          {actionLoading ? (
+            <Loader2 className="w-4 h-4 animate-spin mr-2" />
+          ) : (
+            <UserPlus className="w-4 h-4 mr-2" />
+          )}
+          {joinStatus === "submit_join"
+            ? "Подать заявку"
+            : "Присоединиться к мероприятию"}
+        </Button>
+      );
+    }
+
+    return null;
+  };
 
   if (compact) {
     return (
@@ -85,7 +235,7 @@ export function EventDisplayCard({
 
   return (
     <Card className="shadow-sm">
-      <CardContent className="p-4 space-y-4">
+      <CardContent className="p-4 space-y-10">
         <div className="space-y-3">
           <div className="flex items-center gap-2 flex-wrap">
             <Badge variant="secondary">
@@ -176,6 +326,29 @@ export function EventDisplayCard({
             </div>
           )}
         </div>
+
+        {eventData.membersEnabled &&
+          !showMembers &&
+          eventData.membersVisibility === "members" && (
+            <div className="flex items-center justify-center gap-3 text-sm">
+              <div className="text-muted-foreground">
+                Список участников доступен после вступления
+              </div>
+            </div>
+          )}
+
+        {showMembers && eventData.id && eventData.authorId && (
+          <Members
+            eventId={eventData.id}
+            authorId={eventData.authorId}
+            currentUserId={activeProfile?.id}
+            updateKey={updateKey}
+            defaultMembersVisibility={eventData.membersVisibility}
+            defaultPrivacy={eventData.privacy}
+          />
+        )}
+
+        {renderActionButtons()}
       </CardContent>
     </Card>
   );

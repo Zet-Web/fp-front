@@ -1,295 +1,343 @@
-import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
-import { Session } from '@supabase/supabase-js'
+import { useState, useEffect } from "react";
+import { Session } from "@supabase/supabase-js";
+import { FPApi } from "@/lib/api";
+import { useActiveProfile } from "../../../../shared-src/profile/ActiveProfileContext";
 
 interface UserSettings {
-  timezone: string
-  theme_mode: 'light' | 'dark' | 'system'
+  timezone: string;
+  theme_mode: "light" | "dark" | "system";
+  members_enabled: boolean;
 }
 
 interface SettingsState {
-  settings: UserSettings | null
-  isLoading: boolean
-  error: string | null
-  hasUnsavedChanges: boolean
+  settings: UserSettings | null;
+  isLoading: boolean;
+  error: string | null;
+  hasUnsavedChanges: boolean;
 }
 
 interface TimezoneOption {
-  value: string
-  label: string
-  region: string
-  city: string
-  offset: string
+  value: string;
+  label: string;
+  region: string;
+  city: string;
+  offset: string;
+}
+
+interface GetUserSettingsResponse {
+  timezone: string;
+  theme_mode: string;
+  members_enabled: boolean;
+}
+
+interface UpdateUserSettingsRequest {
+  timezone?: string;
+  theme_mode?: string;
+  members_enabled?: boolean;
+  profileId: string
 }
 
 // Filter out confusing or administrative timezone identifiers
 function isUserFriendlyTimezone(ianaId: string): boolean {
   // Filter out administrative/legacy timezones
-  const excludePrefixes = ['Etc/', 'SystemV/', 'posix/', 'right/']
+  const excludePrefixes = ["Etc/", "SystemV/", "posix/", "right/"];
   const excludeExact = [
-    'EST', 'HST', 'MST', 'PST', 'CST', 'AST', 'BST', 'CDT', 'EDT', 'MDT', 'PDT',
-    'Eire', 'GB', 'GMT', 'Israel', 'Jamaica', 'ROC', 'W-SU', 'WET', 'Zulu',
-    'EST5EDT', 'CST6CDT', 'MST7MDT', 'PST8PDT'
-  ]
-  
+    "EST",
+    "HST",
+    "MST",
+    "PST",
+    "CST",
+    "AST",
+    "BST",
+    "CDT",
+    "EDT",
+    "MDT",
+    "PDT",
+    "Eire",
+    "GB",
+    "GMT",
+    "Israel",
+    "Jamaica",
+    "ROC",
+    "W-SU",
+    "WET",
+    "Zulu",
+    "EST5EDT",
+    "CST6CDT",
+    "MST7MDT",
+    "PST8PDT",
+  ];
+
   // Check if timezone starts with excluded prefixes
-  if (excludePrefixes.some(prefix => ianaId.startsWith(prefix))) {
-    return false
+  if (excludePrefixes.some((prefix) => ianaId.startsWith(prefix))) {
+    return false;
   }
-  
+
   // Check if timezone is in excluded exact matches
   if (excludeExact.includes(ianaId)) {
-    return false
+    return false;
   }
-  
-  return true
+
+  return true;
 }
 
 // Generate user-friendly timezone labels using native Intl API
 function getFriendlyTimezoneLabel(ianaId: string): TimezoneOption {
   try {
-    const now = new Date()
-    
+    const now = new Date();
+
     // Get UTC offset using Intl.DateTimeFormat
-    const offsetFormatter = new Intl.DateTimeFormat('en-US', {
+    const offsetFormatter = new Intl.DateTimeFormat("en-US", {
       timeZone: ianaId,
-      timeZoneName: 'longOffset'
-    })
-    const offsetParts = offsetFormatter.formatToParts(now)
-    const offsetPart = offsetParts.find(part => part.type === 'timeZoneName')
-    const offset = offsetPart ? offsetPart.value.replace('GMT', 'UTC') : 'UTC+00:00'
-    
+      timeZoneName: "longOffset",
+    });
+    const offsetParts = offsetFormatter.formatToParts(now);
+    const offsetPart = offsetParts.find((part) => part.type === "timeZoneName");
+    const offset = offsetPart
+      ? offsetPart.value.replace("GMT", "UTC")
+      : "UTC+00:00";
+
     // Extract region and city from IANA ID
-    const parts = ianaId.split('/')
-    const region = parts.length >= 2 ? parts[0] : 'Unknown'
-    const city = parts.length >= 2 ? parts[parts.length - 1].replace(/_/g, ' ') : ianaId
-    
+    const parts = ianaId.split("/");
+    const region = parts.length >= 2 ? parts[0] : "Unknown";
+    const city =
+      parts.length >= 2 ? parts[parts.length - 1].replace(/_/g, " ") : ianaId;
+
     // Create user-friendly label: "Region (City) UTC±XX:XX"
-    const label = `${ianaId} ${offset}`
-    
+    const label = `${ianaId} ${offset}`;
+
     return {
       value: ianaId,
       label,
       region,
       city,
-      offset
-    }
+      offset,
+    };
   } catch (error) {
-    console.warn(`Failed to process timezone ${ianaId}:`, error)
+    console.warn(`Failed to process timezone ${ianaId}:`, error);
     return {
       value: ianaId,
       label: ianaId,
-      region: 'Unknown',
+      region: "Unknown",
       city: ianaId,
-      offset: '+00:00'
-    }
+      offset: "+00:00",
+    };
   }
 }
 
 export function useSettingsData(session: Session | null) {
+  const {activeProfile} = useActiveProfile();
+
   const [settingsState, setSettingsState] = useState<SettingsState>({
     settings: null,
     isLoading: true,
     error: null,
-    hasUnsavedChanges: false
-  })
+    hasUnsavedChanges: false,
+  });
 
-  const [allTimezones, setAllTimezones] = useState<TimezoneOption[]>([])
+  const [allTimezones, setAllTimezones] = useState<TimezoneOption[]>([]);
 
   useEffect(() => {
     const initializeSettingsData = async () => {
       try {
-        console.log('🚀 [Settings] Initializing settings data...')
-        
-        // Generate timezone list using native browser API
-        if (typeof Intl !== 'undefined' && Intl.supportedValuesOf) {
+        if (typeof Intl !== "undefined" && Intl.supportedValuesOf) {
           try {
-            const timezoneNames = Intl.supportedValuesOf('timeZone')
+            const timezoneNames = Intl.supportedValuesOf("timeZone");
             const filteredTimezones = timezoneNames
               .filter(isUserFriendlyTimezone)
               .map(getFriendlyTimezoneLabel)
-              .sort((a, b) => a.label.localeCompare(b.label))
-            
-            setAllTimezones(filteredTimezones)
-            console.log(`✅ [Settings] Generated ${filteredTimezones.length} user-friendly timezones`)
+              .sort((a, b) => a.label.localeCompare(b.label));
+
+            setAllTimezones(filteredTimezones);
           } catch (error) {
-            console.warn('⚠️ [Settings] Failed to generate timezone list:', error)
-            // Fallback to basic list
+            console.error("Failed to load timezones", error);
             setAllTimezones([
-              { value: 'UTC', label: 'UTC (Coordinated Universal Time) UTC+00:00', region: 'UTC', city: 'UTC', offset: '+00:00' },
-              { value: 'America/New_York', label: 'America (New York) UTC-05:00', region: 'America', city: 'New York', offset: '-05:00' },
-              { value: 'Europe/London', label: 'Europe (London) UTC+00:00', region: 'Europe', city: 'London', offset: '+00:00' }
-            ])
+              {
+                value: "UTC",
+                label: "UTC (Coordinated Universal Time) UTC+00:00",
+                region: "UTC",
+                city: "UTC",
+                offset: "+00:00",
+              },
+              {
+                value: "America/New_York",
+                label: "America (New York) UTC-05:00",
+                region: "America",
+                city: "New York",
+                offset: "-05:00",
+              },
+              {
+                value: "Europe/London",
+                label: "Europe (London) UTC+00:00",
+                region: "Europe",
+                city: "London",
+                offset: "+00:00",
+              },
+            ]);
           }
         } else {
-          console.warn('⚠️ [Settings] Intl.supportedValuesOf not available, using fallback timezone list')
           setAllTimezones([
-            { value: 'UTC', label: 'UTC (Coordinated Universal Time) UTC+00:00', region: 'UTC', city: 'UTC', offset: '+00:00' },
-            { value: 'America/New_York', label: 'America (New York) UTC-05:00', region: 'America', city: 'New York', offset: '-05:00' },
-            { value: 'Europe/London', label: 'Europe (London) UTC+00:00', region: 'Europe', city: 'London', offset: '+00:00' }
-          ])
+            {
+              value: "UTC",
+              label: "UTC (Coordinated Universal Time) UTC+00:00",
+              region: "UTC",
+              city: "UTC",
+              offset: "+00:00",
+            },
+            {
+              value: "America/New_York",
+              label: "America (New York) UTC-05:00",
+              region: "America",
+              city: "New York",
+              offset: "-05:00",
+            },
+            {
+              value: "Europe/London",
+              label: "Europe (London) UTC+00:00",
+              region: "Europe",
+              city: "London",
+              offset: "+00:00",
+            },
+          ]);
         }
 
-        console.log('📡 [Settings] About to fetch user settings...')
-        // Fetch real user settings from Supabase
-        await fetchUserSettings(session)
-
+        await fetchUserSettings(session);
       } catch (error) {
-        console.error('❌ [Settings] Failed to initialize settings data:', error)
-        setSettingsState(prev => ({
+        console.error("Failed to initialize settings system", error);
+        setSettingsState((prev) => ({
           ...prev,
           isLoading: false,
-          error: 'Failed to initialize settings system'
-        }))
+          error: "Failed to initialize settings system",
+        }));
       }
-    }
+    };
 
-    initializeSettingsData()
-  }, [session])
+    initializeSettingsData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session, activeProfile]);
 
   const fetchUserSettings = async (session: Session | null) => {
     try {
-      console.log('🔍 [Settings] Starting fetchUserSettings with provided session')
-
-      if (!session?.user) {
-        console.warn('⚠️ [Settings] No authenticated user found')
-        setSettingsState(prev => ({
+      if (!session?.user || !activeProfile) {
+        setSettingsState((prev) => ({
           ...prev,
           isLoading: false,
-          error: 'Please log in to access settings'
-        }))
-        return
+          error: "Please log in to access settings",
+        }));
+        return;
       }
 
-      console.log('🔍 [Settings] User authenticated, calling SQL function...')
+      const response = await FPApi.axios.get<GetUserSettingsResponse>(
+        `/profile/settings/${activeProfile.id}`
+      );
+      const data = response.data;
 
-      // Call SQL function to fetch settings
-      const { data, error } = await supabase
-        .rpc('settings_get_data')
-
-      console.log('🔍 [Settings] RPC response:', { data, error })
-
-      if (error) {
-        console.error('❌ [Settings] RPC returned error:', error)
-        throw new Error(error.message || 'Failed to fetch settings')
-      }
-
-      if (!data || data.length === 0) {
-        console.error('❌ [Settings] No settings data received')
-        setSettingsState(prev => ({
-          ...prev,
-          isLoading: false,
-          error: 'No settings data received'
-        }))
-        return
-      }
-
-      console.log('✅ [Settings] Successfully fetched settings:', data[0])
-
-      // Update settings state with fetched data
       const userSettings: UserSettings = {
-        timezone: data[0].timezone || 'UTC',
-        theme_mode: (data[0].theme_mode as 'light' | 'dark' | 'system') || 'system'
-      }
+        timezone: data.timezone || "UTC",
+        theme_mode:
+          (data.theme_mode as "light" | "dark" | "system") || "system",
+        members_enabled: data.members_enabled ?? false,
+      };
 
-      console.log('✅ [Settings] Processed user settings:', userSettings)
-
-      setSettingsState(prev => ({
+      setSettingsState((prev) => ({
         ...prev,
         settings: userSettings,
         isLoading: false,
-        error: null
-      }))
-
+        error: null,
+      }));
     } catch (error) {
-      console.error('❌ [Settings] Failed to fetch user settings:', error)
-      setSettingsState(prev => ({
+      setSettingsState((prev) => ({
         ...prev,
         isLoading: false,
-        error: error instanceof Error ? error.message : 'Failed to load settings'
-      }))
+        error:
+          error instanceof Error ? error.message : "Failed to load settings",
+      }));
     }
-  }
+  };
 
   const updateSettings = async (updatedData: Partial<UserSettings>) => {
-    if (settingsState.settings && session?.user) {
-      const newSettings = { ...settingsState.settings, ...updatedData }
-
+    if (settingsState.settings && session?.user && activeProfile) {
       try {
-        const { error } = await supabase
-          .rpc('settings_update_data', {
-            p_timezone: newSettings.timezone,
-            p_theme_mode: newSettings.theme_mode
-          })
-
-        if (error) {
-          throw new Error(error.message || 'Failed to save settings')
+        const requestBody: UpdateUserSettingsRequest = {
+          profileId: activeProfile.id,
+        };
+        if (updatedData.timezone !== undefined) {
+          requestBody.timezone = updatedData.timezone;
+        }
+        if (updatedData.theme_mode !== undefined) {
+          requestBody.theme_mode = updatedData.theme_mode;
+        }
+        if (updatedData.members_enabled !== undefined) {
+          requestBody.members_enabled = updatedData.members_enabled;
         }
 
-        setSettingsState(prev => ({
-          ...prev,
-          settings: newSettings,
-          hasUnsavedChanges: false
-        }))
+        const response = await FPApi.axios.patch<GetUserSettingsResponse>(
+          "/profile/settings",
+          requestBody
+        );
 
-        return { success: true }
+        setSettingsState((prev) => ({
+          ...prev,
+          settings: {
+            timezone: response.data.timezone,
+            theme_mode: response.data.theme_mode as "light" | "dark" | "system",
+            members_enabled: response.data.members_enabled,
+          },
+          hasUnsavedChanges: false,
+        }));
+
+        return { success: true };
       } catch (error) {
-        console.error('Failed to save settings:', error)
-        return { success: false, error }
+        return { success: false, error };
       }
     }
-    return { success: false, error: new Error('No settings or session') }
-  }
+    return { success: false, error: new Error("No settings or session") };
+  };
 
   const saveChanges = async (session: Session | null) => {
     if (!settingsState.settings) {
-      throw new Error('No settings to save')
+      throw new Error("No settings to save");
     }
 
     try {
-      if (!session?.user) {
-        throw new Error('Authentication required to save settings')
+      if (!session?.user || !activeProfile) {
+        throw new Error("Authentication required to save settings");
       }
 
-      // Call SQL function to update settings
-      const { data, error } = await supabase
-        .rpc('settings_update_data', {
-          p_timezone: settingsState.settings.timezone,
-          p_theme_mode: settingsState.settings.theme_mode
-        })
-
-      if (error) {
-        throw new Error(error.message || 'Failed to save settings')
-      }
-
-      console.log('Settings saved successfully:', data)
+      await FPApi.axios.patch<GetUserSettingsResponse>(
+        "/profile/settings",
+        {
+          timezone: settingsState.settings.timezone,
+          theme_mode: settingsState.settings.theme_mode,
+          members_enabled: settingsState.settings.members_enabled,
+          profileId: activeProfile.id,
+        }
+      );
     } catch (error) {
-      console.error('Failed to save settings:', error)
-      throw error
+      console.error("Failed to save settings:", error);
+      throw error;
     } finally {
-      // Re-fetch settings from database to reset to last saved state
-      await fetchUserSettings(session)
-      setSettingsState(prev => ({
+      await fetchUserSettings(session);
+      setSettingsState((prev) => ({
         ...prev,
-        hasUnsavedChanges: false
-      }))
+        hasUnsavedChanges: false,
+      }));
     }
-  }
+  };
 
   const resetChanges = async (session: Session | null) => {
-    // Re-fetch settings from database to reset to last saved state
-    await fetchUserSettings(session)
-    setSettingsState(prev => ({
+    await fetchUserSettings(session);
+    setSettingsState((prev) => ({
       ...prev,
-      hasUnsavedChanges: false
-    }))
-  }
+      hasUnsavedChanges: false,
+    }));
+  };
 
   return {
     ...settingsState,
     allTimezones,
     updateSettings,
     saveChanges,
-    resetChanges
-  }
+    resetChanges,
+  };
 }

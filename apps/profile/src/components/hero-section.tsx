@@ -21,6 +21,12 @@ import { useAuthContext } from "@/components/auth-provider";
 import { useToast } from "@/hooks/use-toast";
 import { getStorageUrl } from "@/utils/getStorageUrl";
 import { CharacterCounter } from "@/components/shared/CharacterCounter";
+import {
+  joinPublicProfile,
+  leavePublicProfile,
+} from "../../../../shared-src/profile/api";
+import type { MembershipStatusResponse } from "../../../../shared-src/profile/types";
+import { VerifiedBadge } from "@/components/shared/VerifiedBadge";
 
 interface HeroSectionProps {
   user: UserProfile;
@@ -36,6 +42,9 @@ interface HeroSectionProps {
   onAddLocation: (location: LocationItem) => boolean;
   onRemoveLocation: (location: LocationItem) => void;
   onClearAllLocations: () => void;
+  isPublicProfile?: boolean;
+  membershipStatus?: MembershipStatusResponse | null;
+  onMembershipUpdate?: () => void;
 }
 
 export function HeroSection({
@@ -52,6 +61,9 @@ export function HeroSection({
   onAddLocation,
   onRemoveLocation,
   onClearAllLocations,
+  isPublicProfile = false,
+  membershipStatus = null,
+  onMembershipUpdate,
 }: HeroSectionProps) {
   const { updateProfilePartial } = useAuthContext();
   const { toast } = useToast();
@@ -61,6 +73,7 @@ export function HeroSection({
   const [isFollowingLoading, setFollowingLoading] = useState(false);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const [isUploadingCover, setIsUploadingCover] = useState(false);
+  const [isMembershipLoading, setIsMembershipLoading] = useState(false);
 
   const displayName = user.name || user.username || "User";
   const displayUsername = user.username || user.telegram_username || "user";
@@ -93,6 +106,9 @@ export function HeroSection({
     try {
       const formData = new FormData();
       formData.append("file", file);
+      if (isPublicProfile) {
+        formData.append("public_profile_id", user.id);
+      }
 
       const res = await FPApi.axios.post<{ filePath: string }>(
         "profile/upload-avatar",
@@ -108,9 +124,18 @@ export function HeroSection({
 
       const uniqueVersion = new Date().getTime();
       const newUrl = `${res.data.filePath}?v=${uniqueVersion}`;
-      await FPApi.axios.patch("/profile/update", {
+
+      const dataToUpdate: Partial<
+        UserProfile & { public_profile_id?: string }
+      > = {
         avatar_url: newUrl,
-      });
+      };
+
+      if (isPublicProfile) {
+        dataToUpdate["public_profile_id"] = user.id;
+      }
+
+      await FPApi.axios.patch("/profile/update", dataToUpdate);
       onUpdateProfile({
         avatar_url: newUrl,
       });
@@ -149,9 +174,18 @@ export function HeroSection({
 
       const uniqueVersion = new Date().getTime();
       const newUrl = `${res.data.filePath}?v=${uniqueVersion}`;
-      await FPApi.axios.patch("/profile/update", {
+
+      const dataToUpdate: Partial<
+        UserProfile & { public_profile_id?: string }
+      > = {
         cover_url: newUrl,
-      });
+      };
+
+      if (isPublicProfile) {
+        dataToUpdate["public_profile_id"] = user.id;
+      }
+
+      await FPApi.axios.patch("/profile/update", dataToUpdate);
       onUpdateProfile({
         cover_url: newUrl,
       });
@@ -179,6 +213,41 @@ export function HeroSection({
       });
     } finally {
       setFollowingLoading(false);
+    }
+  };
+
+  const handleJoinProfile = async () => {
+    setIsMembershipLoading(true);
+    try {
+      await joinPublicProfile(user.id);
+      onMembershipUpdate?.();
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Ошибка",
+        description: (error as Error)?.message || "Не удалось отправить заявку",
+        variant: "destructive",
+      });
+    } finally {
+      setIsMembershipLoading(false);
+    }
+  };
+
+  const handleLeaveProfile = async () => {
+    setIsMembershipLoading(true);
+    try {
+      await leavePublicProfile(user.id);
+      toast({ title: "Вы покинули профиль" });
+      onMembershipUpdate?.();
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Ошибка",
+        description: (error as Error)?.message || "Не удалось покинуть профиль",
+        variant: "destructive",
+      });
+    } finally {
+      setIsMembershipLoading(false);
     }
   };
 
@@ -291,9 +360,14 @@ export function HeroSection({
                   </div>
                 </div>
               ) : (
-                <h1 className="text-3xl font-bold truncate overflow-hidden">
-                  {displayName}
-                </h1>
+                <div className="flex items-center gap-3">
+                  <h1 className="text-3xl font-bold truncate overflow-hidden">
+                    {displayName}
+                  </h1>
+                  {user.is_verified && (
+                    <VerifiedBadge isVerified={user.is_verified} size="md" />
+                  )}
+                </div>
               )}
               {user.badge?.includes("verified") && (
                 <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
@@ -337,24 +411,28 @@ export function HeroSection({
               </p>
             )}
 
-            {isEditing ? (
-              <div className="mb-4 max-w-2xl">
-                <LocationSelector
-                  cities={cities}
-                  countries={countries}
-                  onAddLocation={onAddLocation}
-                  onRemoveLocation={onRemoveLocation}
-                  onClearAll={onClearAllLocations}
-                  maxLocations={3}
-                />
-              </div>
-            ) : (
-              locationString && (
-                <div className="flex items-center gap-1 text-sm text-muted-foreground mb-4">
-                  <MapPin className="w-4 h-4" />
-                  <span>{locationString}</span>
-                </div>
-              )
+            {!isPublicProfile && (
+              <>
+                {isEditing ? (
+                  <div className="mb-4 max-w-2xl">
+                    <LocationSelector
+                      cities={cities}
+                      countries={countries}
+                      onAddLocation={onAddLocation}
+                      onRemoveLocation={onRemoveLocation}
+                      onClearAll={onClearAllLocations}
+                      maxLocations={3}
+                    />
+                  </div>
+                ) : (
+                  locationString && (
+                    <div className="flex items-center gap-1 text-sm text-muted-foreground mb-4">
+                      <MapPin className="w-4 h-4" />
+                      <span>{locationString}</span>
+                    </div>
+                  )
+                )}
+              </>
             )}
           </div>
 
@@ -367,7 +445,7 @@ export function HeroSection({
                       variant="outline"
                       size="sm"
                       className="px-3 md:px-6 py-2 rounded-full font-medium transition-colors text-sm"
-                      onClick={() => navigate('/settings')}
+                      onClick={() => navigate("/settings")}
                       disabled={isSaving}
                     >
                       <Settings className="w-4 h-4 md:mr-2" />
@@ -409,7 +487,7 @@ export function HeroSection({
                       variant="outline"
                       size="sm"
                       className="px-3 md:px-6 py-2 rounded-full font-medium transition-colors text-sm"
-                      onClick={() => navigate('/settings')}
+                      onClick={() => navigate("/settings")}
                     >
                       <Settings className="w-4 h-4 md:mr-2" />
                       <span className="hidden md:inline">Настройки</span>
@@ -419,33 +497,67 @@ export function HeroSection({
               </>
             ) : (
               <>
-                {/* TODO: Uncomment when chat functionality is ready */}
-                {/* <Button
-                  variant="outline"
-                  className="px-4 py-2 rounded-full font-medium transition-colors"
-                  onClick={() => {
-     
-                  }}
-                >
-                  <MessageCircle className="w-4 h-4 mr-2" />
-                  Чат
-                </Button> */}
-                <Button
-                  onClick={handleToggleFollow}
-                  disabled={isFollowingLoading}
-                  variant="outline"
-                  size="sm"
-                  className="px-4 md:px-6 py-2 rounded-full font-medium transition-colors text-sm flex-1 md:flex-none"
-                >
-                  {isFollowingLoading ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <>
-                      {!isFollowing && <UserPlus className="w-4 h-4 mr-2" />}
-                      {isFollowing ? "Отписаться" : "Подписаться"}
-                    </>
-                  )}
-                </Button>
+                {membershipStatus?.status === "active" ? (
+                  <Button
+                    onClick={handleLeaveProfile}
+                    disabled={isMembershipLoading}
+                    variant="outline"
+                    size="sm"
+                    className="px-4 md:px-6 py-2 rounded-full font-medium transition-colors text-sm"
+                  >
+                    {isMembershipLoading ? (
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    ) : (
+                      "Покинуть"
+                    )}
+                  </Button>
+                ) : membershipStatus?.status === "pending" ? (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="px-4 md:px-6 py-2 rounded-full font-medium text-sm"
+                    disabled
+                  >
+                    Заявка отправлена
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={handleJoinProfile}
+                    disabled={isMembershipLoading}
+                    variant="outline"
+                    size="sm"
+                    className="px-4 md:px-6 py-2 rounded-full font-medium transition-colors text-sm"
+                  >
+                    {isMembershipLoading ? (
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    ) : (
+                      <>
+                        <UserPlus className="w-4 h-4 mr-2" />
+                        Вступить
+                      </>
+                    )}
+                  </Button>
+                )}
+
+                {/* Follow button */}
+                {!isPublicProfile && (
+                  <Button
+                    onClick={handleToggleFollow}
+                    disabled={isFollowingLoading}
+                    variant="outline"
+                    size="sm"
+                    className="px-4 md:px-6 py-2 rounded-full font-medium transition-colors text-sm flex-1 md:flex-none"
+                  >
+                    {isFollowingLoading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <>
+                        {!isFollowing && <UserPlus className="w-4 h-4 mr-2" />}
+                        {isFollowing ? "Отписаться" : "Подписаться"}
+                      </>
+                    )}
+                  </Button>
+                )}
               </>
             )}
           </div>

@@ -2,6 +2,10 @@
 
 export type EventType = "online" | "offline";
 
+export type EventPrivacy = "public" | "private";
+
+export type EventMembersVisibility = "all" | "members" | "owner";
+
 export type EventCategory =
   | "conference"
   | "forum"
@@ -38,7 +42,10 @@ export interface EventResponse {
   website?: string;
   category: EventCategory;
   memberLimit?: number;
-  author_id?: string;
+  authorId?: string;
+  privacy: EventPrivacy;
+  membersVisibility: EventMembersVisibility;
+  membersEnabled?: boolean;
 }
 
 export interface EventFormErrors {
@@ -54,6 +61,8 @@ export interface EventFormErrors {
   website?: string;
   category?: string;
   memberLimit?: string;
+  privacy?: string;
+  membersVisibility?: string;
 }
 
 export const EVENT_CATEGORIES: { value: EventCategory; label: string }[] = [
@@ -74,13 +83,26 @@ export const EVENT_TYPE_LABELS: Record<EventType, string> = {
   offline: "Офлайн",
 };
 
+export const EVENT_PRIVACY: { value: EventPrivacy; label: string }[] = [
+  { value: "public", label: "Могут вступить все" },
+  { value: "private", label: "Необходимо одобрение" },
+];
+
+export const EVENT_MEMBERS_VISIBILITY: { value: EventMembersVisibility; label: string }[] = [
+  { value: "all", label: "Все" },
+  { value: "members", label: "Участники" },
+  { value: "owner", label: "Владелец" },
+];
+
 import { z } from "zod";
 
 export const eventSchema = z
   .object({
-     id: z.number().optional(),
+    id: z.number().optional(),
     post_id: z.number().optional(),
     eventTypes: z.array(z.enum(["online", "offline"])).min(1, "Выберите хотя бы один формат"),
+    privacy: z.enum(["public", "private"]),
+    membersVisibility: z.enum(["all", "members", "owner"]),
     location: z
       .object({
         country: z
@@ -103,21 +125,25 @@ export const eventSchema = z
     endDate: z.string().optional(),
     endTime: z.string().optional(),
     website: z.string().url("Некорректный URL").optional().or(z.literal("")),
-    category: z.enum([
-      "conference",
-      "forum",
-      "webinar",
-      "workshop",
-      "master_class",
-      "meetup",
-      "training",
-      "seminar",
-      "course",
-      "other",
-    ], {
-      required_error: "Выберите категорию",
-    }),
+    category: z.enum(
+      [
+        "conference",
+        "forum",
+        "webinar",
+        "workshop",
+        "master_class",
+        "meetup",
+        "training",
+        "seminar",
+        "course",
+        "other",
+      ],
+      {
+        required_error: "Выберите категорию",
+      }
+    ),
     memberLimit: z.number().min(1).optional(),
+    membersEnabled: z.boolean().optional(),
   })
   .superRefine((data, ctx) => {
     if (data.eventTypes.includes("offline")) {

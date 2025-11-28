@@ -41,6 +41,7 @@ import { EventDisplayCard } from "../event/EventDisplayCard";
 import { PostType } from "./post";
 import { getStorageUrl } from "@/utils/getStorageUrl";
 import { EventResponse } from "../event/event-types";
+import { VerifiedBadge } from "@/components/shared/VerifiedBadge";
 
 interface PostCardProps {
   postId: number;
@@ -92,8 +93,7 @@ export function PostCard({
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const displayName = author?.name || author?.username || "User";
-  const displayUsername =
-    author?.username || author?.telegram_username || "user";
+  const displayUsername = author?.username || "user";
   const avatarFallback = displayName
     .split(" ")
     .map((n) => n[0])
@@ -165,6 +165,7 @@ export function PostCard({
                 >
                   {displayName}
                 </h3>
+                <VerifiedBadge isVerified={author?.is_verified} size="sm" />
                 {author?.badge?.includes("verified") && (
                   <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
                     <svg

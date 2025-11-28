@@ -15,6 +15,7 @@ interface InformationSectionProps {
   onUpdateAdditionalInfo: (updates: Partial<UserAdditionalInfo>) => void;
   isAdditionalInfoLoading?: boolean;
   onValidationChange?: (section: string, isValid: boolean) => void;
+  isPublicProfile?: boolean;
 }
 
 export function InformationSection({
@@ -25,6 +26,7 @@ export function InformationSection({
   onUpdateAdditionalInfo,
   isAdditionalInfoLoading,
   onValidationChange,
+  isPublicProfile,
 }: InformationSectionProps) {
   if (isAdditionalInfoLoading) {
     return (
@@ -52,21 +54,23 @@ export function InformationSection({
         />
       )}
       {((additionalInfo?.experience && additionalInfo.experience.length > 0) ||
-        isEditing) && (
-        <ExperienceSection
-          additionalInfo={additionalInfo}
-          onUpdateAdditionalInfo={onUpdateAdditionalInfo}
-          isEditing={isEditing}
-        />
-      )}
+        isEditing) &&
+        !isPublicProfile && (
+          <ExperienceSection
+            additionalInfo={additionalInfo}
+            onUpdateAdditionalInfo={onUpdateAdditionalInfo}
+            isEditing={isEditing}
+          />
+        )}
       {((additionalInfo?.education && additionalInfo.education.length > 0) ||
-        isEditing) && (
-        <EducationSection
-          additionalInfo={additionalInfo}
-          onUpdateAdditionalInfo={onUpdateAdditionalInfo}
-          isEditing={isEditing}
-        />
-      )}
+        isEditing) &&
+        !isPublicProfile && (
+          <EducationSection
+            additionalInfo={additionalInfo}
+            onUpdateAdditionalInfo={onUpdateAdditionalInfo}
+            isEditing={isEditing}
+          />
+        )}
       {((additionalInfo?.awards && additionalInfo.awards.length > 0) ||
         isEditing) && (
         <AwardsSection
@@ -76,13 +80,14 @@ export function InformationSection({
           onValidationChange={onValidationChange}
         />
       )}
-      {((user.birthday && user.birthday.trim()) || isEditing) && (
-        <BirthdaySection
-          user={user}
-          isEditing={isEditing}
-          onUpdateProfile={onUpdateProfile}
-        />
-      )}
+      {((user.birthday && user.birthday.trim()) || isEditing) &&
+        !isPublicProfile && (
+          <BirthdaySection
+            user={user}
+            isEditing={isEditing}
+            onUpdateProfile={onUpdateProfile}
+          />
+        )}
       {((user.additional_info && user.additional_info.trim()) || isEditing) && (
         <AdditionalInfoSection
           user={user}

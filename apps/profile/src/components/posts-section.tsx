@@ -4,7 +4,6 @@ import {
   FeedFilters,
   PostStatusFilter,
 } from "../../../../shared-src/feed/feed-filters";
-import { UserProfile } from "../types/profile";
 import {
   Select,
   SelectContent,
@@ -15,11 +14,14 @@ import {
 import { useNavigate } from "react-router-dom";
 
 interface PostsSectionProps {
-  user: UserProfile;
+  usernameFilter?: string;
   isOwnProfile: boolean;
 }
 
-export function PostsSection({ user, isOwnProfile }: PostsSectionProps) {
+export function PostsSection({
+  usernameFilter,
+  isOwnProfile,
+}: PostsSectionProps) {
   const navigate = useNavigate();
 
   const [filters, setFilters] = useState<FeedFilters>({
@@ -56,7 +58,7 @@ export function PostsSection({ user, isOwnProfile }: PostsSectionProps) {
 
       <Feed
         filters={filters}
-        filterByUsername={user.username}
+        filterByUsername={usernameFilter}
         emptyMessage={isOwnProfile ? "Публикаций нет" : "Публикаций нет"}
         emptyAction={
           isOwnProfile

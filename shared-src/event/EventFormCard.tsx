@@ -27,6 +27,8 @@ import {
   EVENT_CATEGORIES,
   EVENT_TYPE_LABELS,
   eventSchema,
+  EVENT_PRIVACY,
+  EVENT_MEMBERS_VISIBILITY,
 } from "./event-types";
 import { LocationSelector } from "@/components/shared/LocationSelector";
 import { CharacterCounter } from "@/components/shared/CharacterCounter";
@@ -49,6 +51,9 @@ export function EventFormCard({
       startDate: "",
       startTime: "",
       category: "conference" as const,
+      privacy: "public" as const,
+      membersVisibility: "all" as const,
+      membersEnabled: true,
     },
     mode: "onChange",
   });
@@ -60,6 +65,8 @@ export function EventFormCard({
     setValue,
     formState: { errors, isValid },
   } = form;
+
+  const membersEnabled = watch("membersEnabled");
 
   useEffect(() => {
     const subscription = form.watch((value) => {
@@ -93,6 +100,102 @@ export function EventFormCard({
         <CardDescription>Настройки и детали</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
+        <div>
+          <div className="flex items-center space-x-2">
+            <Controller
+              control={control}
+              name="membersEnabled"
+              render={({ field }) => {
+                return (
+                  <Checkbox
+                    id="edit-members-enabled"
+                    checked={field.value}
+                    onCheckedChange={(checked) =>
+                      setValue("membersEnabled", checked as boolean)
+                    }
+                  />
+                );
+              }}
+            ></Controller>
+            <Label
+              htmlFor="edit-members-enabled"
+              className="text-xs md:text-sm font-medium cursor-pointer"
+            >
+              Включить раздел участников
+            </Label>
+          </div>
+        </div>
+
+        {membersEnabled && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2">
+                <Calendar className="w-4 h-4" />
+                Тип меропрития *
+              </Label>
+              <Controller
+                control={control}
+                name="privacy"
+                render={({ field }) => (
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <SelectTrigger
+                      className={errors.privacy ? "border-destructive" : ""}
+                    >
+                      <SelectValue placeholder="Выберите тип мероприятия" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {EVENT_PRIVACY.map((cat) => (
+                        <SelectItem key={cat.value} value={cat.value}>
+                          {cat.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.privacy && (
+                <p className="text-xs text-destructive">
+                  {errors.privacy.message}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2">
+                <Calendar className="w-4 h-4" />
+                Кто видит список участников *
+              </Label>
+              <Controller
+                control={control}
+                name="membersVisibility"
+                render={({ field }) => (
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <SelectTrigger
+                      className={
+                        errors.membersVisibility ? "border-destructive" : ""
+                      }
+                    >
+                      <SelectValue placeholder="Кто видит список участников" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {EVENT_MEMBERS_VISIBILITY.map((cat) => (
+                        <SelectItem key={cat.value} value={cat.value}>
+                          {cat.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.membersVisibility && (
+                <p className="text-xs text-destructive">
+                  {errors.membersVisibility.message}
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label className="flex items-center gap-2">
