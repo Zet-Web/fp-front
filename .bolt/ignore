@@ -10,7 +10,7 @@ apps/about
 apps/profile
 apps/post
 apps/settings
-apps/network
+# apps/network
 apps/quiz
 
 apps/yurservice
