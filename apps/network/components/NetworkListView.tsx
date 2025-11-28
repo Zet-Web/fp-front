@@ -82,9 +82,9 @@ export function NetworkListView({ data, onNodeClick, emptyMessage }: NetworkList
 
   return (
     <div className="space-y-4">
-      <Card className="shadow-sm">
+      {/* <Card className="shadow-sm">
         <CardHeader className="pb-3">
-          {/*<div className="flex items-center justify-between">
+          <div className="flex items-center justify-between">
             <CardTitle className="text-lg">
               Контакты ({sortedNodes.length})
             </CardTitle>
@@ -103,9 +103,9 @@ export function NetworkListView({ data, onNodeClick, emptyMessage }: NetworkList
                 </SelectContent>
               </Select>
             </div>
-          </div>*/}
+          </div>
         </CardHeader>
-      </Card>
+      </Card> */}
 
       <div className="space-y-3">
         {paginatedNodes.map((node) => (
