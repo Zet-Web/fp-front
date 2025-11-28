@@ -111,6 +111,7 @@ export function Feed({
 
         if (uniqueNew.length === 0) {
           setHasMore(false);
+          setIsInitialLoading(false);
           return;
         }
 

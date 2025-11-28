@@ -48,7 +48,7 @@ import {
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useState, useMemo, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useAuthContext } from "@/components/auth-provider";
 import { toast } from "sonner";
@@ -94,6 +94,11 @@ interface PublicProfile {
 export function SettingsPage() {
   const { session, isAuthenticated } = useAuthContext();
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+
+  const initialTab = params.get("tab");
+
+  const [currentTab, setCurrentTab] = useState(initialTab || "general");
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -138,7 +143,12 @@ export function SettingsPage() {
 
   return (
     <div className="container mx-auto px-6 py-6 max-w-4xl">
-      <Tabs defaultValue="general" className="w-full">
+      <Tabs
+        value={currentTab}
+        onValueChange={(value) => setCurrentTab(value)}
+        defaultValue="general"
+        className="w-full"
+      >
         <TabsList className="grid w-full grid-cols-2 mb-6">
           <TabsTrigger value="general">Основное</TabsTrigger>
           <TabsTrigger value="profiles">Профили</TabsTrigger>

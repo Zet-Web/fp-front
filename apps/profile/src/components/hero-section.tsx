@@ -497,46 +497,50 @@ export function HeroSection({
               </>
             ) : (
               <>
-                {membershipStatus?.status === "active" ? (
-                  <Button
-                    onClick={handleLeaveProfile}
-                    disabled={isMembershipLoading}
-                    variant="outline"
-                    size="sm"
-                    className="px-4 md:px-6 py-2 rounded-full font-medium transition-colors text-sm"
-                  >
-                    {isMembershipLoading ? (
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                {user.members_enabled && (
+                  <>
+                    {membershipStatus?.status === "active" ? (
+                      <Button
+                        onClick={handleLeaveProfile}
+                        disabled={isMembershipLoading}
+                        variant="outline"
+                        size="sm"
+                        className="px-4 md:px-6 py-2 rounded-full font-medium transition-colors text-sm"
+                      >
+                        {isMembershipLoading ? (
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        ) : (
+                          "Покинуть"
+                        )}
+                      </Button>
+                    ) : membershipStatus?.status === "pending" ? (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="px-4 md:px-6 py-2 rounded-full font-medium text-sm"
+                        disabled
+                      >
+                        Заявка отправлена
+                      </Button>
                     ) : (
-                      "Покинуть"
+                      <Button
+                        onClick={handleJoinProfile}
+                        disabled={isMembershipLoading}
+                        variant="outline"
+                        size="sm"
+                        className="px-4 md:px-6 py-2 rounded-full font-medium transition-colors text-sm"
+                      >
+                        {isMembershipLoading ? (
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        ) : (
+                          <>
+                            <UserPlus className="w-4 h-4 mr-2" />
+                            Вступить
+                          </>
+                        )}
+                      </Button>
                     )}
-                  </Button>
-                ) : membershipStatus?.status === "pending" ? (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="px-4 md:px-6 py-2 rounded-full font-medium text-sm"
-                    disabled
-                  >
-                    Заявка отправлена
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={handleJoinProfile}
-                    disabled={isMembershipLoading}
-                    variant="outline"
-                    size="sm"
-                    className="px-4 md:px-6 py-2 rounded-full font-medium transition-colors text-sm"
-                  >
-                    {isMembershipLoading ? (
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    ) : (
-                      <>
-                        <UserPlus className="w-4 h-4 mr-2" />
-                        Вступить
-                      </>
-                    )}
-                  </Button>
+                  </>
                 )}
 
                 {/* Follow button */}

@@ -100,13 +100,13 @@ function App() {
       enableSystem={false}
       disableTransitionOnChange
     >
-      <AuthProvider>
-        <ActiveProfileProvider>
+      <ActiveProfileProvider>
+        <AuthProvider>
           <SidebarProvider>
             <AppContent />
           </SidebarProvider>
-        </ActiveProfileProvider>
-      </AuthProvider>
+        </AuthProvider>
+      </ActiveProfileProvider>
       <Toaster />
     </ThemeProvider>
   );

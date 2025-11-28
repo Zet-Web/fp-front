@@ -156,7 +156,10 @@ export function FullPostCard({
                 >
                   {displayName}
                 </h3>
-                <VerifiedBadge isVerified={author?.is_verified} size="sm" />
+                <VerifiedBadge
+                  isVerified={Boolean(author?.is_verified)}
+                  size="sm"
+                />
                 {author?.badge?.includes("verified") && (
                   <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
                     <svg
