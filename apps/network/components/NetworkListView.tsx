@@ -84,7 +84,7 @@ export function NetworkListView({ data, onNodeClick, emptyMessage }: NetworkList
     <div className="space-y-4">
       <Card className="shadow-sm">
         <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
+          {/*<div className="flex items-center justify-between">
             <CardTitle className="text-lg">
               Контакты ({sortedNodes.length})
             </CardTitle>
@@ -102,7 +102,7 @@ export function NetworkListView({ data, onNodeClick, emptyMessage }: NetworkList
                   <SelectItem value="connections-desc">По связям</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
+            </div>*/}
           </div>
         </CardHeader>
       </Card>
