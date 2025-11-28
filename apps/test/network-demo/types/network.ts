@@ -1,6 +1,6 @@
 // TypeScript interfaces for network visualization and connection management
 
-export type ConnectionType = 'direct' | 'following' | 'follower' | 'community' | 'mutual' | 'colleague' | 'client' | 'partner' | 'event';
+export type ConnectionType = 'direct' | 'following' | 'follower' | 'community' | 'mutual' | 'colleague' | 'client' | 'partner';
 
 export type ConnectionLevel = 1 | 2 | 3;
 

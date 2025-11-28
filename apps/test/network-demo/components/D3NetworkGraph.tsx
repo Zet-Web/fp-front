@@ -297,8 +297,7 @@ const labelY = nodeRadius + labelFontSize + 4;
           className="bg-background/50"
         />
 
-        {/* Temporarily commented for test mode */}
-        {/* <div className="absolute bottom-4 right-4 flex flex-col gap-2">
+        <div className="absolute bottom-4 right-4 flex flex-col gap-2">
           <Button
             variant="outline"
             size="icon"
@@ -323,7 +322,7 @@ const labelY = nodeRadius + labelFontSize + 4;
           >
             <Maximize2 className="h-4 w-4" />
           </Button>
-        </div> */}
+        </div>
       </div>
     </Card>
   );

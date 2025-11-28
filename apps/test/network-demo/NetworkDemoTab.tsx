@@ -32,7 +32,7 @@ const DEFAULT_FILTERS: NetworkFiltersState = {
   showMutualOnly: false,
 };
 
-export function NetworkPage() {
+export function NetworkDemoTab() {
   const [filters, setFilters] = useState<NetworkFiltersState>(DEFAULT_FILTERS);
   const [selectedNode, setSelectedNode] = useState<NetworkNode | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -59,19 +59,17 @@ export function NetworkPage() {
   };
 
   return (
-    <div className="h-full w-full flex flex-col">
-      <div className="container mx-auto px-4 py-6 max-w-7xl">
+    <div className="space-y-6">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-foreground mb-2">
-            Контакты
+            Контакты (Демо режим)
           </h1>
           <p className="text-muted-foreground">
-            Профессиональные связи и нетворк
+            Профессиональные связи
           </p>
         </div>
 
-        {/* Temporarily commented for test mode */}
-        {/* <NetworkStats stats={stats} /> */}
+        <NetworkStats stats={stats} />
 
         <div className="mb-6">
           <NetworkFilters
@@ -158,7 +156,6 @@ export function NetworkPage() {
           open={isModalOpen}
           onOpenChange={handleModalClose}
         />
-      </div>
     </div>
   );
 }

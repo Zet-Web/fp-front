@@ -82,9 +82,7 @@ export function NetworkListView({ data, onNodeClick, emptyMessage }: NetworkList
 
   return (
     <div className="space-y-4">
-
-      {/* Temporarily commented for test mode */}
-      {/* <Card className="shadow-sm">
+      <Card className="shadow-sm">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg">
@@ -107,7 +105,7 @@ export function NetworkListView({ data, onNodeClick, emptyMessage }: NetworkList
             </div>
           </div>
         </CardHeader>
-      </Card> */}
+      </Card>
 
       <div className="space-y-3">
         {paginatedNodes.map((node) => (
