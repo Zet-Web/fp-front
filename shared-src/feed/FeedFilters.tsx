@@ -59,9 +59,10 @@ export function FeedFilters({
               <TabsTrigger value="featured" className="text-sm">
                 Рекомендовано
               </TabsTrigger>
-              <TabsTrigger value="all" className="text-sm">
+              {/* Temporary hidden */}
+              {/* <TabsTrigger value="all" className="text-sm">
                 Все посты
-              </TabsTrigger>
+              </TabsTrigger> */}
               <TabsTrigger value="following" className="text-sm">
                 Посты контактов
               </TabsTrigger>
