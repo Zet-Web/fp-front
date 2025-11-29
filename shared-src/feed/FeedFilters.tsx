@@ -55,7 +55,8 @@ export function FeedFilters({
       <CardContent className="p-3 space-y-3">
         <div className="overflow-x-auto scrollbar-hide -mx-3 px-3">
           <Tabs value={view} onValueChange={(v) => onViewChange(v as FeedView)}>
-            <TabsList className="grid w-full grid-cols-4 h-9 min-w-max md:min-w-0">
+            {/* <TabsList className="grid w-full grid-cols-4 h-9 min-w-max md:min-w-0"> */}
+            <TabsList className="grid w-full grid-cols-3 h-9 min-w-max md:min-w-0">
               <TabsTrigger value="featured" className="text-sm">
                 Рекомендовано
               </TabsTrigger>
