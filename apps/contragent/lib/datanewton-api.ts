@@ -1,7 +1,7 @@
 // DataNewton API service for fetching company information by INN or OGRN
 
 const API_BASE_URL = 'https://api.datanewton.ru/v1/counterparty';
-const API_KEY = 'const API_KEY';
+const API_KEY = '4myoXJbKx0eC';
 
 const DEFAULT_FILTERS = [
   'OWNER_BLOCK',
