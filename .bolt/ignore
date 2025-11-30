@@ -10,7 +10,7 @@ apps/about
 apps/profile
 apps/post
 apps/settings
-# apps/network
+apps/network
 apps/quiz
 
 apps/yurservice
@@ -18,4 +18,4 @@ apps/contragent
 apps/split
 
 # src/components
-shared-src
+# shared-src
