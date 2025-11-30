@@ -138,7 +138,7 @@ export function EventVariant1() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t">
                   <div className="flex items-center gap-3 text-sm">
                     <Calendar className="w-4 h-4 text-blue-500" />
-                    <span>{new Date(event.startDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+                    <span>{new Date(event.startDate).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' })}</span>
                   </div>
 
                   <div className="flex items-center gap-3 text-sm">
@@ -184,7 +184,7 @@ export function EventVariant1() {
                 <div className="p-4 bg-muted/50 rounded-lg space-y-2">
                   <div className="flex items-center justify-center gap-2 text-sm">
                     <Calendar className="w-4 h-4 text-blue-500" />
-                    <span className="font-medium">{new Date(event.startDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+                    <span className="font-medium">{new Date(event.startDate).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' })}</span>
                   </div>
                   <div className="flex items-center justify-center gap-2 text-sm">
                     <Clock className="w-4 h-4 text-blue-500" />

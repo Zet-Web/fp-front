@@ -165,7 +165,7 @@ export function EventVariant2() {
                     </div>
                     <div>
                       <div className="text-xs text-muted-foreground">Date</div>
-                      <div className="font-medium">{new Date(event.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</div>
+                      <div className="font-medium">{new Date(event.startDate).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' })}</div>
                     </div>
                   </div>
 
@@ -237,7 +237,7 @@ export function EventVariant2() {
                   <div className="space-y-3">
                     <div className="flex items-center justify-center gap-3">
                       <Calendar className="w-5 h-5 text-blue-500" />
-                      <span className="font-semibold">{new Date(event.startDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+                      <span className="font-semibold">{new Date(event.startDate).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' })}</span>
                     </div>
                     <div className="flex items-center justify-center gap-3">
                       <Clock className="w-5 h-5 text-blue-500" />
