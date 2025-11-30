@@ -1,18 +1,10 @@
 // List view component displaying network connections as cards with sorting and pagination
 
-import { useState, useMemo } from 'react';
-import { NetworkData, NetworkNode } from '../types/network';
-import { ConnectionCard } from './ConnectionCard';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { ArrowUpDown } from 'lucide-react';
+import { useState, useMemo } from "react";
+import { NetworkData, NetworkNode } from "../types/network";
+import { ConnectionCard } from "./ConnectionCard";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 interface NetworkListViewProps {
   data: NetworkData;
@@ -20,32 +12,39 @@ interface NetworkListViewProps {
   emptyMessage?: string;
 }
 
-type SortOption = 'name-asc' | 'name-desc' | 'level-asc' | 'connections-desc';
+type SortOption = "name-asc" | "name-desc" | "level-asc" | "connections-desc";
 
-export function NetworkListView({ data, onNodeClick, emptyMessage }: NetworkListViewProps) {
-  const [sortBy, setSortBy] = useState<SortOption>('name-asc');
+export function NetworkListView({
+  data,
+  onNodeClick,
+  emptyMessage,
+}: NetworkListViewProps) {
+  const [sortBy, setSortBy] = useState<SortOption>("name-asc");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
   const getMutualConnections = (nodeId: string): number => {
-    return data.edges.filter(edge =>
-      (edge.source === nodeId || edge.target === nodeId) &&
-      edge.mutualConnections
-    ).reduce((sum, edge) => sum + (edge.mutualConnections || 0), 0);
+    return data.edges
+      .filter(
+        (edge) =>
+          (edge.source === nodeId || edge.target === nodeId) &&
+          edge.mutualConnections
+      )
+      .reduce((sum, edge) => sum + (edge.mutualConnections || 0), 0);
   };
 
   const sortedNodes = useMemo(() => {
-    const nodes = data.nodes.filter(node => !node.isCurrentUser);
+    const nodes = data.nodes.filter((node) => !node.isCurrentUser);
 
     const sorted = [...nodes].sort((a, b) => {
       switch (sortBy) {
-        case 'name-asc':
-          return a.name.localeCompare(b.name, 'ru');
-        case 'name-desc':
-          return b.name.localeCompare(a.name, 'ru');
-        case 'level-asc':
+        case "name-asc":
+          return a.name.localeCompare(b.name, "ru");
+        case "name-desc":
+          return b.name.localeCompare(a.name, "ru");
+        case "level-asc":
           return a.level - b.level;
-        case 'connections-desc':
+        case "connections-desc":
           return getMutualConnections(b.id) - getMutualConnections(a.id);
         default:
           return 0;
@@ -53,6 +52,7 @@ export function NetworkListView({ data, onNodeClick, emptyMessage }: NetworkList
     });
 
     return sorted;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data.nodes, sortBy]);
 
   const totalPages = Math.ceil(sortedNodes.length / itemsPerPage);
@@ -63,7 +63,7 @@ export function NetworkListView({ data, onNodeClick, emptyMessage }: NetworkList
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   if (sortedNodes.length === 0) {
@@ -72,7 +72,7 @@ export function NetworkListView({ data, onNodeClick, emptyMessage }: NetworkList
         <CardContent className="py-12">
           <div className="text-center">
             <p className="text-muted-foreground">
-              {emptyMessage || 'Нет соединений для отображения'}
+              {emptyMessage || "Нет соединений для отображения"}
             </p>
           </div>
         </CardContent>
@@ -82,7 +82,6 @@ export function NetworkListView({ data, onNodeClick, emptyMessage }: NetworkList
 
   return (
     <div className="space-y-4">
-
       {/* Temporarily commented for test mode */}
       {/* <Card className="shadow-sm">
         <CardHeader className="pb-3">
@@ -114,7 +113,6 @@ export function NetworkListView({ data, onNodeClick, emptyMessage }: NetworkList
           <ConnectionCard
             key={node.id}
             node={node}
-            mutualConnections={getMutualConnections(node.id)}
             onClick={() => onNodeClick(node)}
           />
         ))}
@@ -149,9 +147,13 @@ export function NetworkListView({ data, onNodeClick, emptyMessage }: NetworkList
                   return (
                     <Button
                       key={page}
-                      variant={currentPage === page ? 'default' : 'outline'}
+                      variant={currentPage === page ? "default" : "outline"}
                       size="sm"
-                      className={currentPage === page ? 'bg-blue-500 hover:bg-blue-600' : ''}
+                      className={
+                        currentPage === page
+                          ? "bg-blue-500 hover:bg-blue-600"
+                          : ""
+                      }
                       onClick={() => handlePageChange(page)}
                     >
                       {page}

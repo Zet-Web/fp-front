@@ -1,17 +1,21 @@
 // Modal dialog displaying detailed information about a network node
 
-import { NetworkNode } from '../types/network';
+import { NetworkNode } from "../types/network";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Eye, MessageCircle, Users } from 'lucide-react';
-import { getConnectionTypeBadgeColor, getConnectionTypeLabel } from '../lib/network-utils';
-import { Link } from 'react-router-dom';
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Eye, Users } from "lucide-react";
+import {
+  getConnectionTypeBadgeColor,
+  getConnectionTypeLabel,
+} from "../lib/network-utils";
+import { Link } from "react-router-dom";
+import { getStorageUrl } from "@/utils/getStorageUrl";
 
 interface NodeDetailModalProps {
   node: NetworkNode | null;
@@ -19,7 +23,11 @@ interface NodeDetailModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export function NodeDetailModal({ node, open, onOpenChange }: NodeDetailModalProps) {
+export function NodeDetailModal({
+  node,
+  open,
+  onOpenChange,
+}: NodeDetailModalProps) {
   if (!node) return null;
 
   return (
@@ -32,14 +40,18 @@ export function NodeDetailModal({ node, open, onOpenChange }: NodeDetailModalPro
         <div className="flex flex-col items-center text-center py-4">
           {node.avatarUrl ? (
             <img
-              src={node.avatarUrl}
+              src={getStorageUrl(node.avatarUrl)}
               alt={node.name}
               className="h-20 w-20 rounded-full object-cover shadow-lg mb-4"
             />
           ) : (
             <div className="h-20 w-20 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg mb-4">
               <span className="text-white font-semibold text-2xl">
-                {node.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                {node.name
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")
+                  .slice(0, 2)}
               </span>
             </div>
           )}
@@ -48,9 +60,7 @@ export function NodeDetailModal({ node, open, onOpenChange }: NodeDetailModalPro
             {node.name}
           </h2>
 
-          <p className="text-sm text-muted-foreground mb-4">
-            @{node.username}
-          </p>
+          <p className="text-sm text-muted-foreground mb-4">@{node.username}</p>
 
           {node.role && (
             <p className="text-sm text-muted-foreground mb-4">
@@ -76,7 +86,9 @@ export function NodeDetailModal({ node, open, onOpenChange }: NodeDetailModalPro
                     <Badge
                       key={index}
                       variant="secondary"
-                      className={`${getConnectionTypeBadgeColor(type)} text-white text-xs`}
+                      className={`${getConnectionTypeBadgeColor(
+                        type
+                      )} text-white text-xs`}
                     >
                       {getConnectionTypeLabel(type)}
                     </Badge>
@@ -92,11 +104,7 @@ export function NodeDetailModal({ node, open, onOpenChange }: NodeDetailModalPro
                 </p>
                 <div className="flex flex-wrap gap-2 justify-center">
                   {node.communities.map((community, index) => (
-                    <Badge
-                      key={index}
-                      variant="outline"
-                      className="text-xs"
-                    >
+                    <Badge key={index} variant="outline" className="text-xs">
                       {community}
                     </Badge>
                   ))}
@@ -124,12 +132,12 @@ export function NodeDetailModal({ node, open, onOpenChange }: NodeDetailModalPro
               </Link>
             </Button>
 
-            {node.role !== 'Сообщество' && (
+            {/* {node.role !== "Сообщество" && (
               <Button variant="outline" className="flex-1">
                 <MessageCircle className="h-4 w-4 mr-2" />
                 Написать
               </Button>
-            )}
+            )} */}
           </div>
         </div>
       </DialogContent>

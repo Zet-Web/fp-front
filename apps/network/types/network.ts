@@ -61,6 +61,6 @@ export interface D3Node extends NetworkNode {
 }
 
 export interface D3Edge extends NetworkEdge {
-  source: D3Node | string;
-  target: D3Node | string;
+  source: string;
+  target: string;
 }

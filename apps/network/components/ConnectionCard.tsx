@@ -1,19 +1,19 @@
 // Individual connection card component for list view with user details and actions
 
-import { NetworkNode } from '../types/network';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { ExternalLink } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { NetworkNode } from "../types/network";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { ExternalLink } from "lucide-react";
+import { Link } from "react-router-dom";
+import { getStorageUrl } from "@/utils/getStorageUrl";
 
 interface ConnectionCardProps {
   node: NetworkNode;
-  mutualConnections?: number;
   onClick: () => void;
 }
 
-export function ConnectionCard({ node, mutualConnections, onClick }: ConnectionCardProps) {
+export function ConnectionCard({ node, onClick }: ConnectionCardProps) {
   return (
     <Card className="shadow-sm hover:shadow-md transition-shadow duration-300">
       <CardContent className="p-4">
@@ -24,14 +24,18 @@ export function ConnectionCard({ node, mutualConnections, onClick }: ConnectionC
           >
             {node.avatarUrl ? (
               <img
-                src={node.avatarUrl}
+                src={getStorageUrl(node.avatarUrl)}
                 alt={node.name}
                 className="h-16 w-16 rounded-full object-cover shadow-md"
               />
             ) : (
               <div className="h-16 w-16 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-md">
                 <span className="text-white font-semibold text-lg">
-                  {node.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                  {node.name
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")
+                    .slice(0, 2)}
                 </span>
               </div>
             )}
@@ -52,7 +56,6 @@ export function ConnectionCard({ node, mutualConnections, onClick }: ConnectionC
                   @{node.username}
                 </p>
               </div>
-
 
               <Button
                 variant="outline"
@@ -78,11 +81,7 @@ export function ConnectionCard({ node, mutualConnections, onClick }: ConnectionC
                 <p className="text-xs text-muted-foreground mb-1">Общее:</p>
                 <div className="flex flex-wrap gap-1">
                   {node.communities.slice(0, 3).map((community, index) => (
-                    <Badge
-                      key={index}
-                      variant="outline"
-                      className="text-xs"
-                    >
+                    <Badge key={index} variant="outline" className="text-xs">
                       {community}
                     </Badge>
                   ))}
