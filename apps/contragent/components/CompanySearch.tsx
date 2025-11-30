@@ -14,11 +14,11 @@ interface CompanySearchProps {
 }
 
 const demoExamples = [
+  { inn: '9728006808', name: 'ООО "ДАТАНОМИКА"' },
   { inn: '7707083893', name: 'ПАО "Сбербанк"' },
   { inn: '7728168971', name: 'ООО "Яндекс"' },
   { inn: '7743001840', name: 'ПАО "МТС"' },
-  { inn: '7707049388', name: 'ООО "Девелопер Групп"' },
-  { inn: '5007017140', name: 'ООО "ТехСтрой"' }
+  { inn: '1207700223257', name: 'По ОГРН' }
 ];
 
 export function CompanySearch({ onSearch, isLoading, searchHistory }: CompanySearchProps) {
@@ -44,7 +44,7 @@ export function CompanySearch({ onSearch, isLoading, searchHistory }: CompanySea
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               type="text"
-              placeholder="Введите ИНН или название компании..."
+              placeholder="Введите ИНН (10 или 12 цифр) или ОГРН (13 или 15 цифр)..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-9"

@@ -14,4 +14,15 @@ Goal is optimize and good organize code, save tokens, avoit AI mistakes by decid
 - Using Supabase Self Hosted database.
 - Using direct database requests, call SQL functions, request serverless functions in the own server (NestJs).
 
+# External Integrations
+## DataNewton API
+The Contragent page uses the DataNewton API for fetching real company information from ЕГРЮЛ/ЕГРИП registry.
+- API Endpoint: https://api.datanewton.ru/v1/counterparty
+- Implementation: Client-side fetch requests
+- Features: Search by INN (10-12 digits) or OGRN (13-15 digits)
+- Data blocks: OWNER_BLOCK, ADDRESS_BLOCK, MANAGER_BLOCK, OKVED_BLOCK, CONTACT_BLOCK, NEGATIVE_LISTS_BLOCK, WORKERS_COUNT_BLOCK
+- Files:
+  - apps/contragent/lib/datanewton-api.ts - API service for making requests
+  - apps/contragent/lib/datanewton-mapper.ts - Data transformation and risk assessment logic
+
 Design system description and rules in the design_system.md file.

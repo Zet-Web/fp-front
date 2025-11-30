@@ -7,8 +7,9 @@ import { CompanySearch } from './components/CompanySearch';
 import { RiskHeader } from './components/RiskHeader';
 import { CompanyDetails } from './components/CompanyDetails';
 import { RiskAssessment } from './components/RiskAssessment';
-import { getCompanyByInn } from './lib/mock-companies';
 import { Company, SearchHistoryItem } from './types/company';
+import { fetchCompanyInfo } from './lib/datanewton-api';
+import { mapDataNewtonToCompany } from './lib/datanewton-mapper';
 
 export default function ContragentPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -16,33 +17,33 @@ export default function ContragentPage() {
   const [error, setError] = useState<string | null>(null);
   const [searchHistory, setSearchHistory] = useState<SearchHistoryItem[]>([]);
 
-  const handleSearch = async (inn: string) => {
+  const handleSearch = async (identifier: string) => {
     setIsLoading(true);
     setError(null);
     setCurrentCompany(null);
 
-    setTimeout(() => {
-      const company = getCompanyByInn(inn);
+    try {
+      const apiResponse = await fetchCompanyInfo(identifier);
+      const company = mapDataNewtonToCompany(apiResponse);
 
-      if (company) {
-        setCurrentCompany(company);
+      setCurrentCompany(company);
 
-        const historyItem: SearchHistoryItem = {
-          inn: company.basicInfo.inn,
-          name: company.basicInfo.name,
-          timestamp: new Date().toISOString()
-        };
+      const historyItem: SearchHistoryItem = {
+        inn: company.basicInfo.inn,
+        name: company.basicInfo.name,
+        timestamp: new Date().toISOString()
+      };
 
-        setSearchHistory(prev => {
-          const filtered = prev.filter(item => item.inn !== inn);
-          return [historyItem, ...filtered].slice(0, 5);
-        });
-      } else {
-        setError(`Компания с ИНН "${inn}" не найдена в базе данных. Попробуйте один из примеров.`);
-      }
-
+      setSearchHistory(prev => {
+        const filtered = prev.filter(item => item.inn !== identifier);
+        return [historyItem, ...filtered].slice(0, 5);
+      });
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Произошла неизвестная ошибка';
+      setError(errorMessage);
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -64,11 +65,11 @@ export default function ContragentPage() {
             </div>
           </div>
 
-          {/* Demo Mode Alert */}
+          {/* Live API Alert */}
           <Alert className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
             <AlertCircle className="h-4 w-4 text-blue-600 dark:text-blue-400" />
             <AlertDescription className="text-blue-800 dark:text-blue-200">
-              <strong>Демо-режим:</strong> Используются тестовые данные. Для проверки доступны 5 примеров компаний.
+              <strong>API DataNewton:</strong> Используются реальные данные из ЕГРЮЛ/ЕГРИП через API DataNewton.
             </AlertDescription>
           </Alert>
 
@@ -121,8 +122,8 @@ export default function ContragentPage() {
               <div>
                 <h3 className="text-xl font-semibold mb-2">Начните проверку</h3>
                 <p className="text-muted-foreground max-w-md mx-auto">
-                  Введите ИНН или название компании для получения подробной информации
-                  о финансовом состоянии, судебных делах и оценки рисков
+                  Введите ИНН или ОГРН компании для получения подробной информации
+                  из ЕГРЮЛ/ЕГРИП и оценки рисков
                 </p>
               </div>
             </div>
