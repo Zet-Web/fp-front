@@ -28,24 +28,25 @@ function calculateRiskAssessment(data: DataNewtonResponse): CompanyRiskAssessmen
     score -= 40;
   }
 
-  if (data.negative_lists) {
-    if (data.negative_lists.disqualified_persons) {
+  const negativeLists = data.company?.negative_lists || data.negative_lists;
+  if (negativeLists) {
+    if (negativeLists.disqualified_persons) {
       factors.push('Присутствуют дисквалифицированные лица');
       score -= 25;
     }
-    if (data.negative_lists.unreliable_information) {
+    if (negativeLists.unreliable_information) {
       factors.push('Недостоверные сведения в ЕГРЮЛ');
       score -= 20;
     }
-    if (data.negative_lists.mass_address) {
+    if (negativeLists.mass_address) {
       factors.push('Массовый адрес регистрации');
       score -= 15;
     }
-    if (data.negative_lists.mass_manager) {
+    if (negativeLists.mass_manager) {
       factors.push('Массовый руководитель');
       score -= 15;
     }
-    if (data.negative_lists.mass_founder) {
+    if (negativeLists.mass_founder) {
       factors.push('Массовый учредитель');
       score -= 10;
     }
@@ -129,7 +130,10 @@ export function mapDataNewtonToCompany(data: DataNewtonResponse): Company {
   };
 
   const financials: CompanyFinancials = {
-    yearlyData: [],
+    yearlyData: [
+      { year: new Date().getFullYear() - 1, revenue: 0, profit: 0, assets: 0 },
+      { year: new Date().getFullYear() - 2, revenue: 0, profit: 0, assets: 0 }
+    ],
     taxDebt: 0,
     creditRating: 'N/A'
   };

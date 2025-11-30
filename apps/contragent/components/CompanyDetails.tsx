@@ -12,8 +12,8 @@ interface CompanyDetailsProps {
 
 export function CompanyDetails({ company }: CompanyDetailsProps) {
   const { basicInfo, leadership, financials, legal } = company;
-  const latestYear = financials.yearlyData[0];
-  const previousYear = financials.yearlyData[1];
+  const latestYear = financials.yearlyData[0] || { year: new Date().getFullYear(), revenue: 0, profit: 0, assets: 0 };
+  const previousYear = financials.yearlyData[1] || { year: new Date().getFullYear() - 1, revenue: 0, profit: 0, assets: 0 };
 
   const calculateGrowth = (current: number, previous: number): string => {
     if (!previous) return '—';
