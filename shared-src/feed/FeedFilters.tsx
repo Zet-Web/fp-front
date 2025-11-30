@@ -58,7 +58,7 @@ export function FeedFilters({
             {/* <TabsList className="grid w-full grid-cols-4 h-9 min-w-max md:min-w-0"> */}
             <TabsList className="grid w-full grid-cols-3 h-9 min-w-max md:min-w-0">
               <TabsTrigger value="featured" className="text-sm">
-                Рекомендовано
+                Посты
               </TabsTrigger>
               {/* Temporary hidden */}
               {/* <TabsTrigger value="all" className="text-sm">
