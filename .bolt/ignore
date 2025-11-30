@@ -14,7 +14,7 @@ apps/network
 apps/quiz
 
 apps/yurservice
-apps/contragent
+# apps/contragent
 apps/split
 
 # src/components
