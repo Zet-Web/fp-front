@@ -1,7 +1,7 @@
 This project is business social network web application with AI and SaaS functionality.
 
 Technical Stack & Design Principles:
-Stack: React, Vite, TypeScript, Tailwind CSS, Shadcn UI, Radix UI, Lucide icons.
+Stack: React, Vite, TypeScript, Tailwind CSS, Shadcn UI, Radix UI, Lucide icons. Supabase self hosted (main database), Nestjs (main backend logic).
 Styling: Clean, minimalistic, pleasant and aesthetic.
 Theming: Full dark, light, and system mode support.
 Accent Color: Blue-500.
