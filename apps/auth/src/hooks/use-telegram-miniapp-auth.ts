@@ -62,15 +62,7 @@ export function useTelegramMiniAppAuth(): UseTelegramMiniAppAuthReturn {
 
       // Get Telegram user data from launch params
       const launchParams = getTelegramLaunchParams();
-      if (!launchParams) {
-        setError("Не удалось получить данные пользователя Telegram");
-        setIsLoading(false);
-        return;
-      }
-
-      // Check if initDataRaw is available
-       
-      const initDataRaw = launchParams.tgWebAppStartParam
+      const initDataRaw = launchParams
       console.log('launchParams', launchParams)
       if (!initDataRaw) {
         setError("Не удалось получить подпись Telegram");
@@ -79,7 +71,7 @@ export function useTelegramMiniAppAuth(): UseTelegramMiniAppAuthReturn {
       }
 
       setIsAutoAuthenticating(true);
-      await startAutoAuthentication(initDataRaw);
+      await startAutoAuthentication(initDataRaw as unknown as string);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Произошла ошибка");
       setIsLoading(false);
