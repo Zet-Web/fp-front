@@ -14,21 +14,10 @@ import {
   ResponsiveContainer
 } from 'recharts';
 import { YearlyFinancialData } from '../types/finance';
+import { formatCurrencyCompact } from '../lib/format-utils';
 
 interface BalanceSheetChartProps {
   yearlyData: YearlyFinancialData[];
-}
-
-function formatCurrency(value: number): string {
-  const absValue = Math.abs(value);
-  if (absValue >= 1_000_000_000) {
-    return `${(value / 1_000_000_000).toFixed(1)} млрд ₽`;
-  } else if (absValue >= 1_000_000) {
-    return `${(value / 1_000_000).toFixed(1)} млн ₽`;
-  } else if (absValue >= 1_000) {
-    return `${(value / 1_000).toFixed(0)} тыс ₽`;
-  }
-  return `${value.toFixed(0)} ₽`;
 }
 
 export function BalanceSheetChart({ yearlyData }: BalanceSheetChartProps) {
@@ -93,7 +82,7 @@ export function BalanceSheetChart({ yearlyData }: BalanceSheetChartProps) {
               <YAxis
                 className="text-xs"
                 tick={{ fill: 'hsl(var(--muted-foreground))' }}
-                tickFormatter={formatCurrency}
+                tickFormatter={formatCurrencyCompact}
               />
               <Tooltip
                 contentStyle={{
@@ -102,7 +91,7 @@ export function BalanceSheetChart({ yearlyData }: BalanceSheetChartProps) {
                   borderRadius: '8px',
                   color: 'hsl(var(--popover-foreground))'
                 }}
-                formatter={(value: number) => formatCurrency(value)}
+                formatter={(value: number) => formatCurrencyCompact(value)}
                 labelStyle={{ color: 'hsl(var(--popover-foreground))' }}
               />
               <Legend
@@ -135,14 +124,14 @@ export function BalanceSheetChart({ yearlyData }: BalanceSheetChartProps) {
               <div className="w-3 h-3 bg-blue-500 rounded"></div>
               <span className="text-muted-foreground">Активы</span>
             </div>
-            <div className="font-semibold">{formatCurrency(chartData[chartData.length - 1]?.assets || 0)}</div>
+            <div className="font-semibold">{formatCurrencyCompact(chartData[chartData.length - 1]?.assets || 0)}</div>
           </div>
           <div>
             <div className="flex items-center justify-center gap-2 mb-1">
               <div className="w-3 h-3 bg-red-500 rounded"></div>
               <span className="text-muted-foreground">Обязательства</span>
             </div>
-            <div className="font-semibold">{formatCurrency(chartData[chartData.length - 1]?.liabilities || 0)}</div>
+            <div className="font-semibold">{formatCurrencyCompact(chartData[chartData.length - 1]?.liabilities || 0)}</div>
           </div>
           <div>
             <div className="flex items-center justify-center gap-2 mb-1">
@@ -150,7 +139,7 @@ export function BalanceSheetChart({ yearlyData }: BalanceSheetChartProps) {
               <span className="text-muted-foreground">Капитал</span>
             </div>
             <div className={`font-semibold ${(chartData[chartData.length - 1]?.equity || 0) >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-              {formatCurrency(chartData[chartData.length - 1]?.equity || 0)}
+              {formatCurrencyCompact(chartData[chartData.length - 1]?.equity || 0)}
             </div>
           </div>
         </div>

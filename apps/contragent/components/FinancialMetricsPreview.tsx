@@ -6,29 +6,12 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { BasicFinancialMetrics } from '../types/finance';
+import { formatCurrencyCompact, formatPercentage } from '../lib/format-utils';
 
 interface FinancialMetricsPreviewProps {
   metrics: BasicFinancialMetrics | null;
   isLoading: boolean;
   onViewDetails: () => void;
-}
-
-function formatCurrency(value: number): string {
-  if (value === 0) return '0 ₽';
-
-  const absValue = Math.abs(value);
-  if (absValue >= 1_000_000_000) {
-    return `${(value / 1_000_000_000).toFixed(2)} млрд ₽`;
-  } else if (absValue >= 1_000_000) {
-    return `${(value / 1_000_000).toFixed(2)} млн ₽`;
-  } else if (absValue >= 1_000) {
-    return `${(value / 1_000).toFixed(2)} тыс ₽`;
-  }
-  return `${value.toFixed(0)} ₽`;
-}
-
-function formatPercentage(value: number): string {
-  return `${value.toFixed(1)}%`;
 }
 
 function getReliabilityColor(score: number): string {
@@ -113,7 +96,7 @@ export function FinancialMetricsPreview({ metrics, isLoading, onViewDetails }: F
               <TrendingUp className="h-3 w-3" />
               <span>Выручка {revenue.year}</span>
             </div>
-            <div className="font-semibold text-lg">{formatCurrency(revenue.value)}</div>
+            <div className="font-semibold text-lg">{formatCurrencyCompact(revenue.value)}</div>
             {revenue.yoyPercentage && revenue.yoyPercentage !== '—' && (
               <div className="flex items-center gap-1">
                 {parseFloat(revenue.yoyPercentage) >= 0 ? (
@@ -135,7 +118,7 @@ export function FinancialMetricsPreview({ metrics, isLoading, onViewDetails }: F
               <span>Чистая прибыль</span>
             </div>
             <div className={`font-semibold text-lg ${netProfit.value >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-              {formatCurrency(netProfit.value)}
+              {formatCurrencyCompact(netProfit.value)}
             </div>
             {netProfit.yoyPercentage && netProfit.yoyPercentage !== '—' && (
               <div className="flex items-center gap-1">
@@ -171,7 +154,7 @@ export function FinancialMetricsPreview({ metrics, isLoading, onViewDetails }: F
               <PieChart className="h-3 w-3" />
               <span>Активы</span>
             </div>
-            <div className="font-semibold text-lg">{formatCurrency(totalAssets.value)}</div>
+            <div className="font-semibold text-lg">{formatCurrencyCompact(totalAssets.value)}</div>
             {totalAssets.yoyPercentage && totalAssets.yoyPercentage !== '—' && (
               <span className="text-xs text-muted-foreground">{totalAssets.yoyPercentage}</span>
             )}

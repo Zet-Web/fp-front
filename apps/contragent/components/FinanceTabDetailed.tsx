@@ -9,29 +9,12 @@ import { DetailedFinancialData } from '../types/finance';
 import { PerformanceChart } from './PerformanceChart';
 import { BalanceSheetChart } from './BalanceSheetChart';
 import { ProfitabilityChart } from './ProfitabilityChart';
+import { formatCurrencyCompact, formatPercentage } from '../lib/format-utils';
 
 interface FinanceTabDetailedProps {
   data: DetailedFinancialData | null;
   isLoading: boolean;
   error: string | null;
-}
-
-function formatCurrency(value: number): string {
-  if (value === 0) return '0 ₽';
-
-  const absValue = Math.abs(value);
-  if (absValue >= 1_000_000_000) {
-    return `${(value / 1_000_000_000).toFixed(2)} млрд ₽`;
-  } else if (absValue >= 1_000_000) {
-    return `${(value / 1_000_000).toFixed(2)} млн ₽`;
-  } else if (absValue >= 1_000) {
-    return `${(value / 1_000).toFixed(2)} тыс ₽`;
-  }
-  return `${value.toFixed(0)} ₽`;
-}
-
-function formatPercentage(value: number): string {
-  return `${value.toFixed(2)}%`;
 }
 
 export function FinanceTabDetailed({ data, isLoading, error }: FinanceTabDetailedProps) {
@@ -103,41 +86,41 @@ export function FinanceTabDetailed({ data, isLoading, error }: FinanceTabDetaile
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
               <div className="text-sm text-muted-foreground mb-1">Выручка</div>
-              <div className="font-semibold text-xl">{formatCurrency(latestData.revenue)}</div>
+              <div className="font-semibold text-xl">{formatCurrencyCompact(latestData.revenue)}</div>
             </div>
             <div>
               <div className="text-sm text-muted-foreground mb-1">Чистая прибыль</div>
               <div className={`font-semibold text-xl ${latestData.netProfit >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                {formatCurrency(latestData.netProfit)}
+                {formatCurrencyCompact(latestData.netProfit)}
               </div>
             </div>
             <div>
               <div className="text-sm text-muted-foreground mb-1">Валовая прибыль</div>
               <div className={`font-semibold text-xl ${latestData.grossProfit >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                {formatCurrency(latestData.grossProfit)}
+                {formatCurrencyCompact(latestData.grossProfit)}
               </div>
             </div>
             <div>
               <div className="text-sm text-muted-foreground mb-1">Себестоимость</div>
-              <div className="font-semibold text-xl">{formatCurrency(latestData.costOfSales)}</div>
+              <div className="font-semibold text-xl">{formatCurrencyCompact(latestData.costOfSales)}</div>
             </div>
             <div>
               <div className="text-sm text-muted-foreground mb-1">Активы</div>
-              <div className="font-semibold text-xl">{formatCurrency(latestData.assets)}</div>
+              <div className="font-semibold text-xl">{formatCurrencyCompact(latestData.assets)}</div>
             </div>
             <div>
               <div className="text-sm text-muted-foreground mb-1">Обязательства</div>
-              <div className="font-semibold text-xl">{formatCurrency(latestData.liabilities)}</div>
+              <div className="font-semibold text-xl">{formatCurrencyCompact(latestData.liabilities)}</div>
             </div>
             <div>
               <div className="text-sm text-muted-foreground mb-1">Капитал</div>
               <div className={`font-semibold text-xl ${latestData.equity >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                {formatCurrency(latestData.equity)}
+                {formatCurrencyCompact(latestData.equity)}
               </div>
             </div>
             <div>
               <div className="text-sm text-muted-foreground mb-1">Операц. расходы</div>
-              <div className="font-semibold text-xl">{formatCurrency(latestData.operatingExpenses)}</div>
+              <div className="font-semibold text-xl">{formatCurrencyCompact(latestData.operatingExpenses)}</div>
             </div>
           </div>
         </CardContent>
@@ -226,7 +209,7 @@ export function FinanceTabDetailed({ data, isLoading, error }: FinanceTabDetaile
                   <td className="py-2 font-medium">Выручка</td>
                   {data.yearlyData.map(yearData => (
                     <td key={yearData.year} className="text-right py-2">
-                      {formatCurrency(yearData.revenue)}
+                      {formatCurrencyCompact(yearData.revenue)}
                     </td>
                   ))}
                 </tr>
@@ -234,7 +217,7 @@ export function FinanceTabDetailed({ data, isLoading, error }: FinanceTabDetaile
                   <td className="py-2 font-medium">Чистая прибыль</td>
                   {data.yearlyData.map(yearData => (
                     <td key={yearData.year} className={`text-right py-2 ${yearData.netProfit >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                      {formatCurrency(yearData.netProfit)}
+                      {formatCurrencyCompact(yearData.netProfit)}
                     </td>
                   ))}
                 </tr>
@@ -242,7 +225,7 @@ export function FinanceTabDetailed({ data, isLoading, error }: FinanceTabDetaile
                   <td className="py-2 font-medium">Валовая прибыль</td>
                   {data.yearlyData.map(yearData => (
                     <td key={yearData.year} className={`text-right py-2 ${yearData.grossProfit >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                      {formatCurrency(yearData.grossProfit)}
+                      {formatCurrencyCompact(yearData.grossProfit)}
                     </td>
                   ))}
                 </tr>
@@ -250,7 +233,7 @@ export function FinanceTabDetailed({ data, isLoading, error }: FinanceTabDetaile
                   <td className="py-2 font-medium">Активы</td>
                   {data.yearlyData.map(yearData => (
                     <td key={yearData.year} className="text-right py-2">
-                      {formatCurrency(yearData.assets)}
+                      {formatCurrencyCompact(yearData.assets)}
                     </td>
                   ))}
                 </tr>
@@ -258,7 +241,7 @@ export function FinanceTabDetailed({ data, isLoading, error }: FinanceTabDetaile
                   <td className="py-2 font-medium">Обязательства</td>
                   {data.yearlyData.map(yearData => (
                     <td key={yearData.year} className="text-right py-2">
-                      {formatCurrency(yearData.liabilities)}
+                      {formatCurrencyCompact(yearData.liabilities)}
                     </td>
                   ))}
                 </tr>
@@ -266,7 +249,7 @@ export function FinanceTabDetailed({ data, isLoading, error }: FinanceTabDetaile
                   <td className="py-2 font-medium">Капитал</td>
                   {data.yearlyData.map(yearData => (
                     <td key={yearData.year} className={`text-right py-2 ${yearData.equity >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                      {formatCurrency(yearData.equity)}
+                      {formatCurrencyCompact(yearData.equity)}
                     </td>
                   ))}
                 </tr>

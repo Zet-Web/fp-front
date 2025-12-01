@@ -143,17 +143,17 @@ export default function ContragentPage() {
           {/* Results with Tabs */}
           {currentCompany && !isLoading && (
             <div className="space-y-6 animate-in fade-in duration-500">
-              {/* Risk Header */}
-              <RiskHeader
+              {/* Risk Header - Hidden until proper risk calculation is implemented using real finance API data */}
+              {/* <RiskHeader
                 risk={currentCompany.riskAssessment}
                 companyName={currentCompany.basicInfo.name}
-              />
+              /> */}
 
               {/* Tabs */}
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="grid w-full md:w-[400px] grid-cols-2">
                   <TabsTrigger value="overview">Обзор</TabsTrigger>
-                  <TabsTrigger value="finance">Финансы</TabsTrigger>
+                  <TabsTrigger value="finance">Детальная финансы</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="overview" className="space-y-6 mt-6">
@@ -167,8 +167,8 @@ export default function ContragentPage() {
                     onViewDetails={handleViewFinanceDetails}
                   />
 
-                  {/* Risk Assessment & Actions */}
-                  <RiskAssessment risk={currentCompany.riskAssessment} />
+                  {/* Risk Assessment & Actions - Hidden until proper risk calculation is implemented */}
+                  {/* <RiskAssessment risk={currentCompany.riskAssessment} /> */}
                 </TabsContent>
 
                 <TabsContent value="finance" className="mt-6">

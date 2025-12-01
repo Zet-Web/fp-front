@@ -14,13 +14,10 @@ import {
   ResponsiveContainer
 } from 'recharts';
 import { YearlyFinancialData } from '../types/finance';
+import { formatPercentage } from '../lib/format-utils';
 
 interface ProfitabilityChartProps {
   yearlyData: YearlyFinancialData[];
-}
-
-function formatPercentage(value: number): string {
-  return `${value.toFixed(1)}%`;
 }
 
 export function ProfitabilityChart({ yearlyData }: ProfitabilityChartProps) {

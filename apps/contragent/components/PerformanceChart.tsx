@@ -16,21 +16,10 @@ import {
   ResponsiveContainer
 } from 'recharts';
 import { YearlyFinancialData } from '../types/finance';
+import { formatCurrencyCompact } from '../lib/format-utils';
 
 interface PerformanceChartProps {
   yearlyData: YearlyFinancialData[];
-}
-
-function formatCurrency(value: number): string {
-  const absValue = Math.abs(value);
-  if (absValue >= 1_000_000_000) {
-    return `${(value / 1_000_000_000).toFixed(1)} млрд ₽`;
-  } else if (absValue >= 1_000_000) {
-    return `${(value / 1_000_000).toFixed(1)} млн ₽`;
-  } else if (absValue >= 1_000) {
-    return `${(value / 1_000).toFixed(0)} тыс ₽`;
-  }
-  return `${value.toFixed(0)} ₽`;
 }
 
 export function PerformanceChart({ yearlyData }: PerformanceChartProps) {
@@ -142,7 +131,7 @@ export function PerformanceChart({ yearlyData }: PerformanceChartProps) {
               <YAxis
                 className="text-xs"
                 tick={{ fill: 'hsl(var(--muted-foreground))' }}
-                tickFormatter={formatCurrency}
+                tickFormatter={formatCurrencyCompact}
               />
               <Tooltip
                 contentStyle={{
@@ -151,7 +140,7 @@ export function PerformanceChart({ yearlyData }: PerformanceChartProps) {
                   borderRadius: '8px',
                   color: 'hsl(var(--popover-foreground))'
                 }}
-                formatter={(value: number) => formatCurrency(value)}
+                formatter={(value: number) => formatCurrencyCompact(value)}
                 labelStyle={{ color: 'hsl(var(--popover-foreground))' }}
               />
               <Legend
