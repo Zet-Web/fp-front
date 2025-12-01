@@ -11,11 +11,9 @@ export function AuthPage() {
   const qrRef = useRef<HTMLCanvasElement>(null);
   const navigate = useNavigate();
 
-  // Web authentication hook
   const { isLoading, telegramUrl, error, handleTelegramAuth } =
     useTelegramAuth();
 
-  // Telegram mini app auto-authentication hook
   const {
     isLoading: isMiniAppLoading,
     error: miniAppError,
@@ -24,7 +22,6 @@ export function AuthPage() {
 
   const { isAuthenticated, loading: authLoading } = useAuthContext();
 
-  // Redirect authenticated users
   useEffect(() => {
     if (isAuthenticated && !authLoading) {
       navigate("/");
@@ -44,7 +41,6 @@ export function AuthPage() {
     }
   }, [telegramUrl]);
 
-  // Show auto-authentication loading state
   if (isAutoAuthenticating) {
     return (
       <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-4">
@@ -77,7 +73,6 @@ export function AuthPage() {
     );
   }
 
-  // Show normal web authentication UI
   return (
     <div className="bg-background text-foreground flex items-center justify-center p-4">
       <div className="max-w-md space-y-8 text-center">
@@ -88,7 +83,6 @@ export function AuthPage() {
           </h1>
         </div>
 
-        {/* Telegram Auth Button */}
         <div>
           <Button
             onClick={handleTelegramAuth}
@@ -101,14 +95,12 @@ export function AuthPage() {
           </Button>
         </div>
 
-        {/* Accent text */}
         <div className="py-4">
           <p className="text-muted-foreground text-lg font-medium">
             Без почты и паролей
           </p>
         </div>
 
-        {/* QR Code Section — ONLY on desktop */}
         <div className="hidden md:block space-y-6">
           <div>
             <h2 className="text-lg font-medium text-foreground mb-2">

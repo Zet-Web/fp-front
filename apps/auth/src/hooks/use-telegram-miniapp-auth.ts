@@ -192,7 +192,7 @@ export function useTelegramMiniAppAuth(): UseTelegramMiniAppAuthReturn {
           cleanup();
         }
       }
-    }, 3000);
+    }, 1000);
   };
 
   return {
