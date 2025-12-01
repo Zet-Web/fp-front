@@ -1,6 +1,6 @@
 // Overview component displaying summary of company risk assessment on main page
 
-import { Shield, FileWarning, AlertTriangle, Info, ExternalLink } from 'lucide-react';
+import { Shield, FileWarning, AlertTriangle, Info, ExternalLink, ArrowRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -81,7 +81,7 @@ export function RisksOverview({ summary, isLoading, onViewDetails }: RisksOvervi
             </Badge>
             <Button variant="ghost" size="sm" onClick={onViewDetails} className="text-blue-500 hover:text-blue-600">
               Подробнее
-              <ExternalLink className="h-4 w-4 ml-1" />
+              <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
           </div>
         </div>
