@@ -37,7 +37,7 @@ export function CompanySearch({ onSearch, isLoading, searchHistory, onClearHisto
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               type="text"
-              placeholder="Введите ИНН (10 или 12 цифр) или ОГРН (13 или 15 цифр)..."
+              placeholder="Введите ИНН или ОГРН..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-9"
