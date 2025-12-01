@@ -153,7 +153,7 @@ export default function ContragentPage() {
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="grid w-full md:w-[400px] grid-cols-2">
                   <TabsTrigger value="overview">Обзор</TabsTrigger>
-                  <TabsTrigger value="finance">Детальная финансы</TabsTrigger>
+                  <TabsTrigger value="finance">Финансы</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="overview" className="space-y-6 mt-6">
