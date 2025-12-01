@@ -1,26 +1,64 @@
 // Contragent verification page for checking companies by INN with comprehensive due diligence
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Building2, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CompanySearch } from './components/CompanySearch';
 import { RiskHeader } from './components/RiskHeader';
 import { CompanyDetails } from './components/CompanyDetails';
 import { RiskAssessment } from './components/RiskAssessment';
+import { FinancialMetricsPreview } from './components/FinancialMetricsPreview';
+import { FinanceTabDetailed } from './components/FinanceTabDetailed';
 import { Company, SearchHistoryItem } from './types/company';
-import { fetchCompanyInfo } from './lib/datanewton-api';
+import { BasicFinancialMetrics, DetailedFinancialData } from './types/finance';
+import { fetchCompanyInfo, fetchCompanyFinance } from './lib/datanewton-api';
 import { mapDataNewtonToCompany } from './lib/datanewton-mapper';
+import { mapToBasicFinancialMetrics, mapToDetailedFinancialData } from './lib/datanewton-finance-mapper';
 
 export default function ContragentPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [currentCompany, setCurrentCompany] = useState<Company | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [searchHistory, setSearchHistory] = useState<SearchHistoryItem[]>([]);
+  const [activeTab, setActiveTab] = useState<string>('overview');
+
+  const [financeLoading, setFinanceLoading] = useState(false);
+  const [financeError, setFinanceError] = useState<string | null>(null);
+  const [basicFinanceMetrics, setBasicFinanceMetrics] = useState<BasicFinancialMetrics | null>(null);
+  const [detailedFinanceData, setDetailedFinanceData] = useState<DetailedFinancialData | null>(null);
+
+  const loadFinanceData = async (inn: string, ogrn: string) => {
+    setFinanceLoading(true);
+    setFinanceError(null);
+    setBasicFinanceMetrics(null);
+    setDetailedFinanceData(null);
+
+    try {
+      const financeResponse = await fetchCompanyFinance(inn, ogrn);
+
+      const basicMetrics = mapToBasicFinancialMetrics(financeResponse);
+      const detailedData = mapToDetailedFinancialData(financeResponse);
+
+      setBasicFinanceMetrics(basicMetrics);
+      setDetailedFinanceData(detailedData);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Не удалось загрузить финансовые данные';
+      setFinanceError(errorMessage);
+      console.error('Finance loading error:', err);
+    } finally {
+      setFinanceLoading(false);
+    }
+  };
 
   const handleSearch = async (identifier: string) => {
     setIsLoading(true);
     setError(null);
     setCurrentCompany(null);
+    setBasicFinanceMetrics(null);
+    setDetailedFinanceData(null);
+    setFinanceError(null);
+    setActiveTab('overview');
 
     try {
       const apiResponse = await fetchCompanyInfo(identifier);
@@ -38,6 +76,11 @@ export default function ContragentPage() {
         const filtered = prev.filter(item => item.inn !== identifier);
         return [historyItem, ...filtered].slice(0, 5);
       });
+
+      setTimeout(() => {
+        loadFinanceData(company.basicInfo.inn, company.basicInfo.ogrn);
+      }, 800);
+
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Произошла неизвестная ошибка';
       setError(errorMessage);
@@ -48,6 +91,10 @@ export default function ContragentPage() {
 
   const handleClearHistory = () => {
     setSearchHistory([]);
+  };
+
+  const handleViewFinanceDetails = () => {
+    setActiveTab('finance');
   };
 
   return (
@@ -68,7 +115,6 @@ export default function ContragentPage() {
               </div>
             </div>
           </div>
-
 
           {/* Search */}
           <CompanySearch
@@ -94,7 +140,7 @@ export default function ContragentPage() {
             </div>
           )}
 
-          {/* Results */}
+          {/* Results with Tabs */}
           {currentCompany && !isLoading && (
             <div className="space-y-6 animate-in fade-in duration-500">
               {/* Risk Header */}
@@ -103,11 +149,36 @@ export default function ContragentPage() {
                 companyName={currentCompany.basicInfo.name}
               />
 
-              {/* Company Details */}
-              <CompanyDetails company={currentCompany} />
+              {/* Tabs */}
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                <TabsList className="grid w-full md:w-[400px] grid-cols-2">
+                  <TabsTrigger value="overview">Обзор</TabsTrigger>
+                  <TabsTrigger value="finance">Детальная финансы</TabsTrigger>
+                </TabsList>
 
-              {/* Risk Assessment & Actions */}
-              <RiskAssessment risk={currentCompany.riskAssessment} />
+                <TabsContent value="overview" className="space-y-6 mt-6">
+                  {/* Company Details */}
+                  <CompanyDetails company={currentCompany} />
+
+                  {/* Financial Metrics Preview */}
+                  <FinancialMetricsPreview
+                    metrics={basicFinanceMetrics}
+                    isLoading={financeLoading}
+                    onViewDetails={handleViewFinanceDetails}
+                  />
+
+                  {/* Risk Assessment & Actions */}
+                  <RiskAssessment risk={currentCompany.riskAssessment} />
+                </TabsContent>
+
+                <TabsContent value="finance" className="mt-6">
+                  <FinanceTabDetailed
+                    data={detailedFinanceData}
+                    isLoading={financeLoading}
+                    error={financeError}
+                  />
+                </TabsContent>
+              </Tabs>
             </div>
           )}
 

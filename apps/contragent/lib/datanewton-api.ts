@@ -138,3 +138,66 @@ export async function fetchCompanyInfo(identifier: string): Promise<DataNewtonRe
     throw new Error('Неверный формат ИНН или ОГРН');
   }
 }
+
+export interface FinanceReportRow {
+  name: string;
+  code: string;
+  sum: Record<string, number>;
+  indicators?: FinanceReportRow[];
+  childrenMap?: Record<string, FinanceReportRow>;
+  row_num?: number;
+}
+
+export interface FinanceBalances {
+  okud: string;
+  years: number[];
+  assets: FinanceReportRow;
+  liabilities: FinanceReportRow;
+  indicators?: FinanceReportRow[];
+}
+
+export interface FinanceResults {
+  okud: string;
+  years: number[];
+  indicators: FinanceReportRow[];
+}
+
+export interface MoneyFlow {
+  okud: string | null;
+  years?: number[];
+  indicators?: FinanceReportRow[];
+}
+
+export interface DataNewtonFinanceResponse {
+  balances: FinanceBalances;
+  fin_results: FinanceResults;
+  money_flow: MoneyFlow;
+  available_count: number;
+}
+
+export async function fetchCompanyFinance(inn?: string, ogrn?: string): Promise<DataNewtonFinanceResponse> {
+  if (!inn && !ogrn) {
+    throw new Error('Требуется ИНН или ОГРН');
+  }
+
+  const url = new URL('https://api.datanewton.ru/v1/finance');
+  url.searchParams.append('key', API_KEY);
+
+  if (inn) {
+    url.searchParams.append('inn', inn);
+  } else if (ogrn) {
+    url.searchParams.append('ogrn', ogrn);
+  }
+
+  const response = await fetch(url.toString());
+
+  if (!response.ok) {
+    if (response.status === 409) {
+      throw new Error('Финансовые отчеты не найдены');
+    }
+    throw new Error(`Ошибка API: ${response.status} ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  return data;
+}
