@@ -2,6 +2,7 @@
 
 import { Company, CompanyBasicInfo, CompanyLeadership, CompanyFinancials, CompanyLegal, CompanyRiskAssessment } from '../types/company';
 import { DataNewtonResponse } from './datanewton-api';
+import { mapOkvedCodes, mapTaxRegime, mapRosstatCodes, mapPredecessors, mapSuccessors } from './company-data-mapper';
 
 function mapStatus(statusShort: string): CompanyBasicInfo['status'] {
   switch (statusShort.toLowerCase()) {
@@ -114,12 +115,12 @@ export function mapDataNewtonToCompany(data: DataNewtonResponse): Company {
     registrationDate: companyData?.registration_date || individualData?.registration_date || '',
     employees: getLatestWorkersCount(companyData?.workers_count),
     capital: parseFloat(companyData?.charter_capital || '0'),
-    okved: companyData?.okved,
-    taxRegime: companyData?.tax_system,
-    rosstatCodes: companyData?.rosstat,
+    okved: mapOkvedCodes(companyData?.okveds),
+    taxRegime: mapTaxRegime(companyData?.tax_mode_info),
+    rosstatCodes: mapRosstatCodes(companyData?.ros_stat_codes),
     opf: companyData?.opf,
-    predecessors: companyData?.predecessors,
-    successors: companyData?.successors
+    predecessors: mapPredecessors(companyData?.predecessors),
+    successors: mapSuccessors(companyData?.successors)
   };
 
   const leadership: CompanyLeadership = {

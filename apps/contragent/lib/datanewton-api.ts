@@ -73,18 +73,24 @@ export interface DataNewtonResponse {
       illegal_rewards?: boolean;
       in_sanctions_list?: boolean;
     };
-    okved?: Array<{
+    okveds?: Array<{
+      main?: boolean;
       code: string;
-      name: string;
-      is_primary?: boolean;
+      value: string;
+      mode?: string;
     }>;
-    tax_system?: Array<{
-      type: string;
-      name: string;
-      date_from?: string;
-      date_to?: string;
-    }>;
-    rosstat?: {
+    tax_mode_info?: {
+      publication_date?: string;
+      eshn_sign?: boolean;
+      usn_sign?: boolean;
+      envd_sign?: boolean;
+      srp_sign?: boolean;
+      ausn_sign?: boolean;
+      psn_sign?: boolean;
+      npd_sign?: boolean;
+      common_mode?: boolean;
+    };
+    ros_stat_codes?: {
       okpo?: string;
       okato?: string;
       oktmo?: string;
@@ -93,16 +99,17 @@ export interface DataNewtonResponse {
       okopf?: string;
     };
     predecessors?: Array<{
-      name: string;
       inn?: string;
       ogrn?: string;
-      date?: string;
+      full_name?: string;
+      limited?: boolean;
     }>;
     successors?: Array<{
-      name: string;
       inn?: string;
       ogrn?: string;
-      date?: string;
+      full_name?: string;
+      fixed_date?: string;
+      limited?: boolean;
     }>;
   };
   contacts?: {
