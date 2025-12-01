@@ -14,7 +14,7 @@ interface UseTelegramMiniAppAuthReturn {
 }
 
 const initiatingHostOrigin = "/";
-const devHostOrigin = "http://localhost:5173";
+const devHostOrigin = import.meta.env.VITE_DEV_TMA_HOST_ORIGIN;
 
 export function useTelegramMiniAppAuth(): UseTelegramMiniAppAuthReturn {
   const [isLoading, setIsLoading] = useState(true);

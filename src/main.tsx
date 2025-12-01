@@ -4,7 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App.tsx";
 import "./index.css";
 import "./tiptap.css";
-import { init, miniApp, retrieveLaunchParams } from "@tma.js/sdk";
+import { init, miniApp, retrieveRawLaunchParams } from "@tma.js/sdk";
 
 let isTelegramMiniApp = false;
 let telegramInitialized = false;
@@ -38,9 +38,10 @@ export const isTelegramReady = (): boolean => {
 // Get Telegram launch params if available
 export const getTelegramLaunchParams = () => {
   try {
-    const { initDataRaw, initData } = retrieveLaunchParams();
-    console.log(initDataRaw, initData);
-    return initDataRaw;
+    const initDataRaw = retrieveRawLaunchParams();
+    const urlParams = new URLSearchParams(initDataRaw);
+    const initData = urlParams.get("tgWebAppData");
+    return initData;
   } catch {
     return null;
   }
