@@ -108,11 +108,18 @@ export function mapDataNewtonToCompany(data: DataNewtonResponse): Company {
       : (companyData?.company_names?.short_name || companyData?.company_names?.full_name || 'Неизвестно'),
     inn: data.inn,
     ogrn: data.ogrn,
+    kpp: companyData?.kpp,
     address: companyData?.address?.line_address || 'Адрес не указан',
     status: mapStatus((companyData?.status || individualData?.status)?.status_eng_short || 'active'),
     registrationDate: companyData?.registration_date || individualData?.registration_date || '',
     employees: getLatestWorkersCount(companyData?.workers_count),
-    capital: parseFloat(companyData?.charter_capital || '0')
+    capital: parseFloat(companyData?.charter_capital || '0'),
+    okved: companyData?.okved,
+    taxRegime: companyData?.tax_system,
+    rosstatCodes: companyData?.rosstat,
+    opf: companyData?.opf,
+    predecessors: companyData?.predecessors,
+    successors: companyData?.successors
   };
 
   const leadership: CompanyLeadership = {

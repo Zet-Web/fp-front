@@ -10,7 +10,8 @@ const DEFAULT_FILTERS = [
   'OKVED_BLOCK',
   'CONTACT_BLOCK',
   'NEGATIVE_LISTS_BLOCK',
-  'WORKERS_COUNT_BLOCK'
+  'WORKERS_COUNT_BLOCK',
+  'ROSSTAT_BLOCK'
 ].join(',');
 
 export interface DataNewtonResponse {
@@ -72,6 +73,37 @@ export interface DataNewtonResponse {
       illegal_rewards?: boolean;
       in_sanctions_list?: boolean;
     };
+    okved?: Array<{
+      code: string;
+      name: string;
+      is_primary?: boolean;
+    }>;
+    tax_system?: Array<{
+      type: string;
+      name: string;
+      date_from?: string;
+      date_to?: string;
+    }>;
+    rosstat?: {
+      okpo?: string;
+      okato?: string;
+      oktmo?: string;
+      okfs?: string;
+      okogu?: string;
+      okopf?: string;
+    };
+    predecessors?: Array<{
+      name: string;
+      inn?: string;
+      ogrn?: string;
+      date?: string;
+    }>;
+    successors?: Array<{
+      name: string;
+      inn?: string;
+      ogrn?: string;
+      date?: string;
+    }>;
   };
   contacts?: {
     emails?: Array<{ value: string }>;

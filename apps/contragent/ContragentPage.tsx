@@ -14,6 +14,9 @@ import { RisksOverview } from './components/RisksOverview';
 import { RisksTabDetailed } from './components/RisksTabDetailed';
 import { CorporateActionsPreview } from './components/CorporateActionsPreview';
 import { CorporateActionsTabDetailed } from './components/CorporateActionsTabDetailed';
+import { OkvedPreview } from './components/OkvedPreview';
+import { TaxRegimeCard } from './components/TaxRegimeCard';
+import { RequisitesTabDetailed } from './components/RequisitesTabDetailed';
 import { Company, SearchHistoryItem } from './types/company';
 import { BasicFinancialMetrics, DetailedFinancialData } from './types/finance';
 import { RisksData, RisksSummary } from './types/risks';
@@ -168,6 +171,10 @@ export default function ContragentPage() {
     setActiveTab('corporate-actions');
   };
 
+  const handleViewOkvedDetails = () => {
+    setActiveTab('requisites');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -222,11 +229,12 @@ export default function ContragentPage() {
 
               {/* Tabs */}
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full md:w-[800px] grid-cols-4">
+                <TabsList className="grid w-full md:w-[1000px] grid-cols-5">
                   <TabsTrigger value="overview">Обзор</TabsTrigger>
                   <TabsTrigger value="finance">Финансы</TabsTrigger>
                   <TabsTrigger value="risks">Риски</TabsTrigger>
                   <TabsTrigger value="corporate-actions">Юр факты</TabsTrigger>
+                  <TabsTrigger value="requisites">Реквизиты</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="overview" className="space-y-6 mt-6">
@@ -253,6 +261,19 @@ export default function ContragentPage() {
                     isLoading={corporateActionsLoading}
                     onViewDetails={handleViewCorporateActionsDetails}
                   />
+
+                  {/* OKVED and Tax Regime */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <OkvedPreview
+                      okvedCodes={currentCompany.basicInfo.okved}
+                      isLoading={false}
+                      onViewDetails={handleViewOkvedDetails}
+                    />
+                    <TaxRegimeCard
+                      taxRegime={currentCompany.basicInfo.taxRegime}
+                      isLoading={false}
+                    />
+                  </div>
                 </TabsContent>
 
                 <TabsContent value="finance" className="mt-6">
@@ -278,6 +299,10 @@ export default function ContragentPage() {
                     isLoading={corporateActionsLoading}
                     error={corporateActionsError}
                   />
+                </TabsContent>
+
+                <TabsContent value="requisites" className="mt-6">
+                  <RequisitesTabDetailed company={currentCompany} />
                 </TabsContent>
               </Tabs>
             </div>
