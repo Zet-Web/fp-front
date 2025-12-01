@@ -5,7 +5,7 @@ apps/chats
 apps/header
 apps/mobileNav
 apps/navigation
-apps/home
+# apps/home
 apps/about
 apps/profile
 apps/post
