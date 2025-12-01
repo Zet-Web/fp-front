@@ -1,4 +1,4 @@
-// Detailed finance tab with comprehensive financial analysis
+// Detailed finance tab with comprehensive financial analysis and visualizations
 
 import { DollarSign, TrendingUp, PieChart, BarChart3, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,6 +6,9 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { DetailedFinancialData } from '../types/finance';
+import { PerformanceChart } from './PerformanceChart';
+import { BalanceSheetChart } from './BalanceSheetChart';
+import { ProfitabilityChart } from './ProfitabilityChart';
 
 interface FinanceTabDetailedProps {
   data: DetailedFinancialData | null;
@@ -93,13 +96,13 @@ export function FinanceTabDetailed({ data, isLoading, error }: FinanceTabDetaile
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <BarChart3 className="h-5 w-5 text-blue-500" />
-            Финансовый обзор
+            Финансовый обзор за {latestData.year} год
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
-              <div className="text-sm text-muted-foreground mb-1">Выручка {latestData.year}</div>
+              <div className="text-sm text-muted-foreground mb-1">Выручка</div>
               <div className="font-semibold text-xl">{formatCurrency(latestData.revenue)}</div>
             </div>
             <div>
@@ -139,6 +142,15 @@ export function FinanceTabDetailed({ data, isLoading, error }: FinanceTabDetaile
           </div>
         </CardContent>
       </Card>
+
+      {/* Performance Chart - Multi-line chart */}
+      <PerformanceChart yearlyData={data.yearlyData} />
+
+      {/* Balance Sheet Chart - Stacked bar chart */}
+      <BalanceSheetChart yearlyData={data.yearlyData} />
+
+      {/* Profitability Chart - Area chart */}
+      <ProfitabilityChart yearlyData={data.yearlyData} />
 
       {/* Financial Ratios */}
       <Card className="shadow-sm">
@@ -227,6 +239,14 @@ export function FinanceTabDetailed({ data, isLoading, error }: FinanceTabDetaile
                   ))}
                 </tr>
                 <tr>
+                  <td className="py-2 font-medium">Валовая прибыль</td>
+                  {data.yearlyData.map(yearData => (
+                    <td key={yearData.year} className={`text-right py-2 ${yearData.grossProfit >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                      {formatCurrency(yearData.grossProfit)}
+                    </td>
+                  ))}
+                </tr>
+                <tr>
                   <td className="py-2 font-medium">Активы</td>
                   {data.yearlyData.map(yearData => (
                     <td key={yearData.year} className="text-right py-2">
@@ -252,25 +272,6 @@ export function FinanceTabDetailed({ data, isLoading, error }: FinanceTabDetaile
                 </tr>
               </tbody>
             </table>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Placeholder for Future Chart */}
-      <Card className="shadow-sm">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <BarChart3 className="h-5 w-5 text-blue-500" />
-            График финансовых показателей
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-[300px] flex items-center justify-center border-2 border-dashed rounded-lg">
-            <div className="text-center text-muted-foreground">
-              <BarChart3 className="h-12 w-12 mx-auto mb-2 opacity-50" />
-              <p>График будет реализован на следующем этапе</p>
-              <p className="text-sm">Данные готовы для визуализации</p>
-            </div>
           </div>
         </CardContent>
       </Card>
