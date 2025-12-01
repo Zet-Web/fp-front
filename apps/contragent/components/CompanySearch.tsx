@@ -1,7 +1,7 @@
 // Search component for finding companies by INN or name
 
 import { useState } from 'react';
-import { Search, History, TrendingUp, X } from 'lucide-react';
+import { Search, History, X } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -13,11 +13,6 @@ interface CompanySearchProps {
   searchHistory: Array<{ inn: string; name: string; timestamp: string }>;
   onClearHistory: () => void;
 }
-
-const demoExamples = [
-  { inn: '9728006808', name: 'ООО "ДАТАНОМИКА"' },
-  { inn: '1207700223257', name: 'По ОГРН' }
-];
 
 export function CompanySearch({ onSearch, isLoading, searchHistory, onClearHistory }: CompanySearchProps) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -52,27 +47,6 @@ export function CompanySearch({ onSearch, isLoading, searchHistory, onClearHisto
           <Button type="submit" disabled={isLoading || !searchQuery.trim()}>
             {isLoading ? 'Поиск...' : 'Проверить'}
           </Button>
-        </div>
-
-        <div className="space-y-3">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <TrendingUp className="h-4 w-4" />
-            <span>Примеры для проверки:</span>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {demoExamples.map((example) => (
-              <Button
-                key={example.inn}
-                variant="outline"
-                size="sm"
-                onClick={() => handleQuickSearch(example.inn)}
-                disabled={isLoading}
-                className="text-xs"
-              >
-                {example.name}
-              </Button>
-            ))}
-          </div>
         </div>
 
         {searchHistory.length > 0 && (
