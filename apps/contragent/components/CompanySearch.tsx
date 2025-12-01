@@ -54,7 +54,7 @@ export function CompanySearch({ onSearch, isLoading, searchHistory, onClearHisto
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <History className="h-4 w-4" />
-                <span>Последние проверки:</span>
+                <span>Последние запросы:</span>
               </div>
               <Button
                 type="button"
