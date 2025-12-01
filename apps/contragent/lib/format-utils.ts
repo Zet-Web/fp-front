@@ -1,4 +1,5 @@
 // Centralized formatting utilities for currency, numbers, and percentages
+// NOTE: DataNewton API returns financial values in thousands (тыс ₽), so we multiply by 1000 before formatting
 
 export function formatCurrency(value: number): string {
   if (value === 0) return '0 ₽';
@@ -26,8 +27,9 @@ export function formatCurrency(value: number): string {
 export function formatCurrencyCompact(value: number): string {
   if (value === 0) return '0 ₽';
 
-  const absValue = Math.abs(value);
-  const isNegative = value < 0;
+  const realValue = value * 1000;
+  const absValue = Math.abs(realValue);
+  const isNegative = realValue < 0;
   const prefix = isNegative ? '-' : '';
 
   if (absValue >= 1_000_000_000) {
