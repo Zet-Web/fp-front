@@ -120,8 +120,7 @@ export default function ContragentPage() {
               <div>
                 <h3 className="text-xl font-semibold mb-2">Начните проверку</h3>
                 <p className="text-muted-foreground max-w-md mx-auto">
-                  Введите ИНН или ОГРН компании для получения подробной информации
-                  из ЕГРЮЛ/ЕГРИП и оценки рисков
+                  Введите ИНН или ОГРН компании для получения подробной информации и оценки рисков
                 </p>
               </div>
             </div>
