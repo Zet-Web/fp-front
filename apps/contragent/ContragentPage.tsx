@@ -10,11 +10,16 @@ import { CompanyDetails } from './components/CompanyDetails';
 import { RiskAssessment } from './components/RiskAssessment';
 import { FinancialMetricsPreview } from './components/FinancialMetricsPreview';
 import { FinanceTabDetailed } from './components/FinanceTabDetailed';
+import { RisksOverview } from './components/RisksOverview';
+import { RisksTabDetailed } from './components/RisksTabDetailed';
 import { Company, SearchHistoryItem } from './types/company';
 import { BasicFinancialMetrics, DetailedFinancialData } from './types/finance';
+import { RisksData, RisksSummary } from './types/risks';
 import { fetchCompanyInfo, fetchCompanyFinance } from './lib/datanewton-api';
+import { fetchCompanyRisks } from './lib/datanewton-risks-api';
 import { mapDataNewtonToCompany } from './lib/datanewton-mapper';
 import { mapToBasicFinancialMetrics, mapToDetailedFinancialData } from './lib/datanewton-finance-mapper';
+import { mapToRisksSummary } from './lib/datanewton-risks-mapper';
 
 export default function ContragentPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -27,6 +32,11 @@ export default function ContragentPage() {
   const [financeError, setFinanceError] = useState<string | null>(null);
   const [basicFinanceMetrics, setBasicFinanceMetrics] = useState<BasicFinancialMetrics | null>(null);
   const [detailedFinanceData, setDetailedFinanceData] = useState<DetailedFinancialData | null>(null);
+
+  const [risksLoading, setRisksLoading] = useState(false);
+  const [risksError, setRisksError] = useState<string | null>(null);
+  const [risksData, setRisksData] = useState<RisksData | null>(null);
+  const [risksSummary, setRisksSummary] = useState<RisksSummary | null>(null);
 
   const loadFinanceData = async (inn: string, ogrn: string) => {
     setFinanceLoading(true);
@@ -51,6 +61,27 @@ export default function ContragentPage() {
     }
   };
 
+  const loadRisksData = async (inn: string, ogrn: string) => {
+    setRisksLoading(true);
+    setRisksError(null);
+    setRisksData(null);
+    setRisksSummary(null);
+
+    try {
+      const risksResponse = await fetchCompanyRisks(inn, ogrn);
+      const summary = mapToRisksSummary(risksResponse);
+
+      setRisksData(risksResponse);
+      setRisksSummary(summary);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Не удалось загрузить данные о рисках';
+      setRisksError(errorMessage);
+      console.error('Risks loading error:', err);
+    } finally {
+      setRisksLoading(false);
+    }
+  };
+
   const handleSearch = async (identifier: string) => {
     setIsLoading(true);
     setError(null);
@@ -58,6 +89,9 @@ export default function ContragentPage() {
     setBasicFinanceMetrics(null);
     setDetailedFinanceData(null);
     setFinanceError(null);
+    setRisksData(null);
+    setRisksSummary(null);
+    setRisksError(null);
     setActiveTab('overview');
 
     try {
@@ -79,6 +113,7 @@ export default function ContragentPage() {
 
       setTimeout(() => {
         loadFinanceData(company.basicInfo.inn, company.basicInfo.ogrn);
+        loadRisksData(company.basicInfo.inn, company.basicInfo.ogrn);
       }, 800);
 
     } catch (err) {
@@ -95,6 +130,10 @@ export default function ContragentPage() {
 
   const handleViewFinanceDetails = () => {
     setActiveTab('finance');
+  };
+
+  const handleViewRisksDetails = () => {
+    setActiveTab('risks');
   };
 
   return (
@@ -151,9 +190,10 @@ export default function ContragentPage() {
 
               {/* Tabs */}
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full md:w-[400px] grid-cols-2">
+                <TabsList className="grid w-full md:w-[600px] grid-cols-3">
                   <TabsTrigger value="overview">Обзор</TabsTrigger>
-                  <TabsTrigger value="finance">Детальная финансы</TabsTrigger>
+                  <TabsTrigger value="finance">Финансы</TabsTrigger>
+                  <TabsTrigger value="risks">Риски</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="overview" className="space-y-6 mt-6">
@@ -167,8 +207,12 @@ export default function ContragentPage() {
                     onViewDetails={handleViewFinanceDetails}
                   />
 
-                  {/* Risk Assessment & Actions - Hidden until proper risk calculation is implemented */}
-                  {/* <RiskAssessment risk={currentCompany.riskAssessment} /> */}
+                  {/* Risks Overview */}
+                  <RisksOverview
+                    summary={risksSummary}
+                    isLoading={risksLoading}
+                    onViewDetails={handleViewRisksDetails}
+                  />
                 </TabsContent>
 
                 <TabsContent value="finance" className="mt-6">
@@ -176,6 +220,15 @@ export default function ContragentPage() {
                     data={detailedFinanceData}
                     isLoading={financeLoading}
                     error={financeError}
+                  />
+                </TabsContent>
+
+                <TabsContent value="risks" className="mt-6">
+                  <RisksTabDetailed
+                    data={risksData}
+                    summary={risksSummary}
+                    isLoading={risksLoading}
+                    error={risksError}
                   />
                 </TabsContent>
               </Tabs>
