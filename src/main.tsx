@@ -4,18 +4,18 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App.tsx";
 import "./index.css";
 import "./tiptap.css";
-import { init, miniApp, retrieveLaunchParams } from "@telegram-apps/sdk";
+import { init, miniApp, retrieveLaunchParams } from "@tma.js/sdk";
 
 let isTelegramMiniApp = false;
 let telegramInitialized = false;
 
-const initializeTelegramSDK = async () => {
+const initializeTelegramSDK = () => {
   try {
-    await init();
+    init();
     telegramInitialized = true;
 
     if (miniApp.ready.isAvailable()) {
-      await miniApp.ready();
+      miniApp.ready();
       isTelegramMiniApp = true;
       console.log("Mini App готово");
     }
