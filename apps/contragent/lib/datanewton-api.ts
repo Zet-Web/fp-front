@@ -56,6 +56,22 @@ export interface DataNewtonResponse {
         share: string;
         inn?: string;
       }>;
+      ul_rus?: Array<{
+        name: string;
+        share: string;
+        inn?: string;
+      }>;
+      ul_foreign?: Array<{
+        name: string;
+        share: string;
+        inn?: string;
+        country?: string;
+      }>;
+      gov?: Array<{
+        name: string;
+        share: string;
+        inn?: string;
+      }>;
     };
     charter_capital?: string;
     workers_count?: Record<string, number>;

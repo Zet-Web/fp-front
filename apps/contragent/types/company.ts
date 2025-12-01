@@ -52,10 +52,12 @@ export interface CompanyLeadership {
   founders: Array<{
     name: string;
     share: number;
+    inn?: string;
   }>;
   beneficiaries: Array<{
     name: string;
     share: number;
+    inn?: string;
   }>;
 }
 

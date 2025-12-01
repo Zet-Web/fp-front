@@ -21,7 +21,7 @@ import { Company, SearchHistoryItem } from './types/company';
 import { BasicFinancialMetrics, DetailedFinancialData } from './types/finance';
 import { RisksData, RisksSummary } from './types/risks';
 import { CorporateActionsData } from './types/corporate-actions';
-import { fetchCompanyInfo, fetchCompanyFinance } from './lib/datanewton-api';
+import { fetchCompanyInfo, fetchCompanyFinance, DataNewtonResponse } from './lib/datanewton-api';
 import { fetchCompanyRisks } from './lib/datanewton-risks-api';
 import { fetchCorporateActions } from './lib/datanewton-corporate-actions-api';
 import { mapDataNewtonToCompany } from './lib/datanewton-mapper';
@@ -48,6 +48,7 @@ export default function ContragentPage() {
   const [corporateActionsLoading, setCorporateActionsLoading] = useState(false);
   const [corporateActionsError, setCorporateActionsError] = useState<string | null>(null);
   const [corporateActionsData, setCorporateActionsData] = useState<CorporateActionsData | null>(null);
+  const [apiResponse, setApiResponse] = useState<DataNewtonResponse | null>(null);
 
   const loadFinanceData = async (inn: string, ogrn: string) => {
     setFinanceLoading(true);
@@ -125,10 +126,11 @@ export default function ContragentPage() {
     setActiveTab('overview');
 
     try {
-      const apiResponse = await fetchCompanyInfo(identifier);
-      const company = mapDataNewtonToCompany(apiResponse);
+      const response = await fetchCompanyInfo(identifier);
+      const company = mapDataNewtonToCompany(response);
 
       setCurrentCompany(company);
+      setApiResponse(response);
 
       const historyItem: SearchHistoryItem = {
         inn: company.basicInfo.inn,
@@ -239,7 +241,7 @@ export default function ContragentPage() {
 
                 <TabsContent value="overview" className="space-y-6 mt-6">
                   {/* Company Details */}
-                  <CompanyDetails company={currentCompany} />
+                  <CompanyDetails company={currentCompany} apiResponse={apiResponse || undefined} />
 
                   {/* Financial Metrics Preview */}
                   <FinancialMetricsPreview

@@ -120,14 +120,12 @@ export function RisksOverview({ summary, isLoading, onViewDetails }: RisksOvervi
           })}
         </div>
 
-        <Button
-          onClick={onViewDetails}
-          variant="outline"
-          className="w-full"
-        >
-          <ExternalLink className="h-4 w-4 mr-2" />
-          Подробнее о рисках
-        </Button>
+        <div className="pt-2 border-t">
+          <Button variant="ghost" size="sm" onClick={onViewDetails} className="text-blue-500 hover:text-blue-600 w-full justify-center">
+            Подробнее
+            <ExternalLink className="h-4 w-4 ml-1" />
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );

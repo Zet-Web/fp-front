@@ -123,17 +123,63 @@ export function mapDataNewtonToCompany(data: DataNewtonResponse): Company {
     successors: mapSuccessors(companyData?.successors)
   };
 
+  const allOwners: Array<{ name: string; share: number; inn?: string }> = [];
+
+  if (companyData?.owners?.fl) {
+    companyData.owners.fl.forEach(owner => {
+      allOwners.push({
+        name: owner.name,
+        share: parseFloat(owner.share) || 0,
+        inn: owner.inn
+      });
+    });
+  }
+
+  if (companyData?.owners?.ul_rus) {
+    companyData.owners.ul_rus.forEach(owner => {
+      allOwners.push({
+        name: owner.name,
+        share: parseFloat(owner.share) || 0,
+        inn: owner.inn
+      });
+    });
+  }
+
+  if (companyData?.owners?.ul_foreign) {
+    companyData.owners.ul_foreign.forEach(owner => {
+      allOwners.push({
+        name: owner.name,
+        share: parseFloat(owner.share) || 0,
+        inn: owner.inn
+      });
+    });
+  }
+
+  if (companyData?.owners?.gov) {
+    companyData.owners.gov.forEach(owner => {
+      allOwners.push({
+        name: owner.name,
+        share: parseFloat(owner.share) || 0,
+        inn: owner.inn
+      });
+    });
+  }
+
+  allOwners.sort((a, b) => b.share - a.share);
+
   const leadership: CompanyLeadership = {
     ceo: companyData?.managers?.[0]?.fio || 'Не указано',
-    founders: (companyData?.owners?.fl || []).map(owner => ({
+    founders: allOwners.map(owner => ({
       name: owner.name,
-      share: parseFloat(owner.share) || 0
+      share: Math.round(owner.share * 100) / 100,
+      inn: owner.inn
     })),
-    beneficiaries: (companyData?.owners?.fl || [])
-      .filter(owner => parseFloat(owner.share) > 25)
+    beneficiaries: allOwners
+      .filter(owner => owner.share > 25)
       .map(owner => ({
         name: owner.name,
-        share: parseFloat(owner.share) || 0
+        share: Math.round(owner.share * 100) / 100,
+        inn: owner.inn
       }))
   };
 
