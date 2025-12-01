@@ -59,7 +59,7 @@ export default function ContragentPage() {
               <div>
                 <h1 className="text-3xl font-bold">Проверка контрагентов</h1>
                 <p className="text-muted-foreground">
-                  Комплексная проверка надежности компании перед заключением сделки
+                  Данные компаний и ИП по ИНН и ОГРН
                 </p>
               </div>
             </div>
