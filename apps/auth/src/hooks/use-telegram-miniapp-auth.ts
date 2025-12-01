@@ -71,6 +71,7 @@ export function useTelegramMiniAppAuth(): UseTelegramMiniAppAuthReturn {
       // Check if initDataRaw is available
        
       const initDataRaw = launchParams.tgWebAppStartParam
+      console.log('launchParams', launchParams)
       if (!initDataRaw) {
         setError("Не удалось получить подпись Telegram");
         setIsLoading(false);
