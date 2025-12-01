@@ -71,13 +71,19 @@ export function RisksOverview({ summary, isLoading, onViewDetails }: RisksOvervi
     <Card className="shadow-sm hover:shadow-md transition-shadow">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
+          <div className="flex items-center gap-2">
             <Shield className="h-5 w-5 text-blue-500" />
-            Оценка рисков
-          </CardTitle>
-          <Badge className={getRiskLevelColor(summary.overallLevel)}>
-            {getRiskLevelLabel(summary.overallLevel)}
-          </Badge>
+            <CardTitle>Оценка рисков</CardTitle>
+          </div>
+          <div className="flex items-center gap-2">
+            <Badge className={getRiskLevelColor(summary.overallLevel)}>
+              {getRiskLevelLabel(summary.overallLevel)}
+            </Badge>
+            <Button variant="ghost" size="sm" onClick={onViewDetails} className="text-blue-500 hover:text-blue-600">
+              Подробнее
+              <ExternalLink className="h-4 w-4 ml-1" />
+            </Button>
+          </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -118,13 +124,6 @@ export function RisksOverview({ summary, isLoading, onViewDetails }: RisksOvervi
               </div>
             );
           })}
-        </div>
-
-        <div className="pt-2 border-t">
-          <Button variant="ghost" size="sm" onClick={onViewDetails} className="text-blue-500 hover:text-blue-600 w-full justify-center">
-            Подробнее
-            <ExternalLink className="h-4 w-4 ml-1" />
-          </Button>
         </div>
       </CardContent>
     </Card>

@@ -24,7 +24,8 @@ export function CompanyDetails({ company, apiResponse }: CompanyDetailsProps) {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {/* Basic Information */}
       <Card className="shadow-sm hover:shadow-md transition-shadow">
         <CardHeader>
@@ -102,99 +103,76 @@ export function CompanyDetails({ company, apiResponse }: CompanyDetailsProps) {
               </div>
             </div>
           )}
-
-          {leadership.beneficiaries.length > 0 && (
-            <div>
-              <div className="text-sm text-muted-foreground mb-1">Бенефициары:</div>
-              <div className="space-y-2">
-                {leadership.beneficiaries.map((beneficiary, index) => (
-                  <div key={index} className="text-sm">
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <div className="font-medium">{beneficiary.name}</div>
-                        {beneficiary.inn && (
-                          <div className="text-xs text-muted-foreground">ИНН {beneficiary.inn}</div>
-                        )}
-                      </div>
-                      <Badge variant="secondary" className="ml-2">
-                        {beneficiary.share.toFixed(beneficiary.share < 0.01 ? 3 : 2)}%
-                      </Badge>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {apiResponse?.company?.contacts && (
-            <div className="pt-2 border-t">
-              <div className="text-sm text-muted-foreground mb-2">Контакты:</div>
-              <div className="space-y-1.5">
-                {apiResponse.company.contacts.emails && apiResponse.company.contacts.emails.length > 0 && (
-                  <div className="flex items-start gap-2 text-xs">
-                    <Mail className="h-3 w-3 text-muted-foreground flex-shrink-0 mt-0.5" />
-                    <div className="flex-1">
-                      {apiResponse.company.contacts.emails.slice(0, 2).map((email, i) => (
-                        <a
-                          key={i}
-                          href={`mailto:${email.value}`}
-                          className="text-blue-500 hover:underline block"
-                        >
-                          {email.value}
-                        </a>
-                      ))}
-                      {apiResponse.company.contacts.emails.length > 2 && (
-                        <span className="text-muted-foreground">+ ещё {apiResponse.company.contacts.emails.length - 2}</span>
-                      )}
-                    </div>
-                  </div>
-                )}
-                {apiResponse.company.contacts.phones && apiResponse.company.contacts.phones.length > 0 && (
-                  <div className="flex items-start gap-2 text-xs">
-                    <Phone className="h-3 w-3 text-muted-foreground flex-shrink-0 mt-0.5" />
-                    <div className="flex-1">
-                      {apiResponse.company.contacts.phones.slice(0, 2).map((phone, i) => (
-                        <a
-                          key={i}
-                          href={`tel:${phone.value}`}
-                          className="text-blue-500 hover:underline block"
-                        >
-                          {phone.value}
-                        </a>
-                      ))}
-                      {apiResponse.company.contacts.phones.length > 2 && (
-                        <span className="text-muted-foreground">+ ещё {apiResponse.company.contacts.phones.length - 2}</span>
-                      )}
-                    </div>
-                  </div>
-                )}
-                {apiResponse.company.contacts.websites && apiResponse.company.contacts.websites.length > 0 && (
-                  <div className="flex items-start gap-2 text-xs">
-                    <Globe className="h-3 w-3 text-muted-foreground flex-shrink-0 mt-0.5" />
-                    <div className="flex-1">
-                      {apiResponse.company.contacts.websites.slice(0, 2).map((website, i) => (
-                        <a
-                          key={i}
-                          href={website.value}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-500 hover:underline block"
-                        >
-                          {website.value.replace(/^https?:\/\//, '')}
-                        </a>
-                      ))}
-                      {apiResponse.company.contacts.websites.length > 2 && (
-                        <span className="text-muted-foreground">+ ещё {apiResponse.company.contacts.websites.length - 2}</span>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
         </CardContent>
       </Card>
+      </div>
 
+      {/* Contacts Card */}
+      {apiResponse?.company?.contacts && (
+        <Card className="shadow-sm hover:shadow-md transition-shadow">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Phone className="h-5 w-5 text-blue-500" />
+              Контакты
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {apiResponse.company.contacts.emails && apiResponse.company.contacts.emails.length > 0 && (
+              <div>
+                <div className="text-sm text-muted-foreground mb-1.5">Email:</div>
+                <div className="space-y-1">
+                  {apiResponse.company.contacts.emails.map((email, i) => (
+                    <a
+                      key={i}
+                      href={`mailto:${email.value}`}
+                      className="text-sm text-blue-500 hover:underline flex items-center gap-2"
+                    >
+                      <Mail className="h-3 w-3" />
+                      {email.value}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+            {apiResponse.company.contacts.phones && apiResponse.company.contacts.phones.length > 0 && (
+              <div>
+                <div className="text-sm text-muted-foreground mb-1.5">Телефон:</div>
+                <div className="space-y-1">
+                  {apiResponse.company.contacts.phones.map((phone, i) => (
+                    <a
+                      key={i}
+                      href={`tel:${phone.value}`}
+                      className="text-sm text-blue-500 hover:underline flex items-center gap-2"
+                    >
+                      <Phone className="h-3 w-3" />
+                      {phone.value}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+            {apiResponse.company.contacts.websites && apiResponse.company.contacts.websites.length > 0 && (
+              <div>
+                <div className="text-sm text-muted-foreground mb-1.5">Сайт:</div>
+                <div className="space-y-1">
+                  {apiResponse.company.contacts.websites.map((website, i) => (
+                    <a
+                      key={i}
+                      href={website.value}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-blue-500 hover:underline flex items-center gap-2"
+                    >
+                      <Globe className="h-3 w-3" />
+                      {website.value.replace(/^https?:\/\//, '')}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
