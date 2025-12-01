@@ -38,7 +38,7 @@ export const isTelegramReady = (): boolean => {
 // Get Telegram launch params if available
 export const getTelegramLaunchParams = () => {
   try {
-    return initData.startParam;
+    return initData.startParam();
   } catch {
     return null;
   }

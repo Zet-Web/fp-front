@@ -71,7 +71,7 @@ export function useTelegramMiniAppAuth(): UseTelegramMiniAppAuthReturn {
       }
 
       setIsAutoAuthenticating(true);
-      await startAutoAuthentication(initDataRaw as unknown as string);
+      await startAutoAuthentication(initDataRaw);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Произошла ошибка");
       setIsLoading(false);
