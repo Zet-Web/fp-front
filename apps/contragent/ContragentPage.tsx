@@ -65,13 +65,6 @@ export default function ContragentPage() {
             </div>
           </div>
 
-          {/* Live API Alert */}
-          <Alert className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
-            <AlertCircle className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-            <AlertDescription className="text-blue-800 dark:text-blue-200">
-              <strong>API DataNewton:</strong> Используются реальные данные из ЕГРЮЛ/ЕГРИП через API DataNewton.
-            </AlertDescription>
-          </Alert>
 
           {/* Search */}
           <CompanySearch
