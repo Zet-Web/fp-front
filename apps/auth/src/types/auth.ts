@@ -18,8 +18,5 @@ export interface AuthStatusResponse {
 // Process auth request for Telegram mini app
 export interface ProcessAuthRequest {
   state: string;
-  telegram_user_id: number;
-  telegram_full_name: string;
-  telegram_username?: string;
-  webhook_secret: string;
+  telegram_init_data: string; // Raw signed initData from Telegram
 }

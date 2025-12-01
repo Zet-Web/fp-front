@@ -62,32 +62,23 @@ export function useTelegramMiniAppAuth(): UseTelegramMiniAppAuthReturn {
 
       // Get Telegram user data from launch params
       const launchParams = getTelegramLaunchParams();
-      if (!launchParams?.tgWebAppData?.user) {
-        console.log('launchParams', launchParams);
+      if (!launchParams) {
         setError("Не удалось получить данные пользователя Telegram");
         setIsLoading(false);
         return;
       }
 
-      // Type assertion for Telegram user data
-      const telegramUser = launchParams.tgWebAppData.user;
-
-      if (!telegramUser?.id) {
-        setError("Не удалось получить данные пользователя Telegram");
-        setIsLoading(false);
-        return;
-      }
-
-      // Check if webhook secret is configured
-      const webhookSecret = import.meta.env.VITE_TELEGRAM_WEBHOOK_SECRET;
-      if (!webhookSecret) {
-        setError("Webhook secret не настроен");
+      // Check if initDataRaw is available
+       
+      const initDataRaw = launchParams.tgWebAppStartParam
+      if (!initDataRaw) {
+        setError("Не удалось получить подпись Telegram");
         setIsLoading(false);
         return;
       }
 
       setIsAutoAuthenticating(true);
-      await startAutoAuthentication(telegramUser, webhookSecret);
+      await startAutoAuthentication(initDataRaw);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Произошла ошибка");
       setIsLoading(false);
@@ -95,10 +86,7 @@ export function useTelegramMiniAppAuth(): UseTelegramMiniAppAuthReturn {
     }
   };
 
-  const startAutoAuthentication = async (
-    telegramUser: { id: number; first_name: string; last_name?: string; username?: string },
-    webhookSecret: string
-  ) => {
+  const startAutoAuthentication = async (initDataRaw: string) => {
     try {
       // Step 1: Generate auth state
       const stateResponse = await fetch(
@@ -124,21 +112,14 @@ export function useTelegramMiniAppAuth(): UseTelegramMiniAppAuthReturn {
 
       stateRef.current = stateData.state;
 
-      // Step 2: Process auth with Telegram user data
-      const fullName = [telegramUser.first_name, telegramUser.last_name]
-        .filter(Boolean)
-        .join(" ");
-
+      // Step 2: Process auth with Telegram signed data
       const processAuthPayload: ProcessAuthRequest = {
         state: stateData.state,
-        telegram_user_id: telegramUser.id,
-        telegram_full_name: fullName,
-        telegram_username: telegramUser.username,
-        webhook_secret: webhookSecret,
+        telegram_init_data: initDataRaw,
       };
 
       const processResponse = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/auth/process-auth`,
+        `${import.meta.env.VITE_BACKEND_URL}/auth/process-tma-auth`,
         {
           method: "POST",
           headers: {
