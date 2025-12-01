@@ -1,7 +1,7 @@
 // Search component for finding companies by INN or name
 
 import { useState } from 'react';
-import { Search, History, TrendingUp } from 'lucide-react';
+import { Search, History, TrendingUp, X } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -11,17 +11,15 @@ interface CompanySearchProps {
   onSearch: (inn: string) => void;
   isLoading: boolean;
   searchHistory: Array<{ inn: string; name: string; timestamp: string }>;
+  onClearHistory: () => void;
 }
 
 const demoExamples = [
   { inn: '9728006808', name: 'ООО "ДАТАНОМИКА"' },
-  { inn: '7707083893', name: 'ПАО "Сбербанк"' },
-  { inn: '7728168971', name: 'ООО "Яндекс"' },
-  { inn: '7743001840', name: 'ПАО "МТС"' },
   { inn: '1207700223257', name: 'По ОГРН' }
 ];
 
-export function CompanySearch({ onSearch, isLoading, searchHistory }: CompanySearchProps) {
+export function CompanySearch({ onSearch, isLoading, searchHistory, onClearHistory }: CompanySearchProps) {
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleSearch = (e: React.FormEvent) => {
@@ -79,9 +77,21 @@ export function CompanySearch({ onSearch, isLoading, searchHistory }: CompanySea
 
         {searchHistory.length > 0 && (
           <div className="space-y-3">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <History className="h-4 w-4" />
-              <span>Последние проверки:</span>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <History className="h-4 w-4" />
+                <span>Последние проверки:</span>
+              </div>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={onClearHistory}
+                className="h-7 text-xs text-muted-foreground hover:text-foreground"
+              >
+                <X className="h-3 w-3 mr-1" />
+                Очистить
+              </Button>
             </div>
             <div className="flex flex-wrap gap-2">
               {searchHistory.slice(0, 5).map((item, index) => (

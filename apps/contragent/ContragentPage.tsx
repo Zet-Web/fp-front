@@ -46,6 +46,10 @@ export default function ContragentPage() {
     }
   };
 
+  const handleClearHistory = () => {
+    setSearchHistory([]);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -71,6 +75,7 @@ export default function ContragentPage() {
             onSearch={handleSearch}
             isLoading={isLoading}
             searchHistory={searchHistory}
+            onClearHistory={handleClearHistory}
           />
 
           {/* Error */}
