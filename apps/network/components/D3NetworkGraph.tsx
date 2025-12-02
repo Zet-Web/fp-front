@@ -96,9 +96,18 @@ export function D3NetworkGraph({
       )
       .attr("stroke-opacity", 0.6)
       .attr("stroke-width", (d) => (d.mutualConnections ? 2 : 1))
-      .attr("stroke-dasharray", (d) =>
-        d.connectionType === "community" ? "5,5" : "0"
-      );
+      .attr("stroke-dasharray", (d) => {
+        // Community connections are dashed, unless it's a direct connection to the current user
+        if (d.connectionType === "community") {
+          const sourceNode = nodes.find((n) => n.id === d.source);
+          const targetNode = nodes.find((n) => n.id === d.target);
+          const isCurrentUserInvolved =
+            sourceNode?.isCurrentUser || targetNode?.isCurrentUser;
+
+          return isCurrentUserInvolved ? "0" : "5,5";
+        }
+        return "0";
+      });
 
     const node = g
       .append("g")
@@ -129,8 +138,32 @@ export function D3NetworkGraph({
     node.each(function (d) {
       const nodeGroup = d3.select(this);
       const nodeRadius = getNodeRadius(d);
+      const isEvent = d.nodeType === "event";
+      const isCommunity = d.nodeType === "community";
 
-      if (d.avatarUrl) {
+      if (isEvent && d.coverImage) {
+        // Event with cover image
+        nodeGroup
+          .append("defs")
+          .append("pattern")
+          .attr("id", `cover-${d.id}`)
+          .attr("width", 1)
+          .attr("height", 1)
+          .attr("patternContentUnits", "objectBoundingBox")
+          .append("image")
+          .attr("href", getStorageUrl(d.coverImage))
+          .attr("width", 1)
+          .attr("height", 1)
+          .attr("preserveAspectRatio", "xMidYMid slice");
+
+        nodeGroup
+          .append("circle")
+          .attr("r", nodeRadius)
+          .attr("fill", `url(#cover-${d.id})`)
+          .attr("stroke", currentTheme === "dark" ? "#c084fc" : "#a855f7")
+          .attr("stroke-width", getNodeStrokeWidth(d));
+      } else if (!isEvent && d.avatarUrl) {
+        // User with avatar
         nodeGroup
           .append("defs")
           .append("pattern")
@@ -160,33 +193,29 @@ export function D3NetworkGraph({
           )
           .attr("stroke-width", getNodeStrokeWidth(d));
       } else {
+        // No image or Community node - use colored circle
+        let fillColor;
+        let strokeColor;
+
+        if (isCommunity) {
+          fillColor = currentTheme === "dark" ? "#a78bfa" : "#8b5cf6"; // Purple for community
+          strokeColor = currentTheme === "dark" ? "#c4b5fd" : "#7c3aed";
+        } else if (isEvent) {
+          fillColor = currentTheme === "dark" ? "#a855f7" : "#9333ea";
+          strokeColor = currentTheme === "dark" ? "#c084fc" : "#a855f7";
+        } else if (d.isCurrentUser) {
+          fillColor = currentTheme === "dark" ? "#60a5fa" : "#3b82f6";
+          strokeColor = currentTheme === "dark" ? "#93c5fd" : "#2563eb";
+        } else {
+          fillColor = currentTheme === "dark" ? "#4b5563" : "#d1d5db";
+          strokeColor = currentTheme === "dark" ? "#6b7280" : "#9ca3af";
+        }
+
         nodeGroup
           .append("circle")
           .attr("r", nodeRadius)
-          .attr(
-            "fill",
-            d.isCurrentUser
-              ? currentTheme === "dark"
-                ? "#60a5fa"
-                : "#3b82f6"
-              : d.role === "Сообщество"
-              ? currentTheme === "dark"
-                ? "#a78bfa"
-                : "#8b5cf6"
-              : currentTheme === "dark"
-              ? "#4b5563"
-              : "#d1d5db"
-          )
-          .attr(
-            "stroke",
-            d.isCurrentUser
-              ? currentTheme === "dark"
-                ? "#93c5fd"
-                : "#2563eb"
-              : currentTheme === "dark"
-              ? "#6b7280"
-              : "#9ca3af"
-          )
+          .attr("fill", fillColor)
+          .attr("stroke", strokeColor)
           .attr("stroke-width", getNodeStrokeWidth(d));
 
         nodeGroup
@@ -207,7 +236,7 @@ export function D3NetworkGraph({
           .attr("font-weight", d.isCurrentUser ? "bold" : "normal")
           .attr(
             "fill",
-            d.isCurrentUser || d.role === "Сообщество"
+            isEvent || isCommunity || d.isCurrentUser
               ? "#ffffff"
               : currentTheme === "dark"
               ? "#e5e7eb"

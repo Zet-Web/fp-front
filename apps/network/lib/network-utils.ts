@@ -20,11 +20,31 @@ export function applyNetworkFilters(
     const matchingNodeIds = new Set(
       filteredNodes
         .filter(
-          (node) =>
-            node.name.toLowerCase().includes(searchLower) ||
-            node.username.toLowerCase().includes(searchLower) ||
-            node.role?.toLowerCase().includes(searchLower) ||
-            node.about?.toLowerCase().includes(searchLower)
+          (node) => {
+            // Search by name for all nodes
+            if (node.name.toLowerCase().includes(searchLower)) return true;
+            
+            // For user nodes, also search by username, role, and about
+            if (node.nodeType === "user") {
+              return (
+                node.username?.toLowerCase().includes(searchLower) ||
+                node.role?.toLowerCase().includes(searchLower) ||
+                node.about?.toLowerCase().includes(searchLower)
+              );
+            }
+            
+            // For event nodes, search by category
+            if (node.nodeType === "event") {
+              return node.category?.toLowerCase().includes(searchLower);
+            }
+            
+            // For community nodes, search by name (already covered)
+            if (node.nodeType === "community") {
+              return true; // Name check is already done above
+            }
+            
+            return false;
+          }
         )
         .map((node) => node.id)
     );
@@ -60,9 +80,19 @@ export function applyNetworkFilters(
   if (filters.communities.length > 0) {
     filteredNodes = filteredNodes.filter((node) => {
       if (node.isCurrentUser) return true;
-      return node.communities.some((comm) =>
-        filters.communities.includes(comm)
-      );
+      
+      // For community nodes, check if the node itself is one of the selected communities
+      if (node.nodeType === "community") {
+        return filters.communities.includes(node.name);
+      }
+
+      // Only filter user nodes by communities (events don't have communities)
+      if (node.nodeType === "user") {
+        return node.communities?.some((comm) =>
+          filters.communities.includes(comm)
+        );
+      }
+      return false;
     });
 
     const allowedNodeIds = new Set(filteredNodes.map((n) => n.id));
@@ -129,6 +159,7 @@ export function getConnectionTypeColor(
       client: "#f97316",
       partner: "#14b8a6",
       event: "#f97316",
+      member: "#a855f7",
     },
     dark: {
       direct: "#60a5fa",
@@ -140,6 +171,7 @@ export function getConnectionTypeColor(
       client: "#fb923c",
       partner: "#2dd4bf",
       event: "#fb923c",
+      member: "#c084fc",
     },
   };
 
@@ -157,6 +189,7 @@ export function getConnectionTypeBadgeColor(type: ConnectionType): string {
     client: "bg-orange-500",
     partner: "bg-teal-500",
     event: "bg-orange-500",
+    member: "bg-purple-500",
   };
 
   return colors[type] || "bg-blue-500";
@@ -173,6 +206,7 @@ export function getConnectionTypeLabel(type: ConnectionType): string {
     client: "Клиенты",
     partner: "Партнёры",
     event: "Событие",
+    member: "Участник",
   };
 
   return labels[type] || type;
@@ -200,6 +234,7 @@ export function calculateNetworkStats(
       client: 0,
       partner: 0,
       event: 0,
+      member: 0,
     },
     topCommunities: [],
   };
@@ -221,9 +256,12 @@ export function calculateNetworkStats(
       if (type === "community") stats.communities++;
     });
 
-    node.communities.forEach((comm) => {
-      allCommunities.set(comm, (allCommunities.get(comm) || 0) + 1);
-    });
+    // Only count communities for user nodes
+    if (node.nodeType === "user" && node.communities) {
+      node.communities.forEach((comm) => {
+        allCommunities.set(comm, (allCommunities.get(comm) || 0) + 1);
+      });
+    }
   });
 
   stats.topCommunities = Array.from(allCommunities.entries())
@@ -258,6 +296,7 @@ export function getEmptyStateMessage(filters: NetworkFiltersState): string {
 
 export function getNodeRadius(node: NetworkNode): number {
   if (node.isCurrentUser) return 24;
+  if (node.nodeType === "community") return 20;
   if (node.level === 1) return 16;
   if (node.level === 2) return 12;
   return 10;

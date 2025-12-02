@@ -1,21 +1,45 @@
 // TypeScript interfaces for network visualization and connection management
 
-export type ConnectionType = 'direct' | 'following' | 'follower' | 'community' | 'mutual' | 'colleague' | 'client' | 'partner' | 'event';
+export type NodeType = "user" | "event" | "community";
+
+export type ConnectionType =
+  | "direct"
+  | "following"
+  | "follower"
+  | "community"
+  | "mutual"
+  | "colleague"
+  | "client"
+  | "partner"
+  | "event"
+  | "member"; // for user-to-event and event-to-user connections
 
 export type ConnectionLevel = 1 | 2 | 3;
 
 export interface NetworkNode {
   id: string;
+  nodeType: NodeType;
   name: string;
-  username: string;
-  about: string | null;
-  avatarUrl: string | null;
-  role: string | null;
-  company: string | null;
   level: ConnectionLevel;
   connectionType: ConnectionType[];
-  communities: string[];
+
+  // User-specific fields (only when nodeType === 'user')
+  username?: string;
+  about?: string | null;
+  avatarUrl?: string | null;
+  role?: string | null;
+  company?: string | null;
+  communities?: string[];
   isCurrentUser?: boolean;
+  isCommunity?: boolean;
+  
+  // Event-specific fields (only when nodeType === 'event')
+  eventId?: number;
+  postUrl?: string;
+  category?: string;
+  startDate?: string;
+  endDate?: string | null;
+  coverImage?: string | null;
 }
 
 export interface NetworkEdge {
