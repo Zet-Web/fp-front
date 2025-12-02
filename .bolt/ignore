@@ -5,17 +5,17 @@ apps/chats
 apps/header
 apps/mobileNav
 apps/navigation
-# apps/home
+apps/home
 apps/about
 apps/profile
 apps/post
 apps/settings
-apps/network
+# apps/network
 apps/quiz
 
 apps/yurservice
-# apps/contragent
+apps/contragent
 apps/split
 
 # src/components
-# shared-src
+shared-src
