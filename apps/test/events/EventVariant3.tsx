@@ -253,7 +253,7 @@ export function EventVariant3() {
                     </div>
                     <span className="text-xs font-medium text-muted-foreground">Date</span>
                   </div>
-                  <p className="font-semibold">{new Date(event.startDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</p>
+                  <p className="font-semibold">{new Date(event.startDate).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' })}</p>
                 </div>
 
                 <div className="p-4 rounded-xl bg-gradient-to-br from-blue-500/10 to-blue-500/5 border border-blue-500/20">
@@ -332,7 +332,7 @@ export function EventVariant3() {
                 <div className="p-5 rounded-xl bg-gradient-to-br from-blue-500/10 to-blue-500/5 border-2 border-blue-500/20 text-center">
                   <Calendar className="w-6 h-6 text-blue-500 mx-auto mb-2" />
                   <div className="text-sm text-muted-foreground mb-1">Event Date</div>
-                  <div className="font-bold">{new Date(event.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
+                  <div className="font-bold">{new Date(event.startDate).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' })}</div>
                 </div>
 
                 <div className="p-5 rounded-xl bg-gradient-to-br from-blue-500/10 to-blue-500/5 border-2 border-blue-500/20 text-center">

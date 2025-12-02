@@ -75,21 +75,6 @@ export function RiskAssessment({ risk }: RiskAssessmentProps) {
         </CardContent>
       </Card>
 
-      <Card className="shadow-sm hover:shadow-md transition-shadow bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
-        <CardHeader>
-          <CardTitle className="text-blue-900 dark:text-blue-100">Что мы проверяем</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2 text-sm text-blue-800 dark:text-blue-200">
-          <p>• Регистрационные данные и текущий статус компании</p>
-          <p>• Финансовое состояние и динамику показателей за последние 3 года</p>
-          <p>• Наличие задолженностей по налогам и сборам</p>
-          <p>• Судебную практику в качестве истца и ответчика</p>
-          <p>• Исполнительные производства и процедуры банкротства</p>
-          <p>• Актуальность лицензий и разрешительной документации</p>
-          <p>• Информацию о руководителях и бенефициарах</p>
-          <p>• Кредитный рейтинг и репутацию на рынке</p>
-        </CardContent>
-      </Card>
     </div>
   );
 }

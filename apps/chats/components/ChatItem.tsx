@@ -17,15 +17,15 @@ interface ChatItemProps {
 
 function formatChatTime(dateString: string): string {
   const date = new Date(dateString)
-  
+
   if (isToday(date)) {
     return format(date, 'HH:mm')
   } else if (isThisWeek(date, { weekStartsOn: 1 })) {
     return format(date, 'EEE')
   } else if (isThisYear(date)) {
-    return format(date, 'MMM d')
+    return format(date, 'd MMM')
   } else {
-    return format(date, 'MM/dd/yy')
+    return format(date, 'dd.MM.yy')
   }
 }
 
