@@ -98,7 +98,7 @@ export function D3NetworkGraph({
       .attr("stroke-width", (d) => (d.mutualConnections ? 2 : 1))
       .attr("stroke-dasharray", (d) => {
         // Community connections are dashed, unless it's a direct connection to the current user
-        if (d.connectionType === "community") {
+        if (d.connectionType === "member") {
           const sourceNode = nodes.find((n) => n.id === d.source);
           const targetNode = nodes.find((n) => n.id === d.target);
           const isCurrentUserInvolved =
