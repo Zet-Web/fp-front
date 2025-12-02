@@ -27,7 +27,7 @@ export function HomePage() {
   return (
     <div className="h-full w-full flex flex-col">
       <div className="sticky top-0 z-10 bg-background">
-        <div className="container mx-auto px-4 max-w-4xl">
+        <div className="container mx-auto md:px-4 max-w-4xl">
           <FeedFilters
             view={filters.view}
             postType={filters.postType || null}
@@ -46,7 +46,7 @@ export function HomePage() {
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        <div className="container mx-auto px-4 py-6 max-w-4xl">
+        <div className="container mx-auto md:px-4 py-6 max-w-4xl">
           <Feed
             filters={filters}
             emptyMessage={emptyMessage}

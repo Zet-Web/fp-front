@@ -232,71 +232,73 @@ export function FullPostCard({
               )}
             </div>
 
-            <h1 className="scroll-m-20 text-2xl font-extrabold tracking-tight">
-              {title}
-            </h1>
+            <div className="min-w-[110%] ml-[-60px] mt-6 md:min-w-[unset] md:ml-0 md:mt-0">
+              <h1 className="scroll-m-20 text-2xl font-extrabold tracking-tight">
+                {title}
+              </h1>
 
-            <p className="leading-7 [&:not(:first-child)]:mt-2">{excerpt}</p>
+              <p className="leading-7 [&:not(:first-child)]:mt-2">{excerpt}</p>
 
-            {images.length > 0 && (
-              <div className="my-4">
-                <img
-                  src={getStorageUrl(images[0])}
-                  alt="Post content"
-                  className="w-full rounded-lg object-contain h-auto"
-                />
-              </div>
-            )}
+              {images.length > 0 && (
+                <div className="my-4">
+                  <img
+                    src={getStorageUrl(images[0])}
+                    alt="Post content"
+                    className="w-full rounded-lg object-contain h-auto"
+                  />
+                </div>
+              )}
 
-            <PostContentViewer html={content || ""} />
+              <PostContentViewer html={content || ""} />
 
-            {type === PostType.EVENT && post.event && (
-              <div className="mt-6">
-                <EventDisplayCard eventData={post.event} />
-              </div>
-            )}
+              {type === PostType.EVENT && post.event && (
+                <div className="mt-6">
+                  <EventDisplayCard eventData={post.event} />
+                </div>
+              )}
 
-            {type === PostType.QUIZ && (
-              <div className="mt-6">
-                <QuizTake postId={postId} />
-              </div>
-            )}
+              {type === PostType.QUIZ && (
+                <div className="mt-6">
+                  <QuizTake postId={postId} />
+                </div>
+              )}
 
-            {showActions && (
-              <div className="flex justify-end gap-1 mt-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-muted-foreground hover:text-foreground p-1 bg-transparent hover:bg-transparent"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onBookmarkClick?.();
-                  }}
-                  disabled={isSaving}
-                >
-                  {isSaving ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <Bookmark
-                      className={`w-4 h-4 transition-colors ${
-                        isPostSaved ? "fill-red-500 text-red-500" : ""
-                      }`}
-                    />
-                  )}
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-muted-foreground hover:text-foreground p-1 bg-transparent hover:bg-transparent"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onShareClick?.();
-                  }}
-                >
-                  <Share className="w-4 h-4" />
-                </Button>
-              </div>
-            )}
+              {showActions && (
+                <div className="flex justify-end gap-1 mt-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-muted-foreground hover:text-foreground p-1 bg-transparent hover:bg-transparent"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      onBookmarkClick?.();
+                    }}
+                    disabled={isSaving}
+                  >
+                    {isSaving ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Bookmark
+                        className={`w-4 h-4 transition-colors ${
+                          isPostSaved ? "fill-red-500 text-red-500" : ""
+                        }`}
+                      />
+                    )}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-muted-foreground hover:text-foreground p-1 bg-transparent hover:bg-transparent"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      onShareClick?.();
+                    }}
+                  >
+                    <Share className="w-4 h-4" />
+                  </Button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </CardContent>

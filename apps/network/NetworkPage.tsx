@@ -67,7 +67,7 @@ export function NetworkPage() {
 
   return (
     <div className="h-full w-full flex flex-col">
-      <div className="container mx-auto px-4 py-6 max-w-7xl">
+      <div className="container mx-auto md:px-6 md:py-6 max-w-7xl">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-foreground mb-2">Контакты</h1>
           <p className="text-muted-foreground">

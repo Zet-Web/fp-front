@@ -394,7 +394,7 @@ export function PostPage() {
 
   return (
     <div className="bg-background">
-      <div className="container mx-auto px-4 md:px-6 py-4 md:py-6 max-w-4xl">
+      <div className="container mx-auto md:px-6 md:py-6 max-w-4xl">
         {isEditing ? (
           <EditablePostCard
             key={editPostUpdateKey}
