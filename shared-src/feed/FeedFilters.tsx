@@ -11,8 +11,6 @@ import {
 } from "@/components/ui/select";
 import { PostType, type FeedView } from "../post/post";
 import { POST_TYPE_LABELS } from "./feed-filters";
-import { FeedLocationDropdown } from "./FeedLocationDropdown";
-import { useAuthContext } from "../../src/components/auth-provider";
 
 interface FeedFiltersProps {
   view: FeedView;
@@ -31,25 +29,9 @@ interface FeedFiltersProps {
 export function FeedFilters({
   view,
   postType,
-  location,
-  countries,
-  cities,
   onViewChange,
   onPostTypeChange,
-  onLocationChange,
 }: FeedFiltersProps) {
-  const handleCountryChange = (country: string) => {
-    onLocationChange({ country, city: null });
-  };
-
-  const handleCityChange = (city: string) => {
-    onLocationChange({ ...location, city });
-  };
-
-  const clearLocation = () => {
-    onLocationChange({ country: null, city: null });
-  };
-
   return (
     <Card className="shadow-sm border-b">
       <CardContent className="p-3 space-y-3">
@@ -92,9 +74,6 @@ export function FeedFilters({
                 </SelectItem>
                 <SelectItem value={PostType.EVENT}>
                   {POST_TYPE_LABELS[PostType.EVENT]}
-                </SelectItem>
-                <SelectItem value={PostType.VACANCY}>
-                  {POST_TYPE_LABELS[PostType.VACANCY]}
                 </SelectItem>
                 <SelectItem value={PostType.QUIZ}>
                   {POST_TYPE_LABELS[PostType.QUIZ]}

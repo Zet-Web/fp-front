@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -342,43 +343,48 @@ export function Members({
 
   const MemberItem = ({ member, role }: { member: Member; role: string }) => (
     <div className="flex items-center gap-4 py-3">
-      <Avatar className="w-12 h-12">
-        <AvatarImage
-          src={
-            member.profile.avatar_url
-              ? getStorageUrl(member.profile.avatar_url)
-              : undefined
-          }
-          alt={member.profile.name}
-        />
-        <AvatarFallback className="text-sm">
-          {member.profile.name
-            .split(" ")
-            .map((n) => n[0])
-            .join("")
-            .toUpperCase()
-            .slice(0, 2)}
-        </AvatarFallback>
-      </Avatar>
+      <Link
+        to={`/${member.profile.username}`}
+        className="flex items-center gap-4 flex-1 min-w-0 hover:opacity-80 transition-opacity"
+      >
+        <Avatar className="w-12 h-12">
+          <AvatarImage
+            src={
+              member.profile.avatar_url
+                ? getStorageUrl(member.profile.avatar_url)
+                : undefined
+            }
+            alt={member.profile.name}
+          />
+          <AvatarFallback className="text-sm">
+            {member.profile.name
+              .split(" ")
+              .map((n) => n[0])
+              .join("")
+              .toUpperCase()
+              .slice(0, 2)}
+          </AvatarFallback>
+        </Avatar>
 
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 mb-0.5">
-          <h3 className="font-semibold truncate">{member.profile.name}</h3>
-          <span className="text-sm text-muted-foreground">
-            @{member.profile.username}
-          </span>
-          {member.profile.is_verified && (
-            <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
-              <Check className="w-2.5 h-2.5 text-white" />
-            </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-0.5">
+            <h3 className="font-semibold truncate">{member.profile.name}</h3>
+            <span className="text-sm text-muted-foreground">
+              @{member.profile.username}
+            </span>
+            {member.profile.is_verified && (
+              <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                <Check className="w-2.5 h-2.5 text-white" />
+              </div>
+            )}
+          </div>
+          {member.profile.job_title && (
+            <p className="text-sm text-muted-foreground">
+              {member.profile.job_title}
+            </p>
           )}
         </div>
-        {member.profile.job_title && (
-          <p className="text-sm text-muted-foreground">
-            {member.profile.job_title}
-          </p>
-        )}
-      </div>
+      </Link>
 
       <div className="flex items-center gap-2">
         <Badge
@@ -392,7 +398,10 @@ export function Members({
           <Button
             size="sm"
             variant="ghost"
-            onClick={() => handleDeleteMember(member)}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDeleteMember(member);
+            }}
             className="h-8 w-8 p-0"
           >
             <Trash2 className="w-4 h-4 text-destructive" />
