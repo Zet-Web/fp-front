@@ -1,6 +1,6 @@
 // Mock network data with multi-level connections for testing network visualization
 
-import { NetworkData, NetworkNode, NetworkEdge, NetworkStats, ConnectionType } from '../types/network';
+import { NetworkData, NetworkNode, NetworkEdge, NetworkStats } from '../types/network';
 
 export const CURRENT_USER_ID = 'timur-kakokho';
 
@@ -401,6 +401,7 @@ export const MOCK_NETWORK_STATS: NetworkStats = {
     colleague: 5,
     client: 2,
     partner: 3,
+    event: 0,
   },
   topCommunities: [
     { name: 'IT', count: 8 },

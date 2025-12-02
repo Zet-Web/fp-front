@@ -16,10 +16,12 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider, useAuthContext } from "@/components/auth-provider";
+import { ActiveProfileProvider } from "@shared/profile/ActiveProfileContext";
 import { NotFoundPage } from "/apps/404/404Page";
 import { AboutPage } from "/apps/about/AboutPage";
 import { SidebarProvider } from "@/contexts/sidebar-context";
 import { useMemo } from "react";
+import { CreatePublicProfilePage } from "/apps/profile/src/components/CreatePublicProfilePage";
 
 const fullWidthRoutes = ["/yurservice", "/network"];
 
@@ -53,6 +55,10 @@ function AppContent() {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
+                <Route
+                  path="/profile/create"
+                  element={<CreatePublicProfilePage />}
+                />
                 <Route path="/post" element={<PostPage />} />
                 <Route path="/post/:urlCode" element={<PostPage />} />
                 <Route path="/yurservice" element={<YurServicePage />} />
@@ -94,11 +100,13 @@ function App() {
       enableSystem={false}
       disableTransitionOnChange
     >
-      <AuthProvider>
-        <SidebarProvider>
-          <AppContent />
-        </SidebarProvider>
-      </AuthProvider>
+      <ActiveProfileProvider>
+        <AuthProvider>
+          <SidebarProvider>
+            <AppContent />
+          </SidebarProvider>
+        </AuthProvider>
+      </ActiveProfileProvider>
       <Toaster />
     </ThemeProvider>
   );

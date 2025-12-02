@@ -1,58 +1,55 @@
 // Filter controls for network visualization with connection types, communities, and search
 
-import { NetworkFiltersState, ConnectionType } from '../types/network';
-import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
+import { NetworkFiltersState, ConnectionType } from "../types/network";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Search, Filter, X, Users } from 'lucide-react';
-import { getConnectionTypeLabel } from '../lib/network-utils';
+} from "@/components/ui/popover";
+import { Search, Filter, X } from "lucide-react";
+import { getConnectionTypeLabel } from "../lib/network-utils";
 
 interface NetworkFiltersProps {
   filters: NetworkFiltersState;
-  communities: string[];
   onFiltersChange: (filters: NetworkFiltersState) => void;
 }
 
 const CONNECTION_TYPE_OPTIONS: ConnectionType[] = [
-  'direct',
-  'community',
-  'event',
+  "direct",
+  "community",
+  "event",
+  "follower",
+  "following",
 ];
 
-export function NetworkFilters({ filters, communities, onFiltersChange }: NetworkFiltersProps) {
+export function NetworkFilters({
+  filters,
+  onFiltersChange,
+}: NetworkFiltersProps) {
   const handleSearchChange = (search: string) => {
     onFiltersChange({ ...filters, search });
   };
 
   const handleConnectionTypeToggle = (type: ConnectionType) => {
     const newTypes = filters.connectionTypes.includes(type)
-      ? filters.connectionTypes.filter(t => t !== type)
+      ? filters.connectionTypes.filter((t) => t !== type)
       : [...filters.connectionTypes, type];
     onFiltersChange({ ...filters, connectionTypes: newTypes });
   };
 
   const handleCommunityToggle = (community: string) => {
     const newCommunities = filters.communities.includes(community)
-      ? filters.communities.filter(c => c !== community)
+      ? filters.communities.filter((c) => c !== community)
       : [...filters.communities, community];
     onFiltersChange({ ...filters, communities: newCommunities });
   };
 
-  const handleLevelChange = (level: 'all' | '1' | '2' | '3') => {
+  const handleLevelChange = (level: "all" | "1" | "2" | "3") => {
     onFiltersChange({ ...filters, connectionLevel: level });
   };
 
@@ -62,10 +59,10 @@ export function NetworkFilters({ filters, communities, onFiltersChange }: Networ
 
   const handleClearFilters = () => {
     onFiltersChange({
-      search: '',
+      search: "",
       connectionTypes: [],
       communities: [],
-      connectionLevel: 'all',
+      connectionLevel: "all",
       showMutualOnly: false,
     });
   };
@@ -73,7 +70,7 @@ export function NetworkFilters({ filters, communities, onFiltersChange }: Networ
   const activeFilterCount =
     filters.connectionTypes.length +
     filters.communities.length +
-    (filters.connectionLevel !== 'all' ? 1 : 0) +
+    (filters.connectionLevel !== "all" ? 1 : 0) +
     (filters.showMutualOnly ? 1 : 0);
 
   return (
@@ -169,11 +166,11 @@ export function NetworkFilters({ filters, communities, onFiltersChange }: Networ
                   <X className="h-3 w-3 ml-1" />
                 </Badge>
               ))}
-              {filters.connectionLevel !== 'all' && (
+              {filters.connectionLevel !== "all" && (
                 <Badge
                   variant="secondary"
                   className="cursor-pointer hover:bg-secondary/80"
-                  onClick={() => handleLevelChange('all')}
+                  onClick={() => handleLevelChange("all")}
                 >
                   Уровень {filters.connectionLevel}
                   <X className="h-3 w-3 ml-1" />

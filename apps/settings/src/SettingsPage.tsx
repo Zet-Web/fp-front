@@ -33,24 +33,44 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useSettingsData } from "./hooks/use-settings-data";
-import { Clock, Palette, LogOut, Check, ChevronsUpDown, Users } from "lucide-react";
+import {
+  Clock,
+  Palette,
+  LogOut,
+  Check,
+  ChevronsUpDown,
+  Users,
+  Plus,
+  Trash2,
+} from "lucide-react";
 import { useTheme } from "next-themes";
 import { useState, useMemo, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useAuthContext } from "@/components/auth-provider";
 import { toast } from "sonner";
+import { getStorageUrl } from "@/utils/getStorageUrl";
+import {
+  getMyPublicProfiles,
+  deletePublicProfile,
+} from "../../../shared-src/profile/api";
+import { ProfileSwitcher } from "../../../shared-src/profile/ProfileSwitcher";
 
 interface UserSettings {
   timezone: string;
   theme_mode: "light" | "dark" | "system";
+  members_enabled: boolean;
 }
 
 interface MainSettingsProps {
   settings: UserSettings;
   allTimezones: TimezoneOption[];
-  onUpdate: (data: Partial<UserSettings>) => Promise<{ success: boolean; error?: any }>;
+  onUpdate: (
+    data: Partial<UserSettings>
+  ) => Promise<{ success: boolean; error?: unknown }>;
 }
 
 interface TimezoneOption {
@@ -61,9 +81,24 @@ interface TimezoneOption {
   offset: string;
 }
 
+interface PublicProfile {
+  id: string;
+  name: string;
+  username: string;
+  about?: string;
+  avatar_url?: string;
+  profile_type: string;
+  owner_id: string;
+}
+
 export function SettingsPage() {
   const { session, isAuthenticated } = useAuthContext();
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+
+  const initialTab = params.get("tab");
+
+  const [currentTab, setCurrentTab] = useState(initialTab || "general");
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -73,16 +108,8 @@ export function SettingsPage() {
   }, [isAuthenticated, navigate]);
 
   const settingsData = useSettingsData(session);
-  const {
-    settings,
-    allTimezones,
-    updateSettings,
-    saveChanges,
-    resetChanges,
-    isLoading,
-    error,
-    hasUnsavedChanges,
-  } = settingsData;
+  const { settings, allTimezones, updateSettings, isLoading, error } =
+    settingsData;
 
   if (isLoading) {
     return (
@@ -114,21 +141,31 @@ export function SettingsPage() {
     );
   }
 
-
   return (
     <div className="container mx-auto px-6 py-6 max-w-4xl">
-      {/*<div className="mb-6">
-        <h1 className="text-3xl font-bold mb-2">Settings</h1>
-        <p className="text-muted-foreground">
-          Manage your account preferences and application settings.
-        </p>
-      </div> */}
+      <Tabs
+        value={currentTab}
+        onValueChange={(value) => setCurrentTab(value)}
+        defaultValue="general"
+        className="w-full"
+      >
+        <TabsList className="grid w-full grid-cols-2 mb-6">
+          <TabsTrigger value="general">Основное</TabsTrigger>
+          <TabsTrigger value="profiles">Профили</TabsTrigger>
+        </TabsList>
 
-      <MainSettings
-        settings={settings}
-        allTimezones={allTimezones}
-        onUpdate={updateSettings}
-      />
+        <TabsContent value="general">
+          <MainSettings
+            settings={settings}
+            allTimezones={allTimezones}
+            onUpdate={updateSettings}
+          />
+        </TabsContent>
+
+        <TabsContent value="profiles">
+          <ProfilesTab />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
@@ -141,11 +178,11 @@ export function MainSettings({
   const { setTheme } = useTheme();
   const navigate = useNavigate();
   const { signOut } = useAuthContext();
+
+  const [isProfileSwitcherOpen, setIsProfileSwitcherOpen] = useState(false);
   const [timezoneOpen, setTimezoneOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [membersEnabled, setMembersEnabled] = useState(false);
 
-  // Filter timezones based on search term
   const filteredTimezones = useMemo(() => {
     if (!searchTerm.trim()) return allTimezones || [];
 
@@ -164,9 +201,9 @@ export function MainSettings({
     setTimezoneOpen(false);
 
     if (result.success) {
-      toast.success('Часовой пояс сохранен');
+      toast.success("Часовой пояс сохранен");
     } else {
-      toast.error('Не удалось сохранить часовой пояс');
+      toast.error("Не удалось сохранить часовой пояс");
     }
   };
 
@@ -175,9 +212,19 @@ export function MainSettings({
     setTheme(theme);
 
     if (result.success) {
-      toast.success('Тема сохранена');
+      toast.success("Тема сохранена");
     } else {
-      toast.error('Не удалось сохранить тему');
+      toast.error("Не удалось сохранить тему");
+    }
+  };
+
+  const handleMembersEnabledChange = async (enabled: boolean) => {
+    const result = await onUpdate({ members_enabled: enabled });
+
+    if (result.success) {
+      toast.success("Настройка сохранена");
+    } else {
+      toast.error("Не удалось сохранить настройку");
     }
   };
 
@@ -195,6 +242,13 @@ export function MainSettings({
   return (
     <div className="space-y-6">
       {/* Members Tab Settings */}
+
+      <ProfileSwitcher
+        isOpen={isProfileSwitcherOpen}
+        setIsOpen={setIsProfileSwitcherOpen}
+        large
+      />
+
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -212,8 +266,8 @@ export function MainSettings({
             </div>
             <Switch
               id="members-toggle"
-              checked={membersEnabled}
-              onCheckedChange={setMembersEnabled}
+              checked={settings.members_enabled}
+              onCheckedChange={handleMembersEnabledChange}
             />
           </div>
         </CardContent>
@@ -275,7 +329,8 @@ export function MainSettings({
               </PopoverContent>
             </Popover>
             <p className="text-xs text-muted-foreground">
-              Часовой пояс используется для корректного отображения даты и времени в различных функциях
+              Часовой пояс используется для корректного отображения даты и
+              времени в различных функциях
             </p>
           </div>
         </CardContent>
@@ -304,9 +359,7 @@ export function MainSettings({
                 <SelectItem value="dark">Темный</SelectItem>
               </SelectContent>
             </Select>
-            <p className="text-xs text-muted-foreground">
-              Выберите режим
-            </p>
+            <p className="text-xs text-muted-foreground">Выберите режим</p>
           </div>
         </CardContent>
       </Card>
@@ -334,7 +387,9 @@ export function MainSettings({
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Вы уверены, что хотите выйти из аккаунта?</AlertDialogTitle>
+                    <AlertDialogTitle>
+                      Вы уверены, что хотите выйти из аккаунта?
+                    </AlertDialogTitle>
                     <AlertDialogDescription>
                       Вы действительно хотите выйти из аккаунта?
                     </AlertDialogDescription>
@@ -354,7 +409,232 @@ export function MainSettings({
           </div>
         </CardContent>
       </Card>
+    </div>
+  );
+}
 
+function ProfilesTab() {
+  const { profile } = useAuthContext();
+  const navigate = useNavigate();
+  const [publicProfiles, setPublicProfiles] = useState<PublicProfile[]>([]);
+  const [loadingProfiles, setLoadingProfiles] = useState(true);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [profileToDelete, setProfileToDelete] = useState<PublicProfile | null>(
+    null
+  );
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const loadProfiles = async () => {
+    try {
+      setLoadingProfiles(true);
+      const data = await getMyPublicProfiles();
+      setPublicProfiles(data as unknown as PublicProfile[]);
+    } catch (error) {
+      console.error("Failed to load public profiles", error);
+      toast.error("Не удалось загрузить публичные профили");
+    } finally {
+      setLoadingProfiles(false);
+    }
+  };
+
+  useEffect(() => {
+    loadProfiles();
+  }, []);
+
+  const handleDeleteProfile = (profile: PublicProfile) => {
+    setProfileToDelete(profile);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDeleteProfile = async () => {
+    if (!profileToDelete) return;
+
+    setIsDeleting(true);
+    try {
+      await deletePublicProfile(profileToDelete.id);
+      toast.success(`Профиль "${profileToDelete.name}" удален`);
+      loadProfiles();
+    } catch (error) {
+      console.error(error);
+      toast.error("Не удалось удалить профиль");
+    } finally {
+      setIsDeleting(false);
+      setDeleteDialogOpen(false);
+      setProfileToDelete(null);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Personal Profile Section */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h3 className="text-base font-semibold">Личный профиль</h3>
+        </div>
+
+        <Card className="shadow-sm">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-4">
+              <Avatar className="w-14 h-14">
+                <AvatarImage
+                  src={
+                    profile?.avatar_url
+                      ? getStorageUrl(profile.avatar_url)
+                      : undefined
+                  }
+                  alt="Profile"
+                />
+                <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white">
+                  {profile?.name
+                    ?.split(" ")
+                    .map((n) => n[0])
+                    .join("")
+                    .toUpperCase()
+                    .slice(0, 2) || "U"}
+                </AvatarFallback>
+              </Avatar>
+
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <h4 className="font-semibold truncate">
+                    {profile?.name || "User"}
+                  </h4>
+                </div>
+                <p className="text-sm text-muted-foreground truncate">
+                  @{profile?.username || "username"}
+                </p>
+              </div>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate(`/${profile?.username}`)}
+              >
+                Редактировать
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="h-px bg-border my-4"></div>
+
+      {/* Public Profiles Section */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h3 className="text-base font-semibold">
+            Публичные профили ({publicProfiles.length})
+          </h3>
+        </div>
+
+        {loadingProfiles ? (
+          <Card className="shadow-sm">
+            <CardContent className="p-8 text-center">
+              <p className="text-sm text-muted-foreground">Загрузка...</p>
+            </CardContent>
+          </Card>
+        ) : publicProfiles.length === 0 ? (
+          <Card className="shadow-sm">
+            <CardContent className="p-8 text-center">
+              <Users className="w-12 h-12 mx-auto mb-3 text-muted-foreground" />
+              <p className="text-sm text-muted-foreground mb-4">
+                У вас пока нет публичных профилей
+              </p>
+              <Button size="sm" onClick={() => navigate("/profile/create")}>
+                <Plus className="w-4 h-4 mr-2" />
+                Создать первый профиль
+              </Button>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="space-y-3">
+            {publicProfiles.map((publicProfile) => (
+              <Card
+                key={publicProfile.id}
+                className="shadow-sm hover:shadow-md transition-shadow"
+              >
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-4">
+                    <Avatar className="w-14 h-14">
+                      <AvatarImage
+                        src={
+                          publicProfile.avatar_url
+                            ? getStorageUrl(publicProfile.avatar_url)
+                            : undefined
+                        }
+                        alt={publicProfile.name}
+                      />
+                      <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-500 text-white">
+                        {publicProfile.name.substring(0, 2).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-semibold truncate mb-1">
+                        {publicProfile.name}
+                      </h4>
+                      <p className="text-sm text-muted-foreground truncate">
+                        @{publicProfile.username}
+                      </p>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigate(`/${publicProfile.username}`)}
+                      >
+                        Просмотр
+                      </Button>
+                      <AlertDialog
+                        open={
+                          deleteDialogOpen &&
+                          profileToDelete?.id === publicProfile.id
+                        }
+                        onOpenChange={setDeleteDialogOpen}
+                      >
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-destructive hover:bg-destructive/10"
+                            onClick={() => handleDeleteProfile(publicProfile)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Удалить профиль?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Вы уверены, что хотите удалить профиль "
+                              {publicProfile.name}"? Это действие нельзя
+                              отменить. Все данные профиля будут безвозвратно
+                              удалены.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Отмена</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={confirmDeleteProfile}
+                              disabled={isDeleting}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
+                              {isDeleting ? "Удаление..." : "Удалить"}
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

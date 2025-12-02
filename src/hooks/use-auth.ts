@@ -3,11 +3,17 @@ import { User, Session } from "@supabase/supabase-js";
 import { supabase, authReady } from "@/lib/supabase";
 import { FPApi } from "@/lib/api";
 import { UserProfile } from "@/apps/profile/src/types/profile";
+import { useActiveProfile } from "../../shared-src/profile/ActiveProfileContext";
+import { isTelegramReady } from "@/main";
+import { useNavigate } from "react-router-dom";
+
 export function useAuth() {
+  const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const { resetActiveProfiles } = useActiveProfile();
 
   const fetchProfile = async (session: Session) => {
     FPApi.updateAuth(session.access_token);
@@ -28,7 +34,7 @@ export function useAuth() {
       const initialSession = await authReady;
       if (!isMounted) return;
 
-      setLoading(true)      
+      setLoading(true);
 
       if (initialSession) {
         setSession(initialSession);
@@ -40,6 +46,9 @@ export function useAuth() {
         setSession(null);
         setUser(null);
         setProfile(null);
+        if (isTelegramReady()) {
+          navigate("/auth");
+        }
       }
 
       setLoading(false);
@@ -47,7 +56,9 @@ export function useAuth() {
 
     init();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (!isMounted) return;
 
       setSession(session ?? null);
@@ -67,6 +78,7 @@ export function useAuth() {
       isMounted = false;
       subscription.unsubscribe();
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {
@@ -78,8 +90,9 @@ export function useAuth() {
     signOut: async () => {
       if (user?.id) localStorage.removeItem(`profile_${user.id}`);
       await supabase.auth.signOut();
+      resetActiveProfiles();
     },
     updateProfilePartial: (updates: Partial<UserProfile>) =>
-      setProfile(p => p ? { ...p, ...updates } : null)
+      setProfile((p) => (p ? { ...p, ...updates } : null)),
   };
 }

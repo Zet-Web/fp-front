@@ -5,6 +5,8 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Minimize2,
+  FileText,
+  UserPlus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,25 +16,38 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Link, useLocation } from "react-router-dom";
 import { useAuthContext } from "@/components/auth-provider";
 import { useTheme } from "next-themes";
-import {
-  desktopNavigationItems,
-  createButtonConfig,
-} from "@shared/navigation/navigation-config";
 import { useSidebar } from "@/contexts/sidebar-context";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getStorageUrl } from "@/utils/getStorageUrl";
+import { ProfileSwitcher } from "../../shared-src/profile/ProfileSwitcher";
+import { useState } from "react";
+import {
+  createButtonConfig,
+  desktopNavigationItems,
+} from "../../shared-src/navigation/navigation-config";
+import { useActiveProfile } from "../../shared-src/profile/ActiveProfileContext";
 
 export function Navigation() {
   const location = useLocation();
-  const { user, profile, isAuthenticated, loading } = useAuthContext();
+  const { activeProfile } = useActiveProfile();
+
+  const { user, isAuthenticated, loading } = useAuthContext();
   const { setTheme } = useTheme();
   const { leftCollapsed, rightCollapsed, toggleLeft, collapseAll, expandAll } =
     useSidebar();
+  const [isProfileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [showCreateMenu, setShowCreateMenu] = useState(false);
 
-  const displayName = profile?.name || profile?.username || "User";
+  const displayName = activeProfile?.name || activeProfile?.username || "User";
   const avatarFallback = displayName
     .split(" ")
     .map((n) => n[0])
@@ -77,7 +92,7 @@ export function Navigation() {
               {desktopNavigationItems.map((item) => {
                 const itemPath =
                   typeof item.path === "function"
-                    ? item.path(profile, isAuthenticated)
+                    ? item.path(activeProfile, isAuthenticated)
                     : item.path;
 
                 return (
@@ -106,22 +121,41 @@ export function Navigation() {
                 );
               })}
 
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Link to={createButtonConfig.path}>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-10 w-10 hover:bg-accent/50"
-                    >
-                      <createButtonConfig.icon className="h-5 w-5" />
-                    </Button>
-                  </Link>
-                </TooltipTrigger>
-                <TooltipContent side="right">
-                  <p>{createButtonConfig.label}</p>
-                </TooltipContent>
-              </Tooltip>
+              <DropdownMenu
+                open={showCreateMenu}
+                onOpenChange={setShowCreateMenu}
+              >
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-10 w-10 hover:bg-accent/50"
+                      >
+                        <createButtonConfig.icon className="h-5 w-5" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent side="right">
+                    <p>Создать</p>
+                  </TooltipContent>
+                </Tooltip>
+                <DropdownMenuContent align="start" className="w-56">
+                  <DropdownMenuItem asChild>
+                    <Link to="/post">
+                      <FileText className="h-4 w-4 mr-2" />
+                      Создать пост
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/profile/create">
+                      <UserPlus className="h-4 w-4 mr-2" />
+                      Создать профиль
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
 
               <div className="h-px w-8 bg-border mt-2"></div>
 
@@ -132,17 +166,18 @@ export function Navigation() {
                   <TooltipTrigger asChild>
                     <Link
                       to={
-                        typeof profileNavItem?.path === "function"
-                          ? profileNavItem?.path(profile, isAuthenticated)
-                          : profileNavItem?.path
+                        typeof profileNavItem?.path === "function" &&
+                        activeProfile
+                          ? profileNavItem?.path(activeProfile, isAuthenticated)
+                          : (profileNavItem?.path as string)
                       }
                       className="cursor-pointer hover:opacity-80 transition-opacity"
                     >
                       <Avatar className="w-10 h-10">
                         <AvatarImage
                           src={
-                            profile?.avatar_url
-                              ? getStorageUrl(profile.avatar_url)
+                            activeProfile?.avatar_url
+                              ? getStorageUrl(activeProfile.avatar_url)
                               : undefined
                           }
                           alt="Profile"
@@ -155,13 +190,15 @@ export function Navigation() {
                   </TooltipTrigger>
                   <TooltipContent side="right">
                     <p>
-                      {profile?.name ||
+                      {activeProfile?.name ||
                         user.user_metadata?.name ||
                         user.email?.split("@")[0] ||
                         "User"}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {profile?.username ? `@${profile.username}` : ""}
+                      {activeProfile?.username
+                        ? `@${activeProfile.username}`
+                        : ""}
                     </p>
                   </TooltipContent>
                 </Tooltip>
@@ -278,7 +315,7 @@ export function Navigation() {
             {desktopNavigationItems.map((item) => {
               const itemPath =
                 typeof item.path === "function"
-                  ? item.path(profile, isAuthenticated)
+                  ? item.path(activeProfile, isAuthenticated)
                   : item.path;
 
               return (
@@ -301,16 +338,34 @@ export function Navigation() {
             })}
 
             {/* Create item */}
-            <Button
-              variant="ghost"
-              className="w-full justify-start h-12 px-4 text-base"
-              asChild
+            <DropdownMenu
+              open={showCreateMenu}
+              onOpenChange={setShowCreateMenu}
             >
-              <Link to={createButtonConfig.path}>
-                <createButtonConfig.icon className="h-5 w-5 mr-3" />
-                <span>{createButtonConfig.label}</span>
-              </Link>
-            </Button>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start h-12 px-4 hover:bg-accent/50"
+                >
+                  <createButtonConfig.icon className="h-5 w-5 mr-3" />
+                  <span className="text-base">Создать</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
+                <DropdownMenuItem asChild>
+                  <Link to="/post">
+                    <FileText className="h-4 w-4 mr-2" />
+                    Создать пост
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/profile/create">
+                    <UserPlus className="h-4 w-4 mr-2" />
+                    Создать профиль
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             {/* Separator before user profile */}
             <div className="h-px bg-border mx-2 mt-4"></div>
@@ -325,35 +380,10 @@ export function Navigation() {
                 </div>
               </div>
             ) : isAuthenticated && user ? (
-              <Link
-                to={`/${profile?.username}`}
-                className="flex items-center space-x-3 px-4 py-2 hover:bg-accent/50 transition-colors rounded-md mt-2 cursor-pointer"
-              >
-                <Avatar className="w-10 h-10">
-                  <AvatarImage
-                    src={
-                      profile?.avatar_url
-                        ? getStorageUrl(profile.avatar_url)
-                        : undefined
-                    }
-                    alt="Profile"
-                  />
-                  <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-sm text-white">
-                    {avatarFallback}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground truncate">
-                    {profile?.name ||
-                      user.user_metadata?.name ||
-                      user.email?.split("@")[0] ||
-                      "User"}
-                  </p>
-                  <p className="text-xs text-muted-foreground truncate">
-                    {profile?.username ? `@${profile.username}` : ""}
-                  </p>
-                </div>
-              </Link>
+              <ProfileSwitcher
+                isOpen={isProfileDropdownOpen}
+                setIsOpen={setProfileDropdownOpen}
+              />
             ) : (
               <div className="flex items-center space-x-3 px-4 py-2 mt-2">
                 <div className="h-10 w-10 rounded-full bg-muted"></div>

@@ -13,12 +13,15 @@ import { QuizFormData, QuizResponse } from "@/apps/quiz/types/quiz";
 import { FullPostCard } from "../../../shared-src/feed/FullPostCard";
 import { useToast } from "@/hooks/use-toast";
 import { EventFormData, EventResponse } from "@/shared-src/event/event-types";
+import { useActiveProfile } from "../../../shared-src/profile/ActiveProfileContext";
 
 export function PostPage() {
   const { urlCode } = useParams<{ urlCode: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
+
+  const { activeProfile } = useActiveProfile();
 
   const switchToEditMode = searchParams.get("editMode");
 
@@ -28,6 +31,7 @@ export function PostPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [isCreateMode, setIsCreateMode] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [editPostUpdateKey, setEditPostUpdateKey] = useState(0);
 
   // Quiz data
   const [quizData, setQuizData] = useState<QuizFormData | null>(null);
@@ -35,8 +39,8 @@ export function PostPage() {
   // Event data
   const [eventData, setEventData] = useState<EventFormData | null>(null);
 
-  const { profile, isAuthenticated, loading: authLoading } = useAuthContext();
-  const currentUserId = profile?.id || "";
+  const { isAuthenticated, loading: authLoading } = useAuthContext();
+  const currentUserId = activeProfile?.id || "";
 
   const loadPost = async (postUrlCode?: string) => {
     setIsLoading(true);
@@ -51,6 +55,7 @@ export function PostPage() {
 
         setIsCreateMode(true);
         setIsEditing(true);
+
         setPost({
           id: 0,
           title: "",
@@ -64,17 +69,20 @@ export function PostPage() {
           members_enabled: false,
           url: "",
           slug: undefined,
+          author_id: activeProfile?.id || "",
           author: {
-            id: profile?.id || "",
-            name: profile?.name || "",
-            username: profile?.username || "",
-            telegram_username: profile?.telegram_username || null,
-            avatar_url: profile?.avatar_url || null,
+            id: activeProfile?.id || "",
+            name: activeProfile?.name || "",
+            username: activeProfile?.username || "",
+            avatar_url: activeProfile?.avatar_url || null,
             badge: null,
           },
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         });
+        setEditPostUpdateKey((prev) => prev + 1);
+        setQuizData(null);
+        setEventData(null);
         setIsLoading(false);
         return;
       }
@@ -85,8 +93,8 @@ export function PostPage() {
       const foundPost = res.data;
 
       if (
-        !!profile &&
-        profile.id === foundPost.post.author_id &&
+        !!activeProfile &&
+        activeProfile.id === foundPost.post.author_id &&
         foundPost.post.type === PostType.QUIZ
       ) {
         const res = await FPApi.axios.get<QuizResponse>(
@@ -117,8 +125,8 @@ export function PostPage() {
       }
 
       if (
-        !!profile &&
-        profile.id === foundPost.post.author_id &&
+        !!activeProfile &&
+        activeProfile.id === foundPost.post.author_id &&
         foundPost.post.type === PostType.EVENT
       ) {
         const res = await FPApi.axios.get<EventResponse>(
@@ -139,11 +147,12 @@ export function PostPage() {
             website: data.website,
             category: data.category,
             memberLimit: data.memberLimit,
+            privacy: data.privacy,
+            membersVisibility: data.membersVisibility,
+            membersEnabled: data.membersEnabled,
           };
 
           setEventData(mappedEventData);
-
-          console.log("EVENT DATA LOADED", mappedEventData);
         }
       }
 
@@ -168,10 +177,28 @@ export function PostPage() {
   };
 
   useEffect(() => {
+    if (activeProfile) {
+      setPost((prev) => {
+        if (!prev) return null;
+        return {
+          ...prev,
+          author: {
+            id: activeProfile.id || "",
+            name: activeProfile.name || "",
+            username: activeProfile.username || "",
+            avatar_url: activeProfile.avatar_url || null,
+            badge: null,
+          },
+        };
+      });
+    }
+  }, [activeProfile]);
+
+  useEffect(() => {
     if (authLoading) return;
     loadPost(urlCode);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authLoading, urlCode, profile?.id]);
+  }, [authLoading, urlCode, activeProfile?.id]);
 
   const handleSave = async (
     updates: Partial<PostWithAuthor>,
@@ -180,17 +207,21 @@ export function PostPage() {
   ) => {
     if (!post) return;
 
+    let postId: number | null = null;
+    let postUrl: string | null = null;
+
     try {
       setIsSaving(true);
 
-      const updatedPost = {
+      const updatedPost: PostWithAuthor & { public_profile_id?: string } = {
         ...post,
         ...updates,
         updated_at: new Date().toISOString(),
       };
 
-      let postId: number | null = null;
-      let postUrl: string | null = null;
+      if (activeProfile?.isPublicProfile) {
+        updatedPost["public_profile_id"] = activeProfile.id;
+      }
 
       if (isCreateMode) {
         const createPostRes = await FPApi.axios.post<{
@@ -231,6 +262,7 @@ export function PostPage() {
           timerMinutes: quizData.settings.timerMinutes,
           visibility: quizData.settings.visibility,
           questions: quizData.questions,
+          authorId: activeProfile?.id,
         };
 
         if (quizData.id) {
@@ -256,6 +288,10 @@ export function PostPage() {
           website: eventData.website,
           category: eventData.category,
           memberLimit: eventData.memberLimit,
+          privacy: eventData.privacy,
+          membersVisibility: eventData.membersVisibility,
+          membersEnabled: eventData.membersEnabled,
+          authorId: activeProfile?.id,
         };
 
         if (eventData.id) {
@@ -285,6 +321,10 @@ export function PostPage() {
       setIsCreateMode(false);
       setIsEditing(false);
     } catch (error) {
+      if (isCreateMode && postId) {
+        await FPApi.axios.delete(`/post/delete/${postId}`);
+      }
+
       toast({
         title: "Error while saving post",
         description: `${(error as Error)?.message || ""}`,
@@ -357,6 +397,7 @@ export function PostPage() {
       <div className="container mx-auto px-4 md:px-6 py-4 md:py-6 max-w-4xl">
         {isEditing ? (
           <EditablePostCard
+            key={editPostUpdateKey}
             title={post.title}
             excerpt={post.excerpt}
             content={post.content}
@@ -365,7 +406,6 @@ export function PostPage() {
             type={post.type}
             status={post.status}
             isPinned={post.is_pinned}
-            membersEnabled={post.members_enabled}
             slug={post.slug}
             author={post.author}
             onSave={handleSave}

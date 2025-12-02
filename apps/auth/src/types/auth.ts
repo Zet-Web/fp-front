@@ -14,3 +14,9 @@ export interface AuthStatusResponse {
   message?: string;
   error?: string;
 }
+
+// Process auth request for Telegram mini app
+export interface ProcessAuthRequest {
+  state: string;
+  telegram_init_data: string; // Raw signed initData from Telegram
+}

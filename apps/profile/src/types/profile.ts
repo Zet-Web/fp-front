@@ -13,6 +13,7 @@ export enum BirthdayVisibility {
 
 export interface UserProfile {
   id: string;
+  owner_id?: string | null;
   name: string | null;
   username: string | null;
   avatar_url: string | null;
@@ -28,7 +29,11 @@ export interface UserProfile {
   birthday: string | null;
   birthday_visibility: BirthdayVisibility | null;
   birthday_show_age: boolean | null;
-  is_following?: boolean
+  is_following?: boolean;
+  members_enabled: boolean;
+  members_visibility?: "all" | "members" | "owner";
+  membership_privacy?: "public" | "private";
+  is_verified: boolean;
 }
 
 export interface UserAdditionalInfo {

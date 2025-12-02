@@ -36,7 +36,6 @@ interface EditablePostCardProps {
   type: PostType;
   status: PostStatus;
   isPinned: boolean;
-  membersEnabled?: boolean;
   slug?: string;
   author: PostAuthor;
   onSave: (
@@ -70,7 +69,6 @@ export function EditablePostCard({
   type,
   status,
   isPinned,
-  membersEnabled = false,
   slug = "",
   author,
   onSave,
@@ -87,7 +85,6 @@ export function EditablePostCard({
   const [editedType, setEditedType] = useState(type);
   const [editedStatus, setEditedStatus] = useState(status);
   const [editedIsPinned, setEditedIsPinned] = useState(isPinned);
-  const [editedMembersEnabled, setEditedMembersEnabled] = useState(membersEnabled);
   const [editedSlug, setEditedSlug] = useState(slug);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isUploadingCover, setIsUploadingCover] = useState(false);
@@ -109,8 +106,6 @@ export function EditablePostCard({
   const [isEventFormValid, setIsEventFormValid] = useState(true);
   const [eventData, setEventData] = useState<EventResponse | null>(null);
 
-  console.log("eventData", eventData);
-
   const handleUpdateEventData = useCallback((data: EventResponse) => {
     setEventData(data);
   }, []);
@@ -120,7 +115,7 @@ export function EditablePostCard({
   }, []);
 
   const displayName = author.name || author.username || "User";
-  const displayUsername = author.username || author.telegram_username || "user";
+  const displayUsername = author.username || "user";
   const avatarFallback = displayName
     .split(" ")
     .map((n) => n[0])
@@ -161,7 +156,6 @@ export function EditablePostCard({
         type: editedType,
         status: editedStatus,
         is_pinned: editedIsPinned,
-        members_enabled: editedMembersEnabled,
         slug: editedSlug?.trim() || undefined,
       },
       editedType === PostType.QUIZ ? quizData : null,
@@ -328,22 +322,6 @@ export function EditablePostCard({
                     className="text-xs md:text-sm font-medium cursor-pointer"
                   >
                     Закрепить пост
-                  </Label>
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="edit-members-enabled"
-                    checked={editedMembersEnabled}
-                    onCheckedChange={(checked) =>
-                      setEditedMembersEnabled(checked as boolean)
-                    }
-                  />
-                  <Label
-                    htmlFor="edit-members-enabled"
-                    className="text-xs md:text-sm font-medium cursor-pointer"
-                  >
-                    Включить раздел участников
                   </Label>
                 </div>
               </div>
