@@ -91,29 +91,35 @@ export function RiskCategorySection({
                       <div className="mt-3 pt-3 border-t space-y-2">
                         {risk.details.map((detailGroup, groupIndex) => (
                           <div key={groupIndex} className="space-y-1">
-                            {detailGroup.map((detail, detailIndex) => (
-                              <div key={detailIndex} className="flex items-start gap-2 text-xs">
-                                <span className="text-muted-foreground min-w-[80px]">
-                                  {detail.name}:
-                                </span>
-                                {detail.value_type === 'url' ? (
-                                  <a
-                                    href={detail.value}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
-                                    onClick={(e) => e.stopPropagation()}
-                                  >
-                                    Ссылка
-                                    <ExternalLink className="h-3 w-3" />
-                                  </a>
-                                ) : (
-                                  <span className="font-medium flex-1">
-                                    {formatRiskDetail(detail)}
+                            {detailGroup.map((detail, detailIndex) => {
+                              // Skip external DataNewton URLs
+                              if (detail.value_type === 'url' && detail.value.includes('datanewton.ru')) {
+                                return null;
+                              }
+                              return (
+                                <div key={detailIndex} className="flex items-start gap-2 text-xs">
+                                  <span className="text-muted-foreground min-w-[80px]">
+                                    {detail.name}:
                                   </span>
-                                )}
-                              </div>
-                            ))}
+                                  {detail.value_type === 'url' ? (
+                                    <a
+                                      href={detail.value}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      Ссылка
+                                      <ExternalLink className="h-3 w-3" />
+                                    </a>
+                                  ) : (
+                                    <span className="font-medium flex-1">
+                                      {formatRiskDetail(detail)}
+                                    </span>
+                                  )}
+                                </div>
+                              );
+                            })}
                           </div>
                         ))}
                       </div>

@@ -6,7 +6,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CompanySearch } from './components/CompanySearch';
 import { RiskHeader } from './components/RiskHeader';
-import { CompanyDetails } from './components/CompanyDetails';
+import { CompanyDetails, ContactsCard } from './components/CompanyDetails';
 import { RiskAssessment } from './components/RiskAssessment';
 import { FinancialMetricsPreview } from './components/FinancialMetricsPreview';
 import { FinanceTabDetailed } from './components/FinanceTabDetailed';
@@ -231,13 +231,15 @@ export default function ContragentPage() {
 
               {/* Tabs */}
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full md:w-[1000px] grid-cols-5">
-                  <TabsTrigger value="overview">Обзор</TabsTrigger>
-                  <TabsTrigger value="finance">Финансы</TabsTrigger>
-                  <TabsTrigger value="risks">Риски</TabsTrigger>
-                  <TabsTrigger value="corporate-actions">Юр факты</TabsTrigger>
-                  <TabsTrigger value="requisites">Реквизиты</TabsTrigger>
-                </TabsList>
+                <div className="w-full overflow-x-auto scrollbar-hide">
+                  <TabsList className="inline-flex w-auto min-w-full">
+                    <TabsTrigger value="overview" className="flex-shrink-0">Обзор</TabsTrigger>
+                    <TabsTrigger value="finance" className="flex-shrink-0">Финансы</TabsTrigger>
+                    <TabsTrigger value="risks" className="flex-shrink-0">Риски</TabsTrigger>
+                    <TabsTrigger value="corporate-actions" className="flex-shrink-0">Юр факты</TabsTrigger>
+                    <TabsTrigger value="requisites" className="flex-shrink-0">Реквизиты</TabsTrigger>
+                  </TabsList>
+                </div>
 
                 <TabsContent value="overview" className="space-y-6 mt-6">
                   {/* Company Details */}
@@ -276,6 +278,9 @@ export default function ContragentPage() {
                       isLoading={false}
                     />
                   </div>
+
+                  {/* Contacts Card */}
+                  <ContactsCard apiResponse={apiResponse || undefined} />
                 </TabsContent>
 
                 <TabsContent value="finance" className="mt-6">

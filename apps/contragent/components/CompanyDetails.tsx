@@ -12,6 +12,89 @@ interface CompanyDetailsProps {
   apiResponse?: DataNewtonResponse;
 }
 
+interface ContactsCardProps {
+  apiResponse?: DataNewtonResponse;
+}
+
+export function ContactsCard({ apiResponse }: ContactsCardProps) {
+  if (!apiResponse?.company?.contacts) return null;
+
+  const { emails, phones, websites } = apiResponse.company.contacts;
+  const hasEmails = emails && emails.length > 0;
+  const hasPhones = phones && phones.length > 0;
+  const hasWebsites = websites && websites.length > 0;
+
+  if (!hasEmails && !hasPhones && !hasWebsites) return null;
+
+  return (
+    <Card className="shadow-sm hover:shadow-md transition-shadow">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Phone className="h-5 w-5 text-blue-500" />
+          Контакты
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {hasEmails && (
+            <div>
+              <div className="text-sm font-medium text-muted-foreground mb-2">Email</div>
+              <div className="space-y-1.5">
+                {emails.map((email, i) => (
+                  <a
+                    key={i}
+                    href={`mailto:${email.value}`}
+                    className="text-sm text-blue-500 hover:underline flex items-center gap-2 break-all"
+                  >
+                    <Mail className="h-3 w-3 flex-shrink-0" />
+                    <span className="break-all">{email.value}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+          {hasPhones && (
+            <div>
+              <div className="text-sm font-medium text-muted-foreground mb-2">Телефон</div>
+              <div className="space-y-1.5">
+                {phones.map((phone, i) => (
+                  <a
+                    key={i}
+                    href={`tel:${phone.value}`}
+                    className="text-sm text-blue-500 hover:underline flex items-center gap-2"
+                  >
+                    <Phone className="h-3 w-3 flex-shrink-0" />
+                    {phone.value}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+          {hasWebsites && (
+            <div>
+              <div className="text-sm font-medium text-muted-foreground mb-2">Сайт</div>
+              <div className="space-y-1.5">
+                {websites.map((website, i) => (
+                  <a
+                    key={i}
+                    href={website.value}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-blue-500 hover:underline flex items-center gap-2 break-all"
+                  >
+                    <Globe className="h-3 w-3 flex-shrink-0" />
+                    <span className="break-all">{website.value.replace(/^https?:\/\//, '')}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 export function CompanyDetails({ company, apiResponse }: CompanyDetailsProps) {
   const { basicInfo, leadership, financials, legal } = company;
   const latestYear = financials.yearlyData[0] || { year: new Date().getFullYear(), revenue: 0, profit: 0, assets: 0 };
@@ -24,7 +107,7 @@ export function CompanyDetails({ company, apiResponse }: CompanyDetailsProps) {
   };
 
   return (
-    <div className="space-y-4">
+    <>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {/* Basic Information */}
       <Card className="shadow-sm hover:shadow-md transition-shadow">
@@ -106,73 +189,6 @@ export function CompanyDetails({ company, apiResponse }: CompanyDetailsProps) {
         </CardContent>
       </Card>
       </div>
-
-      {/* Contacts Card */}
-      {apiResponse?.company?.contacts && (
-        <Card className="shadow-sm hover:shadow-md transition-shadow">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Phone className="h-5 w-5 text-blue-500" />
-              Контакты
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {apiResponse.company.contacts.emails && apiResponse.company.contacts.emails.length > 0 && (
-              <div>
-                <div className="text-sm text-muted-foreground mb-1.5">Email:</div>
-                <div className="space-y-1">
-                  {apiResponse.company.contacts.emails.map((email, i) => (
-                    <a
-                      key={i}
-                      href={`mailto:${email.value}`}
-                      className="text-sm text-blue-500 hover:underline flex items-center gap-2"
-                    >
-                      <Mail className="h-3 w-3" />
-                      {email.value}
-                    </a>
-                  ))}
-                </div>
-              </div>
-            )}
-            {apiResponse.company.contacts.phones && apiResponse.company.contacts.phones.length > 0 && (
-              <div>
-                <div className="text-sm text-muted-foreground mb-1.5">Телефон:</div>
-                <div className="space-y-1">
-                  {apiResponse.company.contacts.phones.map((phone, i) => (
-                    <a
-                      key={i}
-                      href={`tel:${phone.value}`}
-                      className="text-sm text-blue-500 hover:underline flex items-center gap-2"
-                    >
-                      <Phone className="h-3 w-3" />
-                      {phone.value}
-                    </a>
-                  ))}
-                </div>
-              </div>
-            )}
-            {apiResponse.company.contacts.websites && apiResponse.company.contacts.websites.length > 0 && (
-              <div>
-                <div className="text-sm text-muted-foreground mb-1.5">Сайт:</div>
-                <div className="space-y-1">
-                  {apiResponse.company.contacts.websites.map((website, i) => (
-                    <a
-                      key={i}
-                      href={website.value}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm text-blue-500 hover:underline flex items-center gap-2"
-                    >
-                      <Globe className="h-3 w-3" />
-                      {website.value.replace(/^https?:\/\//, '')}
-                    </a>
-                  ))}
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
-    </div>
+    </>
   );
 }
