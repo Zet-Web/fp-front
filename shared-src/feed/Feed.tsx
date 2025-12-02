@@ -81,16 +81,8 @@ export function Feed({
     setIsInitialLoading(true);
   }, [filters, filterByUsername]);
 
-  useEffect(() => {
-    if (!hasMore) return;
-    if (shouldShowAuthPrompt) {
-      setIsInitialLoading(false);
-      return;
-    }
-
-    const controller = new AbortController();
-
-    const load = async () => {
+  const load = useCallback(
+    async (controller: AbortController) => {
       if (page === 1) {
         setIsInitialLoading(true);
       } else {
@@ -144,15 +136,26 @@ export function Feed({
       } finally {
         setIsFetchingMore(false);
       }
-    };
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [filterByUsername, filters, itemsPerPage, page, posts]
+  );
 
-    load();
+  useEffect(() => {
+    if (!hasMore) return;
+    if (shouldShowAuthPrompt) {
+      setIsInitialLoading(false);
+      return;
+    }
+
+    const controller = new AbortController();
+
+    load(controller);
 
     return () => {
       controller.abort();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, filters, hasMore, shouldShowAuthPrompt, filterByUsername]);
+  }, [hasMore, load, shouldShowAuthPrompt]);
 
   const attachObserver = useCallback(
     (node: HTMLDivElement | null) => {

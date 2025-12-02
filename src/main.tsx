@@ -21,7 +21,7 @@ const initializeTelegramSDK = () => {
     }
   } catch (_e) {
     console.log("TMA data not found");
-    telegramInitialized = true;
+    telegramInitialized = false;
   }
 };
 
