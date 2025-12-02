@@ -1,27 +1,64 @@
-import React, { useRef } from "react"
-import { Button } from "@/components/ui/button"
-import { LogIn } from "lucide-react"
-import QRCode from "qrcode"
-import { useTelegramAuth } from "./hooks/use-telegram-auth"
+import React, { useRef, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { LogIn } from "lucide-react";
+import QRCode from "qrcode";
+import { useTelegramAuth } from "./hooks/use-telegram-auth";
+import { useTelegramMiniAppAuth } from "./hooks/use-telegram-miniapp-auth";
+import { useAuthContext } from "@/components/auth-provider";
+import { useNavigate } from "react-router-dom";
 
 export function AuthPage() {
-  const qrRef = useRef<HTMLCanvasElement>(null)
-  const { isLoading, telegramUrl, error, handleTelegramAuth } = useTelegramAuth()
-  
+  const qrRef = useRef<HTMLCanvasElement>(null);
+  const navigate = useNavigate();
+
+  const { isLoading, telegramUrl, error, handleTelegramAuth } =
+    useTelegramAuth();
+
+  const {
+    isLoading: isMiniAppLoading,
+    error: miniAppError,
+    isAutoAuthenticating,
+  } = useTelegramMiniAppAuth();
+
+  const { isAuthenticated, loading: authLoading } = useAuthContext();
+
+  useEffect(() => {
+    if (isAuthenticated && !authLoading) {
+      navigate("/");
+    }
+  }, [isAuthenticated, authLoading, navigate]);
+
   React.useEffect(() => {
     if (qrRef.current && telegramUrl) {
       QRCode.toCanvas(qrRef.current, telegramUrl, {
         width: 200,
         margin: 2,
         color: {
-          dark: '#000000',
-          light: '#FFFFFF'
-        }
-      })
+          dark: "#000000",
+          light: "#FFFFFF",
+        },
+      });
     }
-  }, [telegramUrl])
+  }, [telegramUrl]);
 
-  if (error) {
+  if (isAutoAuthenticating) {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-4">
+        <div className="max-w-md space-y-8 text-center">
+          <div>
+            <h1 className="text-2xl font-semibold text-foreground mb-2">
+              Авторизация через Telegram...
+            </h1>
+            <p className="text-muted-foreground">Пожалуйста, подождите</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state (prioritize mini app error if exists)
+  const displayError = miniAppError || error;
+  if (displayError) {
     return (
       <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-4">
         <div className="max-w-md space-y-8 text-center">
@@ -29,11 +66,11 @@ export function AuthPage() {
             <h1 className="text-2xl font-semibold text-foreground mb-2">
               Ошибка авторизации
             </h1>
-            <p className="text-destructive">{error}</p>
+            <p className="text-destructive">{displayError}</p>
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -46,27 +83,24 @@ export function AuthPage() {
           </h1>
         </div>
 
-        {/* Telegram Auth Button */}
         <div>
-          <Button 
+          <Button
             onClick={handleTelegramAuth}
-            disabled={isLoading || !telegramUrl}
+            disabled={isLoading || !telegramUrl || isMiniAppLoading}
             className="w-80 h-14 bg-blue-500 hover:bg-blue-600 text-white text-lg font-medium rounded-xl transition-colors duration-200"
             size="default"
           >
             <LogIn className="w-5 h-5 mr-3" />
-            {isLoading ? 'Loading...' : 'Authorization'}
+            {isLoading ? "Loading..." : "Authorization"}
           </Button>
         </div>
 
-        {/* Accent text */}
         <div className="py-4">
           <p className="text-muted-foreground text-lg font-medium">
             Без почты и паролей
           </p>
         </div>
 
-        {/* QR Code Section — ONLY on desktop */}
         <div className="hidden md:block space-y-6">
           <div>
             <h2 className="text-lg font-medium text-foreground mb-2">
@@ -83,5 +117,5 @@ export function AuthPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

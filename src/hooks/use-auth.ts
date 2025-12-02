@@ -4,8 +4,11 @@ import { supabase, authReady } from "@/lib/supabase";
 import { FPApi } from "@/lib/api";
 import { UserProfile } from "@/apps/profile/src/types/profile";
 import { useActiveProfile } from "../../shared-src/profile/ActiveProfileContext";
+import { isTelegramReady } from "@/main";
+import { useNavigate } from "react-router-dom";
 
 export function useAuth() {
+  const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -43,6 +46,9 @@ export function useAuth() {
         setSession(null);
         setUser(null);
         setProfile(null);
+        if (isTelegramReady()) {
+          navigate("/auth");
+        }
       }
 
       setLoading(false);
@@ -72,6 +78,7 @@ export function useAuth() {
       isMounted = false;
       subscription.unsubscribe();
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {
