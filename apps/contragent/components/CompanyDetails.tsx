@@ -134,7 +134,7 @@ export function CompanyDetails({ company, apiResponse }: CompanyDetailsProps) {
             <div className="font-medium">{formatDate(basicInfo.registrationDate)}</div>
 
             <div className="text-muted-foreground">Сотрудников:</div>
-            <div className="font-medium">{formatNumber(basicInfo.employees)}</div>
+            <div className="font-medium">{basicInfo.employees > 0 ? formatNumber(basicInfo.employees) : '—'}</div>
 
             <div className="text-muted-foreground">Уставной капитал:</div>
             <div className="font-medium">{formatCurrency(basicInfo.capital)}</div>

@@ -231,8 +231,8 @@ export default function ContragentPage() {
 
               {/* Tabs */}
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <div className="w-full overflow-x-auto scrollbar-hide">
-                  <TabsList className="inline-flex w-auto min-w-full">
+                <div className="w-full overflow-x-auto scrollbar-hide md:overflow-x-visible">
+                  <TabsList className="inline-flex md:grid w-auto min-w-full md:w-full md:grid-cols-5">
                     <TabsTrigger value="overview" className="flex-shrink-0">Обзор</TabsTrigger>
                     <TabsTrigger value="finance" className="flex-shrink-0">Финансы</TabsTrigger>
                     <TabsTrigger value="risks" className="flex-shrink-0">Риски</TabsTrigger>
