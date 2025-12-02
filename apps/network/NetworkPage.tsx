@@ -73,13 +73,14 @@ export function NetworkPage() {
         {/* Temporarily commented for test mode */}
         {/* <NetworkStats stats={stats} /> */}
 
-        <div className="mb-6">
+        {/*Search filter temporarily commented */}
+        {/* <div className="mb-6">
           <NetworkFilters
             filters={filters}
             communities={ALL_COMMUNITIES}
             onFiltersChange={setFilters}
           />
-        </div>
+        </div> */}
 
         <Tabs value={activeView} onValueChange={(value) => setActiveView(value as 'graph' | 'list')}>
           <Card className="shadow-sm mb-4">
