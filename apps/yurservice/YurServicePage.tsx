@@ -1,101 +1,108 @@
 // YurService page with database-driven resource catalog
 
-import { useState, useMemo } from "react"
-import { Input } from "@/components/ui/input"
-import { Card, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Search, AlertCircle } from "lucide-react"
-import { ResourceCard } from "./components/ResourceCard"
-import { RegionSelect } from "./components/RegionSelect"
-import { useYurServiceData } from "./hooks/use-yurservice-data"
-import { useBookmarkResource } from "./hooks/use-bookmark-resource"
-import { mapDatabaseResourceToUI } from "./lib/resource-mapper"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { useAuth } from "@/hooks/use-auth"
+import { useState, useMemo } from "react";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Search, AlertCircle } from "lucide-react";
+import { ResourceCard } from "./components/ResourceCard";
+import { RegionSelect } from "./components/RegionSelect";
+import { useYurServiceData } from "./hooks/use-yurservice-data";
+// import { useBookmarkResource } from "./hooks/use-bookmark-resource";
+import { mapDatabaseResourceToUI } from "./lib/resource-mapper";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useAuth } from "@/hooks/use-auth";
+import { YurServiceResource } from "./types/database";
 
-const ITEMS_PER_PAGE = 18
+const ITEMS_PER_PAGE = 18;
 
 export function YurServicePage() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [selectedRegionId, setSelectedRegionId] = useState<string>("all")
-  const [expandedCardId, setExpandedCardId] = useState<string | null>(null)
-  const [courtPage, setCourtPage] = useState(1)
-  const [govPage, setGovPage] = useState(1)
-  const [toolPage, setToolPage] = useState(1)
-  const [savedPage, setSavedPage] = useState(1)
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedRegionId, setSelectedRegionId] = useState<string>("all");
+  const [expandedCardId, setExpandedCardId] = useState<string | null>(null);
+  const [courtPage, setCourtPage] = useState(1);
+  const [govPage, setGovPage] = useState(1);
+  const [toolPage, setToolPage] = useState(1);
+  const [savedPage, setSavedPage] = useState(1);
 
-  const { user } = useAuth()
-  const { resources, regions, isLoading, error } = useYurServiceData()
-  const { savedResourceIds, toggleBookmark } = useBookmarkResource()
+  const { user } = useAuth();
+  const { resources, regions, isLoading, error } = useYurServiceData();
+  // const { savedResourceIds, toggleBookmark } = useBookmarkResource();
 
   const searchFilteredResources = useMemo(() => {
     return resources.filter((resource) => {
       const matchesSearch =
         searchQuery === "" ||
         resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (resource.about && resource.about.toLowerCase().includes(searchQuery.toLowerCase()))
+        (resource.about &&
+          resource.about.toLowerCase().includes(searchQuery.toLowerCase()));
 
-      return matchesSearch
-    })
-  }, [searchQuery, resources])
+      return matchesSearch;
+    });
+  }, [searchQuery, resources]);
 
-  const savedResources = useMemo(() => {
-    if (!user || savedResourceIds.size === 0) return []
-    return searchFilteredResources.filter((r) => savedResourceIds.has(r.id))
-  }, [searchFilteredResources, savedResourceIds, user])
+  const savedResources: YurServiceResource[] = []; /* useMemo(() => {
+    if (!user || savedResourceIds.size === 0) return [];
+    return searchFilteredResources.filter((r) => savedResourceIds.has(r.id));
+  }, [searchFilteredResources, savedResourceIds, user]); */
 
   const courtResources = useMemo(() => {
     return searchFilteredResources.filter((r) => {
-      if (r.type !== "court") return false
+      if (r.type !== "court") return false;
 
       const matchesRegion =
         selectedRegionId === "all" ||
-        (r.region_id !== null && r.region_id.toString() === selectedRegionId)
+        (r.region_id !== null && r.region_id.toString() === selectedRegionId);
 
-      return matchesRegion
-    })
-  }, [searchFilteredResources, selectedRegionId])
+      return matchesRegion;
+    });
+  }, [searchFilteredResources, selectedRegionId]);
 
   const govResources = useMemo(
     () => searchFilteredResources.filter((r) => r.type === "gov"),
     [searchFilteredResources]
-  )
+  );
 
   const toolResources = useMemo(
     () => searchFilteredResources.filter((r) => r.type === "tool"),
     [searchFilteredResources]
-  )
+  );
 
-  const paginatedSavedResources = savedResources.slice(0, savedPage * ITEMS_PER_PAGE)
-  const paginatedCourtResources = courtResources.slice(0, courtPage * ITEMS_PER_PAGE)
-  const paginatedGovResources = govResources.slice(0, govPage * ITEMS_PER_PAGE)
-  const paginatedToolResources = toolResources.slice(0, toolPage * ITEMS_PER_PAGE)
+  const paginatedSavedResources = savedResources.slice(
+    0,
+    savedPage * ITEMS_PER_PAGE
+  );
+  const paginatedCourtResources = courtResources.slice(
+    0,
+    courtPage * ITEMS_PER_PAGE
+  );
+  const paginatedGovResources = govResources.slice(0, govPage * ITEMS_PER_PAGE);
+  const paginatedToolResources = toolResources.slice(
+    0,
+    toolPage * ITEMS_PER_PAGE
+  );
 
-  const hasMoreSaved = savedResources.length > paginatedSavedResources.length
-  const hasMoreCourts = courtResources.length > paginatedCourtResources.length
-  const hasMoreGov = govResources.length > paginatedGovResources.length
-  const hasMoreTools = toolResources.length > paginatedToolResources.length
+  const hasMoreSaved = savedResources.length > paginatedSavedResources.length;
+  const hasMoreCourts = courtResources.length > paginatedCourtResources.length;
+  const hasMoreGov = govResources.length > paginatedGovResources.length;
+  const hasMoreTools = toolResources.length > paginatedToolResources.length;
 
   if (error) {
     return (
       <div className="max-w-7xl mx-auto space-y-6">
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            Failed to load resources: {error}
-          </AlertDescription>
+          <AlertDescription>Failed to load resources: {error}</AlertDescription>
         </Alert>
       </div>
-    )
+    );
   }
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <div>
         <h1 className="text-3xl font-bold mb-2">Юр сервисы</h1>
-        <p className="text-muted-foreground">
-          Каталог сервисов для юристов
-        </p>
+        <p className="text-muted-foreground">Каталог сервисов для юристов</p>
       </div>
 
       <Card className="p-4">
@@ -126,8 +133,10 @@ export function YurServicePage() {
             "Поиск..."
           ) : (
             <>
-              Показано {searchFilteredResources.length} из {resources.length} сервисов
-              {selectedRegionId !== "all" && " (region filter applies to Courts only)"}
+              Показано {searchFilteredResources.length} из {resources.length}{" "}
+              сервисов
+              {selectedRegionId !== "all" &&
+                " (region filter applies to Courts only)"}
             </>
           )}
         </div>
@@ -139,9 +148,7 @@ export function YurServicePage() {
         </Card>
       ) : searchFilteredResources.length === 0 ? (
         <Card className="p-12 text-center">
-          <p className="text-muted-foreground">
-            Не найдено
-          </p>
+          <p className="text-muted-foreground">Не найдено</p>
         </Card>
       ) : (
         <div className="space-y-8">
@@ -151,8 +158,8 @@ export function YurServicePage() {
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {paginatedSavedResources.map((resource) => {
-                  const uiResource = mapDatabaseResourceToUI(resource)
-                  const cardId = `saved-${resource.id}`
+                  const uiResource = mapDatabaseResourceToUI(resource);
+                  const cardId = `saved-${resource.id}`;
                   return (
                     <ResourceCard
                       key={resource.id}
@@ -163,10 +170,10 @@ export function YurServicePage() {
                           expandedCardId === cardId ? null : cardId
                         )
                       }
-                      isSaved={savedResourceIds.has(resource.id)}
-                      onToggleBookmark={toggleBookmark}
+                      isSaved={false /* savedResourceIds.has(resource.id) */}
+                      onToggleBookmark={() => null /* toggleBookmark */}
                     />
-                  )
+                  );
                 })}
               </div>
               {hasMoreSaved && (
@@ -188,8 +195,8 @@ export function YurServicePage() {
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {paginatedCourtResources.map((resource) => {
-                  const uiResource = mapDatabaseResourceToUI(resource)
-                  const cardId = `court-${resource.id}`
+                  const uiResource = mapDatabaseResourceToUI(resource);
+                  const cardId = `court-${resource.id}`;
                   return (
                     <ResourceCard
                       key={resource.id}
@@ -200,10 +207,10 @@ export function YurServicePage() {
                           expandedCardId === cardId ? null : cardId
                         )
                       }
-                      isSaved={savedResourceIds.has(resource.id)}
-                      onToggleBookmark={toggleBookmark}
+                      isSaved={false /* savedResourceIds.has(resource.id) */}
+                      onToggleBookmark={() => null /* toggleBookmark */}
                     />
-                  )
+                  );
                 })}
               </div>
               {hasMoreCourts && (
@@ -225,8 +232,8 @@ export function YurServicePage() {
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {paginatedGovResources.map((resource) => {
-                  const uiResource = mapDatabaseResourceToUI(resource)
-                  const cardId = `gov-${resource.id}`
+                  const uiResource = mapDatabaseResourceToUI(resource);
+                  const cardId = `gov-${resource.id}`;
                   return (
                     <ResourceCard
                       key={resource.id}
@@ -237,10 +244,10 @@ export function YurServicePage() {
                           expandedCardId === cardId ? null : cardId
                         )
                       }
-                      isSaved={savedResourceIds.has(resource.id)}
-                      onToggleBookmark={toggleBookmark}
+                      isSaved={false /* savedResourceIds.has(resource.id) */}
+                      onToggleBookmark={() => null /* toggleBookmark */}
                     />
-                  )
+                  );
                 })}
               </div>
               {hasMoreGov && (
@@ -261,8 +268,8 @@ export function YurServicePage() {
               <h2 className="text-xl font-semibold mb-4">Инструменты</h2>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {paginatedToolResources.map((resource) => {
-                  const uiResource = mapDatabaseResourceToUI(resource)
-                  const cardId = `tool-${resource.id}`
+                  const uiResource = mapDatabaseResourceToUI(resource);
+                  const cardId = `tool-${resource.id}`;
                   return (
                     <ResourceCard
                       key={resource.id}
@@ -273,10 +280,10 @@ export function YurServicePage() {
                           expandedCardId === cardId ? null : cardId
                         )
                       }
-                      isSaved={savedResourceIds.has(resource.id)}
-                      onToggleBookmark={toggleBookmark}
+                      isSaved={false /* savedResourceIds.has(resource.id) */}
+                      onToggleBookmark={() => null /* toggleBookmark */}
                     />
-                  )
+                  );
                 })}
               </div>
               {hasMoreTools && (
@@ -294,5 +301,5 @@ export function YurServicePage() {
         </div>
       )}
     </div>
-  )
+  );
 }

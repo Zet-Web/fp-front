@@ -340,7 +340,7 @@ export function HeroSection({
           )}
         </div>
 
-        <div className="mt-4 flex justify-between items-start">
+        <div className="mt-4 md:flex-row flex-col flex justify-between items-start ">
           <div className="flex-1 max-w-[70%]">
             <div className="flex items-center gap-2 mb-2">
               {isEditing ? (
@@ -361,7 +361,7 @@ export function HeroSection({
                 </div>
               ) : (
                 <div className="flex items-center gap-3">
-                  <h1 className="text-3xl font-bold truncate overflow-hidden">
+                  <h1 className="text-3xl font-bold md:truncate md:overflow-hidden ">
                     {displayName}
                   </h1>
                   {user.is_verified && (
@@ -436,7 +436,7 @@ export function HeroSection({
             )}
           </div>
 
-          <div className="w-full md:w-auto md:ml-6 mt-0 md:mt-2 flex gap-2 md:gap-3 justify-end md:justify-start">
+          <div className="w-full md:w-auto md:ml-6 mt-0 md:mt-2 flex gap-2 md:gap-3 justify-start">
             {isOwnProfile ? (
               <>
                 {isEditing ? (
@@ -449,7 +449,7 @@ export function HeroSection({
                       disabled={isSaving}
                     >
                       <Settings className="w-4 h-4 md:mr-2" />
-                      <span className="hidden md:inline">Настройки</span>
+                      <span className="inline">Настройки</span>
                     </Button>
                     <Button
                       variant="outline"

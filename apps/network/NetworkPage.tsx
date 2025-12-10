@@ -14,6 +14,8 @@ import { NodeDetailModal } from "./components/NodeDetailModal";
 import { MOCK_NETWORK_DATA } from "./lib/mock-network-data";
 import { applyNetworkFilters, getEmptyStateMessage } from "./lib/network-utils";
 import { FPApi } from "@/lib/api";
+import { useNavigate } from "react-router-dom";
+import { useAuthContext } from "@/components/auth-provider";
 
 const DEFAULT_FILTERS: NetworkFiltersState = {
   search: "",
@@ -24,6 +26,9 @@ const DEFAULT_FILTERS: NetworkFiltersState = {
 };
 
 export function NetworkPage() {
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuthContext();
+
   const [filters, setFilters] = useState<NetworkFiltersState>(DEFAULT_FILTERS);
   const [selectedNode, setSelectedNode] = useState<NetworkNode | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -65,9 +70,15 @@ export function NetworkPage() {
     loadNetworkData();
   }, []);
 
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/auth");
+    }
+  }, [isAuthenticated, navigate]);
+
   return (
     <div className="h-full w-full flex flex-col">
-      <div className="container mx-auto px-4 py-6 max-w-7xl">
+      <div className="container mx-auto md:px-6 md:py-6 max-w-7xl">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-foreground mb-2">Контакты</h1>
           <p className="text-muted-foreground">

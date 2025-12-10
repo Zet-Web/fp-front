@@ -46,7 +46,9 @@ export function useAuth() {
         setSession(null);
         setUser(null);
         setProfile(null);
-        if (isTelegramReady()) {
+
+        const isTMAReady = isTelegramReady();
+        if (isTMAReady) {
           navigate("/auth");
         }
       }

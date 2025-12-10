@@ -13,7 +13,11 @@ import {
   LogOut,
   Loader2,
 } from "lucide-react";
-import { EventResponse, EVENT_TYPE_LABELS } from "./event-types";
+import {
+  EventResponse,
+  EVENT_TYPE_LABELS,
+  EVENT_CATEGORIES,
+} from "./event-types";
 import { useState, useEffect } from "react";
 import { useAuthContext } from "@/components/auth-provider";
 import { Members } from "../members/Members";
@@ -103,14 +107,14 @@ export function EventDisplayCard({
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
     const year = date.getFullYear();
     return `${day}.${month}.${year}`;
   };
 
   const getCategoryLabel = (category: string) => {
-    return category.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+    return EVENT_CATEGORIES.find((c) => c.value === category)?.label;
   };
 
   const showLocationFields = eventData.eventTypes.includes("offline");

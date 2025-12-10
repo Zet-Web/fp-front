@@ -142,7 +142,7 @@ export function SettingsPage() {
   }
 
   return (
-    <div className="container mx-auto px-6 py-6 max-w-4xl">
+    <div className="container mx-auto md:px-6 md:py-6 max-w-4xl">
       <Tabs
         value={currentTab}
         onValueChange={(value) => setCurrentTab(value)}

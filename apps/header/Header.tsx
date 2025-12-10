@@ -1,50 +1,58 @@
-import { ChevronLeft } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { useNavigate, useLocation } from "react-router-dom"
-import { useAuthContext } from "@/components/auth-provider"
+import { ChevronLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useAuthContext } from "@/components/auth-provider";
 
 export function Header() {
-  const navigate = useNavigate()
-  const location = useLocation()
-  const { profile } = useAuthContext()
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { profile } = useAuthContext();
 
   const getPageTitle = () => {
-    const path = location.pathname
+    const path = location.pathname;
 
-    if (path === '/' || path === '/home') return null
-    if (path === '/about') return 'О проекте'
-    if (path === '/settings') return 'Настройки'
-    if (path === '/auth') return 'Авторизация'
-    if (path === '/test') return 'Test'
-    if (path === '/explore') return 'Explore'
-    if (path.startsWith('/post/')) return 'Публикация'
-    if (path === '/profile' || (profile?.username && path === `/${profile.username}`)) {
-      return profile?.name || profile?.username || 'Профиль'
+    if (path === "/" || path === "/home") return null;
+    if (path === "/about") return "О проекте";
+    if (path === "/yurservice") return "Юридические услуги";
+    if (path === "/contragent") return "Контрагенты";
+    if (path === "/split") return "Рассрочка";
+    if (path === "/network") return "Нетворк";
+    if (path === "/settings") return "Настройки";
+    if (path === "/auth") return "Авторизация";
+    if (path === "/post") return "Пост";
+    if (path === "/test") return "Test";
+    if (path === "/explore") return "Explore";
+    if (path.startsWith("/post/")) return "Публикация";
+    if (
+      path === "/profile" ||
+      (profile?.username && path === `/${profile.username}`)
+    ) {
+      return profile?.name || profile?.username || "Профиль";
     }
-    if (path.startsWith('/')) {
-      const username = path.substring(1)
-      if (username && !username.includes('/')) {
-        return username
+    if (path.startsWith("/")) {
+      const username = path.substring(1);
+      if (username && !username.includes("/")) {
+        return username;
       }
     }
 
-    return null
-  }
+    return null;
+  };
 
   const canGoBack = () => {
-    return window.history.length > 1
-  }
+    return window.history.length > 1;
+  };
 
   const handleBack = () => {
     if (canGoBack()) {
-      navigate(-1)
+      navigate(-1);
     }
-  }
+  };
 
-  const pageTitle = getPageTitle()
+  const pageTitle = getPageTitle();
 
   if (!pageTitle) {
-    return null
+    return null;
   }
 
   return (
@@ -66,5 +74,5 @@ export function Header() {
         </h1>
       </div>
     </header>
-  )
+  );
 }
