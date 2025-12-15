@@ -1,6 +1,6 @@
 apps/test
 apps/404
-apps/auth
+# apps/auth
 apps/chats
 apps/header
 apps/mobileNav
