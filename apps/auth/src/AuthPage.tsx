@@ -5,11 +5,15 @@ import QRCode from "qrcode";
 import { useTelegramAuth } from "./hooks/use-telegram-auth";
 import { useTelegramMiniAppAuth } from "./hooks/use-telegram-miniapp-auth";
 import { useAuthContext } from "@/components/auth-provider";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { EmailAuthForm } from "./components/EmailAuthForm";
 
 export function AuthPage() {
   const qrRef = useRef<HTMLCanvasElement>(null);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const showEmailAuth = searchParams.has('email');
 
   const { isLoading, telegramUrl, error, handleTelegramAuth } =
     useTelegramAuth();
@@ -71,6 +75,10 @@ export function AuthPage() {
         </div>
       </div>
     );
+  }
+
+  if (showEmailAuth) {
+    return <EmailAuthForm />;
   }
 
   return (
