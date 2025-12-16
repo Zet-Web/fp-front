@@ -21,7 +21,7 @@ const initializeTelegramSDK = () => {
     }
   } catch (_e) {
     console.log("TMA data not found");
-    telegramInitialized = true;
+    telegramInitialized = false;
   }
 };
 
@@ -37,6 +37,8 @@ export const isTelegramReady = (): boolean => {
 
 // Get Telegram launch params if available
 export const getTelegramLaunchParams = () => {
+  if (!isTelegramReady()) return;
+
   try {
     const initDataRaw = retrieveRawLaunchParams();
     const urlParams = new URLSearchParams(initDataRaw);
