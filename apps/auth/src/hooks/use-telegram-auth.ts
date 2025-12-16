@@ -168,7 +168,7 @@ export function useTelegramAuth(): UseTelegramAuthReturn {
           cleanup();
         }
       }
-    }, 3000); 
+    }, 1500); 
   };
 
   return {

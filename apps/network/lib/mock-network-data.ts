@@ -10,7 +10,7 @@ export const MOCK_NETWORK_NODES: NetworkNode[] = [
     name: 'Тимур Какохо',
     username: 'timur-kakokho',
     about: 'IT юрист | Эксперт по цифровому праву',
-    avatarUrl: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=200',
+    avatarUrl: 'https://s3.twcstorage.ru/0e561111-fps/profile-avatar/timur-kakokho.jpeg?auto=compress&cs=tinysrgb&w=200',
     role: 'IT-юрист',
     company: 'Независимый консультант',
     level: 1,

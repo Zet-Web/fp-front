@@ -5,10 +5,11 @@ import { FPApi } from "@/lib/api";
 import { UserProfile } from "@/apps/profile/src/types/profile";
 import { useActiveProfile } from "../../shared-src/profile/ActiveProfileContext";
 import { isTelegramReady } from "@/main";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export function useAuth() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -47,8 +48,10 @@ export function useAuth() {
         setUser(null);
         setProfile(null);
 
-        const isTMAReady = isTelegramReady();
-        if (isTMAReady) {
+        const isOnAuthPage = location.pathname === "/auth";
+        const hasEmailParam = location.search.includes("email");
+
+        if (isTelegramReady() && !isOnAuthPage && !hasEmailParam) {
           navigate("/auth");
         }
       }

@@ -1,6 +1,6 @@
 apps/test
 apps/404
-apps/auth
+# apps/auth
 apps/chats
 apps/header
 apps/mobileNav
@@ -10,7 +10,7 @@ apps/about
 apps/profile
 apps/post
 apps/settings
-# apps/network
+apps/network
 apps/quiz
 
 apps/yurservice
