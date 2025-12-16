@@ -5,14 +5,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useEmailAuth } from '../hooks/use-email-auth';
 import { useNavigate } from 'react-router-dom';
-import { Mail, Lock, LogIn, AlertCircle, UserPlus } from 'lucide-react';
+import { Mail, Lock, LogIn, AlertCircle } from 'lucide-react';
 
 export function EmailAuthForm() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isSignUp, setIsSignUp] = useState(false);
-  const { isLoading, error, signInWithEmail, signUpWithEmail } = useEmailAuth();
+  const { isLoading, error, signInWithEmail } = useEmailAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,10 +20,7 @@ export function EmailAuthForm() {
       return;
     }
 
-    const success = isSignUp
-      ? await signUpWithEmail(email, password)
-      : await signInWithEmail(email, password);
-
+    const success = await signInWithEmail(email, password);
     if (success) {
       navigate('/');
     }
@@ -35,10 +31,10 @@ export function EmailAuthForm() {
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
           <h1 className="text-2xl font-semibold text-foreground mb-2">
-            {isSignUp ? 'Регистрация' : 'Вход с Email'}
+            Вход с Email
           </h1>
           <p className="text-muted-foreground">
-            {isSignUp ? 'Создайте новый аккаунт' : 'Введите данные для входа'}
+            Введите данные для входа
           </p>
         </div>
 
@@ -96,30 +92,9 @@ export function EmailAuthForm() {
             disabled={isLoading || !email || !password}
             className="w-full h-12 bg-blue-500 hover:bg-blue-600 text-white text-base font-medium rounded-xl transition-colors duration-200"
           >
-            {isSignUp ? (
-              <>
-                <UserPlus className="w-5 h-5 mr-2" />
-                {isLoading ? 'Регистрация...' : 'Зарегистрироваться'}
-              </>
-            ) : (
-              <>
-                <LogIn className="w-5 h-5 mr-2" />
-                {isLoading ? 'Вход...' : 'Войти'}
-              </>
-            )}
+            <LogIn className="w-5 h-5 mr-2" />
+            {isLoading ? 'Вход...' : 'Войти'}
           </Button>
-
-          <div className="text-center pt-2">
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => setIsSignUp(!isSignUp)}
-              disabled={isLoading}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {isSignUp ? 'Уже есть аккаунт? Войти' : 'Нет аккаунта? Зарегистрироваться'}
-            </Button>
-          </div>
         </form>
       </div>
     </div>
