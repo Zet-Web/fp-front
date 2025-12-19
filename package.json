@@ -6,8 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:full": "npm run build:network-mfe && npm run build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build:network-mfe": "cd network-mfe && npm install && npm run build && cd .. && rm -rf public/assets/network && mkdir -p public/assets/network && cp -r network-mfe/dist/* public/assets/network/",
+    "dev:with-network": "npm run build:network-mfe && npm run dev"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
